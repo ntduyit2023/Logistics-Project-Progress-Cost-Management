@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feature Relationship Graph — GLPO Node Features</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --bg-color: #0d0822;
+      --panel-bg: rgba(18, 10, 36, 0.75);
+      --panel-border: rgba(140, 120, 255, 0.22);
+      --text-color: #e0d8f0;
+      --text-muted: rgba(224, 216, 240, 0.6);
+      --accent-color: #8c78ff;
+      --font-family: 'Inter', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: var(--bg-color);
+      font-family: var(--font-family);
+      overflow: hidden;
+      color: var(--text-color);
+      user-select: none;
+    }
+    
+    canvas {
+      display: block;
+      cursor: grab;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 10;
+    }
+    canvas:active { cursor: grabbing; }
+
+    #sidebar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      width: 350px;
+      max-height: calc(100vh - 32px);
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
+      z-index: 50;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(140, 120, 255, 0.3) transparent;
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    #sidebar::-webkit-scrollbar-thumb {
+      background: rgba(140, 120, 255, 0.3);
+      border-radius: 3px;
+    }
+    #sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(140, 120, 255, 0.5);
+    }
+
+    .sidebar-section {
+      border-bottom: 1px solid rgba(140, 120, 255, 0.15);
+      padding-bottom: 20px;
+    }
+    .sidebar-section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    #search {
+      width: 100%;
+      background: rgba(10, 5, 25, 0.6);
+      border: 1px solid rgba(140, 120, 255, 0.3);
+      color: var(--text-color);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s ease;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    #search:focus {
+      border-color: rgba(140, 120, 255, 0.8);
+      box-shadow: 0 0 12px rgba(140, 120, 255, 0.25), inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    #search::placeholder { color: rgba(200, 184, 255, 0.35); }
+
+    .search-results-list {
+      margin-top: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      background: rgba(140, 120, 255, 0.05);
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+    .search-result-item:hover {
+      background: rgba(140, 120, 255, 0.15);
+      border-color: rgba(140, 120, 255, 0.25);
+    }
+    .result-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .result-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .result-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .result-group {
+      font-size: 10px;
+      opacity: 0.7;
+    }
+    .search-no-results {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 8px;
+      text-align: center;
+    }
+
+    /* Inspector styles */
+    .inspector-welcome {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 20px 0;
+      font-style: italic;
+      line-height: 1.6;
+    }
+    .inspector-content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .inspector-header {
+      padding-left: 12px;
+      margin-bottom: 4px;
+    }
+    .group-badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+    .inspector-node-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .inspector-desc {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: rgba(224, 216, 240, 0.85);
+      background: rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .inspector-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .inspector-connections {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .conn-title {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .conn-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      max-height: 130px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .conn-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .conn-list::-webkit-scrollbar-thumb {
+      background: rgba(140, 120, 255, 0.2);
+      border-radius: 2px;
+    }
+    .conn-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 11px;
+    }
+    .conn-item:hover {
+      background: rgba(140, 120, 255, 0.08);
+      transform: translateX(3px);
+    }
+    .conn-label {
+      font-weight: 500;
+      color: #eae5f5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+    }
+    .conn-type-badge {
+      font-size: 8px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .conn-type-badge.cost { background: rgba(245, 166, 35, 0.2); color: #f5a623; }
+    .conn-type-badge.time { background: rgba(69, 183, 209, 0.2); color: #45b7d1; }
+    .conn-type-badge.risk { background: rgba(255, 138, 92, 0.2); color: #ff8a5c; }
+    .conn-type-badge.resource { background: rgba(240, 147, 251, 0.2); color: #f093fb; }
+    .conn-type-badge.quality { background: rgba(0, 210, 255, 0.2); color: #00d2ff; }
+    .conn-type-badge.structural { background: rgba(161, 140, 209, 0.2); color: #a18cd1; }
+
+    .no-conn {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+      padding-left: 6px;
+    }
+
+    /* Sliders and general controls */
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #c8b8ff;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .control-group label {
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+    .control-group label span {
+      font-family: monospace;
+      color: #c8b8ff;
+      font-weight: bold;
+    }
+    .control-group input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(140, 120, 255, 0.15);
+      outline: none;
+    }
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #8c78ff;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(140, 120, 255, 0.5);
+      transition: transform 0.1s ease;
+    }
+    .control-group input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    /* Legend style */
+    #legend {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 270px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      font-size: 12px;
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      z-index: 50;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(140, 120, 255, 0.25) transparent;
+    }
+    #legend::-webkit-scrollbar {
+      width: 4px;
+    }
+    #legend::-webkit-scrollbar-thumb {
+      background: rgba(140, 120, 255, 0.25);
+      border-radius: 2px;
+    }
+    #legend h3 {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #c8b8ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(140, 120, 255, 0.15);
+      padding-bottom: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      padding: 5px 8px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    .legend-item:hover {
+      background: rgba(140, 120, 255, 0.08);
+    }
+    .legend-item.dimmed { opacity: 0.25; }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #eae5f5;
+    }
+
+    /* Controls buttons */
+    #controls {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      display: flex;
+      gap: 8px;
+      z-index: 50;
+    }
+    #controls button, .inspector-actions button {
+      background: rgba(140, 120, 255, 0.12);
+      border: 1px solid rgba(140, 120, 255, 0.35);
+      color: #c8b8ff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #controls button:hover, .inspector-actions button:hover {
+      background: rgba(140, 120, 255, 0.28);
+      border-color: rgba(140, 120, 255, 0.65);
+      box-shadow: 0 0 12px rgba(140, 120, 255, 0.3);
+    }
+
+    #tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(12, 6, 28, 0.95);
+      border: 1px solid rgba(140, 120, 255, 0.45);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 12px;
+      max-width: 300px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      display: none;
+      z-index: 100;
+      line-height: 1.5;
+    }
+    #tooltip .tt-title {
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    #tooltip .tt-group {
+      font-size: 10px;
+      opacity: 0.65;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    #tooltip .tt-desc {
+      font-size: 11.5px;
+      opacity: 0.85;
+      color: #eae5f5;
+    }
+
+    /* Table View Dashboard Styles */
+    #table-container {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      background: rgba(10, 6, 24, 0.95);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 24px;
+      z-index: 60;
+      backdrop-filter: blur(24px) saturate(180%);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .table-header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(140, 120, 255, 0.18);
+      padding-bottom: 16px;
+      gap: 20px;
+    }
+    .table-header-section h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 12px rgba(140, 120, 255, 0.3);
+    }
+    .table-filters {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    #table-search {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(140, 120, 255, 0.3);
+      color: var(--text-color);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      outline: none;
+      width: 260px;
+      transition: all 0.2s;
+    }
+    #table-search:focus {
+      border-color: rgba(140, 120, 255, 0.8);
+      box-shadow: 0 0 10px rgba(140, 120, 255, 0.25);
+    }
+    #table-search::placeholder { color: rgba(200, 184, 255, 0.35); }
+
+    #table-filter-group {
+      background: rgba(10, 6, 24, 0.9);
+      border: 1px solid rgba(140, 120, 255, 0.3);
+      color: var(--text-color);
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #table-filter-group:hover {
+      border-color: rgba(140, 120, 255, 0.5);
+    }
+
+    .table-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      border-radius: 12px;
+      border: 1px solid rgba(140, 120, 255, 0.15);
+      background: rgba(0, 0, 0, 0.15);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(140, 120, 255, 0.3) transparent;
+    }
+    .table-wrapper::-webkit-scrollbar {
+      width: 6px;
+    }
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: rgba(140, 120, 255, 0.3);
+      border-radius: 3px;
+    }
+    
+    #features-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      text-align: left;
+    }
+    #features-table th, #features-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(140, 120, 255, 0.1);
+    }
+    #features-table th {
+      background: rgba(22, 12, 45, 0.95);
+      color: #c8b8ff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      border-bottom: 2px solid rgba(140, 120, 255, 0.25);
+    }
+    #features-table tbody tr {
+      transition: background 0.15s ease;
+    }
+    #features-table tbody tr:hover {
+      background: rgba(140, 120, 255, 0.05);
+    }
+    .table-badge {
+      font-size: 9.5px;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      display: inline-block;
+      letter-spacing: 0.3px;
+    }
+    .table-view-btn {
+      background: rgba(140, 120, 255, 0.12);
+      border: 1px solid rgba(140, 120, 255, 0.35);
+      color: #c8b8ff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+    .table-view-btn:hover {
+      background: rgba(140, 120, 255, 0.28);
+      border-color: rgba(140, 120, 255, 0.65);
+      box-shadow: 0 0 10px rgba(140, 120, 255, 0.35);
+    }
+    
+  </style>
+</head>
+<body>
+  <canvas id="graph"></canvas>
+  
+  <div id="sidebar">
+    <!-- Search section -->
+    <div class="sidebar-section">
+      <div id="search-container">
+        <input type="text" id="search" placeholder="🔍 Tìm kiếm đặc trưng..." autocomplete="off" />
+        <div id="search-results" class="search-results-list"></div>
+      </div>
+    </div>
+    
+    <!-- Inspector section -->
+    <div id="inspector" class="sidebar-section">
+      <div class="inspector-welcome">
+        Click vào một nút để xem phân tích chi tiết, các mối liên kết và ghim định vị.
+      </div>
+    </div>
+    
+    <!-- Physics control panel -->
+    <div class="sidebar-section">
+      <h4 class="section-title">⚡ Cấu hình Vật lý</h4>
+      <div class="control-group">
+        <label>Lực đẩy (Repulsion): <span id="val-repulsion">800</span></label>
+        <input type="range" id="param-repulsion" min="100" max="3000" step="50" value="800" />
+      </div>
+      <div class="control-group">
+        <label>Lực hút (Attraction): <span id="val-attraction">0.008</span></label>
+        <input type="range" id="param-attraction" min="0.001" max="0.05" step="0.001" value="0.008" />
+      </div>
+      <div class="control-group">
+        <label>Chiều dài cạnh: <span id="val-edgeLength">120</span></label>
+        <input type="range" id="param-edgeLength" min="40" max="300" step="10" value="120" />
+      </div>
+      <div class="control-group">
+        <label>Độ cản (Damping): <span id="val-damping">0.92</span></label>
+        <input type="range" id="param-damping" min="0.5" max="0.99" step="0.01" value="0.92" />
+      </div>
+      <div class="control-group">
+        <label>Tránh đè nút (Collision): <span id="val-collision">30</span></label>
+        <input type="range" id="param-collision" min="10" max="100" step="5" value="30" />
+      </div>
+    </div>
+  </div>
+  
+  <div id="legend">
+    <h3>📊 Nhóm Đặc trưng (12)</h3>
+  </div>
+
+  <div id="controls">
+    <button onclick="resetView()">🔄 Đặt lại Góc nhìn</button>
+    <button onclick="toggleLabels()">🏷️ Hiện/Ẩn Nhãn</button>
+    <button onclick="togglePhysics()">⚡ Bật/Tắt Vật lý</button>
+    <button onclick="toggleViewMode()" id="btn-view-mode" style="background: rgba(140, 120, 255, 0.15); border-color: rgba(140, 120, 255, 0.5);">📊 Dạng Bảng</button>
+  </div>
+
+  <div id="stats"></div>
+  <div id="tooltip"></div>
+
+  <!-- Table View Overlay Layout -->
+  <div id="table-container" style="display: none;">
+    <div class="table-header-section">
+      <h2>📋 Danh Sách Thống Kê Đặc Trưng (91)</h2>
+      <div class="table-filters">
+        <input type="text" id="table-search" placeholder="🔍 Lọc danh sách..." autocomplete="off" />
+        <select id="table-filter-group" onchange="filterTable()">
+          <option value="all">Tất cả các nhóm</option>
+        </select>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table id="features-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">ID</th>
+            <th style="width: 200px;">Yếu tố</th>
+            <th style="width: 150px;">Nhóm</th>
+            <th>Mô tả</th>
+            <th style="width: 120px;">Đơn vị đo</th>
+            <th style="width: 180px;">Nguồn tham chiếu</th>
+            <th style="width: 110px; text-align: center;">Liên kết (Đến|Đi)</th>
+            <th style="width: 100px; text-align: center;">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+  // ============================================================
+  // DATA: 91 Features organized into 12 groups with relationships
+  // ============================================================
+  const GROUPS = [
+    { id: 0,  name: "Chi phí Trực tiếp",         color: "#f5a623", short: "CP Trực tiếp" },
+    { id: 1,  name: "Chi phí Gián tiếp",          color: "#b0b8c0", short: "CP Gián tiếp" },
+    { id: 2,  name: "Chi phí Cơ hội & Chìm",      color: "#7ed321", short: "CP Cơ hội" },
+    { id: 3,  name: "Chi phí Hợp đồng & Pháp lý", color: "#ff6b6b", short: "Hợp đồng & Pháp lý" },
+    { id: 4,  name: "Chi phí Logistics & SCM",     color: "#4ecdc4", short: "Hậu cần & SCM" },
+    { id: 5,  name: "Yếu tố Thời gian",           color: "#45b7d1", short: "Thời gian" },
+    { id: 6,  name: "Yếu tố Tài nguyên",          color: "#f093fb", short: "Tài nguyên" },
+    { id: 7,  name: "Cấu trúc Đồ thị",            color: "#a18cd1", short: "Cấu trúc Đồ thị" },
+    { id: 8,  name: "Rủi ro & Bất định",           color: "#ff8a5c", short: "Rủi ro" },
+    { id: 9,  name: "Chất lượng & Giá trị",        color: "#00d2ff", short: "CP Chất lượng" },
+    { id: 10, name: "Con người & Tổ chức",         color: "#ffd93d", short: "Nhân sự & Tổ chức" },
+    { id: 11, name: "ESG",                         color: "#6bcb77", short: "ESG" },
+  ];
+
+  const REL_NAMES = {
+    cost: "Chi phí",
+    time: "Thời gian",
+    risk: "Rủi ro",
+    resource: "Tài nguyên",
+    quality: "Chất lượng",
+    structural: "Cấu trúc"
+  };
+
+  // Node definitions: [id, label, group, description]
+  const NODES_RAW = [
+    // Nhóm 0: Chi phí Trực tiếp (9)
+    [0, "Chi phí nhân công nội bộ", 0, "Tiếng Anh: Internal Labor Cost. Lương cơ bản × số ngày × số nhân sự cần cho công việc. Tính riêng theo từng nhóm kỹ năng. Đơn vị: $/ngày/người. Nguồn: PMBOK Ch.7, Case Study"],
+    [1, "Chi phí thuê ngoài", 0, "Tiếng Anh: Subcontracting Cost. Chi phí thuê thầu phụ × (thời lượng công việc + thời gian đào tạo). Đơn giá thầu phụ thường cao hơn nội bộ 40-75%. Đơn vị: $/ngày/người. Nguồn: PMBOK, Case Study Q6a"],
+    [2, "Chi phí làm thêm giờ", 0, "Tiếng Anh: Overtime / Crashing Cost. Hệ số nhân lương: 1.5× (thứ 7), 2.0× (đêm), 3.0× (chủ nhật/lễ). Chi phí biên tăng dần khi rút ngắn tiến độ. Đơn vị: $/ngày. Nguồn: Case Study Q6b"],
+    [3, "Chi phí nguyên vật liệu", 0, "Tiếng Anh: Material Cost. Giá mua nguyên liệu, linh kiện, bán thành phẩm cần thiết cho công việc. Biến động theo thị trường. Đơn vị: $/đơn vị. Nguồn: PMBOK Ch.7"],
+    [4, "Chi phí mua sắm thiết bị", 0, "Tiếng Anh: Equipment Procurement. Giá mua hoặc giá thuê thiết bị chuyên dụng gắn với công việc cụ thể. Đơn vị: $/thiết bị. Nguồn: PMBOK Ch.7"],
+    [5, "Chi phí vận chuyển trực tiếp", 0, "Tiếng Anh: Direct Transportation. Phí vận chuyển nguyên vật liệu đầu vào hoặc sản phẩm đầu ra gắn liền với công việc đó. Phụ thuộc khoảng cách, trọng lượng, phương thức. Đơn vị: $/chuyến. Nguồn: Logistics/SCM"],
+    [6, "Chi phí khấu hao thiết bị", 0, "Tiếng Anh: Equipment Depreciation. Phần khấu hao thiết bị sử dụng trong thời gian thực hiện công việc. Đơn vị: $/giờ sử dụng. Nguồn: PMBOK Ch.7"],
+    [7, "Chi phí năng lượng & nhiên liệu", 0, "Tiếng Anh: Energy / Fuel Cost. Điện, nước, nhiên liệu trực tiếp tiêu thụ cho công việc (ví dụ: chạy máy hàn, máy CNC). Đơn vị: $/kWh hoặc $/lít. Nguồn: Manufacturing"],
+    [8, "Chi phí kiểm thử & kiểm định", 0, "Tiếng Anh: Testing & Inspection. Chi phí kiểm tra chất lượng đầu ra của công việc (phân tích mẫu, kiểm thử phần mềm, kiểm định an toàn). Đơn vị: $/lần kiểm. Nguồn: PMBOK Ch.8"],
+
+    // Nhóm 1: Chi phí Gián tiếp (6)
+    [9,  "Chi phí quản lý dự án", 1, "Tiếng Anh: PM Overhead. Lương PM, PMO, nhân viên hành chính, chi phí văn phòng, phần mềm quản lý. Tỷ lệ thuận với thời gian dự án. Đơn vị: $/tuần. Nguồn: PMBOK Ch.7, Case Study ($500/tuần)"],
+    [10, "Chi phí mặt bằng & thuê văn phòng", 1, "Tiếng Anh: Facility Rent. Tiền thuê nhà xưởng, văn phòng, phòng lab dùng chung cho nhiều công việc. Đơn vị: $/tháng. Nguồn: PMBOK"],
+    [11, "Chi phí tiện ích chung", 1, "Tiếng Anh: Utilities. Điện, nước, internet, điều hòa phục vụ toàn bộ dự án (không gắn riêng một công việc). Đơn vị: $/tháng. Nguồn: PMBOK"],
+    [12, "Chi phí truyền thông & phối hợp", 1, "Tiếng Anh: Communication Cost. Thời gian họp, báo cáo tiến độ, đồng bộ liên phòng ban. Đặc biệt cao tại các nút đồng bộ (Merge Nodes). Đơn vị: giờ/tuần. Nguồn: PMI Research"],
+    [13, "Chi phí đào tạo nội bộ", 1, "Tiếng Anh: Internal Training. Chi phí đào tạo nhân sự nội bộ để thực hiện công việc mới hoặc công nghệ mới. Đơn vị: $/người. Nguồn: PMBOK Ch.9"],
+    [14, "Chi phí quản lý chất lượng chung", 1, "Tiếng Anh: Quality Mgmt Overhead. Chi phí duy trì hệ thống QMS (ISO 9001), kiểm toán nội bộ, quy trình phê duyệt. Đơn vị: $/dự án. Nguồn: PMBOK Ch.8"],
+
+    // Nhóm 2: Chi phí Cơ hội & Chìm (4)
+    [15, "Chi phí cơ hội nhân sự", 2, "Tiếng Anh: Labor Opportunity Cost. Giá trị mà nhân sự bị mất khi phải chờ đồng bộ tại nút hợp nhất (merge node) thay vì làm việc khác có giá trị. Đơn vị: $/ngày/người. Nguồn: Economics"],
+    [16, "Chi phí cơ hội vốn", 2, "Tiếng Anh: Capital Opportunity Cost. Lợi nhuận mất đi do vốn bị \"khóa\" trong hàng tồn kho hoặc thiết bị chờ sử dụng. Đơn vị: %/năm × giá trị. Nguồn: Finance, TCO"],
+    [17, "Chi phí chìm", 2, "Tiếng Anh: Sunk Cost. Chi phí đã chi không thể thu hồi. Theo PMBOK: không nên dùng để ra quyết định tiếp tục/dừng dự án. Đơn vị: $. Nguồn: PMBOK Ch.7"],
+    [18, "Chi phí trì hoãn doanh thu", 2, "Tiếng Anh: Revenue Delay Cost. Mỗi ngày dự án kéo dài = mỗi ngày sản phẩm chưa ra thị trường = mất doanh thu tiềm năng. Đơn vị: $/ngày. Nguồn: Finance"],
+
+    // Nhóm 3: Chi phí Hợp đồng & Pháp lý (7)
+    [19, "Tiền phạt trễ hạn", 3, "Tiếng Anh: Penalty (Late Delivery). Phạt hợp đồng khi hoàn thành sau deadline. Đơn vị: $/tuần. Nguồn: Case Study ($2,000/tuần)"],
+    [20, "Tiền thưởng hoàn thành sớm", 3, "Tiếng Anh: Early Completion Bonus. Thưởng hợp đồng khi bàn giao trước hạn, tạo động lực rút ngắn tiến độ. Đơn vị: $/tuần. Nguồn: Case Study ($3,000/tuần)"],
+    [21, "Chi phí giấy phép & phê duyệt", 3, "Tiếng Anh: Permits & Licensing. Phí xin giấy phép xây dựng, giấy phép vận hành, chứng nhận an toàn. Đơn vị: $/lần. Nguồn: Construction PM"],
+    [22, "Chi phí bảo hiểm dự án", 3, "Tiếng Anh: Project Insurance. Bảo hiểm tai nạn lao động, bảo hiểm thiết bị, bảo hiểm trách nhiệm nghề nghiệp. Đơn vị: $/giai đoạn. Nguồn: PMBOK Ch.11"],
+    [23, "Chi phí bảo hành & hậu mãi", 3, "Tiếng Anh: Warranty & After-sales. Cam kết bảo hành sau bàn giao. Chất lượng công việc kém → chi phí bảo hành tăng. Đơn vị: $/năm. Nguồn: Contract Law"],
+    [24, "Chi phí tranh chấp & kiện tụng", 3, "Tiếng Anh: Dispute & Litigation. Chi phí phát sinh khi xảy ra tranh chấp hợp đồng với nhà thầu phụ hoặc khách hàng. Đơn vị: $/vụ. Nguồn: Legal"],
+    [25, "Chi phí tuân thủ quy định", 3, "Tiếng Anh: Regulatory Compliance. Chi phí đáp ứng các tiêu chuẩn bắt buộc (an toàn lao động, môi trường, PCCC). Đơn vị: $/công việc. Nguồn: ESG, PMBOK"],
+
+    // Nhóm 4: Chi phí Logistics & SCM (7)
+    [26, "Chi phí lưu kho & bảo quản", 4, "Tiếng Anh: Inventory Holding Cost. Chi phí lưu trữ hàng hóa chờ công việc tiếp theo sử dụng. Bao gồm thuê kho, bảo hiểm, hao hụt. Đơn vị: $/ngày/đơn vị. Nguồn: Logistics/SCM"],
+    [27, "Chi phí đặt hàng", 4, "Tiếng Anh: Ordering Cost. Chi phí hành chính cho mỗi lần đặt mua vật tư: xử lý đơn, liên lạc nhà cung cấp, kiểm tra. Đơn vị: $/đơn hàng. Nguồn: SCM"],
+    [28, "Chi phí thiếu hụt & hết hàng", 4, "Tiếng Anh: Shortage / Stockout. Khi vật tư cần cho công việc không có sẵn: phải chờ hoặc đặt gấp với giá cao hơn. Đơn vị: $/lần thiếu. Nguồn: SCM"],
+    [29, "Chi phí hàng lỗi thời & hết hạn", 4, "Tiếng Anh: Obsolescence Cost. Vật tư mua sớm nhưng dự án bị trễ → hàng hết hạn hoặc lỗi thời công nghệ, phải mua lại. Đơn vị: $/đơn vị. Nguồn: SCM, TCO"],
+    [30, "Chi phí vận chuyển quốc tế", 4, "Tiếng Anh: International Freight. Cước container, phí hải quan, thuế nhập khẩu, phí bảo hiểm hàng hóa quốc tế. Đơn vị: $/container. Nguồn: Logistics"],
+    [31, "Chi phí đóng gói & xử lý", 4, "Tiếng Anh: Packaging & Handling. Chi phí đóng gói bảo vệ, bốc xếp, palletizing cho vật tư hoặc sản phẩm của công việc. Đơn vị: $/đơn vị. Nguồn: Logistics"],
+    [32, "Chi phí logistics ngược", 4, "Tiếng Anh: Reverse Logistics. Chi phí thu hồi, trả lại hàng lỗi, tái chế, tiêu hủy. Đơn vị: $/đơn vị. Nguồn: SCM, ESG"],
+
+    // Nhóm 5: Yếu tố Thời gian (13)
+    [33, "Thời gian thực hiện kế hoạch", 5, "Tiếng Anh: Planned Duration. Thời gian dự kiến hoàn thành công việc theo kế hoạch. Đơn vị: ngày. Nguồn: CPM, PMBOK"],
+    [34, "Thời gian dự trữ toàn bộ", 5, "Tiếng Anh: Total Float / Slack. Khoảng trễ tối đa mà công việc có thể chịu mà không làm trễ toàn bộ dự án. Đơn vị: ngày. Nguồn: CPM"],
+    [35, "Thời gian dự trữ tự do", 5, "Tiếng Anh: Free Float. Khoảng trễ tối đa mà công việc có thể chịu mà không làm trễ công việc kế tiếp (successor). Đơn vị: ngày. Nguồn: CPM"],
+    [36, "Thời điểm bắt đầu sớm nhất", 5, "Tiếng Anh: Early Start (ES). Thời điểm sớm nhất có thể bắt đầu công việc, sau khi tất cả predecessors hoàn thành. Đơn vị: ngày. Nguồn: CPM Forward Pass"],
+    [37, "Thời điểm kết thúc sớm nhất", 5, "Tiếng Anh: Early Finish (EF). Thời điểm sớm nhất hoàn thành công việc. EF = ES + Duration. Đơn vị: ngày. Nguồn: CPM"],
+    [38, "Thời điểm bắt đầu muộn nhất", 5, "Tiếng Anh: Late Start (LS). Thời điểm muộn nhất phải bắt đầu công việc để không trễ dự án. Đơn vị: ngày. Nguồn: CPM Backward Pass"],
+    [39, "Thời điểm kết thúc muộn nhất", 5, "Tiếng Anh: Late Finish (LF). Thời điểm muộn nhất phải hoàn thành công việc. Đơn vị: ngày. Nguồn: CPM"],
+    [40, "Thời gian chờ đầu vào", 5, "Tiếng Anh: Wait / Queue Time. Thời gian công việc phải chờ vì predecessors chưa xong hoặc tài nguyên chưa sẵn sàng. Đơn vị: ngày. Nguồn: Scheduling Theory"],
+    [41, "Thời gian thiết lập & chuyển giao", 5, "Tiếng Anh: Setup / Transition Time. Thời gian chuẩn bị khi nhân sự hoặc thiết bị chuyển từ công việc trước sang hiện tại. Đơn vị: giờ. Nguồn: Manufacturing"],
+    [42, "Thời gian đào tạo thầu phụ", 5, "Tiếng Anh: Induction Time. Thời gian cố định (+3 ngày trong Case Study) để thầu phụ mới làm quen dự án. Đơn vị: ngày. Nguồn: Case Study"],
+    [43, "Thời gian dẫn đầu", 5, "Tiếng Anh: Lead Time. Thời gian từ khi đặt hàng vật tư đến khi nhận được (gồm sản xuất + vận chuyển). Đơn vị: ngày. Nguồn: SCM"],
+    [44, "Phương sai thời gian", 5, "Tiếng Anh: Duration Variance (σ²). Độ dao động thời gian thực tế so với kế hoạch, dựa trên lịch sử hoặc ước lượng 3 điểm (PERT). Đơn vị: ngày². Nguồn: PERT, Monte Carlo"],
+    [45, "Ước lượng 3 điểm PERT", 5, "Tiếng Anh: PERT 3-Point Estimate. Thời gian lạc quan (O), khả thi nhất (M), bi quan (P). Thời gian trung bình = (O + 4M + P) / 6. Đơn vị: ngày. Nguồn: PERT"],
+
+    // Nhóm 6: Yếu tố Tài nguyên (9)
+    [46, "Nhu cầu tài nguyên theo loại", 6, "Tiếng Anh: Resource Demand Vector. Vector mô tả số lượng từng loại tài nguyên cần cho công việc. Ví dụ: [DC=1, DM=0, DevC=1, Doc=1]. Đơn vị: người/loại. Nguồn: RCPSP"],
+    [47, "Tổng nhu cầu tài nguyên", 6, "Tiếng Anh: Total Resource Intensity. Tổng số nhân sự / thiết bị cần dùng cho công việc. Đơn vị: người/công việc. Nguồn: RCPSP"],
+    [48, "Mức độ khan hiếm tài nguyên", 6, "Tiếng Anh: Resource Scarcity Index. Tỷ lệ: Nhu cầu tài nguyên / Số lượng khả dụng. Giá trị ≥ 1 = xung đột chắc chắn. Đơn vị: tỉ lệ. Nguồn: RCPSP"],
+    [49, "Số lượng công việc tranh chấp tài nguyên", 6, "Tiếng Anh: Resource Contention. Số công việc khác đang cạnh tranh cùng loại tài nguyên tại cùng thời điểm. Đơn vị: số công việc. Nguồn: Scheduling"],
+    [50, "Khả năng thay thế tài nguyên", 6, "Tiếng Anh: Resource Substitutability. Tài nguyên loại A có thể được thay thế bằng loại B không? Nếu có → tăng tính linh hoạt. Đơn vị: Boolean/Điểm. Nguồn: MRCPSP"],
+    [51, "Chế độ thực hiện", 6, "Tiếng Anh: Execution Mode (Multi-mode). Một công việc có thể được thực hiện bằng nhiều cách khác nhau (kết hợp tài nguyên/thời gian khác nhau). Đơn vị: Mode ID. Nguồn: MRCPSP"],
+    [52, "Năng suất nhân sự", 6, "Tiếng Anh: Labor Productivity. Hiệu suất thực tế so với kế hoạch. Nhân sự mới/thầu phụ thường có năng suất thấp hơn (Learning Curve). Đơn vị: %. Nguồn: HR, Manufacturing"],
+    [53, "Tỷ lệ sử dụng thiết bị", 6, "Tiếng Anh: Equipment Utilization. Phần trăm thời gian thiết bị đang được sử dụng thực sự so với thời gian khả dụng. Đơn vị: %. Nguồn: Manufacturing"],
+    [54, "Tài nguyên tái tạo vs không tái tạo", 6, "Tiếng Anh: Renewable vs Non-renewable. Nhân sự = tài nguyên tái tạo (dùng xong lại có). Vật tư = không tái tạo (dùng hết là hết). Đơn vị: phân loại. Nguồn: RCPSP Theory"],
+
+    // Nhóm 7: Cấu trúc Đồ thị (7)
+    [55, "Bậc vào", 7, "Tiếng Anh: In-degree. Số lượng công việc đi trước (predecessor). Bậc vào cao = nhiều nhánh phải chờ đồng bộ. Đơn vị: số lượng. Nguồn: Graph Theory"],
+    [56, "Bậc ra", 7, "Tiếng Anh: Out-degree. Số lượng công việc đi sau (successor). Bậc ra cao = ảnh hưởng lan rộng nếu trễ. Đơn vị: số lượng. Nguồn: Graph Theory"],
+    [57, "Hệ số trung gian", 7, "Tiếng Anh: Betweenness Centrality. Mức độ nút nằm trên các đường đi ngắn nhất/dài nhất giữa các cặp nút khác. Đơn vị: tỷ lệ. Nguồn: Graph Theory, GNN"],
+    [58, "Lớp Topo", 7, "Tiếng Anh: Topological Layer. Vị trí của công việc trong thứ tự topo (lớp 0 = công việc đầu, lớp cuối = công việc cuối). Đơn vị: chỉ số lớp. Nguồn: Topological Sort"],
+    [59, "Loại ràng buộc phụ thuộc", 7, "Tiếng Anh: Dependency Type (FS/SS/FF/SF). FS (Finish-to-Start), SS (Start-to-Start), FF (Finish-to-Finish), SF (Start-to-Finish) + Lag/Lead Time. Đơn vị: phân loại. Nguồn: PMBOK Ch.6"],
+    [60, "Số lượng đường đi qua nút", 7, "Tiếng Anh: Path Count Through Node. Tổng số đường đi từ nguồn (Source) đến đích (Sink) đi qua nút này. Nút nằm trên nhiều đường = quan trọng cao. Đơn vị: số lượng. Nguồn: Graph Analysis"],
+    [61, "Chiều dài đường đi dài nhất qua nút", 7, "Tiếng Anh: Longest Path Through Node. Đường đi dài nhất từ nguồn đến đích đi qua nút này. Nếu bằng Makespan = nút nằm trên đường găng. Đơn vị: ngày. Nguồn: CPM"],
+
+    // Nhóm 8: Rủi ro & Bất định (10)
+    [62, "Xác suất trễ hạn", 8, "Tiếng Anh: Delay Probability. Tỷ lệ công việc bị trễ so với kế hoạch, dựa trên lịch sử ngành hoặc dữ liệu nội bộ. Đơn vị: %. Nguồn: Risk Management"],
+    [63, "Chỉ số găng", 8, "Tiếng Anh: Criticality Index. Tỷ lệ % công việc nằm trên đường găng qua N lần mô phỏng Monte Carlo. Đơn vị: %. Nguồn: Monte Carlo Simulation"],
+    [64, "Chỉ số nhạy cảm", 8, "Tiếng Anh: Cruciality / Sensitivity Index. Hệ số tương quan giữa thời gian công việc và tổng thời gian dự án. Nút có chỉ số cao = rất nhạy cảm. Đơn vị: tương quan. Nguồn: PERT/Monte Carlo"],
+    [65, "Mức độ phức tạp kỹ thuật", 8, "Tiếng Anh: Technical Complexity. Đánh giá dựa trên số lượng yêu cầu kỹ thuật, công nghệ mới, tích hợp đa hệ thống. Đơn vị: thang đo 1-5. Nguồn: PMBOK Ch.11"],
+    [66, "Rủi ro làm lại", 8, "Tiếng Anh: Rework Probability. Xác suất công việc phải làm lại do lỗi kỹ thuật hoặc không đạt chuẩn nghiệm thu. Đơn vị: %. Nguồn: Quality Management"],
+    [67, "Mức độ phụ thuộc bên ngoài", 8, "Tiếng Anh: External Dependency Level. Mức phụ thuộc vào bên thứ 3 (nhà cung cấp, cơ quan phê duyệt, thời tiết). Đơn vị: điểm số 0-1. Nguồn: Risk Register"],
+    [68, "Dự phòng rủi ro đã biết", 8, "Tiếng Anh: Contingency Reserve. Ngân sách dự phòng cho các rủi ro đã được nhận diện trong Risk Register (PM quản lý). Đơn vị: $ hoặc ngày. Nguồn: PMBOK Ch.11"],
+    [69, "Dự phòng rủi ro chưa biết", 8, "Tiếng Anh: Management Reserve. Ngân sách dự phòng cho các sự kiện chưa lường trước (Ban lãnh đạo quản lý). Đơn vị: $. Nguồn: PMBOK Ch.11"],
+    [70, "Rủi ro thời tiết & mùa vụ", 8, "Tiếng Anh: Weather / Seasonal Risk. Một số công việc bị ảnh hưởng bởi điều kiện thời tiết (xây dựng ngoài trời, vận tải đường biển mùa bão). Đơn vị: điểm số 0-1. Nguồn: Construction PM"],
+    [71, "Rủi ro công nghệ", 8, "Tiếng Anh: Technology Risk. Sử dụng công nghệ mới chưa được kiểm chứng đầy đủ hoặc phiên bản thử nghiệm. Đơn vị: điểm số 0-1. Nguồn: IT PM"],
+
+    // Nhóm 9: Chất lượng & Giá trị (7)
+    [72, "Giá trị đạt được", 9, "Tiếng Anh: Earned Value (EVM). Phần trăm khối lượng đã hoàn thành × ngân sách kế hoạch. Đo lường giá trị thực tế tạo ra. Đơn vị: $. Nguồn: EVM, PMBOK Ch.7"],
+    [73, "Chỉ số hiệu suất chi phí tại nút", 9, "Tiếng Anh: Node CPI (EV/AC). Hiệu quả sử dụng ngân sách tại công việc. CPI < 1 = vượt ngân sách, CPI > 1 = tiết kiệm. Đơn vị: tỉ lệ. Nguồn: EVM"],
+    [74, "Chỉ số hiệu suất tiến độ tại nút", 9, "Tiếng Anh: Node SPI (EV/PV). Tốc độ hoàn thành thực tế vs kế hoạch tại công việc. SPI < 1 = chậm tiến độ. Đơn vị: tỉ lệ. Nguồn: EVM"],
+    [75, "Mức độ ảnh hưởng hạ nguồn", 9, "Tiếng Anh: Downstream Impact Score. Số lượng công việc và đường đi phía sau bị ảnh hưởng trực tiếp nếu nút này trễ. Đơn vị: số công việc. Nguồn: Graph Analysis"],
+    [76, "Giá trị kinh doanh chiến lược", 9, "Tiếng Anh: Strategic Business Value. Tầm quan trọng đối với mục tiêu kinh doanh tổng thể (bàn giao sản phẩm, thu tiền, ký hợp đồng mới). Đơn vị: thang đo 1-10. Nguồn: Portfolio Management"],
+    [77, "Tiêu chuẩn chất lượng yêu cầu", 9, "Tiếng Anh: Quality Standard Level. Tiêu chuẩn kỹ thuật cần đạt (ISO, An toàn, Hiệu năng). Tiêu chuẩn cao = yêu cầu chi phí QC cao hơn. Đơn vị: phân loại. Nguồn: PMBOK Ch.8"],
+    [78, "Đóng góp vào NPV", 9, "Tiếng Anh: NPV Contribution. Đóng góp của công việc vào NPV tổng dự án, tính theo dòng tiền vào/ra tại thời điểm thực hiện. Đơn vị: $. Nguồn: Finance, RCPSP-NPV"],
+
+    // Nhóm 10: Nhân sự & Tổ chức (7)
+    [79, "Mức độ chuyên môn yêu cầu", 10, "Tiếng Anh: Required Skill Level. Trình độ kỹ năng tối thiểu cần thiết để thực hiện công việc. Yêu cầu chuyên gia hiếm = rủi ro cao. Đơn vị: Cấp độ (Junior/Mid/Senior). Nguồn: PMBOK Ch.9"],
+    [80, "Kinh nghiệm nhân sự gán cho công việc", 10, "Tiếng Anh: Staff Experience. Số năm kinh nghiệm hoặc số dự án tương tự đã tham gia của nhân sự được giao công việc. Đơn vị: năm / số dự án. Nguồn: HR"],
+    [81, "Hiệu ứng đường cong học tập", 10, "Tiếng Anh: Learning Curve Effect. Nhân sự mới hoặc thầu phụ cần thời gian làm quen → năng suất thấp ban đầu, tăng dần. Đơn vị: % năng suất. Nguồn: Manufacturing, HR"],
+    [82, "Rủi ro mệt mỏi & kiệt sức", 10, "Tiếng Anh: Fatigue / Burnout Risk. Nhân sự làm tăng ca liên tục hoặc nhiều việc liên tiếp → năng suất giảm, lỗi tăng. Đơn vị: điểm số 0-1. Nguồn: Human Factors, HSE"],
+    [83, "Rủi ro nhân sự nghỉ việc / nghỉ ốm", 10, "Tiếng Anh: Staff Turnover Risk. Xác suất nhân sự chủ chốt nghỉ giữa chừng, gây gián đoạn công việc. Đơn vị: %. Nguồn: HR"],
+    [84, "Mức độ phối hợp liên phòng ban", 10, "Tiếng Anh: Cross-functional Coordination. Số lượng phòng ban / đội nhóm cần phối hợp để hoàn thành công việc. Càng nhiều = càng phức tạp giao tiếp. Đơn vị: số nhóm. Nguồn: Organizational Theory"],
+    [85, "Rủi ro an toàn lao động", 10, "Tiếng Anh: Occupational Safety Risk. Mức độ nguy hiểm của công việc đối với sức khỏe nhân sự (làm việc trên cao, điện áp cao). Đơn vị: cấp độ rủi ro. Nguồn: HSE, ESG"],
+
+    // Nhóm 11: ESG (5)
+    [86, "Tác động môi trường", 11, "Tiếng Anh: Environmental Impact. Lượng khí thải CO2, chất thải, tiếng ồn, nước thải phát sinh từ công việc. Đơn vị: tấn CO2 / kg chất thải. Nguồn: ESG, ISO 14001"],
+    [87, "Chi phí xử lý chất thải", 11, "Tiếng Anh: Waste Disposal Cost. Chi phí thu gom, xử lý, tiêu hủy hoặc tái chế chất thải từ quá trình thực hiện công việc. Đơn vị: $/tấn. Nguồn: ESG"],
+    [88, "Tác động cộng đồng", 11, "Tiếng Anh: Community / Social Impact. Ảnh hưởng đến dân cư xung quanh: tiếng ồn, bụi, giao thông, việc làm địa phương. Đơn vị: điểm định tính. Nguồn: ESG, Stakeholder Mgmt"],
+    [89, "Thuế Carbon / Tín chỉ Carbon", 11, "Tiếng Anh: Carbon Tax / Credit. Chi phí phải trả hoặc tín chỉ carbon phải mua do phát thải CO2 từ công việc (vận tải, sản xuất). Đơn vị: $/tấn CO2. Nguồn: ESG, EU ETS"],
+    [90, "Yêu cầu tuân thủ ESG", 11, "Tiếng Anh: ESG Compliance. Các tiêu chuẩn ESG mà dự án phải đáp ứng để duy trì hợp đồng hoặc nguồn vốn. Đơn vị: mức tuân thủ. Nguồn: ESG Reporting"],
+  ];
+
+  // Edges: [sourceId, targetId, relationship_type]
+  const EDGES_RAW = [
+    // Intra-group: Direct Costs connections
+    [0, 2, "cost"],     // Labor → OT
+    [0, 1, "cost"],     // Labor → Subcontract
+    [3, 5, "cost"],     // Material → Transport
+    [4, 6, "cost"],     // Equipment → Depreciation
+    [4, 7, "cost"],     // Equipment → Energy
+    [8, 14, "quality"], // Testing → QM Overhead
+
+    // Direct ↔ Indirect
+    [0, 9, "cost"],     // Labor → PM Overhead
+    [1, 13, "cost"],    // Subcontract → Training
+    [12, 84, "resource"], // Communication → Cross-functional
+
+    // Direct ↔ Time
+    [0, 33, "time"],    // Labor Cost → Duration
+    [2, 33, "time"],    // OT → Duration (crash)
+    [1, 42, "time"],    // Subcontract → Induction Time
+    [33, 37, "time"],   // Duration → EF
+    [36, 37, "time"],   // ES → EF
+    [38, 39, "time"],   // LS → LF
+    [34, 36, "time"],   // Slack → ES
+    [34, 38, "time"],   // Slack → LS
+    [35, 34, "time"],   // Free Float → Total Float
+
+    // Direct ↔ Resource
+    [0, 46, "resource"],  // Labor → Resource Demand
+    [0, 52, "resource"],  // Labor → Productivity
+    [4, 53, "resource"],  // Equipment → Utilization
+    [46, 47, "resource"], // Demand Vector → Intensity
+    [47, 48, "resource"], // Intensity → Scarcity
+    [48, 49, "resource"], // Scarcity → Contention
+    [50, 51, "resource"], // Substitutability → Multi-mode
+
+    // Direct ↔ Logistics
+    [3, 27, "cost"],    // Material → Ordering
+    [3, 26, "cost"],    // Material → Holding
+    [3, 28, "cost"],    // Material → Shortage
+    [5, 30, "cost"],    // Transport → Intl Freight
+    [5, 31, "cost"],    // Transport → Packaging
+    [28, 29, "cost"],   // Shortage → Obsolescence
+    [32, 87, "cost"],   // Reverse Logistics → Waste Disposal
+
+    // Contract ↔ Time
+    [19, 33, "time"],   // Penalty → Duration
+    [20, 33, "time"],   // Bonus → Duration
+    [19, 18, "cost"],   // Penalty → Revenue Delay
+    [20, 78, "cost"],   // Bonus → NPV
+
+    // Contract ↔ Quality
+    [23, 66, "quality"], // Warranty → Rework
+    [23, 77, "quality"], // Warranty → Quality Standard
+    [25, 21, "cost"],    // Regulatory → Permits
+    [25, 85, "risk"],    // Regulatory → Safety Risk
+    [25, 90, "cost"],    // Regulatory → ESG Compliance
+    [24, 22, "cost"],    // Dispute → Insurance
+
+    // Opportunity ↔ Time
+    [15, 40, "time"],   // Labor Opp Cost → Wait Time
+    [15, 34, "time"],   // Labor Opp Cost → Slack
+    [16, 26, "cost"],   // Capital Opp → Holding
+    [18, 19, "cost"],   // Revenue Delay → Penalty
+
+    // Time ↔ Graph Topology
+    [36, 55, "structural"], // ES → In-degree
+    [56, 75, "structural"], // Out-degree → Downstream Impact
+    [61, 63, "structural"], // Longest Path → Criticality Index
+    [60, 57, "structural"], // Path Count → Betweenness
+    [58, 36, "structural"], // Topo Layer → ES
+    [55, 40, "structural"], // In-degree → Wait Time
+
+    // Time ↔ Risk
+    [44, 62, "risk"],   // Variance → Delay Prob
+    [44, 45, "risk"],   // Variance → PERT
+    [33, 63, "risk"],   // Duration → Criticality
+    [33, 64, "risk"],   // Duration → Cruciality
+    [43, 67, "risk"],   // Lead Time → External Dependency
+    [43, 28, "risk"],   // Lead Time → Stockout
+
+    // Resource ↔ Risk
+    [48, 62, "risk"],   // Scarcity → Delay
+    [49, 62, "risk"],   // Contention → Delay
+    [46, 65, "risk"],   // Demand → Complexity
+
+    // Resource ↔ Human
+    [52, 81, "resource"], // Productivity → Learning Curve
+    [52, 82, "resource"], // Productivity → Fatigue
+    [46, 79, "resource"], // Demand → Skill Level
+    [79, 80, "resource"], // Skill Level → Experience
+    [80, 81, "resource"], // Experience → Learning Curve
+    [2, 82, "risk"],      // OT → Fatigue
+    [82, 66, "risk"],     // Fatigue → Rework
+    [83, 62, "risk"],     // Turnover → Delay
+    [83, 1, "cost"],      // Turnover → Subcontracting
+
+    // Quality ↔ various
+    [72, 73, "quality"],  // EV → CPI
+    [72, 74, "quality"],  // EV → SPI
+    [73, 0, "quality"],   // CPI → Labor Cost
+    [74, 33, "quality"],  // SPI → Duration
+    [77, 8, "quality"],   // Quality Standard → Testing
+    [77, 66, "quality"],  // Quality Standard → Rework
+    [76, 78, "quality"],  // Strategic Value → NPV
+    [75, 56, "structural"], // Downstream → Out-degree
+
+    // Risk reserves
+    [68, 62, "risk"],    // Contingency → Delay
+    [69, 70, "risk"],    // Mgmt Reserve → Weather
+    [69, 71, "risk"],    // Mgmt Reserve → Tech Risk
+    [65, 66, "risk"],    // Complexity → Rework
+    [65, 71, "risk"],    // Complexity → Tech Risk
+    [70, 67, "risk"],    // Weather → External Dep
+    [67, 30, "risk"],    // External Dep → Intl Freight
+
+    // ESG connections
+    [86, 89, "cost"],    // Env Impact → Carbon Tax
+    [86, 87, "cost"],    // Env Impact → Waste Disposal
+    [86, 88, "cost"],    // Env Impact → Community
+    [85, 22, "risk"],    // Safety → Insurance
+    [90, 25, "cost"],    // ESG Compliance → Regulatory
+    [87, 32, "cost"],    // Waste Disposal → Reverse Logistics
+    [88, 24, "risk"],    // Community Impact → Dispute
+
+    // Cross-cutting
+    [51, 33, "time"],    // Multi-mode → Duration
+    [51, 0, "cost"],     // Multi-mode → Labor Cost
+    [41, 52, "resource"], // Setup Time → Productivity
+    [42, 1, "cost"],     // Induction → Subcontract
+    [84, 12, "resource"], // Cross-func → Communication
+    [84, 65, "risk"],    // Cross-func → Complexity
+    [54, 3, "resource"], // Non-renewable → Material
+    [53, 6, "cost"],     // Utilization → Depreciation
+
+    // Finance connections
+    [78, 18, "cost"],    // NPV → Revenue Delay
+    [16, 78, "cost"],    // Capital Opp → NPV
+    [9, 33, "time"],     // PM Overhead → Duration
+    [10, 9, "cost"],     // Facility → PM Overhead
+    [11, 9, "cost"],     // Utilities → PM Overhead
+
+    // Additional cross-links for density
+    [13, 81, "resource"], // Training → Learning Curve
+    [14, 77, "quality"],  // QM Overhead → Quality Standard
+    [59, 55, "structural"], // Dep Type → In-degree
+    [59, 40, "time"],     // Dep Type → Wait Time
+    [63, 34, "time"],     // Criticality → Slack (critical = 0 slack)
+    [71, 66, "risk"],     // Tech Risk → Rework
+    [29, 18, "cost"],     // Obsolescence → Revenue Delay
+  ];
+
+  // ============================================================
+  // BUILD DATA STRUCTURES
+  // ============================================================
+  const nodes = NODES_RAW.map(([id, label, group, rawDesc]) => {
+    // Parse the combined description string
+    const englishMatch = rawDesc.match(/Tiếng Anh:\s*([^.]+)\./);
+    const englishName = englishMatch ? englishMatch[1].trim() : "";
+    
+    const unitMatch = rawDesc.match(/Đơn vị:\s*([^.]+)\./);
+    const unitOfMeasure = unitMatch ? unitMatch[1].trim() : "";
+    
+    const sourceMatch = rawDesc.match(/Nguồn:\s*(.+)$/);
+    const sourceRef = sourceMatch ? sourceMatch[1].trim() : "";
+    
+    let cleanDesc = rawDesc;
+    cleanDesc = cleanDesc.replace(/Tiếng Anh:\s*[^.]+\.\s*/, "");
+    cleanDesc = cleanDesc.replace(/Đơn vị:\s*[^.]+\.\s*/, "");
+    cleanDesc = cleanDesc.replace(/Nguồn:\s*(.+)$/, "");
+    cleanDesc = cleanDesc.trim();
+
+    return {
+      id,
+      label,
+      group,
+      english: englishName,
+      desc: cleanDesc,
+      unit: unitOfMeasure,
+      source: sourceRef,
+      rawDesc: rawDesc,
+      x: 0, y: 0,
+      vx: 0, vy: 0,
+      radius: 6,
+      visible: true,
+      pinned: false
+    };
+  });
+
+  const edges = EDGES_RAW.map(([s, t, type]) => ({
+    source: s, target: t, type
+  }));
+
+  // ============================================================
+  // CANVAS & STATE
+  // ============================================================
+  const canvas = document.getElementById('graph');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  let showLabels = false;
+  let physicsOn = true;
+  
+  let hoveredNode = null;
+  let draggedNode = null;
+  let selectedNode = null;
+  
+  let searchTerm = "";
+  let highlightedGroup = null;
+
+  // Camera state
+  let cam = { x: 0, y: 0, zoom: 0.7 };
+  let targetCam = null; // for smooth movements
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Convert screen coordinates to world coordinates
+  function screenToWorld(mx, my) {
+    const wx = (mx - W / 2) / cam.zoom + cam.x;
+    const wy = (my - H / 2) / cam.zoom + cam.y;
+    return { x: wx, y: wy };
+  }
+
+  // ============================================================
+  // LEGEND INIT
+  // ============================================================
+  const legendEl = document.getElementById('legend');
+  GROUPS.forEach(g => {
+    const div = document.createElement('div');
+    div.className = 'legend-item';
+    div.innerHTML = `<span class="legend-dot" style="background:${g.color}; box-shadow: 0 0 8px ${g.color}90"></span><span class="legend-label">${g.name} (${NODES_RAW.filter(n=>n[2]===g.id).length})</span>`;
+    div.addEventListener('click', () => {
+      if (highlightedGroup === g.id) {
+        highlightedGroup = null;
+        document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('dimmed'));
+      } else {
+        highlightedGroup = g.id;
+        document.querySelectorAll('.legend-item').forEach(el => el.classList.add('dimmed'));
+        div.classList.remove('dimmed');
+        
+        // Center camera on the average position of nodes in this group
+        const groupNodes = nodes.filter(n => n.group === g.id);
+        if (groupNodes.length > 0) {
+          let avgX = 0, avgY = 0;
+          groupNodes.forEach(n => { avgX += n.x; avgY += n.y; });
+          avgX /= groupNodes.length;
+          avgY /= groupNodes.length;
+          
+          targetCam = {
+            x: avgX,
+            y: avgY,
+            zoom: 0.9,
+            startX: cam.x,
+            startY: cam.y,
+            startZoom: cam.zoom,
+            progress: 0
+          };
+        }
+      }
+    });
+    legendEl.appendChild(div);
+  });
+
+  // ============================================================
+  // FORCE SIMULATION
+  // ============================================================
+  const SIM = {
+    repulsion: 800,
+    attraction: 0.008,
+    damping: 0.92,
+    centerPull: 0.003,
+    edgeLength: 120,
+    collisionRadius: 30
+  };
+
+  // Sync sliders with SIM values
+  const sliders = [
+    { id: 'repulsion', param: 'repulsion' },
+    { id: 'attraction', param: 'attraction' },
+    { id: 'edgeLength', param: 'edgeLength' },
+    { id: 'damping', param: 'damping' },
+    { id: 'collision', param: 'collisionRadius' }
+  ];
+
+  sliders.forEach(s => {
+    const el = document.getElementById(`param-${s.id}`);
+    const valEl = document.getElementById(`val-${s.id}`);
+    if (el && valEl) {
+      el.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        SIM[s.param] = val;
+        valEl.textContent = val;
+      });
+    }
+  });
+
+  function simulate() {
+    if (!physicsOn) return;
+    const N = nodes.length;
+
+    // Repulsion
+    for (let i = 0; i < N; i++) {
+      if (!nodes[i].visible) continue;
+      for (let j = i + 1; j < N; j++) {
+        if (!nodes[j].visible) continue;
+        let dx = nodes[j].x - nodes[i].x;
+        let dy = nodes[j].y - nodes[i].y;
+        let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        let force = SIM.repulsion / (dist * dist);
+        let fx = (dx / dist) * force;
+        let fy = (dy / dist) * force;
+        
+        nodes[i].vx -= fx;
+        nodes[i].vy -= fy;
+        nodes[j].vx += fx;
+        nodes[j].vy += fy;
+      }
+    }
+
+    // Attraction along edges
+    for (const e of edges) {
+      const a = nodes[e.source];
+      const b = nodes[e.target];
+      if (!a.visible || !b.visible) continue;
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      let force = (dist - SIM.edgeLength) * SIM.attraction;
+      let fx = (dx / dist) * force;
+      let fy = (dy / dist) * force;
+      
+      a.vx += fx;
+      a.vy += fy;
+      b.vx -= fx;
+      b.vy -= fy;
+    }
+
+    // Collision avoidance (avoid node overlap)
+    const rCollision = SIM.collisionRadius;
+    for (let i = 0; i < N; i++) {
+      if (!nodes[i].visible) continue;
+      for (let j = i + 1; j < N; j++) {
+        if (!nodes[j].visible) continue;
+        let dx = nodes[j].x - nodes[i].x;
+        let dy = nodes[j].y - nodes[i].y;
+        let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        
+        if (dist < rCollision) {
+          let overlap = rCollision - dist;
+          let force = overlap * 0.15; 
+          let fx = (dx / dist) * force;
+          let fy = (dy / dist) * force;
+          
+          if (!nodes[i].pinned && nodes[i] !== draggedNode) {
+            nodes[i].vx -= fx;
+            nodes[i].vy -= fy;
+          }
+          if (!nodes[j].pinned && nodes[j] !== draggedNode) {
+            nodes[j].vx += fx;
+            nodes[j].vy += fy;
+          }
+        }
+      }
+    }
+
+    // Center gravity (pull to world origin 0,0)
+    for (const n of nodes) {
+      if (!n.visible) continue;
+      n.vx += (0 - n.x) * SIM.centerPull;
+      n.vy += (0 - n.y) * SIM.centerPull;
+    }
+
+    // Integration & position update
+    for (const n of nodes) {
+      if (n === draggedNode || n.pinned) continue;
+      n.vx *= SIM.damping;
+      n.vy *= SIM.damping;
+      n.x += n.vx;
+      n.y += n.vy;
+    }
+  }
+
+  // ============================================================
+  // RENDERING
+  // ============================================================
+  const EDGE_COLORS = {
+    cost: "rgba(245, 166, 35, 0.35)",
+    time: "rgba(69, 183, 209, 0.35)",
+    risk: "rgba(255, 138, 92, 0.35)",
+    resource: "rgba(240, 147, 251, 0.35)",
+    quality: "rgba(0, 210, 255, 0.35)",
+    structural: "rgba(161, 140, 209, 0.35)",
+  };
+  const EDGE_COLORS_HL = {
+    cost: "rgba(245, 166, 35, 0.95)",
+    time: "rgba(69, 183, 209, 0.95)",
+    risk: "rgba(255, 138, 92, 0.95)",
+    resource: "rgba(240, 147, 251, 0.95)",
+    quality: "rgba(0, 210, 255, 0.95)",
+    structural: "rgba(161, 140, 209, 0.95)",
+  };
+
+  // Draw arrow representing a directed relationship
+  function drawArrow(ctx, x1, y1, x2, y2, arrowRadius = 7, isHL = false, targetRadius = 6) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 25) return; 
+    
+    const ux = dx / len;
+    const uy = dy / len;
+    
+    // Offset target end point so arrow tip touches target node's boundary
+    const offset = targetRadius + 1.5;
+    const ax = x2 - ux * offset;
+    const ay = y2 - uy * offset;
+    
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(ax, ay);
+    ctx.stroke();
+    
+    // Draw arrowhead pointing to target
+    const angle = Math.atan2(dy, dx);
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - arrowRadius * Math.cos(angle - Math.PI / 5.5), ay - arrowRadius * Math.sin(angle - Math.PI / 5.5));
+    ctx.lineTo(ax - arrowRadius * Math.cos(angle + Math.PI / 5.5), ay - arrowRadius * Math.sin(angle + Math.PI / 5.5));
+    ctx.closePath();
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.fill();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Deep radial space background gradient
+    const bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W, H)*0.75);
+    bg.addColorStop(0, "#191136");
+    bg.addColorStop(1, "#090518");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Determine nodes and edges highlighted by active selection/hover
+    const connectedSet = new Set();
+    const connectedEdges = new Set();
+    const activeNode = selectedNode || hoveredNode;
+    
+    if (activeNode !== null) {
+      connectedSet.add(activeNode.id);
+      edges.forEach((e, idx) => {
+        if (e.source === activeNode.id || e.target === activeNode.id) {
+          connectedSet.add(e.source);
+          connectedSet.add(e.target);
+          connectedEdges.add(idx);
+        }
+      });
+    }
+    const hasActive = activeNode !== null;
+
+    // Search matches set
+    const searchSet = new Set();
+    if (searchTerm.length > 0) {
+      nodes.forEach(n => {
+        if (n.label.toLowerCase().includes(searchTerm) || 
+            n.desc.toLowerCase().includes(searchTerm) ||
+            (n.english && n.english.toLowerCase().includes(searchTerm))) {
+          searchSet.add(n.id);
+        }
+      });
+    }
+
+    // Save context and apply camera transforms
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.scale(cam.zoom, cam.zoom);
+    ctx.translate(-cam.x, -cam.y);
+
+    // 1. Draw Edges
+    edges.forEach((e, idx) => {
+      const a = nodes[e.source];
+      const b = nodes[e.target];
+      if (!a.visible || !b.visible) return;
+
+      const isHL = hasActive && connectedEdges.has(idx);
+      
+      const dimByActive = hasActive && !isHL;
+      const dimByGroup = highlightedGroup !== null && a.group !== highlightedGroup && b.group !== highlightedGroup;
+      const dimBySearch = searchTerm.length > 0 && !searchSet.has(a.id) && !searchSet.has(b.id);
+
+      if (dimByActive) {
+        ctx.globalAlpha = 0.04; // Slightly higher so not completely transparent
+      } else if (dimByGroup || dimBySearch) {
+        ctx.globalAlpha = 0.07;
+      } else {
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.strokeStyle = isHL ? (EDGE_COLORS_HL[e.type] || "rgba(140,120,255,0.9)") : (EDGE_COLORS[e.type] || "rgba(140,120,255,0.32)");
+      ctx.lineWidth = isHL ? 3.0 : 1.2;
+      
+      // Calculate target node's actual drawn radius
+      const isTargetSelected = selectedNode && b.id === selectedNode.id;
+      const isTargetHovered = hoveredNode && b.id === hoveredNode.id;
+      const isTargetConnected = activeNode && connectedSet.has(b.id);
+      let targetRadius = isTargetSelected ? 12 : (isTargetHovered ? 10 : (isTargetConnected ? 8 : 6));
+      if (searchTerm.length > 0 && searchSet.has(b.id)) targetRadius = 9.5;
+
+      const arrowSize = isHL ? 9.5 : 6.5; 
+      
+      drawArrow(ctx, a.x, a.y, b.x, b.y, arrowSize, isHL, targetRadius);
+    });
+    ctx.globalAlpha = 1;
+
+    // 2. Draw Nodes
+    for (const n of nodes) {
+      if (!n.visible) continue;
+
+      const isSelected = selectedNode && n.id === selectedNode.id;
+      const isHovered = hoveredNode && n.id === hoveredNode.id;
+      const isConnected = activeNode && connectedSet.has(n.id);
+      const isSearchMatch = searchSet.has(n.id);
+      
+      const dimByActive = hasActive && !isConnected;
+      const dimByGroup = highlightedGroup !== null && n.group !== highlightedGroup;
+      const dimBySearch = searchTerm.length > 0 && !isSearchMatch;
+
+      const group = GROUPS[n.group];
+      let r = isSelected ? 12 : (isHovered ? 10 : (isConnected ? 8 : 6));
+      if (isSearchMatch && searchTerm.length > 0) r = 9.5;
+
+      if (dimByActive) {
+        ctx.globalAlpha = 0.15;
+      } else if (dimByGroup || dimBySearch) {
+        ctx.globalAlpha = 0.15;
+      } else {
+        ctx.globalAlpha = 1;
+      }
+
+      // Draw shadow glow for active nodes
+      if (isSelected || isHovered || isSearchMatch) {
+        ctx.shadowColor = group.color;
+        ctx.shadowBlur = 18;
+      } else if (isConnected) {
+        ctx.shadowColor = group.color;
+        ctx.shadowBlur = 10;
+      }
+
+      ctx.fillStyle = group.color;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.shadowBlur = 0; // reset shadow
+
+      // Draw borders for selected/hovered/pinned states
+      if (isSelected) {
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+      } else if (n.pinned) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.lineWidth = 1.8;
+        ctx.stroke();
+        
+        // Draw tiny inner white anchor dot
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (isHovered) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // Label rendering
+      if (showLabels || isSelected || isHovered || (isConnected && activeNode) || isSearchMatch) {
+        ctx.fillStyle = (dimByActive || dimByGroup || dimBySearch) ? "rgba(224, 216, 240, 0.25)" : "rgba(224, 216, 240, 0.95)";
+        ctx.font = (isSelected || isHovered || isSearchMatch) ? "bold 11px Inter" : "10px Inter";
+        ctx.textAlign = "center";
+        
+        ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+        ctx.shadowBlur = 4;
+        ctx.fillText(n.label, n.x, n.y - r - 6);
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    ctx.restore();
+
+    // Stats HUD overlay
+    document.getElementById('stats').textContent = `${nodes.length} nút đặc trưng · ${edges.length} liên kết · ${GROUPS.length} nhóm`;
+  }
+
+  // ============================================================
+  // CAMERA ANIMATION (LERP)
+  // ============================================================
+  function updateCameraAnimation() {
+    if (!targetCam) return;
+    
+    targetCam.progress += 0.065; // speed multiplier
+    if (targetCam.progress >= 1) {
+      cam.x = targetCam.x;
+      cam.y = targetCam.y;
+      cam.zoom = targetCam.zoom;
+      targetCam = null;
+    } else {
+      // Ease out cubic
+      const t = targetCam.progress;
+      const ease = 1 - Math.pow(1 - t, 3);
+      
+      cam.x = targetCam.startX + (targetCam.x - targetCam.startX) * ease;
+      cam.y = targetCam.startY + (targetCam.y - targetCam.startY) * ease;
+      cam.zoom = targetCam.startZoom + (targetCam.zoom - targetCam.startZoom) * ease;
+    }
+  }
+
+  // Centering on a node in world space
+  function centerOnNode(nodeId, targetZoom = 1.25) {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return;
+    
+    targetCam = {
+      x: node.x,
+      y: node.y,
+      zoom: targetZoom,
+      startX: cam.x,
+      startY: cam.y,
+      startZoom: cam.zoom,
+      progress: 0
+    };
+  }
+
+  // ============================================================
+  // INTERACTION / EVENT HANDLERS
+  // ============================================================
+  const tooltip = document.getElementById('tooltip');
+  let isPanning = false;
+  let panStart = { x: 0, y: 0 };
+  let camStart = { x: 0, y: 0 };
+  let clickStartPos = { x: 0, y: 0 };
+
+  // Find node at world coordinate
+  function getNodeAt(wx, wy) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      const n = nodes[i];
+      if (!n.visible) continue;
+      const dx = wx - n.x;
+      const dy = wy - n.y;
+      
+      const isHL = (selectedNode && n.id === selectedNode.id) || (hoveredNode && n.id === hoveredNode.id);
+      const hitRadius = isHL ? 14 : 10;
+      
+      if (dx * dx + dy * dy < hitRadius * hitRadius) return n;
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousedown', e => {
+    // Avoid triggering drag/pan if clicking UI elements
+    clickStartPos.x = e.clientX;
+    clickStartPos.y = e.clientY;
+
+    const worldPos = screenToWorld(e.clientX, e.clientY);
+    const node = getNodeAt(worldPos.x, worldPos.y);
+    
+    if (node) {
+      draggedNode = node;
+      canvas.style.cursor = 'grabbing';
+      // Interrupt camera animation when starting to drag
+      targetCam = null;
+    } else {
+      isPanning = true;
+      panStart.x = e.clientX;
+      panStart.y = e.clientY;
+      camStart.x = cam.x;
+      camStart.y = cam.y;
+      canvas.style.cursor = 'move';
+    }
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    const worldPos = screenToWorld(e.clientX, e.clientY);
+    
+    if (draggedNode) {
+      draggedNode.x = worldPos.x;
+      draggedNode.y = worldPos.y;
+      draggedNode.vx = 0;
+      draggedNode.vy = 0;
+      return;
+    }
+
+    if (isPanning) {
+      const dx = e.clientX - panStart.x;
+      const dy = e.clientY - panStart.y;
+      cam.x = camStart.x - dx / cam.zoom;
+      cam.y = camStart.y - dy / cam.zoom;
+      return;
+    }
+
+    const node = getNodeAt(worldPos.x, worldPos.y);
+    hoveredNode = node;
+
+    if (node) {
+      canvas.style.cursor = 'pointer';
+      const group = GROUPS[node.group];
+      let connCount = 0;
+      edges.forEach(e => {
+        if (e.source === node.id || e.target === node.id) connCount++;
+      });
+      tooltip.innerHTML = `
+        <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: ${group.color}; font-weight: 700;">🎯 Yếu tố</div>
+        <div class="tt-title" style="color:#fff; margin-top: 2px; margin-bottom: 2px;">${node.label}</div>
+        ${node.english ? `<div style="font-size:10.5px; color:#c8b8ff; opacity:0.85; font-style:italic; margin-bottom: 6px;">${node.english}</div>` : ""}
+        <div class="tt-group" style="margin-bottom: 8px;">${group.name} · ${connCount} kết nối</div>
+        
+        <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">📝 Mô tả</div>
+        <div class="tt-desc" style="margin-bottom: 8px;">${node.desc}</div>
+        
+        ${node.unit || node.source ? `
+        <div style="font-size:11px; padding: 6px 8px; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px;">
+          ${node.unit ? `<div><span style="opacity:0.6;">Đơn vị đo:</span> <span style="color:#fff;">${node.unit}</span></div>` : ""}
+          ${node.source ? `<div><span style="opacity:0.6;">Nguồn:</span> <span style="color:#c8b8ff;">${node.source}</span></div>` : ""}
+        </div>
+        ` : ""}
+        
+        <div style="font-size:10px; opacity:0.5; margin-top:6px; font-style:italic; border-top: 1px solid rgba(255,255,255,0.1); padding-top:4px;">Click để xem chi tiết ${node.pinned ? '📌' : ''}</div>
+      `;
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 16) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+
+      // Constraint tooltip boundaries
+      const rect = tooltip.getBoundingClientRect();
+      if (rect.right > W) tooltip.style.left = (e.clientX - rect.width - 10) + 'px';
+      if (rect.bottom > H) tooltip.style.top = (e.clientY - rect.height - 10) + 'px';
+    } else {
+      canvas.style.cursor = 'grab';
+      tooltip.style.display = 'none';
+    }
+  });
+
+  canvas.addEventListener('mouseup', e => {
+    const dx = e.clientX - clickStartPos.x;
+    const dy = e.clientY - clickStartPos.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    
+    if (dist < 4) {
+      // Small/no movement is recognized as a click
+      const worldPos = screenToWorld(e.clientX, e.clientY);
+      const node = getNodeAt(worldPos.x, worldPos.y);
+      if (node) {
+        selectNode(node, e.ctrlKey || e.shiftKey || e.metaKey);
+      } else {
+        if (!(e.ctrlKey || e.shiftKey || e.metaKey)) {
+          clearSelection();
+        }
+      }
+    }
+    
+    draggedNode = null;
+    isPanning = false;
+    canvas.style.cursor = 'grab';
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    draggedNode = null;
+    isPanning = false;
+    hoveredNode = null;
+    tooltip.style.display = 'none';
+  });
+
+  // Double click node to pin/unpin it
+  canvas.addEventListener('dblclick', e => {
+    const worldPos = screenToWorld(e.clientX, e.clientY);
+    const node = getNodeAt(worldPos.x, worldPos.y);
+    if (node) {
+      node.pinned = !node.pinned;
+      if (selectedNode && selectedNode.id === node.id) {
+        renderInspector(); // refresh inspector sidebar
+      }
+    }
+  });
+
+  // Zoom at cursor position
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    const zoomFactor = 1.12;
+    const mouseWorldBefore = screenToWorld(e.clientX, e.clientY);
+    
+    if (e.deltaY < 0) {
+      cam.zoom = Math.min(cam.zoom * zoomFactor, 6);
+    } else {
+      cam.zoom = Math.max(cam.zoom / zoomFactor, 0.12);
+    }
+    
+    // Shift camera position to keep world cursor locked under screen cursor
+    cam.x = mouseWorldBefore.x - (e.clientX - W / 2) / cam.zoom;
+    cam.y = mouseWorldBefore.y - (e.clientY - H / 2) / cam.zoom;
+    
+    targetCam = null; // stop any centering transitions
+  }, { passive: false });
+
+  // ============================================================
+  // INSPECTOR & ACTIONS
+  // ============================================================
+  const inspectorEl = document.getElementById('inspector');
+
+  function selectNode(node) {
+    selectedNode = node;
+    renderInspector();
+  }
+
+  function renderInspector() {
+    if (!selectedNode) {
+      inspectorEl.innerHTML = `
+        <div class="inspector-welcome">
+          Click vào một nút để xem phân tích chi tiết, các mối liên kết và ghim định vị.
+        </div>
+      `;
+      return;
+    }
+
+    const node = selectedNode;
+    const group = GROUPS[node.group];
+    
+    const preds = [];
+    const succs = [];
+    edges.forEach(e => {
+      if (e.target === node.id) {
+        const sourceNode = nodes[e.source];
+        preds.push({
+          id: sourceNode.id,
+          label: sourceNode.label,
+          color: GROUPS[sourceNode.group].color,
+          relType: e.type
+        });
+      } else if (e.source === node.id) {
+        const targetNode = nodes[e.target];
+        succs.push({
+          id: targetNode.id,
+          label: targetNode.label,
+          color: GROUPS[targetNode.group].color,
+          relType: e.type
+        });
+      }
+    });
+
+    inspectorEl.innerHTML = `
+      <div class="inspector-content">
+        <div class="inspector-header" style="border-left: 4px solid ${group.color}">
+          <span class="group-badge" style="background: ${group.color}20; color: ${group.color}; border: 1px solid ${group.color}40">${group.short}</span>
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; margin-top: 4px;">🎯 Yếu tố</div>
+          <h3 class="inspector-node-title" style="margin-top: 2px;">${node.label}</h3>
+          ${node.english ? `<div style="font-size:11px; color:#c8b8ff; opacity:0.85; font-style:italic; margin-top:2px;">${node.english}</div>` : ""}
+        </div>
+        
+        <div>
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">📝 Mô tả</div>
+          <p class="inspector-desc">${node.desc}</p>
+        </div>
+        
+        <div class="inspector-meta" style="font-size:11.5px; display:flex; flex-direction:column; gap:6px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+          ${node.unit ? `<div><span style="opacity:0.65; font-weight: 600;">📏 Đơn vị đo:</span> <span style="color:#fff; font-weight:500;">${node.unit}</span></div>` : ""}
+          ${node.source ? `<div><span style="opacity:0.65; font-weight: 600;">📖 Nguồn tham chiếu:</span> <span style="color:#c8b8ff; font-weight:500;">${node.source}</span></div>` : ""}
+        </div>
+
+        <div class="inspector-actions">
+          <button id="btn-pin-${node.id}" onclick="togglePinNode(${node.id})">${node.pinned ? '🔓 Bỏ ghim' : '📌 Ghim nút'}</button>
+          <button onclick="centerOnNode(${node.id}, 1.4)">🎯 Định vị</button>
+        </div>
+        
+        <div class="inspector-connections">
+          <h5 class="conn-title">⬅️ Các yếu tố tác động đến (${preds.length})</h5>
+          ${preds.length === 0 ? '<div class="no-conn">Không có kết nối trực tiếp</div>' : `
+          <div class="conn-list">
+            ${preds.map(p => `
+              <div class="conn-item" onclick="selectAndCenterNode(${p.id})" style="border-left: 2px solid ${p.color}">
+                <span class="conn-label" title="${p.label}">${p.label}</span>
+                <span class="conn-type-badge ${p.relType}">${REL_NAMES[p.relType] || p.relType}</span>
+              </div>
+            `).join('')}
+          </div>
+          `}
+        </div>
+
+        <div class="inspector-connections">
+          <h5 class="conn-title">➡️ Các yếu tố bị tác động bởi (${succs.length})</h5>
+          ${succs.length === 0 ? '<div class="no-conn">Không có kết nối trực tiếp</div>' : `
+          <div class="conn-list">
+            ${succs.map(s => `
+              <div class="conn-item" onclick="selectAndCenterNode(${s.id})" style="border-left: 2px solid ${s.color}">
+                <span class="conn-label" title="${s.label}">${s.label}</span>
+                <span class="conn-type-badge ${s.relType}">${REL_NAMES[s.relType] || s.relType}</span>
+              </div>
+            `).join('')}
+          </div>
+          `}
+        </div>
+      </div>
+    `;
+  }
+
+  function selectAndCenterNode(nodeId) {
+    const node = nodes.find(n => n.id === nodeId);
+    if (node) {
+      selectNode(node);
+      centerOnNode(nodeId, 1.45);
+    }
+  }
+
+  function togglePinNode(nodeId) {
+    const node = nodes.find(n => n.id === nodeId);
+    if (node) {
+      node.pinned = !node.pinned;
+      const btn = document.getElementById(`btn-pin-${nodeId}`);
+      if (btn) {
+        btn.innerHTML = node.pinned ? '🔓 Bỏ ghim' : '📌 Ghim nút';
+      }
+    }
+  }
+
+  function clearSelection() {
+    selectedNode = null;
+    renderInspector();
+  }
+
+  // ============================================================
+  // SEARCH HANDLERS
+  // ============================================================
+  const searchEl = document.getElementById('search');
+  const resultsEl = document.getElementById('search-results');
+
+  searchEl.addEventListener('input', e => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    updateSearchResults();
+  });
+
+  function updateSearchResults() {
+    if (!searchTerm) {
+      resultsEl.innerHTML = "";
+      return;
+    }
+    const matches = nodes.filter(n => 
+      n.label.toLowerCase().includes(searchTerm) || 
+      n.desc.toLowerCase().includes(searchTerm)
+    ).slice(0, 10);
+    
+    if (matches.length === 0) {
+      resultsEl.innerHTML = `<div class="search-no-results">Không tìm thấy đặc trưng nào</div>`;
+      return;
+    }
+    
+    resultsEl.innerHTML = matches.map(n => {
+      const group = GROUPS[n.group];
+      return `
+        <div class="search-result-item" onclick="selectAndCenterNode(${n.id})">
+          <span class="result-dot" style="background:${group.color}"></span>
+          <div class="result-details">
+            <div class="result-label">${n.label}</div>
+            <div class="result-group" style="color:${group.color}">${group.short}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ============================================================
+  // BUTTON ACTIONS
+  // ============================================================
+  function resetView() {
+    nodes.forEach(n => {
+      const angle = (n.group / GROUPS.length) * Math.PI * 2;
+      const r = 260 + Math.random() * 140;
+      n.x = Math.cos(angle) * r + (Math.random() - 0.5) * 120;
+      n.y = Math.sin(angle) * r + (Math.random() - 0.5) * 120;
+      n.vx = 0;
+      n.vy = 0;
+      n.pinned = false; // unpin all
+    });
+    
+    cam.x = 0;
+    cam.y = 0;
+    cam.zoom = 0.7;
+    targetCam = null;
+    
+    highlightedGroup = null;
+    searchTerm = "";
+    searchEl.value = "";
+    resultsEl.innerHTML = "";
+    clearSelection();
+    
+    document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('dimmed'));
+  }
+
+  function toggleLabels() {
+    showLabels = !showLabels;
+  }
+
+  function togglePhysics() {
+    physicsOn = !physicsOn;
+  }
+
+  // ============================================================
+  // INITIALIZATION & ANIMATION LOOP
+  // ============================================================
+  function loop() {
+    simulate();
+    updateCameraAnimation();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // ============================================================
+  // TABLE VIEW FUNCTIONS & LINKING
+  // ============================================================
+  let isTableView = false;
+
+  function buildTable() {
+    const tbody = document.getElementById('table-body');
+    
+    // Populate dropdown filter group if empty
+    const filterGroup = document.getElementById('table-filter-group');
+    if (filterGroup.options.length === 1) {
+      GROUPS.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.textContent = g.name;
+        filterGroup.appendChild(opt);
+      });
+    }
+
+    tbody.innerHTML = nodes.map(n => {
+      const group = GROUPS[n.group];
+      
+      // Calculate incoming & outgoing connections
+      let inCount = 0;
+      let outCount = 0;
+      edges.forEach(e => {
+        if (e.target === n.id) inCount++;
+        if (e.source === n.id) outCount++;
+      });
+      
+      return `
+        <tr id="tr-node-${n.id}">
+          <td style="font-family: monospace; font-weight: bold; color: rgba(255,255,255,0.4);">${n.id}</td>
+          <td>
+            <div style="font-weight:600; color:#fff; font-size:13px;">${n.label}</div>
+            ${n.english ? `<div style="font-size:10.5px; color:#c8b8ff; opacity:0.75; margin-top:2px; font-style:italic;">${n.english}</div>` : ""}
+          </td>
+          <td>
+            <span class="table-badge" style="background: ${group.color}15; color: ${group.color}; border: 1px solid ${group.color}30">${group.name}</span>
+          </td>
+          <td>
+            <div style="line-height: 1.5; color: rgba(224, 216, 240, 0.85);">${n.desc}</div>
+          </td>
+          <td>
+            <div style="color: #eae5f5; font-weight: 500;">${n.unit || "—"}</div>
+          </td>
+          <td>
+            <div style="color: #c8b8ff; opacity: 0.9; font-size: 11.5px; line-height: 1.4;">${n.source || "—"}</div>
+          </td>
+          <td style="text-align: center;">
+            <div style="font-size:11px; opacity:0.9; font-weight: 500; font-family: monospace;">⬅️ ${inCount} | ➡️ ${outCount}</div>
+          </td>
+          <td style="text-align: center;">
+            <button class="table-view-btn" onclick="goToGraphNode(${n.id})">🎯 Đồ thị</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function filterTable() {
+    const searchVal = document.getElementById('table-search').value.toLowerCase().trim();
+    const groupVal = document.getElementById('table-filter-group').value;
+    
+    nodes.forEach(n => {
+      const row = document.getElementById(`tr-node-${n.id}`);
+      if (!row) return;
+      
+      const group = GROUPS[n.group];
+      const matchSearch = n.label.toLowerCase().includes(searchVal) || 
+                          n.desc.toLowerCase().includes(searchVal) ||
+                          (n.english && n.english.toLowerCase().includes(searchVal)) ||
+                          (n.unit && n.unit.toLowerCase().includes(searchVal)) ||
+                          (n.source && n.source.toLowerCase().includes(searchVal)) ||
+                          group.name.toLowerCase().includes(searchVal);
+      const matchGroup = groupVal === "all" || n.group.toString() === groupVal;
+      
+      if (matchSearch && matchGroup) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+
+  document.getElementById('table-search').addEventListener('input', filterTable);
+
+  function toggleViewMode() {
+    isTableView = !isTableView;
+    const btn = document.getElementById('btn-view-mode');
+    const tableContainer = document.getElementById('table-container');
+    
+    if (isTableView) {
+      buildTable();
+      tableContainer.style.display = "flex";
+      btn.innerHTML = "🕸️ Dạng Đồ thị";
+      btn.style.background = "rgba(140, 120, 255, 0.35)";
+      btn.style.borderColor = "rgba(140, 120, 255, 0.8)";
+    } else {
+      tableContainer.style.display = "none";
+      btn.innerHTML = "📊 Dạng Bảng";
+      btn.style.background = "rgba(140, 120, 255, 0.12)";
+      btn.style.borderColor = "rgba(140, 120, 255, 0.35)";
+    }
+  }
+
+  function goToGraphNode(nodeId) {
+    // Hide table view
+    toggleViewMode();
+    
+    // Highlight and select node in Graph
+    setTimeout(() => {
+      selectAndCenterNode(nodeId);
+    }, 100);
+  }
+
+  // Distribute nodes initial circular positions based on group bias around world center (0,0)
+  nodes.forEach(n => {
+    const angle = (n.group / GROUPS.length) * Math.PI * 2;
+    const r = 280 + Math.random() * 120;
+    n.x = Math.cos(angle) * r + (Math.random() - 0.5) * 120;
+    n.y = Math.sin(angle) * r + (Math.random() - 0.5) * 120;
+  });
+
+  // Start the render loop
+  loop();
+  </script>
+</body>
+</html>

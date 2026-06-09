@@ -1,0 +1,229 @@
+{
+  "main": {
+    "id": "1195e660b880c894",
+    "type": "split",
+    "children": [
+      {
+        "id": "9bb7d392ec07331a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3dcee85953044e58",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "PPC_casestudy_2010_V1_vi.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "PPC_casestudy_2010_V1_vi"
+            }
+          },
+          {
+            "id": "5fb6762d102661d0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "dataset_analysis.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "dataset_analysis"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "575bb25efd9adfce",
+    "type": "split",
+    "children": [
+      {
+        "id": "b81caab84014f41a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ebf71fedce9de558",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "5d02f5d75401c0c6",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "8d6cb11115956080",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "568f07911e93d0fe",
+    "type": "split",
+    "children": [
+      {
+        "id": "72a6a0cb18859529",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "340c1251d143a5ce",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "timeseries_logistics_presentation.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for timeseries_logistics_presentation"
+            }
+          },
+          {
+            "id": "f3d8ceef4d2e4b6c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "timeseries_logistics_presentation.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from timeseries_logistics_presentation"
+            }
+          },
+          {
+            "id": "00436738ae44b151",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "a1bf671cb707f1ac",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "dd6c8bce9e8397d8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "timeseries_logistics_presentation.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of timeseries_logistics_presentation"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "5fb6762d102661d0",
+  "lastOpenFiles": [
+    "models_for_optimal_path.md",
+    "dataset_analysis.md",
+    "Chương 6.pdf",
+    "tests/test_output.txt",
+    "tests/verify_cpm.py",
+    "tests/__pycache__/case_study_data.cpython-313.pyc",
+    "algorithms/__pycache__/eva_engine.cpython-313.pyc",
+    "algorithms/__pycache__/crashing_engine.cpython-313.pyc",
+    "algorithms/__pycache__/resource_smoothing.cpython-313.pyc",
+    "algorithms/__pycache__/__init__.cpython-313.pyc",
+    "algorithms/__pycache__/cpm_engine.cpython-313.pyc",
+    "algorithms/__pycache__",
+    "PPC_casestudy_2010_V1_vi.md",
+    "2.canvas",
+    "algorithm_math_and_code.md",
+    "project_mindmap.png",
+    "Comprehensive_App_Development_Report.md",
+    "do_an_3_pipeline_ung_dung.md",
+    "project_app_workflow.md",
+    "PPC_case_study_report.md",
+    "project_mindmap.canvas",
+    "plan.md",
+    "project_mindmap 1.canvas",
+    "timeseries_logistics_presentation.md",
+    "event_impact_analysis_report.md"
+  ]
+}
