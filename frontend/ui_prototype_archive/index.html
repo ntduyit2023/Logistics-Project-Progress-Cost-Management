@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GLPO Master Dashboard</title>
+  <!-- Dependencies -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">GLPO Dashboard</div>
+      <nav class="nav-menu">
+        <a href="#" class="active">📊 Overview</a>
+        <a href="#">🌐 Network Graph</a>
+        <a href="#">💰 EVM Tracking</a>
+        <a href="#">⚙️ Optimizer Settings</a>
+      </nav>
+      
+      <!-- Sliders for "Train Động" -->
+      <div class="ai-sliders">
+        <h4>AI Engine Weights</h4>
+        <label>Time Priority (Schedule) <input type="range" value="80"></label>
+        <label>Cost Priority (Budget) <input type="range" value="40"></label>
+        <label>Quality / Risk Buffer <input type="range" value="60"></label>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <h2>Project: PPC Case Study (MFET 3008)</h2>
+        <div class="kpi-cards">
+          <div class="kpi"><span>Makespan</span><strong>66 Days</strong></div>
+          <div class="kpi"><span>Budget</span><strong>$150,000</strong></div>
+          <div class="kpi"><span>CPI (Health)</span><strong style="color: var(--accent);">0.95</strong></div>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <div class="content-grid">
+        
+        <!-- Top Half: Graph Area -->
+        <section class="card graph-section">
+          <h3>Interactive Network Topology</h3>
+          <div id="cy" class="cy-container"></div>
+        </section>
+
+        <!-- Bottom Half: Analytical Charts -->
+        <section class="bottom-charts">
+          <div class="card chart-card">
+            <h3>EVM Tracking (Week 1 - 5)</h3>
+            <div class="chart-container"><canvas id="evmChart"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Resource Constraint Load (Dev_Comp)</h3>
+            <div class="chart-container"><canvas id="resChart"></canvas></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Right Panel (Slide Over) -->
+    <aside class="right-panel" id="info-panel">
+      <div class="panel-header">
+        <div id="node-critical-badge" class="badge critical" style="display:none;">🔥 Critical Path Node</div>
+        <h2 id="node-id">Task ID</h2>
+        <p id="node-name">Select a node to view details</p>
+      </div>
+      
+      <div class="panel-body" id="panel-body" style="display:none;">
+        <div class="radar-container">
+          <canvas id="radarChart"></canvas>
+        </div>
+        
+        <!-- Accordions for Many Features -->
+        <div class="accordions" id="feature-accordions">
+          
+          <div class="accordion">
+            <button class="accordion-btn">⏱️ 5. Time & Cost Features <span>+</span></button>
+            <div class="accordion-content">
+              <p><strong>Duration:</strong> <span id="val-duration"></span></p>
+              <p><strong>Fixed Cost:</strong> $<span id="val-cost"></span></p>
+              <p><strong>Overtime Premium (Weekend):</strong> 1.5x - 3.0x</p>
+            </div>
+          </div>
+          
+          <div class="accordion">
+            <button class="accordion-btn">👥 6. Resource Requirements <span>+</span></button>
+            <div class="accordion-content" id="node-resources">
+              <!-- Dynamically inserted resource tags -->
+            </div>
+          </div>
+          
+          <div class="accordion">
+            <button class="accordion-btn">⚠️ 8. Risk Analysis (PERT) <span>+</span></button>
+            <div class="accordion-content">
+              <p><strong>Optimistic Time:</strong> <span id="val-opt"></span></p>
+              <p><strong>Pessimistic Time:</strong> <span id="val-pess"></span></p>
+              <p><strong>Delay Probability:</strong> <span id="val-prob"></span>%</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- App Logic -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

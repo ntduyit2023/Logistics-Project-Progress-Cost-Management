@@ -1,0 +1,490 @@
+=== PAGE 1 ===
+UNIVERSITY OF SOUTH AUSTRALIA 
+SCHOOL OF ADVANCED MANUFACTURING AND MECHANICAL ENGINEERING 
+ 
+ 
+PROJECT PLANNING AND CONTROL  
+ 
+MFET 3008/MFET 5040 
+ 
+Final Case Study 
+ 
+Instruction for your submission 
+ 
+1. Please read carefully all instructions  before you prepare your answer.  
+2. This project should be done in a group.  
+3. Type your report using Times New Roman, Arial or similar types of fonts with size 12, or 
+write it clearly by hand on one side (not both sides) of A4 sized paper.  The templates  for 
+the answer using MSExcel are provided by the lecturer or downloaded  from the course 
+homepage.  
+4. Each group must submit the following   two items  
+a. A report containing  the detailed calculation  procedure:  It should include clear and 
+detailed explanation  of the logic that you have used to obtain your answer. Clearly 
+state all assumptions  that have been made. Use the cover sheet provided in the 
+study guide. Without it=5% penalty. 
+b. A diskette or a CD containing  all Gantt charts and other necessary  document:  Note 
+that this diskette/CD  will be used only for the convenience  of the marking process. 
+So all answers in your CD or Diskette should be printed out and submitted  for the 
+marking. Remember!  Only the print‐out copy of your report will be used for the 
+marking. 
+5. The submitted  answers will not be returned after the marking. However,  the feedback 
+report will be provided.  The marking will be made using the mark sheet attached at the 
+end of this instruction.  
+6. The instructor’s  answer for this assignment  will not be provided because there would be 
+several different answers depending  on the assumptions  that each answer used. So it is 
+very important  that each decision made to obtain your answer should be justified. This is 
+similar to what a project manager will face in a company in the future, i.e., to solve a 
+certain problem in an organization,  there would be several alternative  solutions.  The 
+project manager should choose one best option through rigorous justifiable  decision 
+making processes.   
+7. Due date will be announced  by the lecturer during the lecture. 
+No late submission  will be accepted .  
+
+=== PAGE 2 ===
+Summary:   
+ Your company has been granted a contract to design, fabricate and commission  a new 
+computer ‐controlled  parcel transport,  storage and database system, for automatic  
+placement,  storage and retrieval of standardised  shipping containers.  The system uses an 
+overhead  conveyor  track system, conveyor ‐robot transporter  units, racks with standard 
+size shipping containers
+ and storage buckets, and a computerized  database for 
+automatic  placement  and retrieval of parcels and record keeping. The main tasks of this 
+project have been broken down and listed in Table 1.  
+ 
+Q1. WBS, OBS and LRC (total 10 marks): Based on the tasks and required staffs for each 
+task listed in Table 1,  
+a. Create an Organizational  Breakdown  Structure  (OBS) and a Work Breakdown  
+Structure  (WBS) for the project including a standard coding system. Both structures  
+should have at least four levels of hierarchy  (4 marks). 
+b. Create a Linear Responsibility  Chart (LRC) to allocate the tasks into each staff in 
+your company according  to Table 1 given. Make sure to show who will take the 
+principle responsibility  and who will take supportive  responsibilities  whenever  
+necessary.  Note that all staffs and all tasks listed in Table 1 should be in your LRC (3 
+marks) 
+c. In addition, to implement  this project, you need to choose a certain organisational  
+structure (i.e, either functional,  project based or matrix organisation).   Justify your 
+decision by describing  how the organisational  structure you have chosen will 
+improve your ability to manage this project. You may need to make some 
+assumptions.  (3 Marks) 
+ 
+Q2. AON Analysis (total 10 marks): Complete  a network analysis using AON approach  to 
+identify the critical path. Determine  the early start, early finish, late start, late finish, total 
+slack and free slack for each task. Use the following  format of the table at each node. 
+(Network  model 2 marks, all tables in each node 7 marks and critical path 1 marks). 
+(Answer: The project duration will be 66 days.)   
+ES  ID  EF 
+TS   FS 
+LS  L  LF 
+ 
+  
+
+=== PAGE 3 ===
+ 
+Table 1 Project tasks 
+Code  Task  Duration 
+Days Precedence  
+Relationships  Labour Resources  
+A Architectural  decisions  4 ‐   Design (Computing),  Design (Mechanical)  
+B Hardware  
+specifications  6  A  Design (Computing),  Design (Mechanical),  
+Development  (Mechanical),  Assembly  
+(Mechanical)  
+C Software 
+specifications  7  A  Design(Computing),  Development  
+(Computing),  Assembly  (Computing)  
+D Conveyor  design  8  B  Design (Mechanical),  Development  
+(Mechanical)  
+E Hardware  design  6  B  Design (Computing),  Design (Mechanical),  
+Development  (Mechanical)   
+F Software design  12  C  Design (Computing),  Development  
+(Computing)  
+G Operating  system 
+documentation  10  C  Development  (Computing),  Documentation  
+H Hardware  detail 
+drawings 8  E,F  Development(Computing),  Development  
+(Mechanical),  Documentation  
+I Software 
+programming  16  G  Design(Computing),  Documentation  
+J Software 
+verification/testing   12  I  Development(Computing),  
+Assembly(Computing),  Documentation  
+K Conveyor  detailed 
+drawings 7  D  Development(Computing),  Development  
+(Mechanical),  Documentation  
+L Drawing 
+verification/Minor  
+integration   9  H,K  Development  (Computing),  Assembly  
+(Computing),  Assembly  (Mechanical)  
+M Prototype  
+development  4  H  Development  (Computing),  Development  
+(Mechanical)  
+N Prototype  installation   7  J,M  Assembly  (Computing),  Assembly  
+(Mechanical),  
+O Hardware  
+order/delivery  7  L  Development  (Mechanical),  Purchase 
+P System Interface  5  L  Development  (Mechanical),  Assembly  
+(Mechanical)  
+Q Hardware  assembly   4  O,P  Assembly  (Computing),  Assembly  
+(Mechanical)  
+R Hardware/software  
+Integration   5  N,Q  Development  (Computing),  Development  
+(Mechanical),  Assembly  (Computing),  
+Assembly  (Mechanical)  
+S Hardware/software  
+documentation  2  R  Development  (Computing),  Development  
+(Mechanical),  Documentation  
+T System verification   3  R  Development  (Mechanical),  Assembly  
+(Computing),  Assembly  (Mechanical)  
+U Acceptance  test  2  S,T  Assembly  (Computing),  Assembly  
+(Mechanical)  
+  
+
+=== PAGE 4 ===
+Q3. Gantt chart with Resource  Allocation  Profile (total 10 marks): 
+(a) Draw an early start and a late start Gantt charts assuming  that your company has 
+an unlimited  number of staff based on a work‐pattern of 5 days per week (Monday 
+to Friday), 8 hours per day and there are no public holidays (4 marks). (Answer: the 
+duration should be 66 days).   
+(b) Complete  the resource allocation  profile for each technical expert by identifying  
+each staff resource requirement  (i.e., for each Design (computing),  Design 
+(Mechanical),  Development  (Computing,  Development  (Mechanical),  Assembly  
+(computing),  Assembly  (Mechanical),  and Documentation  separately  according  to 
+Table 1) throughout  the duration of the project (3 marks)  
+(c) Generate  a labour cost chart in your early start Gantt chart to show the cost for 
+each activity and the total cost for the whole project based on the cost for 
+company staff provided in Table 2. Note that since the cost for the late start will be 
+the same as the one in the early start, you do not need to calculate the cost chart 
+for the late start Gantt chart. Do it only in the early start Gantt chart. Assume that 
+we do not include the material cost in the cost calculation.  (Answer: Total cost 
+$49,510) (3 marks) 
+ 
+Q4. Slack management  (5 marks): Now, you have a constraint  over the number of staff 
+in your company.  Assume that the number of staff in your company for each of expertise  
+is as shown in Table 2. Note that there are two staffs in Development  (Computing)  and 
+Documentation.  Except those, in all the other expertise,  we have only 1 staff in your 
+company for each expertise.  You can see that according  to the resource allocation  profile 
+you have developed  in Question 3, you have shortage problems  of the resources  (staff) 
+because in some periods, your schedule requires more than 1 or 2 staffs that you have in 
+your company.  To solve this problem, the first step you have to take is to smooth the 
+resource profile to reduce the peak demand. Now generate a new Gantt chart to smooth 
+the resource demands (3 marks). Explain each adjustment  you have made clearly to 
+obtain the smoothed  schedule (2 marks). 
+Table 2 Cost for the company  staff 
+Staffing Category  Cost for Company  Staff  Number of company  staff 
+Design (Computing)   $200/day   1 
+Design (Mechanical)   $200/day   1 
+Development  (Computing)   $150/day   2 
+Development  (Mechanical)   $150/day   1 
+Assembly  (Computing)   $100/day   1 
+Assembly  (Mechanical)   $100/day   1 
+Purchase  $80/day  1 
+Documentation   $80/day  2 
+ 
+  
+
+=== PAGE 5 ===
+ 
+Q5. Resource  constraint  problem (8 marks): As you can see from the resource profile of 
+the Gantt chart obtained from the smoothing  process (in Question 4), you still have 
+resource shortage problems  if you use only the company staff. To solve these shortage 
+problems,  you can choose either to extend the duration of the project or to use other 
+resources  (like contractors  and/or overtime during the weekends).  In this question,  let us 
+assume that you use the first approach,  to extend the project duration. This should be 
+based on 5‐days per week, working 8 hours per day, with no provision  for overtime (no 
+weekend work allowed).  Also assume that once an activity is started, it cannot be 
+interrupted.   
+ THE NUMBER OF STAFF IN EACH EXPERTISE  IS GIVEN IN Table 2.  
+ All under graduate students (MFET 3008) should choose question (a), while all post 
+graduate students (MFET 5040) should choose (b).  
+ Marking scheme:  the answer itself (5 marks) & explanation   and justification  (3 marks). 
+(a) (For under graduate students (MFET 3008)): Using priority rule 1, determine  the 
+new minimum  schedule for the project (Answer: 96 days):  
+Priority rule 1=CPT‐LS(i) 
+(b) (For post graduate students (MFET 5040)): Using a combination  of priority rule 1 and 
+priority rule 2 as given in the below, determine  the new schedule for the project. The 
+rule is determined  as follows. For each activity i, you have to obtain,  
+ PR( i)=Priority  rule 1 obtained in (a). 
+ Sum_PR= ∑ܴܲሺ݅ሻ = addition of all PR( i) 
+ Nor_PR( i)=PR( i)/Sum_PR=normalised  priority rule 1.  
+ PT( i)=The cost for each activity obtained in Question 3(c) which you have 
+found in the early start Gantt chart (basically this is priority rule 2)  
+ Sum_PT= ∑ܶܲሺ݅ሻ = addition of all PT( i) 
+ Nor_PT( i)=PT( i)/Sum_PT=normalised  priority rule 2.  
+Once you find these, your priority rule will be given by 
+Modified Priority Rule( i)=[ Nor_PR( i) x 0.4 + Nor_PT( i) x 0.6 ] x 1000. 
+So this basically puts a higher weight for the priority rule 2 (60%) than the 
+priority rule 1 (40%).  
+The modified priority rule should be a full number only (i.e., do not use any 
+decimal point numbers).  You will see that the priority for A is 59, for B it is 78, 
+and for C it is 75, etc.  
+Using this modified priority rule, determine  a new schedule.   (Answer: 96 days) 
+ 
+ 
+ 
+
+=== PAGE 6 ===
+Q6. Outsourcing  and crashing (total 32 marks): Now you need to solve the shortage of 
+staff using the second approach,  using contractors.  To do it, you should use a systematic  
+way so that all members  in your company are happy with it. Assume that you have only 
+1 staff in each expertise  in this time (Use Table 4 – Do not use Table 2).   
+(a) Contract out (8 marks): Firstly, you need to find the least expensive  way to 
+contract out the staffs having shortage problems.  Starting from the schedule 
+obtained in the slack management,  determine  which activities and which staff 
+should be contracted  to minimise the cost. You need to start from the schedule 
+obtained in the smoothing  process (Q4). However you need to modify the 
+original schedule for your need. The work patterns and the rules to determine  
+the contractors  are given in Table 3. The cost for the company staff and a 
+contract staff per day is shown in Table 4.  
+In the process, at each time you have contracted  out a staff, you have to show a 
+comparison  chart for each different case of possibilities  i.e., show all possible 
+options which activities use contractors  or which activities use company staffs 
+and find the least expensive  option from those options. See the following  
+example.  
+Development  (Mechanical)  Staff is required by both activities S and T at day 62. You 
+have two choices; you can contract out either S or T. The comparison  will be 
+  Option 1: Company  staff for S and a contractor  for T (T should include 3 days of 
+induction)  
+  Total cost: 2(S)x150+(3+3(T))x250=1800  
+  Option 2: Company  staff for T and a contractor  for S (S should include 3 days of 
+induction)  
+  Total cost: 3(T)x150+(3+2(S))x250=1700  
+    Option 2 is cheaper hance S should be contracted  out.  
+ 
+Table 3 Work Patterns and the rules for contracts  
+1. The company normally works 5 days per week (Monday to Friday), 8 hours per day 
+and there are no public holidays. 
+2. Assume that the company  has only 1 staff in each expertise  as shown in Table 4. 
+Do not use Table 2. 
+3. If any activities can be started and the required staff is available,  you have to start 
+that activity as soon as possible. 
+4. For any activities,  if your company staffs are available,  you have to use him/her as 
+much as possible. 
+5. The number of staff working on a task must remain constant over the duration of 
+the task. 
+6. Once an activity is started it should be completed  without any interruptions.  
+7. If a contract or company staff is used in an activity, he/she should complete  that 
+activity, i.e., no changes are allowed from company staff to contractor  in the 
+middle of activity, vice versa.  
+8. Where a contract staff is hired to overcome  resource shortfalls,  the contract staff 
+
+=== PAGE 7 ===
+must be hired 3 working days earlier than required to allow for the company 
+induction.   This must occur each time that a contract staff is employed  as you will 
+not be able to guarantee  that he/she can conduct the contracted  task on his/her 
+first day of the work (meaning  that for each contract staff used, you need to allow 
+him/her to have 3 days of induction  period regardless  of that he/she has already 
+worked for you).  
+9. This 3 days of induction  will be applied for only the contract staff, i.e., if an activity 
+needs two staffs (say A and B) and you decide to use a contract for only one of the 
+two (say A), then the induction  period will be applied for only contracted  staff (A). 
+The company staff (in the case B) can start from the original schedule date (no 
+induction  is required for the company staff).  
+Table 4 Cost for the company  and contract staff 
+Staffing Category  Cost for Company  
+Staff Number of 
+company  staff Cost for 
+Contractors  
+Design (Computing)   $200/day   1  $350/day  
+Design (Mechanical)   $200/day   1  $350/day  
+Development  (Computing)   $150/day   1  $250/day   
+Development  (Mechanical)   $150/day   1  $250/day  
+Assembly  (Computing)   $100/day   1  $200/day  
+Assembly  (Mechanical)   $100/day   1  $200/day  
+Purchase  $80/day  1  $150/day  
+Documentation   $80/day  1  $150/day  
+You have to calculate the direct cost of the whole project again including all 
+contractors.  Make sure you have included for 3 days induction  for all contract staff. 
+Since the cost for contractors  is higher than the cost for staff (as shown in Table 4), 
+the cost will be increased  compared  to the answer you have obtained in Question 3 
+– Early Start Gantt chart. Please fully explain how you obtain your answer. (Answer:  
+Some (or all) staff in activities B, E, F, I, J, L, M, N, P, Q and S are contracted  out. In 
+this case, the schedule with all contractors  would cost $70,230 with 66 days working 
+only weekdays.  Note that your answer should be at least this much. If your answer is 
+lower than this figure and the answer is “CORRECT”,  you will have 20% bonus mark 
+on this question.)  
+(b) Crashing (24 marks):  As you can see, the total number of days for the normal 
+duration is 66 days (which is 13 weeks and 1 day, hence you have to consider it as 14 
+weeks). Now your task is to reduce the number of weeks to complete  this project 
+using overtime on Saturdays  and Sundays. Based on labour costs alone (as material 
+costs are common to all schedules),  determine  the optimum project length which 
+provides the least cost at the completion  using the rules listed in Table 5. At every 
+week of crashing, you should generate a separate time‐cost chart (See the MSExcel 
+template provided),  which clearly shows how you made the crashing. Clearly show 
+how all costs have been calculated  in each crashing. Full explanation  for your 
+decision is critical since that is your justification  for your decision.  
+ 
+ 
+
+=== PAGE 8 ===
+Table 5 Rules for Crashing 
+1. The crashing should be made by working overtime during weekends.  The 
+overtime expense should be paid to both the company  staff and the contractors . 
+The additional  payment due to working overtime will be the crashing cost for 
+each task. The crashing should be made in week by week basis. Overtime  can 
+only be worked on Saturdays  and Sundays and this is for only eight hours 
+maximum  on each day.  You cannot increase the hours worked in any day.  
+Overtime  expenses:       Saturdays:  1.5 times normal labour cost 
+Sundays: 3  times normal labour cost 
+2. For the convenience  of calculation,  simply assume that all Saturdays  should be 
+used before any Sundays are used for overtime.           
+3. For the crashing, your priority rule is always to select any activities that require 
+the least crashing cost than the others.  
+4. If the cost for crashing is the same for several different options, then you 
+should choose the earliest one. For example,  to use Saturday of week 2 and 
+Saturday of week3 cost exactly the same, then you should use Saturday of 
+week 2: earlier one! 
+5. For the convenience  of the calculation,  once a decision is made on which 
+activities are contracted  out at the normal schedule (which is in Q6(a)), you have 
+to stick to this decision for the further crashing. For example, in the normal 
+schedule,  if you decide to contract out Design(Computing)  for activity B and 
+Assembly(Computing)  for L, then for the further crashing, you should use these 
+as contracted,  i.e., you do not need to re‐evaluate which activities should be 
+contracted  out for every crashing case. The contracted  staffs chosen in the 
+normal schedule should be used to the end of the crashing. 
+6. Note that when it is crashed, the last day of the last week should be Saturday.  
+This means that you cannot use Sunday of the last week. So for example, for the 
+12 weeks of schedule,  the last day in week 12 should be Saturday of week 12. 
+Also this means that for 13 weeks of schedule,  you should use activity U for 
+crashing.  
+7. Hint: Firstly you have to crash necessary  critical activities.  Some non‐critical 
+activities could become critical during the smoothing  process or during the 
+crashing. Hence some non‐critical activities also need to be crashed. So every 
+time you crash, check whether non‐critical activities become critical. 
+In the process, at each crashing, you have to consider all possible overtime options 
+in each week, and then you need to choose the least expensive  ones. As you can see 
+that in the first crashing (from 14 weeks to 13 weeks), you should use “U” since the 
+last day of the last week is Saturday.  So we need to overtime U to make the last day 
+of week 13 Saturday (the total direct cost will be $70,330 ).However,  for the further 
+processing,  you have to show all possible crashing options and choose the least 
+expensive  one. It is important  that you have to show all this processes  in your 
+submission.  See the following  example for the second crashing (from 13 weeks to 12 
+weeks). Note that this is an example so this is not necessarily  to be correct. From the 
+
+=== PAGE 9 ===
+Gantt chart you generated  in Week 13 schedule,  you can identify which activities 
+should be crashed on Saturday in each week. For example, in week 1, activity C 
+should be crashed but you do not need to crash B due to the slacks B has. You can 
+calculate the cost for crashing as well (as 0.5 times of the total cost per each day for 
+each activity). The result can be shown like a table below. As you can see that Week 
+2 and Week 3 cost least, you should choose week 2 and 3 for crashing. You have to 
+complete  this table to find additional  3 more Saturdays  to make the schedule 12 
+weeks. (Answer: The total direct cost for 13 week schedule is then $70,345 ). You 
+have to do this for each crashing.  
+Week   Description   Cost  
+1  C: to be crashed.   450(C)x0.5=225  
+   B: no need (slacks)    
+2  G: to be crashed.   230(G)x0.5=115  
+3  G: to be crashed  230(G)x0.5=115  
+   D, E & F: no need (slacks)    
+4  I: to be crashed  350(I)x0.5+380(K)x0.5  
+   K: Also need to crash. F: no need (Slack)  = 365 
+5 
+  
+6 
+  
+7 
+  
+8 
+  
+9 
+  
+10 
+  
+11 
+12 U crashed (Already) used    
+ 
+You need to consider both “direct” cost (cost for crashing and labour cost) and 
+“indirect”  cost (O/H cost, bonus and penalty) to find the optimum schedule which 
+provides you the one with the minimum  total cost. The bonus, penalties and the 
+overhead  cost are given in Table 6.   
+Table 6 Penalties  and Bonuses for crashing 
+1. The project has a contractual  completion  date at the end of week 12 and the 
+penalties are applied for any later completion.   The penalty has been 
+established  at $2000 for every week or part of the week that the project 
+extends beyond week 12 (meaning  that no penalty is applied if the project is 
+finished at week 12.) The penalty is started from week 13 (with $2000 penalty) 
+and in the case it is completed  at week 14, the penalty will be $2000 x 2.   
+2. A bonus payment is available,  if the project is finished before week 12.  The 
+
+=== PAGE 10 ===
+bonus is $3000 for each week that the project is completed  before week 12 
+(meaning  that there is $3000 bonus if the project is completed  at week 11. It 
+will be $3000 x 2 if the project is finished at week 10.) 
+3. The project involves an overhead  cost.  The overhead  cost of the project is $500 
+per week and this must be charged to the project for every week (or part of) 
+that the project is in progress.  
+ 
+Q7. EV Analysis (total 15 marks): Do the Earned value analysis. Note that you might 
+need to assume that some activities use start‐to‐start precedence  relationships  rather 
+than finish‐to‐start to cope with delays in the schedule.  If that is the case, clearly state it 
+in your answer. 
+(a) Complete  an Earned Value analysis based on the optimum schedule obtained in 
+Q6(b) and the project control data given in Table 7 at the end of week 5. The 
+expenditure  values shown in the table are those spent on labour only (9 marks). 
+(b) Draw a Gantt chart that shows planned and actual progress (2 marks).  
+(c) Determine  the expected budget at completion  and the expected completion  date 
+for the project using both the original and revised approaches.  Explain the 
+assumptions  that have been made in the determination  of your estimations  (4 
+marks). 
+Table 7 Project Control data at the end of week 5 
+Code Current Expenditure Percentage  Complete  
+A  $ 2,400 100 
+B  $ 6,500 100 
+C  $ 4,300 100 
+D  $ 3,500 100 
+E  $ 6,100 100 
+F  $ 8,500 50 
+G  $ 2,100 100 
+H  $2,000 10 
+I  $5,300 20 
+K  $3,200 80 
+ 
+Q8. Professional  presentation  (10 marks): When assessing  the report, 10 Marks will be 
+allocated for the professionalism  and clarity of the submission.  
+ 
+ 
+ 
+  
+ 
+ 
+
+=== PAGE 11 ===
+ 
+Marking  sheet for case Study 
+Project planning  and Control (G) 
+ 
+Q  Component  Mark 
+Avail. Mark 
+Given  Comment  
+1 OBS  2       
+WBS  2       
+LRC  3       
+Organisational  structure selection  3       
+2 AON Network  2    
+  Table at each node  7    
+Critical Path  1    
+3 Early Start  2    
+  Late Start  2    
+Resource  Allocation  Profile  3    
+Labour Cost chart for Early Start  3    
+4 Slack management    3    
+   Explanation/Justification   2    
+5 Resource  Constraint  Schedule   5    
+   Explanation/Justification   3    
+6 Normal schedule with 
+contractors/explanation  8      
+Crash 1 schedule/explanation   2       
+Crash 2 schedule/explanation   8       
+Crash 3 schedule/explanation   4       
+Crash 4 schedule/explanation   8       
+Optimum  Selection process  2       
+7 Earned value analysis  5       
+Progress Report for each activity 
+and the whole project 4      
+Gantt chart showing the progress  2       
+Expected budget at completion   2       
+Expected Time of completion   2       
+8 Quality of submission    10       
+total mark  100       
+ 
+

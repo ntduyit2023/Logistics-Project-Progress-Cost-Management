@@ -1,0 +1,34 @@
+node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
+0,1.0,Lock Ganzepoot Ypres,30.375,30.07,30.68,2019-05-20 08:00:00,2019-06-19 17:00:00,,170000
+1,1.1,"Installation of power generators, lighting, toilets, fencing,  supply of concrete and wooden partition",1.375,1.1,1.65,2019-05-20 08:00:00,2019-05-21 17:00:00,Employees[3.00 #3],3920
+2,1.2,Remove railing and platforms,1.375,1.1,1.65,2019-05-22 08:00:00,2019-05-23 17:00:00,Employees[2.00 #3],4780
+3,1.3,"preliminary works at gates (loosing hinges, disconnect hinges, hydraulics, anchorage points)",0.375,0.3,0.45,2019-05-22 08:00:00,2019-05-22 17:00:00,Employees[3.00 #3],5460
+4,1.4,Sealing canal lock gates at other side and overflow sewers,0.375,0.3,0.45,2019-05-22 08:00:00,2019-05-22 17:00:00,Employees[2.00 #3],2640
+5,1.5,Placing of concrete partition + Placing of wooden partition,0.375,0.3,0.45,2019-05-23 08:00:00,2019-05-23 17:00:00,Employees[3.00 #3],5760
+6,1.6,Installing pumps,0.375,0.3,0.45,2019-05-24 08:00:00,2019-05-24 17:00:00,Employees[2.00 #3],3140
+7,1.7,Check safety wooden partition + Check safety concrete partition,0.375,0.3,0.45,2019-05-27 08:00:00,2019-05-27 17:00:00,Employees[3.00 #3],2060
+30,1.8,End Of Preparation/Start Restoration of lock head,0.0,0.0,0.0,2019-05-27 17:00:00,2019-05-27 17:00:00,,0
+8,1.9,Remove gates,0.375,0.3,0.45,2019-05-28 08:00:00,2019-05-28 17:00:00,Employees[2.00 #3],19940
+9,1.1,Remove hinges,0.375,0.3,0.45,2019-05-29 08:00:00,2019-05-29 17:00:00,Employees[3.00 #3],2960
+10,1.11,Pumping lock chamber completely dry,0.375,0.3,0.45,2019-05-29 08:00:00,2019-05-29 17:00:00,Employees[2.00 #3],2140
+11,1.12,Cleaning lock floor,0.375,0.3,0.45,2019-05-30 08:00:00,2019-05-30 17:00:00,Employees,2620
+12,1.13,supply concrete blocks (to prevent the floor comes up),0.375,0.3,0.45,2019-05-30 08:00:00,2019-05-30 17:00:00,Employees,9720
+13,1.14,placing concrete blocks,0.375,0.3,0.45,2019-05-31 08:00:00,2019-05-31 17:00:00,Employees[2.00 #3],3140
+14,1.15,Cleaning walls and threshold,0.375,0.3,0.45,2019-05-30 08:00:00,2019-05-30 17:00:00,Employees,3850
+15,1.16,Installing stairs in lock chamber,0.375,0.3,0.45,2019-06-03 08:00:00,2019-06-03 17:00:00,Employees[3.00 #3],4160
+16,1.17,"Replacing hinges, pivot shoes and pivots",0.375,0.3,0.45,2019-06-04 08:00:00,2019-06-04 17:00:00,Employees[3.00 #3],10360
+17,1.18,Cleaning lock head,2.375,1.9,2.85,2019-06-04 08:00:00,2019-06-06 17:00:00,Employees,3960
+18,1.19,Reparing walls,1.375,1.1,1.65,2019-06-04 08:00:00,2019-06-05 17:00:00,Employees[2.00 #3],4180
+31,1.2,End Restoration of lock head/Start Installing new gates,0.0,0.0,0.0,2019-06-06 17:00:00,2019-06-06 17:00:00,,0
+19,1.21,Transport of gates to the site,0.375,0.3,0.45,2019-06-07 08:00:00,2019-06-07 17:00:00,Employees,5870
+20,1.22,Put gates in place,0.375,0.3,0.45,2019-06-10 08:00:00,2019-06-10 17:00:00,Employees[3.00 #3],24960
+21,1.23,"Adjusting gates (Tightening hinges , front beams, sealing, anchorage points)",0.375,0.3,0.45,2019-06-11 08:00:00,2019-06-11 17:00:00,Employees[2.00 #3],8640
+22,1.24,Installing railing,0.375,0.3,0.45,2019-06-12 08:00:00,2019-06-12 17:00:00,Employees[2.00 #3],2840
+23,1.25,preliminary works at threshold,0.375,0.3,0.45,2019-06-12 08:00:00,2019-06-12 17:00:00,Employees[2.00 #3],3140
+24,1.26,Repairing threshold,1.375,1.1,1.65,2019-06-13 08:00:00,2019-06-14 17:00:00,Employees[3.00 #3],5220
+25,1.27,Install platforms,1.375,1.1,1.65,2019-06-12 08:00:00,2019-06-13 17:00:00,Employees[2.00 #3],5480
+26,1.28,Installing ladder,1.375,1.1,1.65,2019-06-12 08:00:00,2019-06-13 17:00:00,Employees[2.00 #3],6480
+32,1.29,End Installing new gates/ Start Termination,0.0,0.0,0.0,2019-06-14 17:00:00,2019-06-14 17:00:00,,0
+27,1.3,Remove concrete blocks,0.375,0.3,0.45,2019-06-17 08:00:00,2019-06-17 17:00:00,Employees[3.00 #3],3460
+28,1.31,Remove concrete and wooden partition,0.375,0.3,0.45,2019-06-18 08:00:00,2019-06-18 17:00:00,Employees[3.00 #3],4560
+29,1.32,Cleaning site,0.375,0.3,0.45,2019-06-19 08:00:00,2019-06-19 17:00:00,Employees[3.00 #3],4560

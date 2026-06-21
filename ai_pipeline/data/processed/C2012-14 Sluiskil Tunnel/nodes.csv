@@ -1,0 +1,59 @@
+node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
+0,1,Sluiskil Tunnel,1818.33333333333,1800.15,1836.52,2010-07-01 08:00:00,2015-06-23 16:00:00,,528569220
+50,1.1,Preparation - relocation of cables,55.375,54.82,55.93,2010-07-01 08:00:00,2010-08-25 17:00:00,,8519200
+1,1.1.1,Drawing a relocation plan,19.375,15.5,23.25,2010-07-01 08:00:00,2010-07-20 17:00:00,,800000
+2,1.1.2,switching off all electricity and adapting the cables to other temporary networks,15.375,12.3,18.45,2010-07-21 08:00:00,2010-08-05 17:00:00,Electrician[6.00 #10],2440320
+3,1.1.3,allocating cables type A,27.375,21.9,32.85,2010-07-21 08:00:00,2010-08-17 17:00:00,Manpower[10.00 #100],3464000
+4,1.1.4,allocating cables type B,2.08333333333333,1.67,2.5,2010-07-21 08:00:00,2010-07-23 10:00:00,Manpower[10.00 #100],1807200
+5,1.1.5,Checking if all cables are properly located,7.375,5.9,8.85,2010-08-18 08:00:00,2010-08-25 17:00:00,Electric engineer designer[2.00 #2],7680
+51,1.2,Design Tunnel,125.375,124.12,126.63,2010-08-26 08:00:00,2010-12-29 17:00:00,,16115200
+6,1.2.1,Drawing two concepts,48.375,38.7,58.05,2010-08-26 08:00:00,2010-10-13 17:00:00,,8000000
+7,1.2.2,approval of either one of the concepts,20.375,16.3,24.45,2010-10-14 08:00:00,2010-11-03 17:00:00,,500000
+8,1.2.3,drawing the final design,55.375,44.3,66.45,2010-11-04 08:00:00,2010-12-29 17:00:00,Construction Engineer[2.00 #4];Electric engineer designer[2.00 #2],7615200
+52,1.3,Design Tunnel related electric installations,209.375,207.28,211.47,2010-10-14 08:00:00,2011-05-11 17:00:00,,32048000
+9,1.3.1,testing different materials due to the clay type of the Westerschelde,41.375,33.1,49.65,2010-10-14 08:00:00,2010-11-24 17:00:00,Construction Engineer[2.00 #4],12048000
+10,1.3.2,Drawing a test design,111.375,89.1,133.65,2010-10-14 08:00:00,2011-02-02 17:00:00,,8000000
+11,1.3.3,approve the design,20.375,16.3,24.45,2011-02-03 08:00:00,2011-02-23 17:00:00,,500000
+12,1.3.4,Drawing and finishing the final design,76.375,61.1,91.65,2011-02-24 08:00:00,2011-05-11 17:00:00,,11500000
+53,1.4,Construction Tunnel Entrance Driveways,306.333333333333,303.27,309.4,2011-05-12 08:00:00,2012-03-13 16:00:00,,70506340
+13,1.4.1,Setting up all equipment,29.375,23.5,35.25,2011-05-12 08:00:00,2011-06-10 17:00:00,Manpower[20.00 #100];Truck driver[4.00 #4],1183040
+14,1.4.2,Constructing driveway A,62.375,49.9,74.85,2011-10-25 08:00:00,2011-12-26 17:00:00,Manpower[60.00 #100];Road workers[20.00 #20];Construction Engineer[4.00 #4];Crane[2.00 #4],15483200
+15,1.4.3,Constructing driveway B,51.375,41.1,61.65,2011-06-13 08:00:00,2011-08-03 17:00:00,Manpower[50.00 #100];Road workers[20.00 #20];Construction Engineer[4.00 #4];Crane[2.00 #4],14630880
+16,1.4.4,constructing the administrative office,49.375,39.5,59.25,2011-12-27 08:00:00,2012-02-14 17:00:00,Manpower[100.00 #100];Construction Engineer[2.00 #4];Crane[4.00 #4],13978720
+17,1.4.5,constructing the entrances,81.375,65.1,97.65,2011-08-04 08:00:00,2011-10-24 17:00:00,Manpower[100.00 #100];Construction Engineer[2.00 #4];Crane[4.00 #4],11060160
+18,1.4.6,installing all electrics,2.33333333333333,1.87,2.8,2012-02-15 08:00:00,2012-02-17 16:00:00,Electrician[10.00 #10],6516100
+19,1.4.7,installing safety devices,51.375,41.1,61.65,2011-10-25 08:00:00,2011-12-15 17:00:00,Electrician[10.00 #10],6712800
+20,1.4.8,Clearing all equipment from the site,25.0,20.0,30.0,2012-02-17 16:00:00,2012-03-13 16:00:00,Manpower[20.00 #100];Truck driver[4.00 #4],941440
+54,1.5,Construction Tunnel roads,573.0,567.27,578.73,2012-03-13 16:00:00,2013-10-07 16:00:00,,117532800
+21,1.5.1,setting up all equipment,21.0,16.8,25.2,2012-03-13 16:00:00,2012-04-03 16:00:00,Manpower[20.00 #100];Truck driver[4.00 #4],2124800
+22,1.5.2,Constructing tunnel road a,104.0,83.2,124.8,2012-04-03 16:00:00,2012-07-16 16:00:00,Construction Engineer[4.00 #4],33736800
+23,1.5.3,constructing tunnel road b,102.0,81.6,122.4,2012-07-16 16:00:00,2012-10-26 16:00:00,Construction Engineer[4.00 #4],33736800
+24,1.5.4,installing all safety tunnels,76.0,60.8,91.2,2013-06-07 16:00:00,2013-08-22 16:00:00,Manpower[50.00 #100],35264000
+25,1.5.5,final check,29.0,23.2,34.8,2013-08-22 16:00:00,2013-09-20 16:00:00,,11000000
+26,1.5.6,clearing all equipment from the site,17.0,13.6,20.4,2013-09-20 16:00:00,2013-10-07 16:00:00,Manpower[20.00 #100],1670400
+55,1.6,Drilling and constructing the tunnel pipes,595.0,589.05,600.95,2012-10-26 16:00:00,2014-06-13 16:00:00,,230902400
+27,1.6.1,Mounting and constructing the tunnel drull machine on site,56.0,44.8,67.2,2012-10-26 16:00:00,2012-12-21 16:00:00,Manpower[20.00 #100],2256000
+28,1.6.2,Drilling the first tunnel pipe,168.0,134.4,201.6,2012-12-21 16:00:00,2013-06-07 16:00:00,Manpower[80.00 #100];Tunnel drill,96072000
+29,1.6.3,Constructing the first tunnel pipe,161.0,128.8,193.2,2013-06-07 16:00:00,2013-11-15 16:00:00,Manpower[50.00 #100];Electrician[10.00 #10],64484000
+30,1.6.4,De-mounting tunnel drill and installing it fot the construction of the second tunnel pipe,28.0,22.4,33.6,2013-11-15 16:00:00,2013-12-13 16:00:00,Manpower[20.00 #100],1128000
+31,1.6.5,Drilling the second tunnel pipe,77.0,61.6,92.4,2013-12-13 16:00:00,2014-02-28 16:00:00,Manpower[80.00 #100];Tunnel drill,33008000
+32,1.6.6,constructing the second tunnel pipe,77.0,61.6,92.4,2014-02-28 16:00:00,2014-05-16 16:00:00,Manpower[50.00 #100];Electrician[10.00 #10],32788000
+33,1.6.7,clearing all equipment from the site,28.0,22.4,33.6,2014-05-16 16:00:00,2014-06-13 16:00:00,Manpower[20.00 #100];Truck driver[4.00 #4],1166400
+56,1.7,Construction of roads,371.0,367.29,374.71,2014-06-13 16:00:00,2015-06-19 16:00:00,,44858400
+34,1.7.1,Setting up all equipment,11.0,8.8,13.2,2014-06-13 16:00:00,2014-06-24 16:00:00,Truck driver[4.00 #4],513440
+35,1.7.2,constructing road A,118.0,94.4,141.6,2014-06-24 16:00:00,2014-10-20 16:00:00,Road workers[20.00 #20];Construction Engineer[4.00 #4];Crane[2.00 #4],14155840
+36,1.7.3,Constructing road B,114.0,91.2,136.8,2014-10-20 16:00:00,2015-02-11 16:00:00,Road workers[10.00 #20];Construction Engineer[4.00 #4];Crane[2.00 #4],13734720
+37,1.7.4,Constructing emergency strips side A,93.0,74.4,111.6,2014-10-20 16:00:00,2015-01-21 16:00:00,Road workers[10.00 #20],7146600
+38,1.7.5,Constructing an emergency side strip side B,92.0,73.6,110.4,2015-02-11 16:00:00,2015-05-14 16:00:00,Road workers[10.00 #20],7141800
+39,1.7.6,painting road lines road A,30.0,24.0,36.0,2015-01-21 16:00:00,2015-02-20 16:00:00,Road workers[10.00 #20],905600
+40,1.7.7,painting road lines road B,29.0,23.2,34.8,2015-05-14 16:00:00,2015-06-12 16:00:00,Road workers[10.00 #20],900800
+41,1.7.8,clearing all equipment from the site,7.0,5.6,8.4,2015-06-12 16:00:00,2015-06-19 16:00:00,Truck driver[4.00 #4],359600
+57,1.8,Testing the tunnel and electric installations,123.0,121.77,124.23,2015-02-20 16:00:00,2015-06-23 16:00:00,,8086880
+42,1.8.1,Setting up all equipment,4.0,3.2,4.8,2015-02-20 16:00:00,2015-02-24 16:00:00,Manpower[10.00 #100];Truck driver[2.00 #4],208320
+43,1.8.2,checking all electronics tunnel A,9.0,7.2,10.8,2015-02-24 16:00:00,2015-03-05 16:00:00,Electrician[2.00 #10];Electric engineer designer[2.00 #2],1916800
+44,1.8.3,Checking electronics tunnel B,8.0,6.4,9.6,2015-03-05 16:00:00,2015-03-13 16:00:00,Electrician[2.00 #10];Electric engineer designer[2.00 #2],1714400
+45,1.8.4,Checking all sprinkle systems tunnel A,13.0,10.4,15.6,2015-03-05 16:00:00,2015-03-18 16:00:00,Electrician[2.00 #10],1110080
+46,1.8.5,checking all sprinkle systems tunnel B,12.0,9.6,14.4,2015-03-13 16:00:00,2015-03-25 16:00:00,Electrician[2.00 #10],908960
+47,1.8.6,checking all safety tunnels,7.0,5.6,8.4,2015-06-12 16:00:00,2015-06-19 16:00:00,Electrician[2.00 #10];Construction Engineer[2.00 #4];Electric engineer designer[2.00 #2],2020000
+48,1.8.7,clearing all equipment from the site,4.0,3.2,4.8,2015-06-19 16:00:00,2015-06-23 16:00:00,Manpower[10.00 #100];Truck driver[2.00 #4],208320
+49,1.9,END,0.0,0.0,0.0,2015-06-23 16:00:00,2015-06-23 16:00:00,,0

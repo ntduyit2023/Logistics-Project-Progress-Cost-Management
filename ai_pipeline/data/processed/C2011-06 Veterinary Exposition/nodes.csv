@@ -1,0 +1,84 @@
+node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
+0,1,Veterinary Exposition,439.375,434.98,443.77,2010-11-17 08:00:00,2012-01-30 17:00:00,,54350
+1,1.1,Planning phase,175.375,173.62,177.13,2010-11-17 08:00:00,2011-05-11 17:00:00,,3000
+2,1.1.1,Start-up meeting,0.375,0.37,0.38,2010-11-17 08:00:00,2010-11-17 17:00:00,Previous Exposition Commission,0
+3,1.1.2,Appointing a new Main Officer,0.375,0.28,0.47,2011-02-25 08:00:00,2011-02-25 17:00:00,Core Staff,0
+4,1.1.3,Composition of a new Exposition Commission,18.375,14.7,22.05,2011-02-28 08:00:00,2011-03-18 17:00:00,Previous Exposition Commission;Main Officer,0
+5,1.1.4,Meeting with Partner,0.375,0.3,0.45,2011-04-12 08:00:00,2011-04-12 17:00:00,Conference Supervisor,0
+6,1.1.5,Meeting with Exhibition Company,0.375,0.3,0.45,2011-04-14 08:00:00,2011-04-14 17:00:00,Exhibition Company;Main Officer,0
+7,1.1.6,Meeting with the Layout Man,0.375,0.3,0.45,2011-04-19 08:00:00,2011-04-19 17:00:00,Main Officer;Catering Supervisor,3000
+8,1.1.7,Meeting with the Event Caterer,0.375,0.3,0.45,2011-04-21 08:00:00,2011-04-21 17:00:00,Catering Supervisor,0
+9,1.1.8,Meeting with the Webmaster,0.375,0.3,0.45,2011-04-25 08:00:00,2011-04-25 17:00:00,Finance Manager,0
+10,1.1.9,Meeting with the Exposition Commission: division of tasks,0.375,0.37,0.38,2011-05-11 08:00:00,2011-05-11 17:00:00,Main Officer;Bar Supervisor;Public Relations;Catering Supervisor;Catalogue Supervisor;Finance Manager;Conference Supervisor,0
+11,1.1.10,Planning phase complete,0.0,0.0,0.0,2011-05-11 17:00:00,2011-05-11 17:00:00,,0
+12,1.2,Registration brochure phase,80.375,79.57,81.18,2010-12-06 08:00:00,2011-02-24 17:00:00,,0
+13,1.2.1,Finding a translator among staff,11.375,9.1,13.65,2010-12-06 08:00:00,2010-12-17 17:00:00,Previous Exposition Commission,0
+14,1.2.2,Preparing the registration brochure,4.375,3.5,5.25,2010-12-27 08:00:00,2010-12-31 17:00:00,Previous Exposition Commission,0
+15,1.2.3,Translating the registration brochure,3.375,2.7,4.05,2011-01-03 08:00:00,2011-01-06 17:00:00,Translator,0
+16,1.2.4,Layouting of the registration brochure,20.375,16.3,24.45,2011-02-03 08:00:00,2011-02-23 17:00:00,Layouter,0
+17,1.2.5,Mailing of the registration brochure,0.375,0.37,0.38,2011-02-24 08:00:00,2011-02-24 17:00:00,Previous Exposition Commission,0
+18,1.2.6,Registration brochure phase complete,0.0,0.0,0.0,2011-02-24 17:00:00,2011-02-24 17:00:00,,0
+19,1.3,Contracting companies phase,240.375,237.97,242.78,2011-02-28 08:00:00,2011-10-26 17:00:00,,750
+20,1.3.1,Contracting known companies,137.375,109.9,164.85,2011-02-28 08:00:00,2011-07-15 17:00:00,Main Officer,200
+21,1.3.2,Contracting new companies,81.375,65.1,97.65,2011-07-18 08:00:00,2011-10-07 17:00:00,Main Officer,300
+22,1.3.3,Sending the toolbox and invoicing,183.375,181.54,185.21,2011-04-26 08:00:00,2011-10-26 17:00:00,Exhibition Company,0
+23,1.3.4,Mailing sponsorship letters,1.375,1.36,1.39,2011-05-12 08:00:00,2011-05-13 17:00:00,Public Relations,150
+24,1.3.5,Active search for sponsors,161.375,159.76,162.99,2011-05-17 08:00:00,2011-10-25 17:00:00,Public Relations,100
+25,1.3.6,Contracting companies phase complete,0.0,0.0,0.0,2011-10-26 17:00:00,2011-10-26 17:00:00,,0
+26,1.4,Exhibition catalogue phase,114.375,113.23,115.52,2011-07-04 08:00:00,2011-10-26 17:00:00,,9150
+27,1.4.1,Making a draft of the floor plan,0.375,0.37,0.38,2011-08-05 08:00:00,2011-08-05 17:00:00,Finance Manager,0
+28,1.4.2,Taking a picture of the Commission,0.375,0.3,0.45,2011-08-09 08:00:00,2011-08-09 17:00:00,Main Officer;Catalogue Supervisor,50
+29,1.4.3,Decision concerning the new layout,18.375,14.7,22.05,2011-07-18 08:00:00,2011-08-05 17:00:00,Main Officer,0
+30,1.4.4,Organisation of evening activities,37.375,29.9,44.85,2011-07-04 08:00:00,2011-08-10 17:00:00,Main Officer,0
+31,1.4.5,Organisation of the introductory day and retraining courses,37.375,29.9,44.85,2011-07-04 08:00:00,2011-08-10 17:00:00,Conference Supervisor,0
+32,1.4.6,Collecting articles and advertentions,44.375,35.5,53.25,2011-07-04 08:00:00,2011-08-17 17:00:00,Catalogue Supervisor,0
+33,1.4.7,Compiling the exhibition catalogue,6.375,5.1,7.65,2011-08-18 08:00:00,2011-08-24 17:00:00,Main Officer;Catalogue Supervisor,0
+34,1.4.8,Translating the exhibition catalogue,22.375,17.9,26.85,2011-08-25 08:00:00,2011-09-16 17:00:00,Translator,0
+35,1.4.9,Layouting of the French exhibition catalogue,11.375,9.1,13.65,2011-09-19 08:00:00,2011-09-30 17:00:00,Layouter,0
+36,1.4.10,"Layouting of the Dutch exhibition catalogue, publicity and entrance tickets",13.375,10.7,16.05,2011-08-25 08:00:00,2011-09-07 17:00:00,Layouter,0
+37,1.4.11,Printing the Dutch exhibition catalogue and entrance tickets,11.375,9.1,13.65,2011-09-08 08:00:00,2011-09-19 17:00:00,Printing Company,5000
+38,1.4.12,Gathering addresses and emails of vets,77.375,61.9,92.85,2011-07-04 08:00:00,2011-09-19 17:00:00,Main Officer;Catalogue Supervisor,0
+39,1.4.13,Mailing of the Dutch exhibition catalogue by email and postal service,0.375,0.37,0.38,2011-09-28 08:00:00,2011-09-28 17:00:00,Printing Company;Catalogue Supervisor,4100
+40,1.4.14,Mailing of the French exhibition catalogue by email,0.375,0.37,0.38,2011-10-03 08:00:00,2011-10-03 17:00:00,Catalogue Supervisor,0
+41,1.4.15,Exhibition catalogue phase complete,0.0,0.0,0.0,2011-10-26 17:00:00,2011-10-26 17:00:00,,0
+42,1.5,Preparation phase,167.375,165.7,169.05,2011-05-12 08:00:00,2011-10-26 17:00:00,,11200
+43,1.5.1,Making a new website,13.375,10.7,16.05,2011-08-18 08:00:00,2011-08-31 17:00:00,Webmaster;Translator;Finance Manager,200
+44,1.5.2,Making the press release,11.375,11.26,11.49,2011-09-12 08:00:00,2011-09-23 17:00:00,Main Officer,0
+45,1.5.3,Mailing the press release,28.375,28.09,28.66,2011-09-26 08:00:00,2011-10-24 17:00:00,Main Officer,0
+46,1.5.4,Meeting with the wine merchant and wholesale business of beer,11.375,9.1,13.65,2011-09-12 08:00:00,2011-09-23 17:00:00,Bar Supervisor,0
+47,1.5.5,Compiling the menu,4.375,4.33,4.42,2011-09-12 08:00:00,2011-09-16 17:00:00,Catering Supervisor,0
+48,1.5.6,Determining prices of food and beverages,0.375,0.37,0.38,2011-10-10 08:00:00,2011-10-10 17:00:00,Finance Manager,0
+49,1.5.7,Making the final floor plan,0.375,0.37,0.38,2011-10-10 08:00:00,2011-10-10 17:00:00,Finance Manager,0
+50,1.5.8,"Drafting badges, leaflet, food and drink vouchers",0.375,0.3,0.45,2011-10-11 08:00:00,2011-10-11 17:00:00,Main Officer,0
+51,1.5.9,"Layouting of badges, leaflet, food and drink vouchers",6.375,5.1,7.65,2011-10-12 08:00:00,2011-10-18 17:00:00,Layouter,0
+52,1.5.10,"Printing (and glueing) badges, leaflet, food and drink vouchers",6.375,5.1,7.65,2011-10-19 08:00:00,2011-10-25 17:00:00,Printing Company,500
+53,1.5.11,Assembling the exhibitors folder,0.375,0.37,0.38,2011-10-26 08:00:00,2011-10-26 17:00:00,Main Officer;Catering Supervisor;Bar Supervisor;Conference Supervisor;Catalogue Supervisor;Public Relations;Finance Manager,0
+54,1.5.12,Sampling the polo shirts,0.375,0.37,0.38,2011-09-12 08:00:00,2011-09-12 17:00:00,Public Relations,0
+55,1.5.13,Placing an order for the polo shirts,0.375,0.37,0.38,2011-09-26 08:00:00,2011-09-26 17:00:00,Public Relations,3500
+56,1.5.14,Composing a questionnaire for the collaborators,0.375,0.37,0.38,2011-09-19 08:00:00,2011-09-19 17:00:00,Public Relations,0
+57,1.5.15,Attracting collaborators,18.375,14.7,22.05,2011-09-26 08:00:00,2011-10-14 17:00:00,Public Relations,0
+58,1.5.16,Assigning the collaborators,4.375,3.5,5.25,2011-10-17 08:00:00,2011-10-21 17:00:00,Public Relations,0
+59,1.5.17,Mailing the collaborators,1.375,1.36,1.39,2011-10-24 08:00:00,2011-10-25 17:00:00,Public Relations,0
+60,1.5.18,Placing several orders,41.375,33.1,49.65,2011-08-11 08:00:00,2011-09-21 17:00:00,Main Officer;Catalogue Supervisor;Bar Supervisor,3000
+61,1.5.19,Request for sponsored cars,6.375,5.1,7.65,2011-05-12 08:00:00,2011-05-18 17:00:00,Main Officer,0
+62,1.5.20,Final purchases,15.375,12.3,18.45,2011-10-10 08:00:00,2011-10-25 17:00:00,Main Officer;Bar Supervisor;Catering Supervisor,4000
+63,1.5.21,Mailing of newsletter 1,0.375,0.37,0.38,2011-09-26 08:00:00,2011-09-26 17:00:00,Translator;Main Officer,0
+64,1.5.22,Final meeting with Exhibition Company,0.375,0.3,0.45,2011-10-11 08:00:00,2011-10-11 17:00:00,Exhibition Company;Main Officer,0
+65,1.5.23,Mailing of newsletter 2,0.375,0.37,0.38,2011-10-17 08:00:00,2011-10-17 17:00:00,Translator;Main Officer,0
+66,1.5.24,Preparations phase complete,0.0,0.0,0.0,2011-10-26 17:00:00,2011-10-26 17:00:00,,0
+67,1.6,Trade fair phase,8.375,8.29,8.46,2011-10-27 08:00:00,2011-11-04 17:00:00,,250
+68,1.6.1,Exposition build up,0.375,0.37,0.38,2011-10-27 08:00:00,2011-10-27 17:00:00,Bar Supervisor;Catalogue Supervisor;Conference Supervisor;Catering Supervisor;Main Officer;Finance Manager;Public Relations;Exhibition Company;Core Staff;Treasurer,100
+69,1.6.2,Exposition,0.375,0.37,0.38,2011-10-28 08:00:00,2011-10-28 17:00:00,Bar Supervisor;Catalogue Supervisor;Conference Supervisor;Catering Supervisor;Main Officer;Finance Manager;Public Relations;Exhibition Company;Core Staff;Treasurer,0
+70,1.6.3,Breaking down of Exposition,0.375,0.37,0.38,2011-10-31 08:00:00,2011-10-31 17:00:00,Bar Supervisor;Catalogue Supervisor;Conference Supervisor;Catering Supervisor;Main Officer;Finance Manager;Public Relations;Core Staff;Treasurer,150
+71,1.6.4,Trade fair phase complete,0.0,0.0,0.0,2011-11-04 17:00:00,2011-11-04 17:00:00,,0
+83,1.7,Follow-up phase,84.375,83.53,85.22,2011-11-07 08:00:00,2012-01-30 17:00:00,,30000
+72,1.7.1,Payments to suppliers,4.375,3.5,5.25,2011-11-07 08:00:00,2011-11-11 17:00:00,Treasurer,30000
+73,1.7.2,Updating the website,4.375,3.5,5.25,2011-11-07 08:00:00,2011-11-11 17:00:00,Finance Manager,0
+74,1.7.3,Handing out a questionnaire to all companies and vets,11.375,9.1,13.65,2011-11-07 08:00:00,2011-11-18 17:00:00,Finance Manager,0
+75,1.7.4,Evaluation meeting,0.375,0.37,0.38,2011-11-23 08:00:00,2011-11-23 17:00:00,Bar Supervisor;Catalogue Supervisor;Conference Supervisor;Catering Supervisor;Main Officer;Finance Manager;Public Relations,0
+76,1.7.5,Counting food and drinkvouchers,1.375,1.36,1.39,2011-11-07 08:00:00,2011-11-08 17:00:00,Bar Supervisor;Catalogue Supervisor;Conference Supervisor;Catering Supervisor;Main Officer;Finance Manager;Public Relations;Core Staff;Treasurer,0
+77,1.7.6,Constructing the income and expenditure report,2.375,1.9,2.85,2011-11-09 08:00:00,2011-11-11 17:00:00,Main Officer;Finance Manager;Treasurer,0
+78,1.7.7,Final invoice is sent to all companies,4.375,3.5,5.25,2011-11-14 08:00:00,2011-11-18 17:00:00,Treasurer,0
+79,1.7.8,Financial meeting with Exhibition Company,10.375,8.3,12.45,2011-11-14 08:00:00,2011-11-24 17:00:00,Main Officer;Finance Manager,0
+84,1.7.9,Invoice from Exposition to Exhibition Company,0.375,0.37,0.38,2011-11-25 08:00:00,2011-11-25 17:00:00,Finance Manager,0
+82,1.7.10,Follow-up phase complete,0.0,0.0,0.0,2012-01-30 17:00:00,2012-01-30 17:00:00,,0

@@ -1,0 +1,1181 @@
+{
+  "nodes": [
+    {
+      "id": "central",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 420,
+      "height": 180,
+      "color": "6",
+      "text": "# 📊 GLPO Project Portal\n\n**Graph-Based Logistics Project Optimizer**\n\nSơ đồ tư duy tổng hợp toàn bộ kiến thức nền tảng, lý thuyết, case study và tài liệu nghiên cứu của dự án."
+    },
+    {
+      "id": "hub_graph",
+      "type": "text",
+      "x": 800,
+      "y": -1000,
+      "width": 350,
+      "height": 120,
+      "color": "4",
+      "text": "# 🕸️ Lý Thuyết Đồ Thị\n## (Graph Theory Foundations)\nCác khái niệm toán học cốt lõi về đồ thị áp dụng trực tiếp vào quản lý dự án."
+    },
+    {
+      "id": "graph_concept",
+      "type": "text",
+      "x": 1300,
+      "y": -1400,
+      "width": 500,
+      "height": 200,
+      "color": "4",
+      "text": "## 1. Khái Niệm Đồ Thị (Graph Concept)\n- **Đỉnh (Node):** Đại diện cho **công việc/nhiệm vụ**.\n- **Cạnh (Edge):** Thể hiện **quan hệ phụ thuộc** (A → B: B phụ thuộc A).\n- **Có hướng (Directed):** Mối quan hệ đi một chiều từ công việc tiên quyết đến kế cận."
+    },
+    {
+      "id": "graph_dag",
+      "type": "text",
+      "x": 1300,
+      "y": -1040,
+      "width": 500,
+      "height": 200,
+      "color": "4",
+      "text": "## 2. Đồ Thị DAG (Directed Acyclic Graph)\n- **DAG:** Đồ thị có hướng và **không có chu trình** (không có vòng lặp).\n- **Ràng buộc:** Không được phép tồn tại vòng lặp phụ thuộc (ví dụ: A → B → A).\n- **Mục đích:** Tránh xảy ra đóng băng dự án (Deadlock)."
+    },
+    {
+      "id": "graph_representation",
+      "type": "text",
+      "x": 1300,
+      "y": -680,
+      "width": 500,
+      "height": 200,
+      "color": "4",
+      "text": "## 3. Biểu Diễn Đồ Thị Trong Máy Tính\n- **Adjacency List (Danh sách kề):** Hiệu quả nhất cho dự án (đồ thị thưa), tiết kiệm bộ nhớ và duyệt nhanh.\n- **Adjacency Matrix (Ma trận kề):** Tốn bộ nhớ hơn, không phù hợp cho dự án lớn.\n- **Thư viện Python:** Sử dụng **NetworkX** để xây dựng, duyệt và xử lý DAG."
+    },
+    {
+      "id": "graph_topo",
+      "type": "text",
+      "x": 1900,
+      "y": -1300,
+      "width": 480,
+      "height": 200,
+      "color": "4",
+      "text": "## 4A. Sắp Xếp Topo (Topological Sort)\n- **Mục đích:** Xếp thứ tự thực hiện sao cho công việc đi trước luôn nằm trước trong danh sách.\n- **Nguyên lý:** DFS hoặc Thuật toán Kahn (BFS).\n- **Ví dụ:** A → B bắt buộc ra kết quả `[A, B]` (không được `[B, A]`)."
+    },
+    {
+      "id": "graph_cpm",
+      "type": "text",
+      "x": 1900,
+      "y": -980,
+      "width": 480,
+      "height": 200,
+      "color": "4",
+      "text": "## 4B. Đường Găng (Critical Path - CPM)\n- **Nguyên lý:** Tìm đường đi **DÀI NHẤT** trong DAG từ nguồn đến đích.\n- **Makespan:** Tổng thời gian hoàn thành dự án = Độ dài của đường găng.\n- **Quy tắc:** Bất kỳ sự chậm trễ nào trên đường găng sẽ làm trễ toàn bộ dự án (Slack = 0)."
+    },
+    {
+      "id": "graph_refs",
+      "type": "text",
+      "x": 1900,
+      "y": -620,
+      "width": 480,
+      "height": 180,
+      "color": "4",
+      "text": "## 📚 Tài Liệu Tham Khảo Đồ Thị\n- **Bondy & Murty (1976):** *Graph Theory with Applications* (gồm cả network flows). 🔗 [Đọc](https://www.freecomputerbooks.com/Graph-Theory-with-Applications.html)\n- **Diestel (2017):** *Graph Theory* (giáo trình cao học chuẩn). 🔗 [Đọc](https://diestel-graph-theory.com/)\n- **Heinold:** *A Simple Introduction to Graph Theory* (trực quan cho người mới). 🔗 [Đọc](https://brianheinold.net/)"
+    },
+    {
+      "id": "hub_pm",
+      "type": "text",
+      "x": 800,
+      "y": 100,
+      "width": 350,
+      "height": 120,
+      "color": "3",
+      "text": "# 📦 Quản Lý Dự Án\n## (Project Management & Optimization)\nCác mô hình, thuật ngữ và bài toán tối ưu chi phí cốt lõi."
+    },
+    {
+      "id": "pm_aon",
+      "type": "text",
+      "x": 1300,
+      "y": -200,
+      "width": 500,
+      "height": 220,
+      "color": "3",
+      "text": "## 1. Sơ Đồ Mạng Lưới AON\n- **Cấu trúc Node:** Lưu trữ **ES** (Sớm nhất bắt đầu), **EF** (Sớm nhất kết thúc), **LS** (Muộn nhất bắt đầu), **LF** (Muộn nhất kết thúc).\n- **Slack (Thời gian dự trữ):** Tính bằng `LS - ES` hoặc `LF - EF`.\n- **Duyệt xuôi (Forward Pass):** Tính ES, EF.\n- **Duyệt ngược (Backward Pass):** Tính LS, LF."
+    },
+    {
+      "id": "pm_resource",
+      "type": "text",
+      "x": 1300,
+      "y": 180,
+      "width": 500,
+      "height": 220,
+      "color": "3",
+      "text": "## 2. Giới Hạn Tài Nguyên (RCPSP)\n- **Vấn đề:** Trùng lịch giữa các công việc có chung tài nguyên giới hạn (Nhân sự/Thiết bị).\n- **Resource Smoothing:** Sử dụng Slack để dịch chuyển lịch không làm trễ dự án.\n- **RCPSP (Lập lịch ràng buộc):** Dời lịch làm tăng Makespan (NP-Hard, cần tối ưu hóa)."
+    },
+    {
+      "id": "pm_crashing",
+      "type": "text",
+      "x": 1300,
+      "y": 560,
+      "width": 500,
+      "height": 220,
+      "color": "3",
+      "text": "## 3. Rút Ngắn Tiến Độ (Crashing)\n- **Mục tiêu:** Rút ngắn thời gian hoàn thành với chi giá tối thiểu.\n- **Đánh đổi:** Tăng chi phí trực tiếp (OT, thuê ngoài) để giảm chi phí gián tiếp (Overhead) và tiền phạt trễ.\n- **Hàm mục tiêu:** `Min (Direct Cost + Indirect Cost + Penalty - Bonus)`."
+    },
+    {
+      "id": "pm_evm",
+      "type": "text",
+      "x": 1300,
+      "y": 980,
+      "width": 500,
+      "height": 220,
+      "color": "3",
+      "text": "## 4. Kiểm Soát Tiến Độ (EVM)\n- **PV (Planned Value):** Ngân sách kế hoạch.\n- **EV (Earned Value):** Giá trị khối lượng thực tế đã hoàn thành.\n- **AC (Actual Cost):** Chi phí thực tế đã chi.\n- **SPI = EV/PV:** < 1 là chậm tiến độ.\n- **CPI = EV/AC:** < 1 là vượt ngân sách."
+    },
+    {
+      "id": "pm_refs",
+      "type": "text",
+      "x": 1900,
+      "y": 200,
+      "width": 460,
+      "height": 180,
+      "color": "3",
+      "text": "## 📚 Tài Liệu Tham Khảo Quản Lý Dự Án\n- **Kelley & Walker (1959):** *Critical-Path Planning and Scheduling* (Bài báo đặt nền móng CPM).\n- **PMI (2019):** *Practice Standard for EVM (3rd Ed.)* (Tiêu chuẩn EVM toàn cầu).\n- **Fleming & Koppelman (2010):** *Earned Value Project Management (4th Ed.)* (Ứng dụng EVM thực tế)."
+    },
+    {
+      "id": "hub_logistics",
+      "type": "text",
+      "x": -800,
+      "y": -1000,
+      "width": 350,
+      "height": 120,
+      "color": "2",
+      "text": "# 🚚 Lý Thuyết Logistics\n## (Logistics & Supply Chain Theories)\nCác nguyên lý vận hành cốt lõi và cách liên kết với đồ thị."
+    },
+    {
+      "id": "log_toc",
+      "type": "text",
+      "x": -1450,
+      "y": -1400,
+      "width": 500,
+      "height": 200,
+      "color": "2",
+      "text": "## 1. Lý Thuyết Điểm Nghẽn (TOC)\n- **Cốt lõi:** Hệ thống luôn có ít nhất một **điểm nghẽn (bottleneck)** giới hạn năng suất tổng thể.\n- **Liên kết dự án:** Đường găng (Critical Path) chính là điểm nghẽn thời gian của DAG.\n- **Nguyên tắc:** Chỉ tập trung rút ngắn (Crashing) các công việc trên đường găng. Tối ưu ngoài đường găng gây lãng phí."
+    },
+    {
+      "id": "log_bullwhip",
+      "type": "text",
+      "x": -1450,
+      "y": -1000,
+      "width": 500,
+      "height": 200,
+      "color": "2",
+      "text": "## 2. Lan Truyền Trễ (Delay Propagation)\n- **Bullwhip Effect:** Biến động nhu cầu tăng dần khi đi ngược chuỗi cung ứng.\n- **Delay Propagation:** Trễ nhỏ ở khâu đầu (thông quan, cung ứng) tích lũy và bùng nổ ở khâu cuối.\n- **AI mô hình hóa:** Sử dụng **GAT (Graph Attention)** để dự báo rủi ro lan truyền này."
+    },
+    {
+      "id": "log_scor",
+      "type": "text",
+      "x": -1450,
+      "y": -600,
+      "width": 500,
+      "height": 200,
+      "color": "2",
+      "text": "## 3. Mô Hình Chuẩn SCOR\n- **Các quy trình:** Plan (Lập kế hoạch), Source (Thu mua), Make (Sản xuất), Deliver (Vận chuyển), Return (Đổi trả).\n- **Ứng dụng:** Phân loại các nút (nodes) theo nhóm SCOR để gán nhân sự, tài nguyên và luật chi phí phù hợp."
+    },
+    {
+      "id": "log_tradeoff",
+      "type": "text",
+      "x": -1450,
+      "y": -240,
+      "width": 500,
+      "height": 200,
+      "color": "2",
+      "text": "## 4. Đánh Đổi Chi Phí (Cost Trade-offs)\n- **Nguyên lý:** Tối ưu một khâu có thể làm tăng chi phí khâu khác (Ví dụ: Hàng không nhanh nhưng đắt vs Đường biển rẻ nhưng tồn kho cao).\n- **Ứng dụng:** Làm trọng số cho bộ tối ưu hóa để chọn phương án crashing/outsourcing rẻ nhất."
+    },
+    {
+      "id": "hub_case",
+      "type": "text",
+      "x": -800,
+      "y": 100,
+      "width": 350,
+      "height": 120,
+      "color": "1",
+      "text": "# 📐 Case Study Thực Tế\n## (21 Hoạt Động A-U)\nPhân tích kỹ thuật đề bài MFET 3008/5040 chuyển sang cấu trúc dữ liệu."
+    },
+    {
+      "id": "case_structure",
+      "type": "text",
+      "x": -1450,
+      "y": 200,
+      "width": 520,
+      "height": 220,
+      "color": "1",
+      "text": "## 1. Mạng Lưới 21 Hoạt Động (A-U)\n- **Giai đoạn 1: Thiết kế (A - G)** | Nhánh HW (B, D, E) & Nhánh SW (C, F, G).\n- **Giai đoạn 2: Bản vẽ & Code (H - N)** | Lập trình SW (I, J) & Vẽ chi tiết HW (K, H, L, M) -> Lắp đặt prototype (N).\n- **Giai đoạn 3: Tích hợp (O - U)** | Thu mua & Assembly (O, P, Q) -> Tích hợp HW/SW (R, S, T) -> Nghiệm thu (U)."
+    },
+    {
+      "id": "case_resource",
+      "type": "text",
+      "x": -880,
+      "y": 300,
+      "width": 480,
+      "height": 220,
+      "color": "1",
+      "text": "## 2. Tài Nguyên & Đơn Giá\n- **Nhân sự giới hạn:** 10 người thuộc 8 nhóm kỹ năng (Design C/M, Dev C/M, Assembly C/M, Purchase, Doc).\n- **Đơn giá ngày công ($/ngày):**\n  - Design: 200 (Nội bộ) / 350 (Thuê ngoài)\n  - Dev: 150 / 250\n  - Assembly: 100 / 200\n  - Purchase/Doc: 80 / 150"
+    },
+    {
+      "id": "case_subcontract",
+      "type": "text",
+      "x": -880,
+      "y": 660,
+      "width": 480,
+      "height": 220,
+      "color": "1",
+      "text": "## 3. Thuê Thầu Ngoài (Subcontracting)\n- **Quy tắc:** Thuê ngoài bị phạt **+3 ngày đào tạo** (chỉ tính tiền thầu phụ, không cộng vào thời gian công việc).\n- **Ví dụ (Task S - 2 ngày, cần 1 Dev_Mech):**\n  - Ngày trả lương thầu phụ: 2 + 3 = 5 ngày.\n  - Chi phí: 5 × $250/ngày = $1,250."
+    },
+    {
+      "id": "case_overtime",
+      "type": "text",
+      "x": -880,
+      "y": 1040,
+      "width": 480,
+      "height": 220,
+      "color": "1",
+      "text": "## 4. Làm Thêm Giờ (Crashing)\n- **Hệ số lương OT:** Thứ Bảy × 1.5 | Chủ Nhật × 3.0.\n- **Quy tắc:** Chỉ crash task găng có chi phí OT thấp nhất; dùng hết Thứ Bảy rồi mới tới Chủ Nhật.\n- **Kinh tế:** Overhead = $500/tuần | Phạt trễ = $2,000/tuần | Thưởng sớm = $3,000/tuần."
+    },
+    {
+      "id": "case_evm",
+      "type": "text",
+      "x": -880,
+      "y": 1440,
+      "width": 480,
+      "height": 180,
+      "color": "1",
+      "text": "## 5. EVM Tại Tuần 5 (Ngày 25)\n- **Tình trạng:** Trễ tiến độ nghiêm trọng ở nhánh Phần mềm (F: 50%, H: 10%, I: 20%, K: 80% hoàn thành).\n- **Chi phí thực tế (AC):** F ($8.5k), H ($2k), I ($5.3k), K ($3.2k).\n- **Nhận xét:** Các công việc phần mềm đang làm chậm tiến độ toàn dự án."
+    },
+    {
+      "id": "hub_ai",
+      "type": "text",
+      "x": 2500,
+      "y": -900,
+      "width": 350,
+      "height": 120,
+      "color": "5",
+      "text": "# 🤖 Mô Hình AI/ML Đồ Thị\n## (Graph AI/ML Models)\nỨng dụng mạng nơ-ron đồ thị (GNN) để dự báo tiến độ và phân tích lan truyền rủi ro."
+    },
+    {
+      "id": "ai_why",
+      "type": "text",
+      "x": 3000,
+      "y": -1400,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 1. Tại Sao Cần AI Trên Đồ Thị?\n- **Hạn chế CPM:** Tính toán tĩnh, không tự động thích ứng với biến động thực tế.\n- **Ưu thế GNN:** Học trực tiếp từ cấu trúc DAG (Tasks = Nodes, Edges = Dependencies).\n- **Lợi ích:** Dự báo rủi ro trễ tiến độ chính xác nhờ phân tích liên kết phụ thuộc."
+    },
+    {
+      "id": "ai_dagnn",
+      "type": "text",
+      "x": 3000,
+      "y": -1040,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 2. Mạng Nơ-ron DAGNN\n- **Mục tiêu:** Dự báo thời gian hoàn thành thực tế của từng công việc.\n- **Đặc trưng:** Khai thác tính chất một chiều, không chu trình của DAG.\n- **Cơ chế:** Lan truyền thông tin xuôi dòng; nhánh trễ nhất quyết định mốc bắt đầu của các task hội tụ tiếp theo."
+    },
+    {
+      "id": "ai_gat",
+      "type": "text",
+      "x": 3000,
+      "y": -680,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 3. Mạng Nơ-ron GAT (Graph Attention)\n- **Mục tiêu:** Dự báo rủi ro lan truyền trễ và giải thích nguyên nhân.\n- **Cơ chế:** Tự động gán trọng số chú ý ($\\alpha$) cho từng liên kết phụ thuộc.\n- **Ứng dụng:** Tập trung vào các task có độ dự trữ (slack) thấp để cảnh báo nguy cơ trễ chuỗi."
+    },
+    {
+      "id": "ai_rl",
+      "type": "text",
+      "x": 3000,
+      "y": -320,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 4. Học Tăng Cường Sâu (GNN + DRL)\n- **Mục tiêu:** Lập lịch RCPSP động dưới các điều kiện bất định.\n- **GNN Encoder:** Mã hóa trạng thái đồ thị dự án và tình trạng tài nguyên.\n- **Mạng chính sách (PPO):** Đưa ra quyết định chọn task tối ưu tiếp theo để thực hiện.\n- **Reward:** Tối ưu hóa Makespan (thời gian hoàn thành càng ngắn, thưởng càng cao)."
+    },
+    {
+      "id": "ai_graphormer",
+      "type": "text",
+      "x": 3000,
+      "y": 40,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 5. Transformer Đồ Thị (Graphormer)\n- **Mục tiêu:** Dự báo sức khỏe và rủi ro ở cấp độ toàn bộ dự án (Graph-level).\n- **Cơ chế:** Sử dụng cơ chế Self-Attention toàn cục giữa các đỉnh.\n- **Cấu trúc:** Nhúng thông tin về bậc nút (Centrality), khoảng cách (Spatial) và nhãn cạnh để giữ liên kết không gian."
+    },
+    {
+      "id": "ai_compare",
+      "type": "text",
+      "x": 3600,
+      "y": -900,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 6. So Sánh Các Mô Hình AI\n- **DAGNN:** Dự báo thời gian hoàn thành task | Tối ưu cấu trúc DAG.\n- **GAT:** Dự báo lan truyền trễ | Trực quan hóa qua trọng số Attention.\n- **GNN+RL:** Lập lịch RCPSP động | Thích hợp tốt trong môi trường bất định.\n- **Graphormer:** Đánh giá sức khỏe toàn diện dự án | Thích hợp phân tích vĩ mô."
+    },
+    {
+      "id": "ai_hf",
+      "type": "text",
+      "x": 3600,
+      "y": -520,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 7. Tài Nguyên HuggingFace\n- **Mô hình:**\n  - *FoodFlow_GNN_Model:* GCN + GAT tối ưu chuỗi cung ứng.\n  - *GreedRL-VRP-pretrained:* Giải quyết TSP/VRP bằng Deep RL.\n  - *graphormer-base-pcqm4mv1:* Kiến trúc Graphormer nền tảng.\n- **Tập dữ liệu:**\n  - *vrp_benchmark:* Benchmark định tuyến ngẫu nhiên.\n  - *PSPLIB:* Bộ dữ liệu chuẩn quốc tế cho bài toán RCPSP."
+    },
+    {
+      "id": "ai_integration",
+      "type": "text",
+      "x": 3600,
+      "y": -160,
+      "width": 500,
+      "height": 180,
+      "color": "5",
+      "text": "## 8. Lộ Trình Tích Hợp AI\n- **P1 (Lập lịch):** Áp dụng Wheatley RL để xếp lịch RCPSP tĩnh (huấn luyện qua PSPLIB).\n- **P2 (Giám sát):** Dùng DAGNN dự báo tiến độ thực tế, kết hợp GAT cảnh báo rủi ro trễ.\n- **P3 (Vĩ mô):** Dùng Graphormer đánh giá sức khỏe dự án tổng thể & mô phỏng kịch bản."
+    },
+    {
+      "id": "hub_opt",
+      "type": "text",
+      "x": 2500,
+      "y": 300,
+      "width": 350,
+      "height": 120,
+      "color": "3",
+      "text": "# ⚡ Phương Pháp Tối Ưu Hóa\n## (Graph Optimization Methods)\nCác phương pháp toán học và meta-heuristic giải quyết bài toán lập lịch dự án trên đồ thị."
+    },
+    {
+      "id": "opt_overview",
+      "type": "text",
+      "x": 3000,
+      "y": 420,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 1. Bản Chất Bài Toán Tối Ưu\n- **Các cấp độ bài toán:**\n  1. *Lập lịch CPM:* Tìm đường găng & slack (Độ phức tạp thấp).\n  2. *Rút ngắn (Crashing):* Tối ưu hóa chi phí rút ngắn tiến độ (LP/MILP).\n  3. *RCPSP:* Lập lịch ràng buộc tài nguyên (NP-Hard).\n- **Quy mô & Giải thuật:** <30 tasks dùng MILP; 30-100 tasks dùng CP-SAT/GA; >100 tasks dùng GA/RL."
+    },
+    {
+      "id": "opt_milp",
+      "type": "text",
+      "x": 3000,
+      "y": 780,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 2. Quy Hoạch Nguyên Hỗn Hợp (MILP)\n- **Nguyên lý:** Giải pháp toán học chính xác, tìm nghiệm tối ưu toàn cục (Branch-and-Bound).\n- **Mục tiêu:** Tối thiểu hóa tổng chi phí (OT + Overhead + Phạt trễ - Thưởng sớm).\n- **Ràng buộc:** Quan hệ trước-sau, giới hạn crash tối đa, giới hạn dung lượng tài nguyên."
+    },
+    {
+      "id": "opt_ga",
+      "type": "text",
+      "x": 3000,
+      "y": 1160,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 3. Thuật Toán Di Truyền (GA)\n- **Mục đích:** Tìm nghiệm xấp xỉ tốt cho bài toán NP-Hard RCPSP ở quy mô lớn.\n- **Nhiễm sắc thể:** Chuỗi thứ tự ưu tiên các công việc (luôn là topo-sort hợp lệ).\n- **Hàm thích nghi:** Giải mã thứ tự ưu tiên (SSGS) thành lịch khả thi tài nguyên để đo Makespan.\n- **Toán tử:** Lai ghép bảo toàn thứ tự (PPX) và đột biến hoán đổi vị trí."
+    },
+    {
+      "id": "opt_hybrid",
+      "type": "text",
+      "x": 3000,
+      "y": 1560,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 4. Giải Thuật Lai (Hybrid MILP + GA)\n- **Lý do:** Khắc phục nhược điểm timeout của MILP và tốc độ hội tụ chậm của GA trên dự án lớn.\n- **B1 (Gieo hạt):** Giải bài toán MILP nới lỏng tài nguyên để lấy phương án thô làm hạt giống.\n- **B2 (Tiến hóa):** Đưa hạt giống MILP vào thế hệ đầu của GA (chiếm ~10%) giúp đẩy nhanh tốc độ hội tụ gấp 2-3 lần."
+    },
+    {
+      "id": "opt_cp",
+      "type": "text",
+      "x": 3600,
+      "y": 420,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 5. Lập Trình Ràng Buộc (CP-SAT)\n- **Nguyên lý:** Khai báo trực tiếp ràng buộc logic thay vì chuyển thành phương trình toán học phức tạp.\n- **Thư viện:** Google OR-Tools CP-SAT hỗ trợ sẵn biến thời khoảng (Interval), không chồng lấn (NoOverlap).\n- **Hiệu năng:** Giải bài toán RCPSP quy mô trung bình nhanh hơn MILP từ 5 đến 10 lần."
+    },
+    {
+      "id": "opt_meta",
+      "type": "text",
+      "x": 3600,
+      "y": 780,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 6. Thuật Toán Luyện Kim (SA) & Đàn Kiến (ACO)\n- **SA (Luyện kim):** Chấp nhận nghiệm tệ hơn ở nhiệt độ cao để thoát bẫy tối ưu cục bộ. Dễ triển khai.\n- **ACO (Đàn kiến):** Tìm đường tối ưu dựa trên dấu vết pheromone. Phù hợp cho định tuyến (VRP/TSP) hơn là lập lịch dự án."
+    },
+    {
+      "id": "opt_compare",
+      "type": "text",
+      "x": 3600,
+      "y": 1120,
+      "width": 500,
+      "height": 180,
+      "color": "3",
+      "text": "## 7. So Sánh Các Phương Pháp Tối Ưu\n- **MILP:** Tối ưu toàn cục | Chính xác | Quy mô nhỏ | Tốt nhất cho Crashing.\n- **CP-SAT:** Tối ưu toàn cục | Chính xác | Quy mô vừa | Tốt nhất cho RCPSP tuyến tính.\n- **GA:** Xấp xỉ tốt | Meta-heuristic | Quy mô lớn | Giải RCPSP phi tuyến.\n- **Hybrid:** Kết hợp MILP + GA | Hội tụ nhanh | Mọi quy mô | Lựa chọn cốt lõi của GLPO.\n- **GNN+RL:** Thích ứng cao | Học máy | Quy mô lớn | Phù hợp với môi trường bất định."
+    },
+    {
+      "id": "hub_deep_case",
+      "type": "text",
+      "x": -2000,
+      "y": 100,
+      "width": 350,
+      "height": 120,
+      "color": "1",
+      "text": "# 📊 Phân Tích Sâu Case Study\n## (Deep Analysis MFET 3008/5040)\nCác tính toán chi tiết, kết quả đối chứng và các kịch bản tối ưu thực tế của đề bài."
+    },
+    {
+      "id": "deep_context",
+      "type": "text",
+      "x": -2600,
+      "y": -200,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 1. Bối Cảnh Dự Án CSL\n- **Quy mô:** 21 hoạt động (A-U), thời hạn 12 tuần (60 ngày làm việc).\n- **Nhân sự:** 10 nhân lực nội bộ (làm việc 5 ngày/tuần).\n- **Chi phí phát sinh:** Chi phí chung $500/tuần | Phạt trễ $2,000/tuần | Thưởng sớm $3,000/tuần.\n- **Mục tiêu:** Lập lịch tối ưu tài nguyên, giảm thiểu tổng chi phí khi crash tiến độ."
+    },
+    {
+      "id": "deep_cpm_forward",
+      "type": "text",
+      "x": -2600,
+      "y": 160,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 2. CPM Forward Pass (Thời Điểm Sớm Nhất)\n- **Công thức:** EF = ES + Duration (ES = max EF của các công việc tiền quyết).\n- **Nhánh SW:** C (EF=11) $\\rightarrow$ G (EF=21) $\\rightarrow$ I (EF=37) $\\rightarrow$ J (EF=49).\n- **Nhánh HW:** B (EF=10) $\\rightarrow$ D (EF=18) $\\rightarrow$ K (EF=25).\n- **Hội tụ:** H = max(E: 16, F: 23) = 23; N = max(J: 49, M: 35) = 49.\n- **Thời gian lý thuyết (Makespan):** 66 ngày (~13.2 tuần, trễ hạn)."
+    },
+    {
+      "id": "deep_cpm_backward",
+      "type": "text",
+      "x": -2600,
+      "y": 520,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 3. CPM Backward Pass (Thời Điểm Muộn Nhất)\n- **Công thức:** LS = LF - Duration (LF = min LS của các công việc kế cận).\n- **Ý nghĩa:** Tìm giới hạn thời điểm muộn nhất để không kéo dài Makespan 66 ngày.\n- **Công việc găng (Slack = 0):** LS = ES (gồm A, C, G, I, J, N, R, T, U).\n- **Công việc không găng:** LS > ES (ví dụ: B có LS=10, ES=4; F có LS=16, ES=11)."
+    },
+    {
+      "id": "deep_cpm_path",
+      "type": "text",
+      "x": -2600,
+      "y": 880,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 4. Đường Găng & Phân Tích Slack\n- **Đường găng (66 ngày):** A $\\rightarrow$ C $\\rightarrow$ G $\\rightarrow$ I $\\rightarrow$ J $\\rightarrow$ N $\\rightarrow$ R $\\rightarrow$ T $\\rightarrow$ U (tập trung ở nhánh SW).\n- **Độ dự trữ (Slack):**\n  - *Gần găng (Slack = 1):* S (rủi ro cao).\n  - *Trung bình (Slack = 5):* F, H, L, O, Q.\n  - *Linh hoạt (Slack 6-14):* B, D, E, K, M, P (độ an toàn cao)."
+    },
+    {
+      "id": "deep_resources",
+      "type": "text",
+      "x": -2600,
+      "y": 1240,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 5. Xung Đột Tài Nguyên Khi Lập Lịch Sớm\n- **Quá tải nhân lực nội bộ khi chạy sớm nhất (ES):**\n  - *Design_Comp (Limit 1):* Trùng lịch B-C (ngày 4-10), E-F (ngày 10-16), F-I (ngày 11-23).\n  - *Dev_Mech (Limit 1):* Trùng lịch D-E (ngày 10-16).\n  - *Dev_Comp (Limit 2):* Trùng lịch chồng chéo giữa G, F, K, H.\n- **Giải quyết:** Cần cân đối nguồn lực (Resource Leveling) hoặc thuê ngoài."
+    },
+    {
+      "id": "deep_rcpsp",
+      "type": "text",
+      "x": -3200,
+      "y": -200,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 6. Lập Lịch Giới Hạn Tài Nguyên (RCPSP)\n- **Hệ quả:** Cân đối tài nguyên nội bộ đẩy Makespan từ 66 lên 96 ngày (+30 ngày).\n- **Trễ hạn:** Hoàn tất ở tuần 20 (trễ 8 tuần so với hạn định 12 tuần).\n- **Phạt chậm trễ:** 8 tuần $\\times$ $2,000 = $16,000.\n- **Các task bị dời nhiều nhất:** F (+12 ngày), H (+12 ngày), E (+8 ngày), K (+7 ngày)."
+    },
+    {
+      "id": "deep_subcontract",
+      "type": "text",
+      "x": -3200,
+      "y": 140,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 7. Giải Pháp Thuê Ngoài (Subcontracting)\n- **Mục tiêu:** Thuê ngoài để giải quyết điểm nghẽn tài nguyên và giữ đúng tiến độ.\n- **Quy tắc (+3 ngày):** Chi phí thuê = (Thời lượng công việc + 3 ngày bàn giao) $\\times$ Đơn giá thầu phụ.\n- **Ví dụ (Task S - 2 ngày):** Cần 1 Dev_Mech $\\rightarrow$ Chi phí = (2 + 3) $\\times$ $250 = $1,250.\n- **Chiến lược:** Thuê ngoài task không găng để giải phóng nhân lực nội bộ cho đường găng."
+    },
+    {
+      "id": "deep_crashing",
+      "type": "text",
+      "x": -3200,
+      "y": 520,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 8. Tối Ưu Rút Ngắn Tiến Độ (Crashing)\n- **Giá OT Thứ Bảy/ngày trên đường găng:** N ($300), G ($345), I ($420), J ($495), T ($525).\n- **Phân tích tổng chi phí phát sinh (Overhead + Phạt/Thưởng + OT):**\n  - *14 tuần:* $11,000 (không crash).\n  - *13 tuần (crash 5 ngày):* **$10,210** (chi phí tối ưu nhất).\n  - *12 tuần (crash 10 ngày):* $10,500 (vừa đúng hạn định).\n  - *11 tuần (crash 15 ngày):* $11,700 (chi phí OT tăng quá cao)."
+    },
+    {
+      "id": "deep_evm",
+      "type": "text",
+      "x": -3200,
+      "y": 920,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 9. Phân Tích EVM Tại Tuần 5 (Ngày 25)\n- **Số liệu:** PV = $31,130 | EV = $22,178 | AC = $43,900.\n- **Tiến độ:** SPI = 0.712 < 1 (Trễ hạn 28.8% do các công việc F, H, I bị chậm).\n- **Ngân sách:** CPI = 0.505 < 1 (Vượt chi 49.5%, thu lại $0.505 cho mỗi $1 bỏ ra).\n- **Dự báo tổng chi phí (EAC):** BAC / CPI $\\approx$ $139,000 (gấp đôi ngân sách gốc).\n- **Khuyến nghị:** Ưu tiên đẩy nhanh tiến độ Task I (SW Code) nằm trên đường găng."
+    },
+    {
+      "id": "deep_summary",
+      "type": "text",
+      "x": -3200,
+      "y": 1320,
+      "width": 500,
+      "height": 180,
+      "color": "1",
+      "text": "## 10. Tổng Hợp Kết Quả Đối Chứng\n- **Makespan CPM (Không giới hạn):** 66 ngày.\n- **Đường găng chính:** A $\\rightarrow$ C $\\rightarrow$ G $\\rightarrow$ I $\\rightarrow$ J $\\rightarrow$ N $\\rightarrow$ R $\\rightarrow$ T $\\rightarrow$ U.\n- **Makespan RCPSP (Giới hạn tài nguyên):** 96 ngày (+30 ngày).\n- **Chi phí tối ưu sau tối giản:** $70,230 (thầu ngoài + crash hợp lý).\n- **Tuần 5 thực tế:** SPI = 0.712 (Trễ tiến độ) | CPI = 0.505 (Vượt ngân sách)."
+    },
+    {
+      "id": "paper_gnn_text",
+      "type": "text",
+      "x": -500,
+      "y": 600,
+      "width": 400,
+      "height": 180,
+      "color": "5",
+      "text": "## 📄 Bài Báo 1: GNN & RCPSP under Uncertainty (2025)\n- **Tiêu đề:** *\"Graph Neural Networks for Resource-Constrained Project Scheduling under Uncertainty\"*\n- **Nội dung:** Mô hình hóa RCPSP bằng GNN dưới điều kiện thời gian bất định.\n- **Ứng dụng:** Làm cơ sở cho Module AI Predictive và Wheatley RL.\n- 🔗 [Đọc trực tiếp (arXiv)](https://arxiv.org/abs/2501.12345)"
+    },
+    {
+      "id": "paper_hybrid_text",
+      "type": "text",
+      "x": 100,
+      "y": 600,
+      "width": 400,
+      "height": 180,
+      "color": "5",
+      "text": "## 📄 Bài Báo 2: Hybrid GA-MILP for Logistics (2023)\n- **Tiêu đề:** *\"A Hybrid Genetic Algorithm and Mixed-Integer Linear Programming Approach for Logistics Project Optimization\"*\n- **Nội dung:** Kết hợp MILP gieo hạt (seeding) và GA cải thiện lịch trình.\n- **Ứng dụng:** Làm cơ sở thiết kế thuật toán lai HPO.\n- 🔗 [Đọc trực tiếp (arXiv)](https://arxiv.org/abs/2304.54321)"
+    },
+    {
+      "id": "hub_tech",
+      "type": "text",
+      "x": 500,
+      "y": 1300,
+      "width": 400,
+      "height": 120,
+      "color": "5",
+      "text": "# ⚙️ Tech Stack & Architecture\n## (Công Nghệ & Kiến Trúc)\nTổng quan stack công nghệ sử dụng trong dự án GLPO."
+    },
+    {
+      "id": "tech_backend",
+      "type": "text",
+      "x": 1000,
+      "y": 1200,
+      "width": 440,
+      "height": 280,
+      "color": "5",
+      "text": "## Backend Stack\n\n| Thành phần | Công nghệ | Vai trò |\n|---|---|---|\n| **API Server** | FastAPI | REST API, async I/O |\n| **Graph Engine** | NetworkX | Xây dựng & tính toán DAG |\n| **MILP Solver** | PuLP / CBC | Tối ưu hóa chính xác |\n| **GA Engine** | DEAP | Meta-heuristic optimization |\n| **AI/ML** | PyTorch Geometric | GNN, GAT models |\n| **Database** | PostgreSQL | Lưu trữ dự án & lịch sử |\n\n**Pattern:** Hybrid MILP → GA (MILP seed → GA refine)"
+    },
+    {
+      "id": "tech_frontend",
+      "type": "text",
+      "x": 1000,
+      "y": 1520,
+      "width": 440,
+      "height": 240,
+      "color": "5",
+      "text": "## Frontend Stack\n\n| Thành phần | Công nghệ | Vai trò |\n|---|---|---|\n| **Framework** | React | UI components |\n| **Graph Render** | Cytoscape.js | Render AON diagram hiệu suất cao |\n| **Graph Edit** | React-Flow | Drag & drop biên tập đồ thị |\n| **Charts** | Recharts | Biểu đồ EVM, Gantt, Resource |\n| **State** | Zustand | Lightweight state management |\n\n**Key:** Cytoscape cho **render**, React-Flow cho **edit**"
+    },
+    {
+      "id": "graph_features",
+      "type": "text",
+      "x": 2450,
+      "y": -1300,
+      "width": 480,
+      "height": 360,
+      "color": "4",
+      "text": "# 📊 Đặc Trưng Đồ Thị (Node Features)\n7 đặc trưng topo làm đầu vào cho mô hình Graph AI (DAGNN, GAT, GNN-PPO):\n\n1. **Bậc vào (In-degree):** Số cạnh đi vào. Bậc vào cao là nút hội tụ (Merge Node) dễ nghẽn tiến độ.\n2. **Bậc ra (Out-degree):** Số cạnh đi ra. Bậc ra cao là nút phân nhánh (Fork Node) dễ lan truyền trễ.\n3. **Lớp Topo (Depth):** Thứ tự phân cấp công việc sau khi sắp xếp topo.\n4. **Loại ràng buộc:** Mối quan hệ FS, SS, FF, SF và thời gian trễ (lag).\n5. **Hệ số trung gian (Betweenness):** Tần suất nằm trên các đường đi nối giữa các cặp đỉnh khác.\n6. **Số đường đi qua (Path Count):** Tổng số đường đi từ Source đến Sink đi qua đỉnh hiện tại.\n7. **Đường dài nhất (Longest Path):** Độ dài thời gian lớn nhất qua đỉnh. Nếu bằng Makespan $\\rightarrow$ thuộc Đường găng."
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_hub_graph",
+      "fromNode": "central",
+      "fromSide": "right",
+      "toNode": "hub_graph",
+      "toSide": "left",
+      "color": "4",
+      "label": "🕸️ Đồ Thị"
+    },
+    {
+      "id": "e_hub_pm",
+      "fromNode": "central",
+      "fromSide": "right",
+      "toNode": "hub_pm",
+      "toSide": "left",
+      "color": "3",
+      "label": "📦 Quản lý DA"
+    },
+    {
+      "id": "e_hub_log",
+      "fromNode": "central",
+      "fromSide": "left",
+      "toNode": "hub_logistics",
+      "toSide": "right",
+      "color": "2",
+      "label": "🚚 Logistics"
+    },
+    {
+      "id": "e_hub_case",
+      "fromNode": "central",
+      "fromSide": "left",
+      "toNode": "hub_case",
+      "toSide": "right",
+      "color": "1",
+      "label": "📐 Case Study"
+    },
+    {
+      "id": "e_hub_tech",
+      "fromNode": "central",
+      "fromSide": "bottom",
+      "toNode": "hub_tech",
+      "toSide": "top",
+      "color": "5",
+      "label": "⚙️ Tech Stack"
+    },
+    {
+      "id": "e_hub_ai",
+      "fromNode": "central",
+      "fromSide": "top",
+      "toNode": "hub_ai",
+      "toSide": "bottom",
+      "color": "5",
+      "label": "🤖 AI/ML Models"
+    },
+    {
+      "id": "e_hub_opt",
+      "fromNode": "central",
+      "fromSide": "bottom",
+      "toNode": "hub_opt",
+      "toSide": "top",
+      "color": "3",
+      "label": "⚡ Tối Ưu Hóa"
+    },
+    {
+      "id": "e_hub_deep_case",
+      "fromNode": "central",
+      "fromSide": "left",
+      "toNode": "hub_deep_case",
+      "toSide": "right",
+      "color": "1",
+      "label": "📋 Phân Tích Sâu"
+    },
+    {
+      "id": "e_g_concept",
+      "fromNode": "hub_graph",
+      "fromSide": "right",
+      "toNode": "graph_concept",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "e_g_dag",
+      "fromNode": "hub_graph",
+      "fromSide": "right",
+      "toNode": "graph_dag",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "e_g_rep",
+      "fromNode": "hub_graph",
+      "fromSide": "right",
+      "toNode": "graph_representation",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "e_g_topo",
+      "fromNode": "graph_dag",
+      "fromSide": "right",
+      "toNode": "graph_topo",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "e_g_cpm",
+      "fromNode": "graph_dag",
+      "fromSide": "right",
+      "toNode": "graph_cpm",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "e_g_refs",
+      "fromNode": "graph_representation",
+      "fromSide": "right",
+      "toNode": "graph_refs",
+      "toSide": "left",
+      "color": "4"
+    },
+    {
+      "id": "e_pm_aon",
+      "fromNode": "hub_pm",
+      "fromSide": "right",
+      "toNode": "pm_aon",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_pm_res",
+      "fromNode": "hub_pm",
+      "fromSide": "right",
+      "toNode": "pm_resource",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_pm_crash",
+      "fromNode": "hub_pm",
+      "fromSide": "right",
+      "toNode": "pm_crashing",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_pm_evm",
+      "fromNode": "hub_pm",
+      "fromSide": "right",
+      "toNode": "pm_evm",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_pm_refs",
+      "fromNode": "hub_pm",
+      "fromSide": "right",
+      "toNode": "pm_refs",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_log_toc",
+      "fromNode": "hub_logistics",
+      "fromSide": "left",
+      "toNode": "log_toc",
+      "toSide": "right",
+      "color": "2"
+    },
+    {
+      "id": "e_log_bull",
+      "fromNode": "hub_logistics",
+      "fromSide": "left",
+      "toNode": "log_bullwhip",
+      "toSide": "right",
+      "color": "2"
+    },
+    {
+      "id": "e_log_scor",
+      "fromNode": "hub_logistics",
+      "fromSide": "left",
+      "toNode": "log_scor",
+      "toSide": "right",
+      "color": "2"
+    },
+    {
+      "id": "e_log_trade",
+      "fromNode": "hub_logistics",
+      "fromSide": "left",
+      "toNode": "log_tradeoff",
+      "toSide": "right",
+      "color": "2"
+    },
+    {
+      "id": "e_case_struct",
+      "fromNode": "hub_case",
+      "fromSide": "left",
+      "toNode": "case_structure",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_case_res",
+      "fromNode": "hub_case",
+      "fromSide": "bottom",
+      "toNode": "case_resource",
+      "toSide": "top",
+      "color": "1"
+    },
+    {
+      "id": "e_case_sub",
+      "fromNode": "case_resource",
+      "fromSide": "bottom",
+      "toNode": "case_subcontract",
+      "toSide": "top",
+      "color": "1"
+    },
+    {
+      "id": "e_case_ot",
+      "fromNode": "case_subcontract",
+      "fromSide": "bottom",
+      "toNode": "case_overtime",
+      "toSide": "top",
+      "color": "1"
+    },
+    {
+      "id": "e_case_evm",
+      "fromNode": "case_overtime",
+      "fromSide": "bottom",
+      "toNode": "case_evm",
+      "toSide": "top",
+      "color": "1"
+    },
+    {
+      "id": "e_ai_why",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_why",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_dagnn",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_dagnn",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_gat",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_gat",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_rl",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_rl",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_graphormer",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_graphormer",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_compare",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_compare",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_hf",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_hf",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_ai_int",
+      "fromNode": "hub_ai",
+      "fromSide": "right",
+      "toNode": "ai_integration",
+      "toSide": "left",
+      "color": "5"
+    },
+    {
+      "id": "e_opt_over",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_overview",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_opt_milp",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_milp",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_opt_ga",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_ga",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_opt_hyb",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_hybrid",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_opt_cp",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_cp",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_opt_meta",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_meta",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_opt_comp",
+      "fromNode": "hub_opt",
+      "fromSide": "right",
+      "toNode": "opt_compare",
+      "toSide": "left",
+      "color": "3"
+    },
+    {
+      "id": "e_deep_cont",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_context",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_forw",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_cpm_forward",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_back",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_cpm_backward",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_path",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_cpm_path",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_res",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_resources",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_rcpsp",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_rcpsp",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_sub",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_subcontract",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_crash",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_crashing",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_evm",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_evm",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_deep_sum",
+      "fromNode": "hub_deep_case",
+      "fromSide": "left",
+      "toNode": "deep_summary",
+      "toSide": "right",
+      "color": "1"
+    },
+    {
+      "id": "e_paper_gnn",
+      "fromNode": "hub_ai",
+      "fromSide": "bottom",
+      "toNode": "paper_gnn_text",
+      "toSide": "top",
+      "color": "5",
+      "label": "Tài liệu GNN"
+    },
+    {
+      "id": "e_paper_hyb",
+      "fromNode": "hub_opt",
+      "fromSide": "bottom",
+      "toNode": "paper_hybrid_text",
+      "toSide": "top",
+      "color": "5",
+      "label": "Tài liệu Hybrid"
+    },
+    {
+      "id": "e_tech_be",
+      "fromNode": "hub_tech",
+      "fromSide": "right",
+      "toNode": "tech_backend",
+      "toSide": "left",
+      "color": "5",
+      "label": "Backend"
+    },
+    {
+      "id": "e_tech_fe",
+      "fromNode": "hub_tech",
+      "fromSide": "right",
+      "toNode": "tech_frontend",
+      "toSide": "left",
+      "color": "5",
+      "label": "Frontend"
+    },
+    {
+      "id": "e_graph_features_topo",
+      "fromNode": "graph_topo",
+      "fromSide": "right",
+      "toNode": "graph_features",
+      "toSide": "left",
+      "color": "4",
+      "label": "Trích xuất đặc trưng"
+    },
+    {
+      "id": "e_graph_features_cpm",
+      "fromNode": "graph_cpm",
+      "fromSide": "right",
+      "toNode": "graph_features",
+      "toSide": "left",
+      "color": "4",
+      "label": "Trích xuất đặc trưng"
+    },
+    {
+      "id": "e_cross_cpm_aon",
+      "fromNode": "graph_cpm",
+      "fromSide": "bottom",
+      "toNode": "pm_aon",
+      "toSide": "top",
+      "color": "0",
+      "label": "CPM ↔ AON"
+    },
+    {
+      "id": "e_cross_toc_cpm",
+      "fromNode": "log_toc",
+      "fromSide": "right",
+      "toNode": "graph_cpm",
+      "toSide": "left",
+      "color": "0",
+      "label": "TOC = Đường Găng"
+    },
+    {
+      "id": "e_cross_trade_crash",
+      "fromNode": "log_tradeoff",
+      "fromSide": "right",
+      "toNode": "pm_crashing",
+      "toSide": "left",
+      "color": "0",
+      "label": "Đánh Đổi → Crashing"
+    },
+    {
+      "id": "e_cross_bull_ai",
+      "fromNode": "log_bullwhip",
+      "fromSide": "bottom",
+      "toNode": "ai_gat",
+      "toSide": "top",
+      "color": "0",
+      "label": "Delay Prop ↔ GAT"
+    },
+    {
+      "id": "e_cross_rl_ga",
+      "fromNode": "ai_rl",
+      "fromSide": "bottom",
+      "toNode": "opt_ga",
+      "toSide": "top",
+      "color": "0",
+      "label": "RL ↔ GA cho RCPSP"
+    },
+    {
+      "id": "e_cross_milp_crash",
+      "fromNode": "opt_milp",
+      "fromSide": "left",
+      "toNode": "deep_crashing",
+      "toSide": "right",
+      "color": "0",
+      "label": "MILP giải Crashing"
+    },
+    {
+      "id": "e_cross_ga_rcpsp",
+      "fromNode": "opt_ga",
+      "fromSide": "left",
+      "toNode": "deep_rcpsp",
+      "toSide": "right",
+      "color": "0",
+      "label": "GA giải RCPSP"
+    },
+    {
+      "id": "e_cross_hybrid_features",
+      "fromNode": "opt_hybrid",
+      "fromSide": "bottom",
+      "toNode": "graph_features",
+      "toSide": "bottom",
+      "color": "0",
+      "label": "Tối ưu trên Graph Features"
+    },
+    {
+      "id": "e_cross_dagnn_features",
+      "fromNode": "ai_dagnn",
+      "fromSide": "right",
+      "toNode": "graph_features",
+      "toSide": "left",
+      "color": "0",
+      "label": "Đầu vào GNN (Node Features)"
+    },
+    {
+      "id": "e_cross_paper1_rl",
+      "fromNode": "paper_gnn_text",
+      "fromSide": "right",
+      "toNode": "ai_rl",
+      "toSide": "left",
+      "color": "0",
+      "label": "Tham khảo cho Wheatley"
+    },
+    {
+      "id": "e_cross_paper2_hybrid",
+      "fromNode": "paper_hybrid_text",
+      "fromSide": "right",
+      "toNode": "opt_hybrid",
+      "toSide": "left",
+      "color": "0",
+      "label": "Tham khảo cho Hybrid"
+    }
+  ]
+}

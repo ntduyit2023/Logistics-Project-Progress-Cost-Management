@@ -1,0 +1,13 @@
+source,target,type
+2,3,FS
+3,6,FS
+6,7,FS
+7,8,FS
+8,10,FS
+8,11,FS
+11,13,FS
+13,14,FS
+14,16,FS
+13,18,FS
+18,19,FS
+19,20,FS

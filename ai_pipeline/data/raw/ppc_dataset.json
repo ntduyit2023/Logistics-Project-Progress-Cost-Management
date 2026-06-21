@@ -1,0 +1,48 @@
+{
+  "project_name": "PPC Case Study MFET 3008",
+  "tasks": {
+    "A": { "name": "Architectural decisions", "duration": 4, "predecessors": [], "resources": {"Design_Comp": 1, "Design_Mech": 1} },
+    "B": { "name": "Hardware specifications", "duration": 6, "predecessors": ["A"], "resources": {"Design_Comp": 1, "Design_Mech": 1, "Dev_Mech": 1, "Assembly_Mech": 1} },
+    "C": { "name": "Software specifications", "duration": 7, "predecessors": ["A"], "resources": {"Design_Comp": 1, "Dev_Comp": 1, "Assembly_Comp": 1} },
+    "D": { "name": "Conveyor design", "duration": 8, "predecessors": ["B"], "resources": {"Design_Mech": 1, "Dev_Mech": 1} },
+    "E": { "name": "Hardware design", "duration": 6, "predecessors": ["B"], "resources": {"Design_Comp": 1, "Design_Mech": 1, "Dev_Mech": 1} },
+    "F": { "name": "Software design", "duration": 12, "predecessors": ["C"], "resources": {"Design_Comp": 1, "Dev_Comp": 1} },
+    "G": { "name": "Operating system documentation", "duration": 10, "predecessors": ["C"], "resources": {"Dev_Comp": 1, "Documentation": 1} },
+    "H": { "name": "Hardware detail drawings", "duration": 8, "predecessors": ["E", "F"], "resources": {"Dev_Comp": 1, "Dev_Mech": 1, "Documentation": 1} },
+    "I": { "name": "Software programming", "duration": 16, "predecessors": ["G"], "resources": {"Design_Comp": 1, "Documentation": 1} },
+    "J": { "name": "Software verification/testing", "duration": 12, "predecessors": ["I"], "resources": {"Dev_Comp": 1, "Assembly_Comp": 1, "Documentation": 1} },
+    "K": { "name": "Conveyor detailed drawings", "duration": 7, "predecessors": ["D"], "resources": {"Dev_Comp": 1, "Dev_Mech": 1, "Documentation": 1} },
+    "L": { "name": "Drawing verification/Minor integration", "duration": 9, "predecessors": ["H", "K"], "resources": {"Dev_Comp": 1, "Assembly_Comp": 1, "Assembly_Mech": 1} },
+    "M": { "name": "Prototype development", "duration": 4, "predecessors": ["H"], "resources": {"Dev_Comp": 1, "Dev_Mech": 1} },
+    "N": { "name": "Prototype installation", "duration": 7, "predecessors": ["J", "M"], "resources": {"Assembly_Comp": 1, "Assembly_Mech": 1} },
+    "O": { "name": "Hardware order/delivery", "duration": 7, "predecessors": ["L"], "resources": {"Dev_Mech": 1, "Purchase": 1} },
+    "P": { "name": "System Interface", "duration": 5, "predecessors": ["L"], "resources": {"Dev_Mech": 1, "Assembly_Mech": 1} },
+    "Q": { "name": "Hardware assembly", "duration": 4, "predecessors": ["O", "P"], "resources": {"Assembly_Comp": 1, "Assembly_Mech": 1} },
+    "R": { "name": "Hardware/software Integration", "duration": 5, "predecessors": ["N", "Q"], "resources": {"Dev_Comp": 1, "Dev_Mech": 1, "Assembly_Comp": 1, "Assembly_Mech": 1} },
+    "S": { "name": "Hardware/software documentation", "duration": 2, "predecessors": ["R"], "resources": {"Dev_Comp": 1, "Dev_Mech": 1, "Documentation": 1} },
+    "T": { "name": "System verification", "duration": 3, "predecessors": ["R"], "resources": {"Dev_Mech": 1, "Assembly_Comp": 1, "Assembly_Mech": 1} },
+    "U": { "name": "Acceptance test", "duration": 2, "predecessors": ["S", "T"], "resources": {"Assembly_Comp": 1, "Assembly_Mech": 1} }
+  },
+  "resources": {
+    "Design_Comp": { "capacity": 1, "internal_cost": 200, "external_cost": 350 },
+    "Design_Mech": { "capacity": 1, "internal_cost": 200, "external_cost": 350 },
+    "Dev_Comp": { "capacity": 2, "internal_cost": 150, "external_cost": 250 },
+    "Dev_Mech": { "capacity": 1, "internal_cost": 150, "external_cost": 250 },
+    "Assembly_Comp": { "capacity": 1, "internal_cost": 100, "external_cost": 200 },
+    "Assembly_Mech": { "capacity": 1, "internal_cost": 100, "external_cost": 200 },
+    "Purchase": { "capacity": 1, "internal_cost": 80, "external_cost": 150 },
+    "Documentation": { "capacity": 2, "internal_cost": 80, "external_cost": 150 }
+  },
+  "evm_week_5": {
+    "A": { "pv_pct": 100, "ev_pct": 100, "ac": 2400 },
+    "B": { "pv_pct": 100, "ev_pct": 100, "ac": 6500 },
+    "C": { "pv_pct": 100, "ev_pct": 100, "ac": 4300 },
+    "D": { "pv_pct": 100, "ev_pct": 100, "ac": 3500 },
+    "E": { "pv_pct": 100, "ev_pct": 100, "ac": 6100 },
+    "F": { "pv_pct": 100, "ev_pct": 50, "ac": 8500 },
+    "G": { "pv_pct": 100, "ev_pct": 100, "ac": 2100 },
+    "H": { "pv_pct": 100, "ev_pct": 10, "ac": 2000 },
+    "I": { "pv_pct": 100, "ev_pct": 20, "ac": 5300 },
+    "K": { "pv_pct": 100, "ev_pct": 80, "ac": 3200 }
+  }
+}

@@ -1,0 +1,15 @@
+node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
+0,1,WKB_Gannt chart,58.375,57.79,58.96,2018-09-03 08:00:00,2018-10-31 17:00:00,,220271
+12,1.1,Offering,43.375,42.94,43.81,2018-09-03 08:00:00,2018-10-16 17:00:00,,148667
+1,1.1.1,Implement best practices for market places (advice consultant),14.375,11.5,17.25,2018-09-03 08:00:00,2018-09-17 17:00:00,,14586
+2,1.1.2,Centralize all relevant data from different sources into  1 ONIX file to feed book.be/BDL.be,28.375,22.7,34.05,2018-09-03 08:00:00,2018-10-01 17:00:00,,51325
+3,1.1.3,ONIX file to feed EWINGS to generate the flexibility in business roles and channels,14.375,11.5,17.25,2018-10-02 08:00:00,2018-10-16 17:00:00,,28000
+4,1.1.4,Set up T&T (Bpost) to support Plaza contract @ Bol.com,8.375,6.7,10.05,2018-09-03 08:00:00,2018-09-11 17:00:00,,46800
+5,1.1.5,"Review contract with Bol.com (PLAZA, without stock) & other potential market places (Amazon)",7.375,5.9,8.85,2018-09-12 08:00:00,2018-09-19 17:00:00,,7956
+13,1.2,Order intake,58.375,57.79,58.96,2018-09-03 08:00:00,2018-10-31 17:00:00,,42432
+6,1.2.1,6. Use boek.be & EWINGS to consolidate orders in 1 order file into SAP,14.375,11.5,17.25,2018-10-17 08:00:00,2018-10-31 17:00:00,,14586
+7,1.2.2,Academic pricing – 50% as new standard price to avoid the need for Partnershop,18.375,14.7,22.05,2018-09-03 08:00:00,2018-09-21 17:00:00,,19890
+8,1.2.3,DQ matching after order intake,7.375,5.9,8.85,2018-09-03 08:00:00,2018-09-10 17:00:00,,7956
+14,1.3,Communication & logistics,27.375,27.1,27.65,2018-09-12 08:00:00,2018-10-09 17:00:00,,29172
+9,1.3.1,Increased UX in front end of e-shop (DSM UX refresh) to avoid abandoned carts & traffic obstacles,21.375,17.1,25.65,2018-09-18 08:00:00,2018-10-09 17:00:00,,21216
+11,1.3.2,Set up internal IF on T&T for CIC,7.375,5.9,8.85,2018-09-12 08:00:00,2018-09-19 17:00:00,,7956

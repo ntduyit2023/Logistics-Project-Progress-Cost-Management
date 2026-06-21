@@ -1,0 +1,27 @@
+node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
+0,1.0,Job Fair in Ghent,175.375,173.62,177.13,2018-04-02 08:00:00,2018-09-24 17:00:00,,34720
+1,1.1,Job Fair Date Planning,0.375,0.3,0.45,2018-04-02 08:00:00,2018-04-02 17:00:00,Maria Cunha Patricija Oreski,80
+2,1.2,Estimate the Budget,13.375,10.7,16.05,2018-04-03 08:00:00,2018-04-16 17:00:00,Maria Cunha Patricija Oreski,800
+3,1.3,Sponsorship Deals to be Prepared & Offered,20.375,16.3,24.45,2018-04-17 08:00:00,2018-05-07 17:00:00,Maria Cunha Patricija Oreski,1200
+4,1.4,Preparing the Company List to be Pursued,13.375,10.7,16.05,2018-04-03 08:00:00,2018-04-16 17:00:00,Madalena Malcata,600
+5,1.5,Job Fair Program Plan,6.375,5.1,7.65,2018-04-17 08:00:00,2018-04-23 17:00:00,Maria Cunha Patricija Oreski,400
+6,1.6,Authorisation & Decision Mechanism to be decided,0.375,0.3,0.45,2018-04-03 08:00:00,2018-04-03 17:00:00,Maria Cunha Patricija Oreski,80
+7,1.7,Make the contracts with sponsors,13.375,10.7,16.05,2018-05-08 08:00:00,2018-05-21 17:00:00,Maria Cunha Patricija Oreski,800
+8,1.8,Project Income/Expense Management,115.375,92.3,138.45,2018-05-22 08:00:00,2018-09-14 17:00:00,Francisco Agostinho,6720
+12,1.9,Invoice Management,132.375,105.9,158.85,2018-05-08 08:00:00,2018-09-17 17:00:00,Francisco Agostinho,7600
+14,1.1,Prepare the Final Financial Statement,6.375,5.1,7.65,2018-09-18 08:00:00,2018-09-24 17:00:00,Francisco Agostinho,400
+15,1.11,Booth Advertisement for companies,13.375,10.7,16.05,2018-07-03 08:00:00,2018-07-16 17:00:00,Madalena Malcata,600
+16,1.12,Prepare Advertisement Brochures,20.375,16.3,24.45,2018-07-03 08:00:00,2018-07-23 17:00:00,Madalena Malcata,900
+17,1.13,Prepare Billboard Advertisement,41.375,33.1,49.65,2018-07-03 08:00:00,2018-08-13 17:00:00,Madalena Malcata,1800
+18,1.14,Prepare Social Media Advertisements,13.375,10.7,16.05,2018-07-03 08:00:00,2018-07-16 17:00:00,Madalena Malcata,600
+19,1.15,Prepare the website,34.375,27.5,41.25,2018-05-22 08:00:00,2018-06-25 17:00:00,Pieter Claeys,3000
+20,1.16,Prepare the Registration System,29.375,23.5,35.25,2018-07-03 08:00:00,2018-08-01 17:00:00,Pieter Claeys,2640
+21,1.17,Prepare the Digital Advertisements,20.375,16.3,24.45,2018-07-17 08:00:00,2018-08-06 17:00:00,Kevin Vendelman,1800
+22,1.18,Contacting Companies,13.375,10.7,16.05,2018-08-07 08:00:00,2018-08-20 17:00:00,Madalena Malcata,600
+23,1.19,Renting the booths to companies,20.375,16.3,24.45,2018-08-21 08:00:00,2018-09-10 17:00:00,Madalena Malcata,900
+24,1.2,RFQ to the Convention Centers,13.375,10.7,16.05,2018-05-22 08:00:00,2018-06-04 17:00:00,Burak Simsek,600
+25,1.21,Deciding on the Convention Center,13.375,10.7,16.05,2018-06-05 08:00:00,2018-06-18 17:00:00,Burak Simsek,600
+26,1.22,Amount of food & beverages to be determined,2.375,1.9,2.85,2018-09-17 08:00:00,2018-09-19 17:00:00,Burak Simsek,180
+27,1.23,Layout of the Convention Center to be done,20.375,16.3,24.45,2018-06-19 08:00:00,2018-07-09 17:00:00,Maria Cunha Patricija Oreski,1200
+28,1.24,Company/Booth Matching according to the Layout,3.375,2.7,4.05,2018-09-11 08:00:00,2018-09-14 17:00:00,Maria Cunha Patricija Oreski,320
+29,1.25,"Maps,coupons and name tags for the participants to be printed",4.375,3.5,5.25,2018-09-17 08:00:00,2018-09-21 17:00:00,Burak Simsek,300

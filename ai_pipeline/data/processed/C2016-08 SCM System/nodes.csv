@@ -1,0 +1,148 @@
+node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
+0,1,SCM System,1012.375,1002.25,1022.5,2010-10-04 08:00:00,2013-07-12 17:00:00,,375253.343053818
+1,1.1,Project has started,2.625,2.1,3.15,2010-10-04 08:00:00,2010-10-01 17:00:00,,0.0
+127,1.2,Phase 1: Global Analysis and Analysis Early Validation,81.375,80.56,82.19,2010-10-04 08:00:00,2010-12-24 17:00:00,,44999.9959564209
+2,1.2.1,Prepare next visit,4.375,3.5,5.25,2010-10-04 08:00:00,2010-10-08 17:00:00,,5000.0
+3,1.2.2,Global Analysis of the Planning Cycle,25.375,20.3,30.45,2010-10-11 08:00:00,2010-11-05 17:00:00,,2500.0
+4,1.2.3,Analyse details for Integration by Excel,6.375,5.1,7.65,2010-11-03 08:00:00,2010-11-09 17:00:00,,2500.0
+5,1.2.4,Analyse Master planning rules in detail for plant A,13.375,10.7,16.05,2010-10-27 08:00:00,2010-11-09 17:00:00,,7500.0
+6,1.2.5,Analyse gaps of Master planning rules in detail for plant B,25.375,20.3,30.45,2010-11-29 08:00:00,2010-12-24 17:00:00,,2500.0
+7,1.2.6,Analyse gaps of Master planning rules for other plants,27.375,21.9,54.75,2010-10-13 08:00:00,2010-11-09 17:00:00,,5000.0
+8,1.2.7,Analyse DRP for Early Validation (incl. deployment engine),18.375,14.7,36.75,2010-11-22 08:00:00,2010-12-10 17:00:00,,2499.9959564209
+9,1.2.8,Validate concept internal + prepare document/presentation for next visit,13.375,10.7,26.75,2010-11-10 08:00:00,2010-11-23 17:00:00,,10000.0
+10,1.2.9,Validate Analysis with Business and get acceptance,6.375,5.1,12.75,2010-11-24 08:00:00,2010-11-30 17:00:00,,7500.0
+11,1.2.10,Phase 1: Global Analysis is accepted and phase is closed,0.0,0.0,0.0,2010-11-30 17:00:00,2010-11-30 17:00:00,,0.0
+128,1.3,Phase 1: Global Analysis and Analysis Early Validation,102.375,101.35,103.4,2010-11-29 08:00:00,2011-03-11 17:00:00,,73445.8832740784
+135,1.3.1,Minimum implementation needed for Early Validation,102.375,101.35,103.4,2010-11-29 08:00:00,2011-03-11 17:00:00,,73445.8832740784
+12,1.3.1.1,Setup the environment,11.375,9.1,13.65,2010-11-29 08:00:00,2010-12-10 17:00:00,,5000.0
+13,1.3.1.2,Received Master data for building the DRP model and MPS Model,0.0,0.0,0.0,2010-12-31 17:00:00,2010-12-31 17:00:00,,0.0
+131,1.3.1.3,Model integration,18.375,18.19,18.56,2010-12-13 08:00:00,2010-12-31 17:00:00,,11480.0
+14,1.3.1.3.1,Model integration of Operational forecast and Sales Orders,4.375,3.5,8.75,2010-12-13 08:00:00,2010-12-17 17:00:00,,1000.0
+15,1.3.1.3.2,Model integration of the DRP master data and network,6.375,5.1,12.75,2010-12-15 08:00:00,2010-12-21 17:00:00,,3500.0
+16,1.3.1.3.3,"Model integration of the MPS Master data (routings, BOM's,…)",11.375,9.1,22.75,2010-12-20 08:00:00,2010-12-31 17:00:00,,5000.0
+17,1.3.1.3.4,Model integration of the inventory,4.375,3.5,8.75,2010-12-27 08:00:00,2010-12-31 17:00:00,,1000.0
+18,1.3.1.3.5,Coordination,17.375,13.9,20.85,2010-12-13 08:00:00,2010-12-30 17:00:00,,980.0
+19,1.3.1.4,"Build basic Order Allocation Model (Accept all orders, straightforward forecast netting)",11.375,9.1,13.65,2010-12-20 08:00:00,2010-12-31 17:00:00,,3000.0
+132,1.3.1.5,Build basic DRP model (only pushing demand from DC to plant + manual planning),53.375,52.84,53.91,2011-01-03 08:00:00,2011-02-25 17:00:00,,14989.0823478699
+20,1.3.1.5.1,Check master data from Excel,11.375,9.1,22.75,2011-01-03 08:00:00,2011-01-14 17:00:00,,2500.0
+21,1.3.1.5.2,Build DRP model,18.375,14.7,36.75,2011-01-17 08:00:00,2011-02-04 17:00:00,,7500.0
+22,1.3.1.5.3,Test off-line the DRP model,4.375,3.5,8.75,2011-02-07 08:00:00,2011-02-11 17:00:00,,1000.0
+23,1.3.1.5.4,Validate DRP with Business,11.375,9.1,22.75,2011-02-14 08:00:00,2011-02-25 17:00:00,,2500.0
+24,1.3.1.5.5,Coordination,52.375,41.9,62.85,2011-01-03 08:00:00,2011-02-24 17:00:00,,1489.08234786987
+133,1.3.1.6,Build Master Planning model for Early validation (no campaigns),67.375,66.7,68.05,2011-01-03 08:00:00,2011-03-11 17:00:00,,38976.8009262085
+25,1.3.1.6.1,Check master data for two test plants,4.375,3.5,8.75,2011-01-03 08:00:00,2011-01-07 17:00:00,,2500.0
+26,1.3.1.6.2,Build Master Planning Model for two test plants,25.375,20.3,50.75,2011-01-10 08:00:00,2011-02-04 17:00:00,,15000.0
+27,1.3.1.6.3,Configure basic solvers (heuristics for capacity and inventory constraints),11.375,9.1,22.75,2011-02-07 08:00:00,2011-02-18 17:00:00,,5000.0
+28,1.3.1.6.4,Test off-line the Master Planning,4.375,3.5,8.75,2011-02-21 08:00:00,2011-02-25 17:00:00,,2500.0
+29,1.3.1.6.5,Validate Master Planning with Business,11.375,9.1,22.75,2011-02-28 08:00:00,2011-03-11 17:00:00,,10000.0
+30,1.3.1.6.6,Coordination,66.375,53.1,79.65,2011-01-03 08:00:00,2011-03-10 17:00:00,,3976.80092620848
+31,1.3.2,Phase 2: Early Validation is accepted,0.0,0.0,0.0,2011-03-11 17:00:00,2011-03-11 17:00:00,,0.0
+129,1.4,Phase 3: Full Implementation of DRP and Master Planning,651.0,644.49,657.51,2011-03-11 17:00:00,2012-12-21 17:00:00,,191673.687395096
+32,1.4.1,Purchase Order for Implementation is received,0.0,0.0,0.0,2011-03-11 17:00:00,2011-03-11 17:00:00,,0.0
+136,1.4.2,Analyse DRP and Master Planing,35.0,34.65,35.35,2011-03-11 17:00:00,2011-04-15 17:00:00,,24000.0
+33,1.4.2.1,Analyze remaining details for Integration (final),32.375,25.9,38.85,2011-03-14 08:00:00,2011-04-15 17:00:00,,4000.0
+34,1.4.2.2,Analyze Order allocation rules in detail,32.375,25.9,38.85,2011-03-14 08:00:00,2011-04-15 17:00:00,,2500.0
+35,1.4.2.3,Analyze DRP rules in detail,32.375,25.9,38.85,2011-03-14 08:00:00,2011-04-15 17:00:00,,7500.0
+36,1.4.2.4,Analyse shape Campaign rules in detail for plant A,32.375,25.9,38.85,2011-03-14 08:00:00,2011-04-15 17:00:00,,5000.0
+37,1.4.2.5,Analyse shape Campaign rules in detail for plant B,32.375,25.9,38.85,2011-03-14 08:00:00,2011-04-15 17:00:00,,2500.0
+38,1.4.2.6,Analyse gaps of Master planning rules in detail for remaining plants,32.375,25.9,38.85,2011-03-14 08:00:00,2011-04-15 17:00:00,,2500.0
+39,1.4.2.7,Analysis of DRP and Master Planning is finished,0.0,0.0,0.0,2011-03-11 17:00:00,2011-03-11 17:00:00,,0.0
+137,1.4.3,Implement Integration,67.375,66.7,68.05,2011-03-14 08:00:00,2011-05-20 17:00:00,,14669.8552246094
+148,1.4.3.1,Model integration,4.375,4.33,4.42,2011-04-18 08:00:00,2011-04-22 17:00:00,,3125.0
+40,1.4.3.1.1,Configure SAI2,0.0416666666666667,0.03,0.05,2011-04-18 08:00:00,2011-04-18 09:00:00,,125.0
+41,1.4.3.1.2,Model integration of the feedback on Transport/Purchase orders,4.375,3.5,8.75,2011-04-18 08:00:00,2011-04-22 17:00:00,,1500.0
+42,1.4.3.1.3,Model integration of the feedback on Manufacturing Orders,4.375,3.5,8.75,2011-04-18 08:00:00,2011-04-22 17:00:00,,1500.0
+145,1.4.3.2,Model integration from DRP,11.375,11.26,11.49,2011-04-25 08:00:00,2011-05-06 17:00:00,,6500.0
+43,1.4.3.2.1,Model integration of intercompany Transport orders,11.375,9.1,22.75,2011-04-25 08:00:00,2011-05-06 17:00:00,,2500.0
+44,1.4.3.2.2,Model integration of Purchase Orders,11.375,9.1,22.75,2011-04-25 08:00:00,2011-05-06 17:00:00,,2500.0
+45,1.4.3.2.3,Model Purchase requisitions to data warehouse,11.375,9.1,22.75,2011-04-25 08:00:00,2011-05-06 17:00:00,,1500.0
+144,1.4.3.3,Model integration from Master Planning,11.375,11.26,11.49,2011-05-09 08:00:00,2011-05-20 17:00:00,,3562.5
+46,1.4.3.3.1,Configure SAI3 and SAI4b,0.0416666666666667,0.03,0.05,2011-05-09 08:00:00,2011-05-09 09:00:00,,62.5
+47,1.4.3.3.2,Model integration of Manufacturing Orders to ASI and Excel,11.375,9.1,22.75,2011-05-09 08:00:00,2011-05-20 17:00:00,,2000.0
+48,1.4.3.3.3,Model integration of Manufacturing requisitions,11.375,9.1,22.75,2011-05-09 08:00:00,2011-05-20 17:00:00,,1500.0
+49,1.4.3.4,Coordination,31.375,25.1,37.65,2011-03-14 08:00:00,2011-04-14 17:00:00,,1482.35522460938
+50,1.4.3.5,Implementation of the Integration is finished,0.0,0.0,0.0,2011-05-20 17:00:00,2011-05-20 17:00:00,,0.0
+138,1.4.4,Implement Order Allocation,21.0,20.79,21.21,2011-04-15 17:00:00,2011-05-06 17:00:00,,4480.0
+51,1.4.4.1,Received Forecast and Customer Orders from customer for off-line application testing,0.0,0.0,0.0,2011-04-15 17:00:00,2011-04-15 17:00:00,,0.0
+52,1.4.4.2,Complete Order Allocation model with rules,4.375,3.5,8.75,2011-04-18 08:00:00,2011-04-22 17:00:00,,1000.0
+53,1.4.4.3,Off-line application testing + check data,4.375,3.5,8.75,2011-04-25 08:00:00,2011-04-29 17:00:00,,1000.0
+54,1.4.4.4,Validate Order Allocation with Business,4.375,3.5,8.75,2011-05-02 08:00:00,2011-05-06 17:00:00,,1500.0
+55,1.4.4.5,Coordination,17.375,13.9,20.85,2011-04-18 08:00:00,2011-05-05 17:00:00,,980.0
+56,1.4.4.6,Implementation of the Order Allocation is finished,0.0,0.0,0.0,2011-05-06 17:00:00,2011-05-06 17:00:00,,0.0
+139,1.4.5,Implement DRP for complete US Market,182.0,180.18,183.82,2011-05-06 17:00:00,2011-11-04 17:00:00,,37511.6968574524
+57,1.4.5.1,Received Master data for building the DRP model,0.0,0.0,0.0,2011-05-06 17:00:00,2011-05-06 17:00:00,,0.0
+58,1.4.5.2,Check master data,11.375,9.1,13.65,2011-05-09 08:00:00,2011-05-20 17:00:00,,2500.0
+59,1.4.5.3,Complete Build DRP model,18.375,14.7,36.75,2011-05-23 08:00:00,2011-06-10 17:00:00,,5000.00381469726
+60,1.4.5.4,Configure basic solvers (heuristics for pulling inventory to RDC's),11.375,9.1,22.75,2011-06-13 08:00:00,2011-06-24 17:00:00,,2500.0
+61,1.4.5.5,Model manufacturing requirements for Master Planning,11.375,9.1,22.75,2011-06-13 08:00:00,2011-06-24 17:00:00,,2500.0
+62,1.4.5.6,Test off-line the DRP model,11.375,9.1,22.75,2011-06-27 08:00:00,2011-07-08 17:00:00,,1500.0
+63,1.4.5.7,Validate DRP with Business,18.375,14.7,36.75,2011-07-11 08:00:00,2011-07-29 17:00:00,,5000.00381469726
+64,1.4.5.8,"Integration test, Dry-run tests and GO-live of DRP",18.375,14.7,36.75,2011-08-01 08:00:00,2011-08-19 17:00:00,,2499.9959564209
+65,1.4.5.9,Interactive DRP with basic solvers is live,0.0,0.0,0.0,2011-09-05 17:00:00,2011-09-05 17:00:00,,0.0
+66,1.4.5.10,Assistence after go-live,18.375,14.7,36.75,2011-09-05 08:00:00,2011-09-23 17:00:00,,2499.9959564209
+67,1.4.5.11,Adapt Solver for pushing surplus inventory to RDC's,39.375,31.5,78.75,2011-09-26 08:00:00,2011-11-04 17:00:00,,10000.0076293945
+68,1.4.5.12,Coordination,178.375,142.7,356.75,2011-05-09 08:00:00,2011-11-03 17:00:00,,3511.68968582153
+69,1.4.5.13,Implementation of DRP for the complete US Market is finished,0.0,0.0,0.0,2011-11-04 17:00:00,2011-11-04 17:00:00,,0.0
+140,1.4.6,Complete Implemention Master Planning GO LIVE 1,517.0,511.83,522.17,2011-05-06 17:00:00,2012-10-04 17:00:00,,46004.3158149719
+70,1.4.6.1,Received Master Data for building the Master Planning model,0.0,0.0,0.0,2011-05-06 17:00:00,2011-05-06 17:00:00,,0.0
+71,1.4.6.2,Check master data of plant A,11.375,9.1,22.75,2011-05-23 08:00:00,2011-06-03 17:00:00,,2500.0
+72,1.4.6.3,Test off-line the Master Planning,18.375,14.7,36.75,2011-07-11 08:00:00,2011-07-29 17:00:00,,2499.9959564209
+73,1.4.6.4,Validate Master Planning with Business + on the job training,39.375,31.5,78.75,2011-08-01 08:00:00,2011-09-09 17:00:00,,4999.99191284179
+74,1.4.6.5,Configure Shape Campaigns for plant A,60.375,48.3,120.75,2011-09-12 08:00:00,2011-11-11 17:00:00,,10000.0078582764
+75,1.4.6.6,Validate Shape campaigns with plant A Business + on the job training,39.375,31.5,78.75,2011-11-14 08:00:00,2011-12-23 17:00:00,,4999.99191284179
+76,1.4.6.7,Dry-run tests and GO-live of MPS in plant A,25.375,20.3,50.75,2011-12-26 08:00:00,2012-01-20 17:00:00,,2500.0
+77,1.4.6.8,Interactive MPS with basic solvers at plant A is live,0.0,0.0,0.0,2012-02-03 17:00:00,2012-02-03 17:00:00,,0.0
+78,1.4.6.9,Assistence after go-live,18.375,14.7,36.75,2012-02-06 08:00:00,2012-02-24 17:00:00,,5000.00381469726
+79,1.4.6.10,Refine basic Solver,39.375,31.5,78.75,2012-02-27 08:00:00,2012-04-06 17:00:00,,10000.0076293945
+80,1.4.6.11,Coordination,329.375,263.5,395.25,2011-05-09 08:00:00,2012-04-02 17:00:00,,3504.31673049926
+81,1.4.6.12,Completion of the implementation of Master Planning in Pilot plant A is finished,0.0,0.0,0.0,2012-10-04 17:00:00,2012-10-04 17:00:00,,0.0
+141,1.4.7,Implement Master Planning GO LIVE 2,189.0,187.11,190.89,2012-02-03 17:00:00,2012-08-10 17:00:00,,40016.6554031372
+82,1.4.7.1,Received Master Data for building the Master Planning model,0.0,0.0,0.0,2012-02-03 17:00:00,2012-02-03 17:00:00,,0.0
+83,1.4.7.2,Check master data of go live 2,11.375,9.1,13.65,2012-02-06 08:00:00,2012-02-17 17:00:00,,2500.0
+84,1.4.7.3,Adapt Master Planning Model to go live 2,39.375,31.5,47.25,2012-02-20 08:00:00,2012-03-30 17:00:00,,7500.0
+85,1.4.7.4,Adapt basic solvers (heuristics for capacity and inventory constraints),11.375,9.1,13.65,2012-04-02 08:00:00,2012-04-13 17:00:00,,2500.0
+86,1.4.7.5,Adapt Shape Campaigns configuration for plant B,25.375,20.3,30.45,2012-04-02 08:00:00,2012-04-27 17:00:00,,5000.0
+87,1.4.7.6,Test off-line the Master Planning,11.375,9.1,13.65,2012-04-30 08:00:00,2012-05-11 17:00:00,,2500.0
+88,1.4.7.7,Validate Master Planning with plant B Business,11.375,9.1,13.65,2012-05-14 08:00:00,2012-05-25 17:00:00,,3500.0
+89,1.4.7.8,Validate Shape campaigns with plant B Business,11.375,9.1,13.65,2012-05-28 08:00:00,2012-06-08 17:00:00,,2500.0
+90,1.4.7.9,Dry-run tests and GO-live of MPS in plant B,11.375,9.1,13.65,2012-06-11 08:00:00,2012-06-22 17:00:00,,1500.0
+91,1.4.7.10,Interactive MPS with basic solvers at plant B is live,0.0,0.0,0.0,2012-06-29 17:00:00,2012-06-29 17:00:00,,0.0
+92,1.4.7.11,Assistence after go-live,11.375,9.1,13.65,2012-07-02 08:00:00,2012-07-13 17:00:00,,2500.0
+93,1.4.7.12,Refine basic Solver,25.375,20.3,30.45,2012-07-16 08:00:00,2012-08-10 17:00:00,,5000.0
+94,1.4.7.13,Coordination,178.375,142.7,214.05,2012-02-06 08:00:00,2012-08-02 17:00:00,,5016.65540313721
+95,1.4.7.14,Implementation of Master Planning in plant B with LUT is finished,0.0,0.0,0.0,2012-08-10 17:00:00,2012-08-10 17:00:00,,0.0
+142,1.4.8,Implement Master Planning GO LIVE 3,175.0,173.25,176.75,2012-06-29 17:00:00,2012-12-21 17:00:00,,24991.1640949249
+96,1.4.8.1,Received Master Data for building the Master Planning model,0.0,0.0,0.0,2012-06-29 17:00:00,2012-06-29 17:00:00,,0.0
+97,1.4.8.2,Analyse Added Value planning process,46.375,37.1,92.75,2012-07-02 08:00:00,2012-08-17 17:00:00,,2500.0080871582
+98,1.4.8.3,Check master data,11.375,9.1,22.75,2012-07-02 08:00:00,2012-07-13 17:00:00,,1500.0
+99,1.4.8.4,Adapt Master Planning Model to remaining plants,46.375,37.1,92.75,2012-07-16 08:00:00,2012-08-31 17:00:00,,6000.0080871582
+100,1.4.8.5,Adapt basic solvers (heuristics for capacity and inventory constraints),25.375,20.3,50.75,2012-07-16 08:00:00,2012-08-10 17:00:00,,2500.0
+101,1.4.8.6,Test off-line the Master Planning,11.375,9.1,22.75,2012-09-03 08:00:00,2012-09-14 17:00:00,,1500.0
+102,1.4.8.7,Validate Master Planning with remaining plants Business,32.375,25.9,64.75,2012-09-17 08:00:00,2012-10-19 17:00:00,,3000.0
+103,1.4.8.8,Dry-run tests and GO-live of MPS in remaining plants,25.375,20.3,50.75,2012-10-22 08:00:00,2012-11-16 17:00:00,,1500.0
+104,1.4.8.9,Interactive MPS with basic solvers at remaining plants is live,0.0,0.0,0.0,2012-11-30 17:00:00,2012-11-30 17:00:00,,0.0
+105,1.4.8.10,Assistence after go-live,11.375,9.1,22.75,2012-12-03 08:00:00,2012-12-14 17:00:00,,1500.0
+106,1.4.8.11,Refine basic Solver,4.375,3.5,8.75,2012-12-17 08:00:00,2012-12-21 17:00:00,,2500.0
+107,1.4.8.12,Coordination,168.375,134.7,202.05,2012-07-02 08:00:00,2012-12-17 17:00:00,,2491.14792060852
+108,1.4.8.13,Implementation of Master Planning in remaining plants is finished,0.0,0.0,0.0,2012-12-21 17:00:00,2012-12-21 17:00:00,,0.0
+109,1.4.9,Phase 3: Full Implementation of DRP and Master Planning is finished,0.0,0.0,0.0,2012-12-21 17:00:00,2012-12-21 17:00:00,,0.0
+130,1.5,Phase 4: Implementation of S&OP Planning,200.375,198.37,202.38,2012-12-24 08:00:00,2013-07-12 17:00:00,,65133.7764282227
+152,1.5.1,Analysis of S&OP Planning,32.375,32.05,32.7,2012-12-24 08:00:00,2013-01-25 17:00:00,,10000.0
+110,1.5.1.1,Analyze details for Integration with S&OP,4.375,3.5,5.25,2012-12-24 08:00:00,2012-12-28 17:00:00,,1000.0
+111,1.5.1.2,Analyze S&OP rules in detail,18.375,14.7,22.05,2012-12-31 08:00:00,2013-01-18 17:00:00,,7500.0
+112,1.5.1.3,Analyze integration of S&OP in DRP and Master Planning,4.375,3.5,5.25,2013-01-21 08:00:00,2013-01-25 17:00:00,,1500.0
+113,1.5.1.4,Analysis of S&OP Planning is finished,0.0,0.0,0.0,2013-01-25 17:00:00,2013-01-25 17:00:00,,0.0
+153,1.5.2,Implementation of S&OP Planning,168.0,166.32,169.68,2013-01-25 17:00:00,2013-07-12 17:00:00,,55133.7764282227
+114,1.5.2.1,Received Master data for building the S&OP model,0.0,0.0,0.0,2013-01-25 17:00:00,2013-01-25 17:00:00,,0.0
+115,1.5.2.2,Check master data,4.375,3.5,8.75,2013-01-28 08:00:00,2013-02-01 17:00:00,,2500.0
+116,1.5.2.3,Build S&OP model,53.375,42.7,106.75,2013-02-04 08:00:00,2013-03-29 17:00:00,,16000.0
+117,1.5.2.4,Configure basic solvers,18.375,14.7,36.75,2013-04-01 08:00:00,2013-04-19 17:00:00,,5000.00381469726
+118,1.5.2.5,Test off-line the S&OP model,4.375,3.5,8.75,2013-04-22 08:00:00,2013-04-26 17:00:00,,2500.0
+119,1.5.2.6,Validate S&OP with Business,18.375,14.7,36.75,2013-04-29 08:00:00,2013-05-17 17:00:00,,7500.0
+120,1.5.2.7,"Integration test, Dry-run tests and GO-live of S&OP",4.375,3.5,8.75,2013-05-20 08:00:00,2013-05-24 17:00:00,,2500.0
+121,1.5.2.8,Interactive S&OP with basic solvers is live,0.0,0.0,0.0,2013-05-24 17:00:00,2013-05-24 17:00:00,,0.0
+122,1.5.2.9,Assistence after go-live,4.375,3.5,8.75,2013-05-27 08:00:00,2013-05-31 17:00:00,,2500.0
+123,1.5.2.10,Refine basic Solver for S&OP,38.375,30.7,76.75,2013-06-03 08:00:00,2013-07-11 17:00:00,,10150.0
+124,1.5.2.11,Coordination,157.375,125.9,188.85,2013-01-28 08:00:00,2013-07-04 17:00:00,,6483.77261352539
+125,1.5.2.12,Implementation of S&OP Planning is finished,0.0,0.0,0.0,2013-07-12 17:00:00,2013-07-12 17:00:00,,0.0
+126,1.6,Project is closed,0.0,0.0,0.0,2013-07-12 17:00:00,2013-07-12 17:00:00,,0.0

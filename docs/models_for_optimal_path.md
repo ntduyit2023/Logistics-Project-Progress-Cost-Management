@@ -6,18 +6,18 @@
 
 ## 📋 Tổng Quan Nhanh: 10 Mô Hình
 
-| #   | Mô hình                        | Loại                 | Bài toán giải                         | Thư viện Python        | Dataset phù hợp        |
-| --- | ------------------------------ | -------------------- | ------------------------------------- | ---------------------- | ---------------------- |
-| 1   | **CPM** (Critical Path Method) | Toán đồ thị          | Đường găng, ES/EF/LS/LF, Slack        | NetworkX, tự viết      | PSPLIB, Case Study     |
-| 2   | **PERT** (3-point estimation)  | Xác suất             | Xác suất hoàn thành đúng hạn          | SciPy (stats)          | Case Study, OR&S       |
-| 3   | **Topological Sort + DFS**     | Thuật toán đồ thị    | Thứ tự thực hiện, phát hiện chu trình | NetworkX               | PSPLIB, Case Study     |
-| 4   | **MILP** (Mixed Integer LP)    | Tối ưu hóa chính xác | Crashing tối ưu chi phí               | PuLP, OR-Tools         | Case Study, PSPLIB J30 |
-| 5   | **GA** (Genetic Algorithm)     | Meta-heuristic       | RCPSP xếp lịch giới hạn tài nguyên    | DEAP, PyGAD            | PSPLIB J30-J120        |
-| 6   | **Hybrid MILP+GA**             | Tối ưu hóa lai       | Đa mục tiêu (cost + time + resource)  | PuLP + DEAP            | PSPLIB, Case Study     |
-| 7   | **DAGNN**                      | GNN (Deep Learning)  | Dự đoán thời gian thực tế             | PyTorch Geometric      | PSPLIB, OR&S           |
-| 8   | **GAT**                        | GNN (Attention)      | Dự báo lan truyền trễ                 | PyTorch Geometric      | OR&S, DataCo           |
-| 9   | **GNN + DRL (PPO)**            | RL + GNN             | Xếp lịch thông minh (auto-dispatch)   | Stable-Baselines3, PyG | PSPLIB, VRP            |
-| 10  | **Monte Carlo Simulation**     | Mô phỏng             | Phân tích rủi ro, chỉ số găng         | NumPy, SciPy           | Case Study, OR&S       |
+| # | Mô hình | Loại | Bài toán giải | Thư viện Python | Dataset phù hợp |
+|---|---|---|---|---|---|
+| 1 | **CPM** (Critical Path Method) | Toán đồ thị | Đường găng, ES/EF/LS/LF, Slack | NetworkX, tự viết | PSPLIB, Case Study |
+| 2 | **PERT** (3-point estimation) | Xác suất | Xác suất hoàn thành đúng hạn | SciPy (stats) | Case Study, OR&S |
+| 3 | **Topological Sort + DFS** | Thuật toán đồ thị | Thứ tự thực hiện, phát hiện chu trình | NetworkX | PSPLIB, Case Study |
+| 4 | **MILP** (Mixed Integer LP) | Tối ưu hóa chính xác | Crashing tối ưu chi phí | PuLP, OR-Tools | Case Study, PSPLIB J30 |
+| 5 | **GA** (Genetic Algorithm) | Meta-heuristic | RCPSP xếp lịch giới hạn tài nguyên | DEAP, PyGAD | PSPLIB J30-J120 |
+| 6 | **Hybrid MILP+GA** | Tối ưu hóa lai | Đa mục tiêu (cost + time + resource) | PuLP + DEAP | PSPLIB, Case Study |
+| 7 | **DAGNN** | GNN (Deep Learning) | Dự đoán thời gian thực tế | PyTorch Geometric | PSPLIB, OR&S |
+| 8 | **GAT** | GNN (Attention) | Dự báo lan truyền trễ | PyTorch Geometric | OR&S, DataCo |
+| 9 | **GNN + DRL (PPO)** | RL + GNN | Xếp lịch thông minh (auto-dispatch) | Stable-Baselines3, PyG | PSPLIB, VRP |
+| 10 | **Monte Carlo Simulation** | Mô phỏng | Phân tích rủi ro, chỉ số găng | NumPy, SciPy | Case Study, OR&S |
 
 ---
 

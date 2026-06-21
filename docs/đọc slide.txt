@@ -1,0 +1,67 @@
+I. Tiến trình thực hiện dự án:
+1. Sàn lọc và lựa chọn dự án 
+2. Các chỉ số:
+	- WBS: chia nhỏ một dự án lớn thành các phần việc nhỏ. Giúp ước tính chính xác chi phí, thời gian và nguồn lực. 
+	- OBS: chia các công việc cho các nhân sự sẵn có. Giúp đánh giá nguồn lực và cấu trúc quản lý.
+	- LCR: Là kẻ ra ma trận xong rồi với 2 trục WBS và OBS. Giúp nhìn ra được toàn bộ dự án.
+
+3. Lập tiến độ thời gian của dự án.
+4. Phân phối chi phí theo tiến độ. Nếu không được qua về bước 3.
+5. Xác định lại tiến độ dự án theo nguồn lực.
+6. Triển khai dự án. 
+
+
+II. Các loại chi phí dự án:
+1. Chi phí trực tiếp (chi phí biến đổi):
+	- Chi phí nhân công lao động trực tiếp.
+	- Chi phí nguyên vật liệu và máy móc thiết bị.
+	- Các hợp đồng ngoài.
+2. Chi phí gian tiếp (chi phí cố định):
+	- Chi phí duy trì: bảo vệ, lau dọn, điện nước, phí điện thoại, máy tính, văn phòng phẩm,...
+	- Chi phí quản lý điều hành: tiếp thị, công việc thư ký văn phòng quản lý nhân sự, liên lạc, đi lại, huấn luyện nhân công.
+	- Chi phí máy móc: máy photocopy, fax, bàn ghế, nhà xưởng, máy móc, máy tính.
+
+2. Các mô hình ước tính chi phí:
+2.1. Phương pháp tỷ lệ (ratio method)
+	- Phương pháp đơn giản và thô.
+	- Dựa trên dữ liệu hoặc chuẩn có sẵn rồi quy đổi ra chi phí.
+	- Ví dụ: để  sản xuất ra 100 cái nón/ngày thì tốn 20k $, thì 500 cái nón tốn 100k $.
+
+2.2. Phương pháp tương tự (Template method)
+	- Dựa trên công việc tương tự trong quá khứ mà suy ngược lại chi phí.
+	- Khi dùng phương pháp này để hiệu chỉnh phù hợp cho hiện đại vì đó là dự liệu trong quá khứ.
+	- Ví dụ ngày xưa đi Đà Lạt bạn tốn 500k, thì giờ bạn đi lại Đà Lạt thì có thể chi phí là 500k.
+
+2.3. Phương pháp phân bổ (apportion method)
+	- Dùng phân bố chi phí đã được sử dụng trong WBS của dự án.
+	- Áp dụng khi khi dự án mới có những đặt tính và chi phí giống với dự án cũ.
+	- Được tính dựa trên tỉ lệ phần trăm chi phí của một công việc cụ thể trên tổng chi phí dự án.
+	- Ví dụ: Dự án có 1M $, thì công việc A có thể 3,4%/dự án thì 34k $.
+
+2.4. Phương pháp tỷ lệ công suất (capacity ratio)
+	- Đây là phương pháp đánh giá chí phí qua độ phình của công việc. Nếu công việc tăng gấp đôi quy thì có thể là không tăng gấp đôi chi phí. Do đó được đánh giá qua công thực:
+	Chi phí ước tính = Chí phí quá khứ * (công suất hiện tại /công suất quá khứ)^P
+	P là nhân tố hiệu suất chi phí (khả năng chi trả) được dẫn xuất từ các số liệu quá khứ. Thường p<1, nếu p=1 điều đó có nghĩa là quy mô tăng gấp đôi thì chi phí cũng sẽ tăng gấp đôi. Còn p>1, có nghĩa là công việc quy mô càng to thì tốn càng nhiều chi phí.
+	
+3. Quy tắc phấn bố chi phí theo tiến độ
+	- Một hoạt động có chi phí bằng nhau đồng bộ qua các đơn vị thời gian
+	- Các hoạt động này phải liên tục tục và không gián đoạn cho đến khi hoàn thành công việc.
+
+4. Phương pháp điều hoà chi phí theo tiến độ (slack)
+	- Mục tiêu của phương pháp này là là để cho không là tăng chi phí dự án một cách đột ngột dễ làm sập dự án (đứt cashflow) bằng cách phân bố lại các công việc (chuyển dịch và phân bố công việc mượt mà mức tăng giảm của chính dự án). Phương pháp không làm thay đổi thời gian và chi phí hoàn thành.
+	- Phương pháp ở đây dùng là dịch chuyển các task không nằm trên critical path (chuỗi công việc chiếu tổng thời gian dài nhất). 
+	- Các bước thực hiện gồm:
+		1. Sử dụng biểu đồ găng triển khai sớm đã phân tích CPM (Critical Path Method).
+		2. Xác định đỉnh cao nhất chi phí và thấp nhất chi phí theo tiến độ.
+		3. Điều chỉnh các hoạt động không nằm trên Critical Path để giảm các đỉnh chi phí.
+
+5. Phương pháp đánh đổi thời gian/chi phí (crashing method)
+	- Phương pháp đặt ra câu hỏi: Thời gian yếu tố yếu tố phụ hay yếu tố quyết định cho sự thành công của dự án.
+	- Rút ngắn thời gian hoàn thành dự án thì thì phải tăng nguồn lực (nhân công, máy móc, hạ tầng), tăng chi phí trực  tiếp sản xuất nhằm tăng năng suất đầu ra của dự án.
+	- Mục tiêu của phương pháp: Tìm ra điểm tối ưu chi phí - thời gian -> phải thoả mãn hai điều kiện:
+		+ Thời gian hoàn thành dự án đảm bảo tối ưu theo yêu cầu.
+		+ Chi phí tăng thêm do quá trình đánh đổi phải thấp nhất.
+	- Phương pháp làm thay đổi cả thời gian và chi phí hoàn thành
+	
+6. Lựa chọn tối ưu trong vấn đề Thưởng - Phạt
+khi có hơn 1 lựa chọn tôt thì phải xét trên các khía cạnh thưởng phạt

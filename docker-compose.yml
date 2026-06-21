@@ -1,0 +1,110 @@
+# ==========================================================
+# GLPO - AI Project Scheduling Platform
+# ==========================================================
+# Profiles:
+#   dev  : Chạy toàn bộ hệ thống cho development (hot-reload)
+#   prod : Chạy bản production (tối ưu hiệu năng, giới hạn RAM chặt)
+#   db   : Chỉ chạy Database (dùng khi ETL hoặc debug)
+#
+# Cách dùng:
+#   docker compose --profile dev up -d
+#   docker compose --profile prod up -d
+#   docker compose --profile db up -d
+# ==========================================================
+
+services:
+  # --------------------------------------------------
+  # 1. POSTGRESQL DATABASE (Luôn chạy ở mọi profile)
+  # --------------------------------------------------
+  db:
+    image: postgres:15-alpine
+    container_name: glpo_postgres
+    profiles: [ "dev", "prod", "db" ]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-glpo_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-glpo_password}
+      POSTGRES_DB: ${POSTGRES_DB:-glpo_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - glpo_net
+    deploy:
+      resources:
+        limits:
+          memory: ${DB_MEM_LIMIT:-1G}
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-glpo_admin} -d ${POSTGRES_DB:-glpo_db}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # --------------------------------------------------
+  # 2. FASTAPI BACKEND (dev + prod)
+  # --------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: glpo_backend
+    profiles: [ "dev", "prod" ]
+    volumes:
+      - ./backend:/app
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-glpo_admin}:${POSTGRES_PASSWORD:-glpo_password}@db:5432/${POSTGRES_DB:-glpo_db}"
+      DATABASE_URL_SYNC: "postgresql://${POSTGRES_USER:-glpo_admin}:${POSTGRES_PASSWORD:-glpo_password}@db:5432/${POSTGRES_DB:-glpo_db}"
+      ENV: ${ENV:-development}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - glpo_net
+    deploy:
+      resources:
+        limits:
+          memory: ${BACKEND_MEM_LIMIT:-1G}
+        reservations:
+          memory: 256M
+    restart: unless-stopped
+
+  # --------------------------------------------------
+  # 3. REACT/VITE FRONTEND (dev + prod)
+  # --------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: glpo_frontend
+    profiles: [ "dev", "prod" ]
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    environment:
+      VITE_API_URL: "http://localhost:${BACKEND_PORT:-8000}"
+    depends_on:
+      - backend
+    networks:
+      - glpo_net
+    deploy:
+      resources:
+        limits:
+          memory: ${FRONTEND_MEM_LIMIT:-512M}
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  glpo_net:
+    driver: bridge
