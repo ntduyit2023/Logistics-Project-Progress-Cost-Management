@@ -1,0 +1,972 @@
+RE-CHECK: CÁC FILE ĐÃ XÓA - CÓ PHẢI LOGISTICS KHÔNG?
+========================================================================================================================
+
+========================================================================================================================
+FILE: C2012-04 Asti-Cuneo Highway.xlsx
+Project: Asti-Cuneo Highway
+Total Tasks: 95
+ALL TASK NAMES:
+    0. Asti-Cuneo Highway
+    1. Installation of fixed yard
+    2. Pegging and fence
+    3. Clearing site
+    4. Levelling ground
+    5. Containers placement
+    6. Connection to network service
+    7. Pegging road
+    8. Alternative road system
+    9. Zone B working
+   10. Demolition
+   11. Clearing subbase and topsoil removal
+   12. Minor works
+   13. Manhole covers
+   14. Culverts box
+   15. Placement formworks and concrete casting
+   16. Culverts concrete aging
+   17. Ground movement
+   18. Road embankments
+   19. Sound barriers
+   20. Trench
+   21. Digging
+   22. Hydraulic works
+   23. Longitudinal drains (ditches)
+   24. Overpass construction
+   25. Plinths excavation
+   26. Pouring piles frameworks and drilling
+   27. Piles concrete aging
+   28. Making of plinths (pouring frameworks and concrete casting)
+   29. Plinths concrete aging
+   30. Making of pylons (pouring frameworks and concrete casting)
+   31. Pylons concrete aging
+   32. Making of shoulders (pouring frameworks and concrete casting)
+   33. Shoulders concrete aging
+   34. Pouring prefabricated beam
+   35. Making of slab (pouring frameworks and concrete casting)
+   36. Slab's concrete aging
+   37. Making of embankments
+   38. Zone A working
+   39. Demolitions
+   40. Topsoil removal and clearing subbase
+   41. Ground movement
+   42. Embankments
+   43. Sound barriers
+   44. Minor works
+   45. Manhole covers
+   46. Hydraulic works
+   47. Catch water drains
+   48. Subway construction
+   49. Retaining walls (frameworks and concrete casting)
+  ... +45 more tasks
+
+========================================================================================================================
+FILE: C2012-07 Solar Park.xlsx
+Project: Solar Park
+Total Tasks: 217
+ALL TASK NAMES:
+    0. Solar Park
+    1. Photovoltaische installatie
+    2. Tekenen kaderovereenkomst
+    3. Studie fase
+    4. Conceptuele Engineering
+    5. Studie netwerkbeheerder
+    6. Opvolging netstudie
+    7. Milestone: Resultaat Netstudie
+    8. SPV
+    9. Predesign Opstellen
+   10. rapport TA Predesign
+   11. Indienen Investment porposal
+   12. Goedkeuring SPV
+   13. Design
+   14. Rapport TA Design
+   15. Bouwvergunning
+   16. Inhoud bekijken
+   17. Aftoetsen bij gemeente
+   18. Afspraak vastleggen studiebureau
+   19. Afspraak studiebureau
+   20. Beslissing zelf opstellen of studiebureau
+   21. Kadasterplan opvragen
+   22. Bouwaanvraagdossier
+   23. plan tekenen
+   24. documentatie verzamelen
+   25. Definitieve gegevens ingeven
+   26. Indienen
+   27. Ontvankelijkheidsverklaring
+   28. Goedkeuring bouwvergunning
+   29. Milestone: Goedkeuring bouwvergunning
+   30. Milieuvergunning
+   31. Milieuvergunning opstellen
+   32. Milieuvergunning indienen
+   33. Ontvankelijkheidsverklaring
+   34. Goedkeuring milieuvergunning
+   35. Voorbereiden infovergadering milieuvergunning
+   36. Infovergadering milieuvergunning
+   37. Detailengineering
+   38. Netstudie opvolgen
+   39. beslissingsvergadering plannen
+   40. vergadering
+   41. plan hertekenen
+   42. E-schema doorsturen
+   43. ATEX (veiligheid en explosie)
+   44. zonering opvragen
+   45. afspraak keuringsbureau
+   46. zoneringsplan / explosieanalyse opstellen
+   47. risico zone - plan hertekenen
+   48. Stabiliteitsstudie
+   49. afspraak vastleggen studiebureau
+  ... +167 more tasks
+
+========================================================================================================================
+FILE: C2015-09 Railway Station (2).xlsx
+Project: Railway Station (2)
+Total Tasks: 372
+ALL TASK NAMES:
+    0. Railway Station (2)
+    1. voorbereidende werken
+    2. beschoeide sleuf
+    3. funderingen voor tijdelijke structuur bovenleidingen
+    4. tijdelijke structuur overname bovenleiding
+    5. aanpassing doorgang mindervaliden perron A
+    6. overdracht spoor D
+    7. plaatsing oranje veiligheidsnet
+    8. aanpassing signalisatie perron A
+    9. opritten toegang spoorniveau
+   10. Afsluiting zone werf (perron A)
+   11. nieuwe verlichting perron A
+   12. Fundering voor torenkraan
+   13. Installatie torenkraan
+   14. Grondwerken
+   15. Zone 1
+   16. opbraakwerken perron
+   17. beschoeiing
+   18. afbraakwerken luifel
+   19. beschoeiing
+   20. grondwerken
+   21. verankering beschoeiing
+   22. grondwerken
+   23. aanpassing oprit toegang naar spoor
+   24. afbraak wegtunnel
+   25. afbraak wegtunnel
+   26. Zone 2
+   27. beschoeide sleuf
+   28. opbraakwerken perron
+   29. afbraakwerken luifel
+   30. beschoeide sleuf
+   31. grondwerken perron op volle grond
+   32. eerste wand koker in perron op volle grond
+   33. beschoeiiing funderingen palen bovenleiding
+   34. funderingsmassieven in perron
+   35. perron volle grond
+   36. eerste wand koker in perron volle grond
+   37. perron volle grond
+   38. beschoeiing
+   39. grondwerken
+   40. verankering beschoeiing
+   41. grondwerken
+   42. Afbraakwerken wegtunnel
+   43. Zone 3
+   44. Opbraakwerken perron
+   45. afbraakwerken luifel
+   46. Afbraakwerken reizigerstunnel
+   47. Voorlopige trap toegang perron A
+   48. Afbraakwerken reizigerstunnel
+   49. Voorlopige toegang perron A
+  ... +322 more tasks
+
+========================================================================================================================
+FILE: C2017-01 Apartment construction.xlsx
+Project: Project
+Total Tasks: 65
+ALL TASK NAMES:
+    0. Project
+    1. Stadium
+    2. Preparatory infrastructure construction
+    3. Detailed site analysis
+    4. Road access
+    5. Water supply
+    6. Electricity
+    7. Storm and sewer water systems
+    8. Transportation preparation
+    9. Foundation Work
+   10. Subsurface drainage
+   11. Groundbreaking ceremony
+   12. Excavations
+   13. Placing pipes into the ground
+   14. Lay foundation concrete
+   15. Pour base concrete
+   16. Pour concrete for stands
+   17. Other concrete
+   18. Building colums
+   19. Building raker beams
+   20. Building floor slabs
+   21. Building elevator shafts
+   22. Building stairs
+   23. Building emergency exits
+   24. Prefabricated elements
+   25. Building lower tier of the stands
+   26. Building upper tier of the stands
+   27. Mechanical, electrical& plumbing installations (MEP)
+   28. Roof construction & facade
+   29. Building steel columns (vertical support)
+   30. Building radial roof elements, whether they be cables or steel truss elements
+   31. Building roof
+   32. Building cladding elements for both the façade and roof can be applied
+   33. Exterior Design Work
+   34. Preparation exterior design work
+   35. Add exterior design
+   36. Light installation
+   37. Trafic and Parking
+   38. Building parking
+   39. Access to Public Transportation
+   40. Hard Construction cmpleted
+   41. Furniture, Fixture and Equipment operation
+   42. Interior design applications
+   43. Installation seats
+   44. VIP lounge
+   45. Commentators lounge
+   46. Dressing rooms
+   47. Scorebord, volume and video system
+   48. The lawn
+   49. Ground preparation
+  ... +15 more tasks
+
+========================================================================================================================
+FILE: C2018-04 Christmas market (1).xlsx
+Project: Christmas market
+Total Tasks: 39
+ALL TASK NAMES:
+    0. Christmas market
+    1. Submit + getting approval for request usage public domain
+    2. Contact designer for advertising poster and flyers
+    3. Submit + getting approval for request usage electricity, water supply (Farys)
+    4. Submit + getting approval for request other licenses
+    5. Submit + getting approval for event insurance
+    6. Submit report form events
+    7. Order for the ice skating rink
+    8. Order 35 chalets
+    9. Order iglo bar
+   10. Order drink supplier
+   11. Order flyers and advertising posters
+   12. Request order Stad Gent
+   13. Order christmas trees, reindeers and sleigh
+   14. Order heaters
+   15. Placing posters
+   16. Order a Santa
+   17. Contacting DJ's
+   18. Handing out flyers
+   19. Submit + approval request Sabam
+   20. Sending letters to local residents
+   21. Submit insurance of volunteers
+   22. Handing out flyers (2)
+   23. Buy the ornaments
+   24. Submit + approval request 'Bilijke vergoeding'
+   25. Final chek-up preparation
+   26. Build ice rink
+   27. Delivery Stad Gent
+   28. Build chalets
+   29. Build up the iglo bar
+   30. Placing heras fences
+   31. Delivery drinks
+   32. Build up stage
+   33. Setting up bar
+   34. Build up DJ booth
+   35. Placing ornaments
+   36. Placing heaters
+   37. Setting up tables
+   38. Final check-up
+
+========================================================================================================================
+FILE: C2018-05 Music festival.xlsx
+Project: Festivalcorrect
+Total Tasks: 31
+ALL TASK NAMES:
+    0. Festivalcorrect
+    1. Evacuation planning
+    2. asking for funding+permits
+    3. advertising (online)
+    4. ordering material sound + light + stands
+    5. ordering bracelets ( x amount) and install system
+    6. ordering cups for recycling
+    7. ordering food + drinks
+    8. hiring artists
+    9. public transport
+   10. leveling plane field
+   11. fencing ( festival area + camping area + parking area) + place root cloths
+   12. wooden planks + planks of steel ( festival -, camping -, parking area)
+   13. electricity ( festival are + camping area)
+   14. building main stage
+   15. building 2 small stages
+   16. crowd dividing space
+   17. placing toilets ( festival + camping)
+   18. placing stands: food+ drink+ reloading points bracelet (festival area + camping area)
+   19. placing enterance
+   20. building backstage ( main stage + 2 small stages)
+   21. deliver dishwasher cups ( festival area + camping area)
+   22. build sponsor area
+   23. electricity + cabling ( 3 stages)
+   24. music + boxes ( 3 stages)
+   25. screens + lights ( festival area + camping area)
+   26. fireman + emergency routes + security inspeciton
+   27. lights + sound check
+   28. checking bracelets ( festival area + camping area)
+   29. checking foods and drink supplies
+   30. extreme precaution for weather
+
+========================================================================================================================
+FILE: C2019-17 Wine production.xlsx
+Project: Wine Production
+Total Tasks: 26
+ALL TASK NAMES:
+    0. Wine Production
+    1. Test yeast 1
+    2. Test yeast 2
+    3. Analysis and decision
+    4. Pilot plant preparation
+    5. Get Grape
+    6. Pressing grape
+    7. Fermentation with stems
+    8. Fermentation without stems
+    9. Filtration with stems
+   10. Filtration without stems
+   11. Aging with stems
+   12. Aging without stems
+   13. Evaluation - decision wine
+   14. Market research for promotion
+   15. Design label
+   16. Design promotion material
+   17. Print label
+   18. Bottle supply
+   19. Washing bottles
+   20. Bottling
+   21. Stick label on bottles
+   22. Creation of promotional material
+   23. Look for promoters
+   24. Transportation material to event
+   25. Control of the stand: End check-up
+
+========================================================================================================================
+FILE: C2019-22 BAM Deelproject 1.xlsx
+Project: Project
+Total Tasks: 1633
+ALL TASK NAMES:
+    0. Project
+    1. DP1 Leien
+    2. 1 LEIEN
+    3. START MS LEIEN
+    4. Inkomende relaties naar DP1
+    5. RV015 Nader te bepalen raakvlak
+    6. Uitgaande relaties vanuit DP1
+    7. Contractmijlpaal uit DP1 NAAR DMP VO-05 (Weg Kempenstraat + Asiadok Oostkaai)
+    8. Contractmijlpaal uit DP1 NAAR DMP VO-07a Weg Italiëlei tot en met Noorderplaats (tot ca 20m1 voorbij bocht richting Hardenvoort)
+    9. Contractmijlpaal uit DP1 NAAR DMP VO-07b Weg Hardenvoortviaduct tot en met Ijzerlaan, scheduled ontvangst VO
+   10. Contractmijlpaal uit DP1 naar DMP VO-7b afgifte VO
+   11. Contractmijlpaal uit DP1 NAAR DMP WOG-15 Fietstunnel
+   12. RV verval uit DP1, DP2 én DP3 naar DP1: DP1, DP2 én DP3 gereed voor afrol bovenleiding Rd-09 en Rd-10 (Kipdorpvest - Kipdorpbrug - tot nèt vóór Tunnelplaats)
+   13. RV019 uit DP1 naar DP2: Ventweg naast tunneluitrit NO gereed ten behoeve van bussen ná gereed KW-NoordWest (KW3)
+   14. Contractmijlpaal uit DP1 naar VO-11light, Aansluiting wegenis Leien op tunneluitrit ATN-oost
+   15. Contractmijlpaal uit DP1 naar BCT5, Tram Operaplein-Leien bovengronds Noord-Zuid
+   16. Contractmijlpaal uit DP1 naar DMP testperiode OG en ON BCT5 Tram Operaplein-Leien Noord-Zuid)
+   17. Contractmijlpaal uit DP1 naar DMP testperiode OG BCT5 Tram Operaplein-Leien Noord-Zuid)
+   18. RV101 UIT DP1 NAAR DMP FINISH MS LEIEN
+   19. MIJLPAAL UIT DP1 NAAR DMP BCT4 (Tram Eilandje-Groenendaallaan)
+   20. Testperiode testtram ON
+   21. Rijden met de testtram (ON en OG samen) 
+   22. Bct5 gereed voor rijden met testtram, Geen beschikbaarheid matrieel van OG
+   23. 11 Frankrijklei
+   24. 110 Frankrijklei
+   25. Werken nutsleidingen (restant verplaatsingswerken en overkoppelingen)
+   26. Voorbereidingen ifv omleiding verkeer via ventwegen (tot aan Gemeentestr)
+   27. Aanpassingswerken ifv vlotte doorgang verkeer thv kruispunten
+   28. Inrichten tijdelijk fietspad op huidig voetpad, verwijderen objecten
+   29. VRI kruispunt Stoopstraat
+   30. VRI kruispunt Maria-Theresia (uit dienst)
+   31. VRI kruispunt Keyserlei
+   32. VRI kruispunt Gemeentestraat
+   33. Plaatsing wegmarkeringen, incl op fietspaden
+   34. Plaatsing signalisatie
+   35. Nieuwe verkeerssituatie in werking (verkeer via ventwegen)
+   36. Tijdelijke tramspoor (richting zuid) omleggen naast Open Helling
+   37. Verwijderen verkeerslichten kruising tram-weg
+   38. Opbraak wegenis tijdelijk tramtracé
+   39. Bovenleidingen (aanpassen)
+   40. Rooien deel bomen
+   41. Spoorbedding
+   42. Spoorwerken (normale werktijden)
+   43. Verharding trambaan
+   44. Spoorwerken (BDS 's nachts)
+   45. Tram op tijdelijk tracé
+   46. Opbraak oud tramtracé
+   47. Tijdelijk tramtracé Frankrijklei + Operaplein
+   48. Bovenleidingen aanpassen (spinnenweb)
+   49. Rooien bomen vanop centrale werfzone
+  ... +1583 more tasks
+
+========================================================================================================================
+FILE: C2019-25 BAM Deelproject 3b.xlsx
+Project: Project
+Total Tasks: 2155
+ALL TASK NAMES:
+    0. Project
+    1. DP3-2 Parking Tunnels en Kipdorpsite
+    2. DP3 OPON (OPERAPLEIN ONDERGROND - Parking, Autotunnels en Kipdorpsite)
+    3. START OPON
+    4. FINISH OPON
+    5. Extere relaties
+    6. Inkomende relaties naar DP3
+    7. RV016-2 uit DP2 naar DP3: Einde aanleg voetgangers en fietserscorridor - Start staal Kipdorpbrug
+    8. Uitgaande relaties vanuit DP3-2
+    9. RV016-1 uit DP3 naar DP2: Installatie bemaling verwijderd tbv bestrating
+   10. RV 6 naar DP2, Zone W9 en Lichtput gereed voor start bestrating 
+   11. RV 10 naar DP2, Zone W8 Keyserlei centraal gereed voor start bestrating
+   12. RV 11 naar DP2, Zone W5 Teniers zuid, gereed voor start bestrating
+   13. Contractmijlpaal uit DP3-2 naar BCT5, Tram Operaplen-Leien Noord Zuid
+   14. ContractMijlpaal uit DP3 naar VO-09b, Archeologische tuin Kipdorpbrug
+   15. ContracMijlpaal uit DP3 naar VO-11 light, Autotunnels (beperkte functionaliteit)
+   16. ContractMijlpaal uit DP3 naar VO-11 vol, Operaplein ondergrond tunnel
+   17. ContractMijlpaal uit DP3-2 naar VO-13 Operaplein ondergrond Parking VÓÓR testen
+   18. ContractMijlpaal uit DP3-2 naar VO-13 Operaplein ondergrond Parking NA testen
+   19. RV012 uit DP3-2 naar DP2, Logistieke opening gedicht (kraan- en strossgat)
+   20. RV027 uit DP3 naar DP2: Einde Hijsactie 700T kraan Kipdorpbrug - Start Dwarskabels tbv Rd01 en Rd02
+   21. RV013 uit DP2 én DP3 naar DP1: DP1, DP2 én DP3 gereed voor afrol bovenleiding Rd-09 en Rd-10 (Kipdorpvest - Kipdorpbrug - tot nèt vóór Tunnelplaats)
+   22. RV014 uit DP3 naar DP2, Middenspanningscabine zuidhoek Kipdorpvest en Operaplein verwijderd
+   23. RV022, MP uit DP3-2 naar DP2: Staalwerk trambrug gereed - start Gemeentestraat fase J Kipdorpbrug-Operaplein en plaatsen sporen op trambrug
+   24. RV034, uit DP3-2 naar DP2: T28 Trappencomplex gereed- Start aanleg Perron Roosevelt
+   25. RV029 uit DP3-2 naar DP2: Einde metselwerken archeologische brug - start ventweg werfdeel IV
+   26. Inkomende relaties naar DP3-2
+   27. RV013 uit DP3-1 naar DP3-2: Leuningen Lichtput af
+   28. RV023, MP uit DP3-2 naar DP2: Einde Betonstructuren ventweg west - start Ventweg Kipdorpbrug zuidwest
+   29. RV028, MP uit DP3-2 naar DP2: Einde keerconstructie trambaan O&W - Start fundering trambaan noord van Kipdorpbrug
+   30. 30 BOUWPLAATS
+   31. Verwijderen middenspanningscabine Domino's Pizza (hoek Kipdorpvest - Operaplein) na gereed grootste deel werf (datum opgave KME 19.11.18)
+   32. Stapsgewijs afschakelen bemaling bouwput
+   33. Verwijderen bemaling Domino's Pizza (Hoek Operaplein - Kipdorpvest)
+   34. 32 PARKING & TUNNELS
+   35. A) Parking
+   36. niv 0
+   37. ruwbouw
+   38. plaatsen balken 1e fase B89 tem B39(tem zone 10)
+   39. plaatsen oplegtoestellen
+   40. plaatsen balken 2e fase B38 tem B13(tem zone 15)
+   41. plaatsen balken 3e fase B12 tem B1 (nacht)
+   42. eindbalken en dakplaat
+   43. zone 1
+   44. zone 2
+   45. zone 3
+   46. zone 4
+   47. zone 5
+   48. zone 6
+   49. zone 7
+  ... +2105 more tasks
+
+========================================================================================================================
+FILE: C2019-26 BAM Deelproject 4.xlsx
+Project: Project
+Total Tasks: 758
+ALL TASK NAMES:
+    0. Project
+    1. DP4 TRAMLIJN EILANDJE
+    2. 4 TRAMLIJN EILANDJE
+    3. START MS TRAMLIJN EILANDJE
+    4. FINISH MS TRAMLIJN EILANDJE
+    5. Uitgaande relaties vanuit DP4
+    6. Contractmijlpaal uit DP4 naar DMP t.b.v. BCT5b  (Tram Kattendokdijk Oostkaai-Mexicostraat)
+    7. Afronden opleverpunten t.b.v. BCT5b (Tram Kattendokdijk Oostkaai-Mexicostraat)
+    8. Voorbereiding
+    9. Voorafgaande verplaatsingswerken nutsleidingen
+   10. Aanvangsdatum DP4 Eilandje
+   11. Peilen, (ver)plaatsen en aanpassen nutsleidingen
+   12. Werken door derden op perrons ifv trambaan (leuningen)
+   13. Werken door derden (straatobjecten, aansluitingen ervan, infoborden, camera’s, …)
+   14. Groenaanleg en beplantingen (alle zones)
+   15. Deelfase 1A
+   16. start
+   17. einde
+   18. start
+   19. ????????
+   20. einde
+   21. Deelfase 1C
+   22. start
+   23. einde
+   24. Deelfase 2A
+   25. start
+   26. einde
+   27. Deelfase 2B
+   28. start
+   29. einde
+   30. Voorbereidende werken deelfase 1A
+   31. Aanpassingen kruispunt Amsterdamstraat en Bataviastraat
+   32. Aanpassen VRI kruispunt Amsterdamstraat
+   33. Fasewissel deel 1: Amsterdamstraat -> Bonapartedok (verkeer westelijke weghelft)
+   34. Aanpassingswerken zone Brouwersvliet
+   35. Aanpassen VRI kruispunt Brouwersvliet
+   36. Fasewissel deel 2: Bonapartedok -> Sint-Pietersvliet (verkeer westelijke weghelft)
+   37. 41 Aansluiting Katelijnevest : zie 423 St-Pietersvliet
+   38. start
+   39. einde
+   40. 42 Rijnkaai Zuid
+   41. Afwerking sporen volledige zone Rijnkaai Zuid
+   42. 421St-Pietersvliet (Zone 9)
+   43. Voorbereidingen, signalisatie en opbraakwerken
+   44. Wachtbuizen en Spoorbedding
+   45. wissels St-Pietersvliet
+   46. Leveren kruis 160K001
+   47. Plaatsen wissels kruis
+   48. OV kabel
+   49. Boren bvl palen
+  ... +708 more tasks
+
+========================================================================================================================
+FILE: C2019-27 BAM Deelproject 6.xlsx
+Project: Project
+Total Tasks: 1029
+ALL TASK NAMES:
+    0. Project
+    1. DP6 TRAMLIJN NOORDERLAAN
+    2. 6 TRAMLIJN NOORDERLAAN
+    3. START MS TRAMLIJN NOORDERLAAN
+    4. FINISH MS NOORDERLAAN
+    5. FINISH MS  NOORDERLAAN excl deel beplanting en werkzaamh tgv DWA-riolering
+    6. FINISH MS  NOORDERLAAN incl vertraging wegens riolering
+    7. FINISH MS  NOORDERLAAN incl alle beplanting
+    8. Deelfase 1 - Trambusbaan + weg Oost
+    9. start
+   10. Voorbereidende werken
+   11. belijning & signalisatie westelijke helft
+   12. Vellen bomen + ontstronken
+   13. Opbraak & wegname OV-palen
+   14. Steenslagfundering
+   15. Asfalt
+   16. Installatie tijdelijke VRI
+   17. Kruispunt Santiagostraat afgesloten
+   18. begin
+   19. Einde
+   20. Kruispunt Manchesterlaan afgesloten
+   21. begin
+   22. Einde
+   23. Santiagostraat - Groenendaallaan (430 lm)
+   24. opbraak + afgraving
+   25. Opbraak OV-palen
+   26. Wegname VRI
+   27. Vellen bomen + ontstronken
+   28. Opbraak rijweg
+   29. Opbraak voetpad-fietspad
+   30. Afgraving middenberm
+   31. rioleringen
+   32. RWA D600 + putten
+   33. aansluitingen slokkers
+   34. fietspad-voetpad
+   35. Verplaatsen nutsleidingen + overkoppelingen
+   36. Opbraak / opvullen bestaande riolering
+   37. Wachtbuizen, trekputten & funderingen
+   38. Grondkoffer
+   39. Onderfundering type I
+   40. Steenslagfundering type I
+   41. Steenslagfundering type IIA
+   42. Asfalt OL
+   43. Asfalt TL
+   44. Borduur + betonstraatstenen + koffer
+   45. Afwerking VP klinkers
+   46. trambusbaan
+   47. Dwarse wachtbuizen
+   48. Grondkoffer
+   49. Onderfundering type III
+  ... +979 more tasks
+
+========================================================================================================================
+FILE: C2015-26 Debt Collection System.xlsx
+Project: Debt Collection System
+Total Tasks: 263
+ALL TASK NAMES:
+    0. Debt Collection System
+    1. define
+    2. kick-off meeting
+    3. project charter set
+    4. project charter (scope definition)
+    5. project security risks
+    6. project charter - communication and validation
+    7. inform  IT governance
+    8. send info
+    9. send project charter for validation + delivery board validation
+   10. business validation
+   11. end of define
+   12. design
+   13. blueprint set
+   14. functional analysis List/file creation
+   15. functional analysis Monitoring
+   16. functional analysis Interfacing
+   17. architecture analysis
+   18. budget &amp; planning for development + master test chapter
+   19. design phase - validations
+   20. presentation to Business part 1
+   21. presentation to Business part 2
+   22. send to delivery board + IT governance validation
+   23. business validation
+   24. end of design
+   25. build
+   26. weekly file
+   27. build/technical design
+   28. ABAP
+   29. UT program in general
+   30. UT submission file
+   31. UT clearing file
+   32. UT other treatment file
+   33. business UT submission
+   34. UT sending via e-mail
+   35. build/technical design
+   36. monthly file
+   37. build/technical design
+   38. ABAP
+   39. UT
+   40. business UT
+   41. UT sending via e-mail
+   42. authorization check
+   43. IRIS-SC
+   44. build/technical design
+   45. ABAP
+   46. UT
+   47. build/technical design
+   48. ABAP
+   49. UT
+  ... +213 more tasks
+
+========================================================================================================================
+FILE: C2016-09 Data Loss Prevention System.xlsx
+Project: Data Loss Prevention System
+Total Tasks: 143
+ALL TASK NAMES:
+    0. Data Loss Prevention System
+    1. MS Kick off meeting
+    2. DLP workshop
+    3. study existing documentation
+    4. Milestones
+    5. MS Start specific design
+    6. MS testing start
+    7. MS testing end
+    8. MS Deployment start
+    9. MS Deployment end
+   10. A. DLP Strategy
+   11. Define DLP Strategy output
+   12. Initial DLP Strategy workshop
+   13. DLP Strategy Document writing
+   14. A.1 Technical and Organizational inputs
+   15. A.2 Data loss/leakage prevention Strategy
+   16. Follow-up DLP Strategy workshop
+   17. A.3 Proposed optimization of the need of information sharing and portability
+   18. A.4 Overarching technical policies
+   19. DLP Strategy Document writing
+   20. A.1 Technical and Organizational inputs
+   21. A.2 Data loss/leakage prevention Strategy
+   22. A.3 Proposed optimization of the need of information sharing and portability
+   23. A.4 Overarching technical policies
+   24. DLP Strategy Document review
+   25. DLP Strategy Fix document
+   26. DLP Strategy approval
+   27. B. High level implementation plan
+   28. Define HL Implementation plan output
+   29. Initial HL Implementation plan workshop
+   30. HL Implementation plan Document writing
+   31. B.1 Roadmap towards a full DLP implementation
+   32. B.2 Communication plan to stakeholders
+   33. B.3 integration in exisiting architecture
+   34. B.4 Security controls for the enforcement of the policy
+   35. Follow-up HL Implementation plan workshop
+   36. HL Implementation plan Document writing
+   37. B.1 Roadmap towards a full DLP implementation
+   38. B.2 Communication plan to stakeholders
+   39. B.3 integration in existing architecture
+   40. B.4 Security controls for the enforcement of the policy
+   41. HL Implementation plan Document review
+   42. HL Implementation plan Fix document
+   43. HL Implementation plan approval
+   44. D. Technical directives
+   45. Define Technical directives output
+   46. Initial Technical directives workshop
+   47. Technical directives Document writing
+   48. D.1 Device/Port control rules
+   49. D.2 DLP rules
+  ... +93 more tasks
+
+========================================================================================================================
+FILE: C2023-03 metaBOF.xlsx
+Project: Project
+Total Tasks: 110
+ALL TASK NAMES:
+    0. Project
+    1. Official PO accepted by Myriade = Start of contract
+    2. Payment milestone #1
+    3. Visit current operations and kick off meeting 
+    4. Initial Training Key Users
+    5. Training key users customer & partner in preparation Workshops
+    6. Introduce documents  User Guide + Deployment & Configuration
+    7. Access to Myriade test system for experience building & play
+    8. Collection of data & information (network, people, credentials, etc.) 
+    9. Contact details of all people (and their backups) = Resources
+   10. Introduce Camera List template (Excel) to complete
+   11. Introduce Alarm List template (Excel) to complete
+   12. Prepare Active Directory Integration (LDAP/SAML)
+   13. Review passages (average day, average night, peak) Statistics Collection.
+   14. Count of Alarms Lists, Cameras, Concurrent users, Exports, reports, Features
+   15. Gather network information + credentials
+   16. Review Hardware Scaling with customer
+   17. Availability of FTP/SFTP/FTPS/SMTP/SMS/SNMP/NTP, etc.
+   18. Choice of Geographical Information System (GIS) + Administrative DB
+   19. Specifications of cameras & protocols
+   20. Specification of protocols for third party Alarm lists
+   21. Virtual Test Environment
+   22. Setup test virtual machines on Hyper-V farm customer
+   23. Testing performance of customer supplied VM's on Hyper-V farm
+   24. Workshops with customer to fine-tune requirement in Tender (iteration)
+   25. Workhop to clarify Tender and deepen understanding of details
+   26. Write Change Requests/clarifications based on Tender to be developed
+   27. Start identifying requests outside Tender requirements
+   28. Introduce Access Management topic & Template (critical & complex)
+   29. Write General Project and Progress Plan
+   30. Listing up new functionalities for follow-up and planning (monitoring)
+   31. Status Update
+   32. Steerco #1
+   33. Project plan signed by customer + Status information provided
+   34. Payment milestone #2
+   35. Start development of requirements from Tender
+   36. Architecture - Technical Specifications
+   37. Development - Code Writing
+   38. Internal Testing, automated testing
+   39. Integration testing, Final manual testing, deployment testing
+   40. Translation resource files to local language (if needed, iteration)
+   41. Setup multiple Hyper-V environments in data center
+   42. Review Scaling information (consider extra requirements)
+   43. If possible consider MMCR, OCR2, Blurring, WIM, etc.
+   44. Set up Staging Environment
+   45. Set up initial Production Environment
+   46. Set up Backup (Redundancy) Environment
+   47. Duplicate data (Camera, etc) from Legacy system to New system (crucial)
+   48. Set up + Test Failover system
+   49. Listing up all missing info to be delivered and documented by Partner
+  ... +60 more tasks
+
+========================================================================================================================
+FILE: C2023-05 IT Data migration.xlsx
+Project: Project Data migration 
+Total Tasks: 77
+ALL TASK NAMES:
+    0. Project Data migration 
+    1. Deployment framework 
+    2. Deployment framework 
+    3. Speos 
+    4. Speos 
+    5. Build environment  (Depending on Charlotte's report)
+    6. Jira upgrade
+    7. SaaS update
+    8. Lettergen server
+    9. Application servers 
+   10. MongoDB
+   11. Back-up
+   12. Reinstall back-up server
+   13. Automate software updates / packages
+   14. Configuration back-up management node
+   15. Configuration back-up scheduling
+   16. Configuration clients
+   17. Network devices (configuration of switches, routers, ...)
+   18. Testen backup's
+   19. Testen restore
+   20. Documentation in wiki
+   21. Infrastructure DC Oostkamp
+   22. Migration Saas Test to DC Gent (includes ip to hostnames)
+   23. Migration Saas Production to DC Gent (redeploy)
+   24. Migration Development environments to DC Gent 
+   25. Migration Testing environments to DC Gent (BNPPF, Databases, ...)
+   26. Reconfig van DC Oostkamp
+   27. Network aligned with DC Gent
+   28. Configuration Switches
+   29. Deploy OpenNebula
+   30. Integrate OpenNebula with DC Gent
+   31. Deploy Storage
+   32. Firewall configuration
+   33. Configuration management
+   34. Setup Ansible
+   35. Build UI for Ansible and Ansible Inventory
+   36. Ansible Playbooks (non development deployments)
+   37. Playbook for Server authentication (via SSH keys)
+   38. Monitoring
+   39. Setup Tooling
+   40. Define  and implement monitoring plan
+   41. Define and implement dashboards
+   42. Monitoring Infrastructure 
+   43. Network status
+   44. Network Traffic
+   45. LDAP status
+   46. Development environments status
+   47. Back-up status
+   48. Hardware (Hypervisors, storage, availability)
+   49. Monitoring SaaS
+  ... +27 more tasks
+
+========================================================================================================================
+FILE: C2023-11 Rail-net communication point 1.xlsx
+Project: Train One
+Total Tasks: 288
+ALL TASK NAMES:
+    0. Train One
+    1. GENERAL PLANNING
+    2. Start uitvoeringstermijn
+    3. Eind uitvoeringstermijn
+    4. officiële start van DT1
+    5. DT1: Algemene studie
+    6. Goedkeuring Algemene studie
+    7. DT1: Algemene studie + goedkeuring
+    8. Technische fiches buitenuitrustingen
+    9. Goedkeuring buitenuitrustingen
+   10. Technische fiches kabels en installatiemateriaal
+   11. Goedkeuring kabels en installatiemateriaal
+   12. Bediening en visualisatie gids  (inclusief besprekingen met klant)
+   13. Bediening en visualisatie gids : laatste invoer van klant
+   14. Finale versie van de Bediening en visualisatie gids
+   15. Goedkeuring Bediening en visualisatie gids
+   16. Interface SAP (YPTO) : besprekingen met  partner YPTO
+   17. Interface SAP (YPTO) : bevestiging van de XML schemas
+   18. Interface SAP (YPTO) : finale beschrijving
+   19. Goedkeuring interface SAP
+   20. Interface EBP (Infrabel) : besprekingen met partner Infrabel
+   21. Interface EBP (Infrabel) : laatste invoer van klant
+   22. Interface EBP (Infrabel) : finale beschrijving
+   23. Goedkeuring interface EBP (Infrabel)
+   24. Interface RFID : besprekingen met klant
+   25. Interface RFID : laatste invoer van klant
+   26. Interface RFID : finale beschrijving
+   27. Goedkeuring interface RFID
+   28. Algemene specificaties BFR / MSR32 (internal doc.)
+   29. Documentatie (Algemeen)
+   30. Vertaling algemene studie in NL en FR + voorbereiding exemplaren
+   31. Voorbereiding van de bedieningshandleiding en de onderhoudshandleiding
+   32. System Engineering
+   33. BFR
+   34. Gebruiker interface
+   35. RFID Interface
+   36. Verbinding met SAP
+   37. Verbinding met MSR32
+   38. Tracking van treinnummer
+   39. MSR32
+   40. MSR32
+   41. DT3: Kinkempois
+   42. officiële start van DT3.1
+   43. DT3.1 Detail studie Kinkempois
+   44. Goedkeuring Detail studie Kinkempois
+   45. DT3.1 Detail studie Kinkempois + goedkeuring
+   46. definitieve en gedetailleerde plannen van de sporen (dubbel lijn) beschikbaar en bruikbaar (dwg formaat)
+   47. Signalen situatieplan (inclusief besprekingen met klant)
+   48. Goedkeuring Signalen situatieplan
+   49. Overzicht wagon posities (inclusief besprekingen met klant)
+  ... +238 more tasks
+
+========================================================================================================================
+FILE: C2023-13 Rail-net communication point 2.xlsx
+Project: Train Three
+Total Tasks: 240
+ALL TASK NAMES:
+    0. Train Three
+    1. Offerte en contract fase
+    2. offerte
+    3. plan van aanpak
+    4. planning
+    5. documentenlijst
+    6. opdrachtsomschrijving ISA
+    7. contractafstemming
+    8. opdracht van ProRail
+    9. Contractering
+   10. Opdrachtbevestiging 2 ProRail
+   11. Opdracht aan Sweco
+   12. Opdracht aan ISA
+   13. Mobilisatie
+   14. Go
+   15. Kick Off voorbereiding
+   16. Kick Off (incl. projectplannigssessie)
+   17. Regulier wekelijks overleg/samenwerk
+   18. V&V plan
+   19. Analyse V&V Matrix
+   20. Check en update Plan
+   21. Update evt met new saf req
+   22. Interne Review+update
+   23. ProRail Review
+   24. Workshop bespreken matrix
+   25. Verwerken reviewcomm
+   26. Controle-review en acceptatie
+   27. V&V matrix
+   28. Review bestaande matrix
+   29. Update matrix
+   30. Interne Review+update
+   31. ProRail Review
+   32. Verwerken reviewcomm
+   33. Controle-review
+   34. Safety Plan + Systemdefinition
+   35. Opgave inhoud
+   36. Schrijven
+   37. Interne review
+   38. Update
+   39. ProRail Review
+   40. Verwerken reviewcomm
+   41. Controle-review
+   42. Review ISA
+   43. Verwerken reviewcomm
+   44. Check met PR
+   45. Herissue naar ISA/AsBo
+   46. Hazard Log
+   47. Organiseren Hazid sessie
+   48. Hazid Sessie
+   49. Hazard Log Opstellen
+  ... +190 more tasks
+
+========================================================================================================================
+FILE: C2025-24  CONSTRUSSION DE CERCO.xlsx
+Project: CONSTRUSSION DE CERCO PERIMETRICO Y VEREDA, ADQUISICION DE EQUIPO, EN EL (LA) PARQUE DE LA SOBERANIA DISTRITO DE CERRO COLORADO, PROVINCIA DE AREQUIPA, DEPARTAMENTO AREQUIPA
+Total Tasks: 110
+ALL TASK NAMES:
+    0. CONSTRUSSION DE CERCO PERIMETRICO Y VEREDA, ADQUISICION DE EQUIPO, EN EL (LA) PARQUE DE LA SOBERANIA DISTRITO DE CERRO COLORADO, PROVINCIA DE AREQUIPA, DEPARTAMENTO AREQUIPA
+    1. “CONSTRUSSION DE CERCO PERIMETRICO Y VEREDA, ADQUISICION DE EQUIPO, EN EL(LA)  PARQUE DE LA SOBERANIA DISTRITO DE CERRO COLORADO, PROVINCIA DE AREQUIPA, DEPARTAMENTO AREQUIPA”
+    2. OBRAS PROVISIONALES, TRABAJOS PRELIMINARES, SEGURIDAD Y SALUD
+    3. OBRAS PROVISIONALES
+    4. OFICINA, ALMACEN Y CASETA D/GUARDIANIA
+    5. CARTEL DE IDENTIFICACION DE OBRA 3.60mX2.40m
+    6. CERCO PROVISIONAL MALLA ARPÍLLERA
+    7. AGUA PARA LA CONSTRUSSION
+    8. ENERGIA ELECTRICA PARA LA CONSTRUSSION
+    9. TRABAJOS PRELIMINARES
+   10. TRANSPORTE DE EQUIPO Y HERRAMIENTAS
+   11. TRAZO, NIVELACION Y REPLANTEO
+   12. ELABORACION DEL PLAN DE SEGURIDAD Y SALUD EN EL TRABAJO
+   13. SERVICIOS HIGIENICOS PARA LA OBRA-BAÑOS QUIMICOS
+   14. SEGURIDAD Y SALUD
+   15. EQUIPO DE PROTESSION INDIVIDUAL
+   16. EQUIPOS DE PROTESSION COLECTIVA
+   17. SEÑALIZACION TEMPORAL DE SEGURIDAD
+   18. PREVENCION Y CONTROL ANTE COVID 19
+   19. INSTALACIONES PROVISIONALES
+   20. LAVADERO DE MANOS PORTATIL
+   21. IMPLEMENTACION PARA COVID 19
+   22. ELABORACION PLAN DE VIGILANCIA, PREVENCION Y CONTROL COVID-19 EN EL TRABAJO
+   23. EQUIPOS COMPLEMENTARIOS DE PROTESSION INDIVIDUAL - COVID 19
+   24. EQUIPOS COMPLEMENTARIOS DE PROTESSION COLECTIVA - COVID 19
+   25. LIMPIEZA PERMANENTE Y DESINFESSIÓN
+   26. SERVICIOS COMPLEMENTARIOS EXAMEN PRUEBA COVID-19
+   27. MANEJO DE RESIDUOS SOLIDOS BIO CONTAMINANTES FRENTE A COVID-19
+   28. PLAN DE MITIGACION AMBIENTAL
+   29. ELABORACION DE PLAN DE MITIGACION DE IMPACTO AMBIENTAL
+   30. CERCO PERIMETRICO
+   31. MOVIMIENTO DE TIERRAS
+   32. EXCAVACION DE ZANJAS PARA SARDINEL (MANUAL)
+   33. ACARREO MANUAL DE DESMONTE
+   34. ELIMINACION DE DESMONTE Y DESPERDICIOS
+   35. OBRAS DE CONCRETO SIMPLE
+   36. ENCOFRADO PARA SARDINEL
+   37. SARDINEL DE CONCRETO f'c=175 kg/cm2
+   38. ESTRUCTURA METALICA
+   39. FABRICACION E INSTALACION DE CERCO PERIMETRICO, INCLUYE PINTADO
+   40. PUERTA METALICA INC.  COLOCACION Y PINTADO
+   41. ASSESORIOS  VARIOS
+   42. PINTURA ESMALTE EN SARDINEL DE CONCRETO
+   43. JUNTAS ASFALTICAS CON TECKNOPORT E=1"
+   44. VEREDAS Y RAMPAS
+   45. DEMOLICIONES
+   46. DEMOLICION DE CONCRETO EN PISOS Y BANCAS
+   47. ELIMINACION DE MATERIAL EXCEDENTE PROVENIENTE DE DEMOLICIONES
+   48. MOVIMIENTO DE TIERRAS
+   49. EXCAVACION MANUAL EN TERRENO NORMAL
+  ... +60 more tasks
+

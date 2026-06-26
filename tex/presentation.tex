@@ -1,0 +1,217 @@
+% Đã cấu hình để biên dịch trực tiếp bằng pdfLaTeX (Mặc định của Overleaf)
+\documentclass[aspectratio=169]{beamer}
+
+% Cài đặt tiếng Việt cho pdfLaTeX
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages cho biểu đồ và code
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+% Cấu hình hiển thị code JSON
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue},
+    stringstyle=\color{green!50!black},
+    commentstyle=\color{gray},
+    showstringspaces=false,
+    breaklines=true
+}
+
+% Thông tin trang bìa
+\title[GLPO AI Optimizer]{GLPO AI Optimizer: Kiến trúc \& Thuật toán Cốt lõi}
+\subtitle{Hệ thống Tối ưu hóa Tiến độ \& Chi phí Dự án bằng Trí tuệ Nhân tạo}
+\author{Báo cáo Đồ án}
+\institute[Đại học]{Khoa Công nghệ Thông tin}
+\date{\today}
+
+\begin{document}
+
+% Slide Bìa
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% -------------------------------------------------------------
+% PHẦN 1: BÀI TOÁN & THIẾT KẾ DATABASE
+% -------------------------------------------------------------
+\section{Bài toán \& Kiến trúc}
+
+\begin{frame}{1. Bài toán Thực tiễn: "Sự biến dị của Dữ liệu" (Schema Drift)}
+    \textbf{Thực trạng Dataset DSLIB (2011 - 2025):}
+    \begin{itemize}
+        \item Cấu trúc file Excel dự án thay đổi liên tục qua từng năm.
+        \item Các cột dữ liệu co giãn (từ 17 cột xuống 14 cột), xuất hiện nhiều thuộc tính (features) mới.
+    \end{itemize}
+    \vspace{0.3cm}
+    \textbf{Giải pháp Kiến trúc Lai (Hybrid SQL-NoSQL):}
+    \begin{itemize}
+        \item \textbf{Cột tĩnh (Hard columns):} Lưu trữ thông số cốt lõi (ID, Duration, Fixed Cost).
+        \item \textbf{Cột động (JSONB metadata):} Tự động "hút" mọi thông số dị biệt theo từng năm.
+        \item Hệ thống phân rã thành \textbf{3 Trục Ràng Buộc} độc lập: Thời gian (Agenda), Tài nguyên (Resource), và Logic (Topology).
+    \end{itemize}
+\end{frame}
+
+% -------------------------------------------------------------
+% PHẦN 2: MIỀN GIÁ TRỊ LÝ THUYẾT & ERD (THEORETICAL DOMAINS)
+% -------------------------------------------------------------
+\section{Miền Giá trị \& ERD}
+
+\begin{frame}{2. Sơ đồ Thực thể Liên kết (ERD) - Universal Schema}
+    Kiến trúc Database được đập đi xây lại hoàn toàn để hỗ trợ Dataset 2011-2025:
+    \vspace{0.2cm}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Nhóm Bảng Cốt lõi (Core \& Snowflake):}
+        \begin{itemize}
+            \item \texttt{app\_projects}: Chứa Metadata JSONB.
+            \item \texttt{fact\_tasks}: Hút mọi thuộc tính dị biệt.
+            \item \texttt{dim\_topic\_cost}: Tách bạch Fixed/Resource.
+        \end{itemize}
+        
+        \vspace{0.2cm}
+        \textbf{Nhóm Bảng Ràng Buộc (Constraints):}
+        \begin{itemize}
+            \item \texttt{project\_constraint\_time} (Lịch trình)
+            \item \texttt{project\_constraint\_resource} (Tài nguyên)
+            \item \texttt{project\_constraint\_logic} (Mạng DAG)
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.95\linewidth]{erd.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{3. Miền Giá trị Lý thuyết (Theoretical Domains)}
+    Việc định nghĩa Miền xác định giúp AI không đưa ra đề xuất "phi thực tế", là cơ sở cho Constraint Validation.
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{@{}llp{8cm}@{}}
+            \toprule
+            \textbf{Feature} & \textbf{Domain} & \textbf{Giải thích Toán học} \\
+            \midrule
+            \textbf{Duration} & $(0, +\infty)$ & Thời lượng không thể âm hoặc bằng 0. \\
+            \textbf{Total Float} & $(-\infty, +\infty)$ & Khoảng dự trữ. Có thể âm nếu dự án đã trễ hạn chót (Hard Deadline). \\
+            \textbf{Max Availability} & $\mathbb{N} (0, +\infty)$ & Sức chứa tài nguyên là số tự nhiên (Không thể có âm 2 người thợ). \\
+            \textbf{Cruciality (CRI)} & $[-1, 1]$ & Hệ số tương quan Pearson đo độ nhạy của Task với toàn dự án. \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{3. Phân rã Đặc trưng theo Cấp độ (Features Range)}
+    \textbf{Tầng 1: Task-Level Features (Đặc trưng Cục bộ)}
+    \begin{itemize}
+        \item \textit{Duration, Resource Cost, Fixed Cost, Predecessors, Optimistic/Pessimistic.}
+        \item Đặc điểm: Sẽ biến thiên khi AI áp dụng Crashing (Ép tiến độ).
+    \end{itemize}
+    \vspace{0.2cm}
+    \textbf{Tầng 2: Project-Level Constraints (Ràng buộc Vĩ mô)}
+    \begin{itemize}
+        \item \textit{Logic Constraint:} Mũi tên phụ thuộc (FS, SS), Lag Days.
+        \item \textit{Resource Constraint:} Sức chứa (Max Availability), Loại tài nguyên (Renewable/Consumable).
+        \item \textit{Agenda Constraint:} Cấu trúc lịch làm việc \texttt{weekly\_schedule} (VD: Nghỉ Thứ 7, CN).
+    \end{itemize}
+\end{frame}
+
+% -------------------------------------------------------------
+% PHẦN 3: FEATURE ENGINEERING
+% -------------------------------------------------------------
+\section{Kỹ nghệ Đặc trưng}
+
+\begin{frame}{4. Kỹ nghệ Đặc trưng (Feature Engineering cho AI)}
+    Biến đổi dữ liệu thô (Raw Data) thành Vector chuẩn hóa (Scale-Invariant) để Graph Neural Network học:
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Trục Thời gian (Criticality):} \texttt{float\_ratio} = Total Float / Duration. Tỷ lệ tiến về 0 $\rightarrow$ Đường găng (Tử huyệt). Cờ \texttt{is\_critical}.
+        \item \textbf{Trục Tài nguyên (Pressure):} \texttt{utilization\_ratio} = Daily Usage / Max Availability. Chuẩn hóa dải $[0, 1]$.
+        \item \textbf{Trục Chi phí (Sensitivity):} \texttt{cost\_density} = Resource Cost / Duration. AI dựa vào đây để săn các Task "rẻ nhất" để nén tiến độ.
+        \item \textbf{Trục Topological (Hub):} \texttt{descendant\_count}. Đếm số lượng công việc bị kéo lùi nếu Task hiện tại trễ.
+    \end{itemize}
+\end{frame}
+
+% -------------------------------------------------------------
+% PHẦN 4: AI PIPELINE & THUẬT TOÁN
+% -------------------------------------------------------------
+\section{Thuật toán Cốt lõi}
+
+\begin{frame}{5. Trái tim Hệ thống: 5 Lớp của AI Optimizer Pipeline}
+    Mục tiêu: Dập tắt \textit{"Sự bùng nổ không gian trạng thái"} (State Space Explosion).
+    \vspace{0.2cm}
+    \begin{enumerate}
+        \item \textbf{Graph Ingestion Layer:} Dựng DAG, tính Forward/Backward Pass (Early Start, Late Finish, Critical Path).
+        \item \textbf{Pruning Layer (Cắt tỉa):} Lõi tối ưu giảm tải phép tính.
+        \item \textbf{Action Generation Layer:} Sinh kịch bản Đơn \& Kép.
+        \item \textbf{Validation Layer (Beam Search):} Giữ lại Top K kịch bản khả thi.
+        \item \textbf{Evaluation Layer:} Tính điểm Sinh lời (ROI).
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{6. Pruning Layer (Lớp Cắt tỉa không gian tìm kiếm)}
+    Đây là kỹ thuật mấu chốt giúp AI chạy mượt mà trên các dự án khổng lồ:
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Hard Pruning (Critical Path Pruning):} 
+        Lập tức VỨT BỎ toàn bộ các tasks có \texttt{Total Float > 0} khỏi danh sách ứng viên rút ngắn tiến độ. Ép tiến độ task rảnh rỗi không mang lại lợi ích gì.
+        \item \textbf{Soft Pruning (Hàm Phạt - Penalty Function):} 
+        Chấp nhận dời lịch task trên đường găng (\texttt{Float = 0}) nếu Tiền phạt trễ dự án (Delay Penalty) \textit{rẻ hơn} chi phí thuê ngoài giờ (Crashing Cost) để bảo vệ Dòng tiền (Cashflow).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{7. Nghệ thuật Đánh đổi (Constraint Relaxation)}
+    Tầng 3 của dữ liệu cho phép AI \textbf{"Mở khóa/Nới lỏng ràng buộc"} khi kịch đường cùng.
+    \vspace{0.2cm}
+    \begin{block}{Kịch bản: Kích hoạt lệnh AGENDA\_OVERRIDE}
+        \begin{itemize}
+            \item \textbf{Hành động:} Tự động sửa biến \texttt{weekly\_schedule}, biến Thứ 7 \& CN thành Working Days.
+            \item \textbf{Chi phí:} Hệ số làm ngoài giờ (\texttt{overtime\_multiplier} x1.5) kích hoạt, đẩy \texttt{Resource Cost} lên cao. \texttt{Fixed Cost} bất biến.
+            \item \textbf{Lợi ích:} Kéo giãn tiến độ thực tế (Calendar Days) mà không làm "vỡ" giới hạn \texttt{Max Availability} của ngày thường.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+% -------------------------------------------------------------
+% PHẦN 5: OUTPUT
+% -------------------------------------------------------------
+\section{Kết quả}
+
+\begin{frame}[fragile]{8. Output Cuối cùng: AI Insight JSON Schema}
+    Toàn bộ giải pháp tối ưu được gói gọn vào API Contract trả về cho Frontend:
+    \vspace{0.2cm}
+\begin{lstlisting}[language=json]
+{
+  "action_type": ["CRASHING", "AGENDA_OVERRIDE"],
+  "target_tasks": ["T12", "T15"],
+  "human_message": "Mo khoa lich cuoi tuan cho Cum móng. Rut ngan 4 ngay. Chi phi tang $2000.",
+  "impact": {
+    "time_saved_days": 4,
+    "cost_penalty_usd": 2000,
+    "roi_score": 0.85
+  },
+  "risk": {
+    "float_consumed_days": 2,
+    "peak_resource_variance": 0.15
+  }
+}
+\end{lstlisting}
+\end{frame}
+
+% Slide Kết
+\begin{frame}
+    \centering
+    \Huge \textbf{CẢM ƠN HỘI ĐỒNG ĐÃ LẮNG NGHE!}
+    
+    \vspace{1cm}
+    \Large \textit{Q\&A}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,703 @@
+DSLIB LOGISTICS SUBSET - VERIFICATION REPORT
+Total files: 30
+========================================================================================================================
+
+========================================================================================================================
+FILE: C2011-07 Patient Transport System.xlsx
+Project: Patient Transport System
+Total Tasks: 69 | Logistics-matched Tasks: 7
+Logistics Tasks:
+  -> Patient Transport System
+  -> Request proposal suppliers transport system
+  -> Research suppliers transport systems
+  -> Negociation conditions final supplier transport system
+  -> Draw up & Sign contract with supplier transport system
+  -> Installation transport system
+  -> Training rapportage
+
+========================================================================================================================
+FILE: C2012-04 Asti-Cuneo Highway.xlsx
+Project: Asti-Cuneo Highway
+Total Tasks: 95 | Logistics-matched Tasks: 7
+Logistics Tasks:
+  -> Containers placement
+  -> Pegging road
+  -> Alternative road system
+  -> Road embankments
+  -> Guardrails pouring
+  -> Road signals pouring
+  -> Containers removal
+
+========================================================================================================================
+FILE: C2012-07 Solar Park.xlsx
+Project: Solar Park
+Total Tasks: 217 | Logistics-matched Tasks: 4
+Logistics Tasks:
+  -> rapport TA Predesign
+  -> Rapport TA Design
+  -> controle stabiliteit transport
+  -> Logistiek: transport / hijswerken
+
+========================================================================================================================
+FILE: C2012-08 Sea Electricity.xlsx
+Project: Sea Electricity
+Total Tasks: 467 | Logistics-matched Tasks: 144
+Logistics Tasks:
+  -> Transportation of template and mounting on Jack Up Platform Buzzard
+  -> Continious delivery of pin-piles
+  -> Delivery of pin-piles OTS
+  -> Delivery of pin-piles 1
+  -> Delivery of pin-piles 2
+  -> Delivery of pin-piles 3
+  -> Delivery of pin-piles 4
+  -> Delivery of pin-piles 5
+  -> Delivery of pin-piles 6
+  -> Delivery of pin-piles 7
+  -> Delivery of pin-piles 8
+  -> Delivery of pin-piles 9
+  -> Delivery of pin-piles 10
+  -> Delivery of pin-piles 11
+  -> Delivery of pin-piles 12
+  -> Delivery of pin-piles 13
+  -> Delivery of pin-piles 14
+  -> Delivery of pin-piles 15
+  -> Delivery of pin-piles 16
+  -> Delivery of pin-piles 17
+  -> Delivery of pin-piles 18
+  -> Delivery of pin-piles 19
+  -> Delivery of pin-piles 20
+  -> Delivery of pin-piles 21
+  -> Delivery of pin-piles 22
+  -> Delivery of pin-piles 23
+  -> Delivery of pin-piles 24
+  -> Transport (Hoboken to Vlissingen) 1
+  -> Transport (Hoboken to Vlissingen) 2
+  -> Transport (Hoboken to Vlissingen) 3
+  -> Transport (Hoboken to Vlissingen) 4
+  -> Transport (Hoboken to Vlissingen) 5
+  -> Transport (Hoboken to Vlissingen) 6
+  -> Transport (Hoboken to Vlissingen) 7
+  -> Transport (Hoboken to Vlissingen) 8
+  -> Transport (Hoboken to Vlissingen) 9
+  -> Transport (Hoboken to Vlissingen) 10
+  -> Transport (Hoboken to Vlissingen) 11
+  -> Transport (Hoboken to Vlissingen) 12
+  -> Transport (Hoboken to Vlissingen) 13
+  -> Transport (Hoboken to Vlissingen) 14
+  -> Transport (Hoboken to Vlissingen) 15
+  -> Transport (Hoboken to Vlissingen) 16
+  -> Transport (Hoboken to Vlissingen) 17
+  -> Transport (Hoboken to Vlissingen) 18
+  -> Transport (Hoboken to Vlissingen) 19
+  -> Transport (Hoboken to Vlissingen) 20
+  -> Transport (Hoboken to Vlissingen) 21
+  -> Transport (Hoboken to Vlissingen) 22
+  -> Transport (Hoboken to Vlissingen) 23
+  -> Transport (Hoboken to Vlissingen) 24
+  -> Transportation and installation of the jacket foundations
+  -> Transport of the jacket foundations 1
+  -> Transport of the jacket foundations 2
+  -> Transport of the jacket foundations 3
+  -> Transport of the jacket foundations 4
+  -> Transport of the jacket foundations 5
+  -> Transport of the jacket foundations 6
+  -> Transport of the jacket foundations 7
+  -> Transport of the jacket foundations 8
+  -> Transport of the jacket foundations 9
+  -> Transport of the jacket foundations 10
+  -> Transport of the jacket foundations 11
+  -> Transport of the jacket foundations 12
+  -> Transport of the jacket foundations 13
+  -> Transport of the jacket foundations 14
+  -> Transport of the jacket foundations 15
+  -> Transport of the jacket foundations 16
+  -> Transport of the jacket foundations 17
+  -> Transport of the jacket foundations 18
+  -> Transport of the jacket foundations 19
+  -> Transport of the jacket foundations 20
+  -> Transport of the jacket foundations 21
+  -> Transport of the jacket foundations 22
+  -> Transport of the jacket foundations 23
+  -> Transport of the jacket foundations 24
+  -> Grouting of foundation to the pin-piles 1
+  -> Grouting of foundation to the pin-piles 2
+  -> Grouting of foundation to the pin-piles 3
+  -> Grouting of foundation to the pin-piles 4
+  -> Grouting of foundation to the pin-piles 5
+  -> Grouting of foundation to the pin-piles 6
+  -> Grouting of foundation to the pin-piles 7
+  -> Grouting of foundation to the pin-piles 8
+  -> Grouting of foundation to the pin-piles 9
+  -> Grouting of foundation to the pin-piles 10
+  -> Grouting of foundation to the pin-piles 11
+  -> Grouting of foundation to the pin-piles 12
+  -> Grouting of foundation to the pin-piles 13
+  -> Grouting of foundation to the pin-piles 14
+  -> Grouting of foundation to the pin-piles 15
+  -> Grouting of foundation to the pin-piles 16
+  -> Grouting of foundation to the pin-piles 17
+  -> Grouting of foundation to the pin-piles 18
+  -> Grouting of foundation to the pin-piles 19
+  -> Grouting of foundation to the pin-piles 20
+  -> Grouting of foundation to the pin-piles 21
+  -> Grouting of foundation to the pin-piles 22
+  -> Grouting of foundation to the pin-piles 23
+  -> Grouting of foundation to the pin-piles 24
+  -> Transportation of parts from respective factories to Ostend
+  -> Loading jack up transport and installation platform 1
+  -> Loading jack up transport and installation platform 2
+  -> Loading jack up transport and installation platform 3
+  -> Loading jack up transport and installation platform 4
+  -> Loading jack up transport and installation platform 5
+  -> Loading jack up transport and installation platform 6
+  -> Loading jack up transport and installation platform 7
+  -> Loading jack up transport and installation platform 8
+  -> Loading jack up transport and installation platform 9
+  -> Loading jack up transport and installation platform 10
+  -> Loading jack up transport and installation platform 11
+  -> Loading jack up transport and installation platform 12
+  -> Loading jack up transport and installation platform 13
+  -> Loading jack up transport and installation platform 14
+  -> Loading jack up transport and installation platform 15
+  -> Loading jack up transport and installation platform 16
+  -> Loading jack up transport and installation platform 17
+  -> Loading jack up transport and installation platform 18
+  -> Loading jack up transport and installation platform 19
+  -> Loading jack up transport and installation platform 20
+  -> Loading jack up transport and installation platform 21
+  -> Loading jack up transport and installation platform 22
+  -> Loading jack up transport and installation platform 23
+  -> Loading jack up transport and installation platform 24
+  -> Transport of jacket foundation to Ostend
+  -> Transport of jacket foundation in sea
+  -> Preparation for upcoming transport
+  -> Transport and installation
+  -> Transport of OTS
+  -> Infield cables: production, transport and installation
+  -> Transport
+  -> Export cables (150 kV)
+  -> Production and transport of export cable
+  -> Transport Sweden-Ostend
+  -> Dredging shipping lane and preparing trench
+  -> Dredging to widen shipping lane Vaargeul1
+  -> Prepare trench where export cable B (150kV) is crossing Vaargeul1
+  -> Delivery of pipes to be drilled
+  -> Cable laying onshore between export cable landing and Elia sub-station
+  -> Export cable was laid down
+  -> Export cable laying on sea bed between coast and OTS
+  -> Export cable pull in OTS
+  -> Delivery of rock on Halve Maan site
+
+========================================================================================================================
+FILE: C2015-09 Railway Station (2).xlsx
+Project: Railway Station (2)
+Total Tasks: 372 | Logistics-matched Tasks: 7
+Logistics Tasks:
+  -> Railway Station (2)
+  -> Integratie technieken in portiek
+  -> Plaatsing rolluik in portiek roltrap
+  -> Beglaasde portieken GOK - kaders
+  -> Beglaasde portieken GOK - integratie elek.
+  -> Beglaasde portieken GOK - bekledingen
+  -> Beglaasde portieken GOK - beglazing
+
+========================================================================================================================
+FILE: C2015-26 Debt Collection System.xlsx
+Project: Debt Collection System
+Total Tasks: 263 | Logistics-matched Tasks: 11
+Logistics Tasks:
+  -> send project charter for validation + delivery board validation
+  -> send to delivery board + IT governance validation
+  -> import WSDL
+  -> import WSDL
+  -> monitoring and reporting
+  -> BI reports
+  -> import WSDL
+  -> performance report
+  -> preparation reporting
+  -> defect BI reporting
+  -> part 3 - reporting
+
+========================================================================================================================
+FILE: C2016-08 SCM System.xlsx
+Project: SCM System
+Total Tasks: 147 | Logistics-matched Tasks: 10
+Logistics Tasks:
+  -> Model integration of the MPS Master data (routings, BOM's,…)
+  -> Model integration of the inventory
+  -> Configure basic solvers (heuristics for capacity and inventory constraints)
+  -> Model integration of the feedback on Transport/Purchase orders
+  -> Model integration of intercompany Transport orders
+  -> Model Purchase requisitions to data warehouse
+  -> Configure basic solvers (heuristics for pulling inventory to RDC's)
+  -> Adapt Solver for pushing surplus inventory to RDC's
+  -> Adapt basic solvers (heuristics for capacity and inventory constraints)
+  -> Adapt basic solvers (heuristics for capacity and inventory constraints)
+
+========================================================================================================================
+FILE: C2016-09 Data Loss Prevention System.xlsx
+Project: Data Loss Prevention System
+Total Tasks: 143 | Logistics-matched Tasks: 7
+Logistics Tasks:
+  -> A.3 Proposed optimization of the need of information sharing and portability
+  -> A.3 Proposed optimization of the need of information sharing and portability
+  -> B.1 Roadmap towards a full DLP implementation
+  -> B.1 Roadmap towards a full DLP implementation
+  -> D.1 Device/Port control rules
+  -> D.1 Device /Port control rules
+  -> H. Migration Strategy and a high level Implementation Package
+
+========================================================================================================================
+FILE: C2016-35 Sweetpack.xlsx
+Project: Project
+Total Tasks: 65 | Logistics-matched Tasks: 8
+Logistics Tasks:
+  -> Testing supply hoppers candy (min. 70/min.)
+  -> Testing supply hoppers PP handles (min. 70/min.)
+  -> Evaluation concept with Sweetpack
+  -> Production flowpacker
+  -> Customization standard flowpacker
+  -> Delivery flowpacker at Sweetpack
+  -> Delivery hoppers and flowpacker
+  -> Integration of hoppers and flowpacker in new production line
+
+========================================================================================================================
+FILE: C2017-01 Apartment construction.xlsx
+Project: Project
+Total Tasks: 65 | Logistics-matched Tasks: 5
+Logistics Tasks:
+  -> Road access
+  -> Water supply
+  -> Transportation preparation
+  -> Building steel columns (vertical support)
+  -> Access to Public Transportation
+
+========================================================================================================================
+FILE: C2017-03 Hydrogen Island.xlsx
+Project: Hydrogen Island - MS project
+Total Tasks: 105 | Logistics-matched Tasks: 9
+Logistics Tasks:
+  -> Cone Penetration Test Report
+  -> Roads and hardstands
+  -> Roads
+  -> Carbon capture and storage SMR
+  -> Storage tanks
+  -> Port
+  -> Crane
+  -> Transport resources
+  -> Supply cables and sewage
+
+========================================================================================================================
+FILE: C2018-04 Christmas market (1).xlsx
+Project: Christmas market
+Total Tasks: 39 | Logistics-matched Tasks: 4
+Logistics Tasks:
+  -> Submit + getting approval for request usage electricity, water supply (Farys)
+  -> Submit report form events
+  -> Delivery Stad Gent
+  -> Delivery drinks
+
+========================================================================================================================
+FILE: C2018-05 Music festival.xlsx
+Project: Festivalcorrect
+Total Tasks: 31 | Logistics-matched Tasks: 3
+Logistics Tasks:
+  -> public transport
+  -> placing stands: food+ drink+ reloading points bracelet (festival area + camping area)
+  -> deliver dishwasher cups ( festival area + camping area)
+
+========================================================================================================================
+FILE: C2018-09 CarSharing platform.xlsx
+Project: Project
+Total Tasks: 49 | Logistics-matched Tasks: 9
+Logistics Tasks:
+  -> Research for possible docking stations
+  -> 6. Research for traffic sign supplier (Trafiroad)
+  -> 13. Meeting with docking station suppliers
+  -> 22. Delivery and placing of the charging blocks (UwLaadpunt)
+  -> 24. Installation of visibility marks (Trafiroad)
+  -> 25. Installation of trafic signs (Trafiroad)
+  -> Delivery
+  -> 27. Delivery cars
+  -> 34. Payment 'Traffiroad'
+
+========================================================================================================================
+FILE: C2018-11 Warehouse renovation.xlsx
+Project: Project
+Total Tasks: 30 | Logistics-matched Tasks: 8
+Logistics Tasks:
+  -> Order + delivery containers for discharging wood
+  -> Order + delivery containers for discharging waste walls 
+  -> Order + delivery concrete
+  -> Order + delivery ventilation systems
+  -> Order + delivery sandwich pallets
+  -> Ordering + delivery new door 
+  -> Putting sandwich pallets against the walls
+  -> Putting sandwich pallets against the walls
+
+========================================================================================================================
+FILE: C2019-16 Lock Ganzepoot Excel.xlsx
+Project: Lock Ganzepoot Ypres
+Total Tasks: 33 | Logistics-matched Tasks: 5
+Logistics Tasks:
+  -> Installation of power generators, lighting, toilets, fencing,  supply of concrete and wooden partition
+  -> Remove railing and platforms
+  -> supply concrete blocks (to prevent the floor comes up)
+  -> Transport of gates to the site
+  -> Installing railing
+
+========================================================================================================================
+FILE: C2019-17 Wine production.xlsx
+Project: Wine Production
+Total Tasks: 26 | Logistics-matched Tasks: 2
+Logistics Tasks:
+  -> Bottle supply
+  -> Transportation material to event
+
+========================================================================================================================
+FILE: C2019-22 BAM Deelproject 1.xlsx
+Project: Project
+Total Tasks: 1633 | Logistics-matched Tasks: 12
+Logistics Tasks:
+  -> Jet-grouting thv aansluiting bestaande constructie
+  -> Aflossen mbv krol en containerbak 
+  -> Aflossen mbv krol en containerbak 
+  -> Plaatsen waterafvoer rails (PVC buis + plaatsen rails)
+  -> Laatste herziening sporen (machinaal onderstoppen) + slijpen rails
+  -> Aanbrengen resterende raillijfbekleding
+  -> Afwerken raillijfbekleding
+  -> Afwerken raillijfbekleding
+  -> Afwerken raillijfbekleding
+  -> Lassen sporen + Afwerking raillijfbekleding + controlemeting
+  -> Afwerken raillijfbekleding
+  -> Afwerken raillijfbekleding
+
+========================================================================================================================
+FILE: C2019-25 BAM Deelproject 3b.xlsx
+Project: Project
+Total Tasks: 2155 | Logistics-matched Tasks: 16
+Logistics Tasks:
+  -> DENYS Fase 3-4-5 (Horizontale boringen - injecties - bescherming brugdek - verticale grouting)
+  -> Boringen + opening toezichtsput Kipdorpbrug tbv portiek trambrug
+  -> Installatiewerken Roads fase 1
+  -> Installatiewerken Roads fase 2
+  -> Installatiewerken Roads fase 3
+  -> Installatiewerken Roads fase 4
+  -> Installatiewerken Roads fase 3
+  -> Installatiewerken Roads fase 4
+  -> Installatiewerken Roads fase 3
+  -> Installatiewerken Roads fase 4
+  -> Installatiewerken Roads fase 3
+  -> Installatiewerken Roads fase 4
+  -> Installatiewerken Roads fase 3
+  -> Installatiewerken Roads fase 4
+  -> TECHNIEKEN ROADS
+  -> TECHNIEKEN ROADS
+
+========================================================================================================================
+FILE: C2019-26 BAM Deelproject 4.xlsx
+Project: Project
+Total Tasks: 758 | Logistics-matched Tasks: 15
+Logistics Tasks:
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen bochtpanelen, lassen, railbekleding en afstellen
+  -> Tijdelijke overkoppeling bestaande riolering + aansluiting Freindshipbuilding
+  -> Plaatsen raillijfbekleding
+  -> Inrichten werfzone - containerzone + sanitair
+  -> Aanbrengen resterende raillijfbekleding
+  -> Aanbrengen resterende raillijfbekleding
+  -> Ophalen container Aelterman Londenbrug
+  -> Oplevering spoor door BTR ( fotoreportage)
+  -> Aanbrengen resterende raillijfbekleding
+  -> Oplevering spoor door BTR (fotoreportage)
+  -> Aanbrengen resterende raillijfbekleding
+  -> Leggen 12 panelen mbv trailers (tussen kattendijkdok en fietsersoversteek)
+  -> Aanbrengen resterende raillijfbekleding
+  ->  Aanbrengen resterende raillijfbekleding
+
+========================================================================================================================
+FILE: C2019-27 BAM Deelproject 6.xlsx
+Project: Project
+Total Tasks: 1029 | Logistics-matched Tasks: 18
+Logistics Tasks:
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding+ stalen strips
+  -> Plaatsen raillijfbekleding + stalen strips
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen raillijfbekleding
+  -> Plaatsen railijfbekleding + stalen strips
+  -> Plaatsen raillijfbekleding + stalen strips
+  -> Plaatsen raillijfbekleding + stalen strips
+  -> Sokkel nieuw portiek
+  -> Plaatsen spoorbakjes BAM RAIL
+
+========================================================================================================================
+FILE: C2022-01 Student kick-off Kramersplein.xlsx
+Project: Project
+Total Tasks: 188 | Logistics-matched Tasks: 68
+Logistics Tasks:
+  -> Placing bottom container (bar 3)
+  -> Placing top container (bar3)
+  -> Equipping both containers with utilities (bar3)
+  -> Filling the fridges in the bottom container (bar 3)
+  -> Furnishing interior of upper container (bar 3)
+  -> Placing fully equipped container (bar 4)
+  -> Equipping container with utilities (bar 4)
+  -> Placing container (desk container boxoffices)
+  -> Equipping container with utilities (desk container boxoffices)
+  -> Furnishing interior of container (desk container boxoffices)
+  -> Placing container (desk container coordinators)
+  -> Equipping container with utilities (desk container coordinators)
+  -> Furnishing interior of container (desk container coordinators)
+  -> Placing container (first-aid)
+  -> Equipping container with utilities (first-aid)
+  -> Furnishing interior of container (first-aid)
+  -> Placing bottom container (warehouse + SS)
+  -> Placing top container (warehouse + SS)
+  -> Installing the stairs (warehouse + SS)
+  -> Equipping both containers with utilities (warehouse + SS)
+  -> Furnishing interior of both containers (warehouse + SS)
+  -> Placing container (press)
+  -> Equipping container with utilities (press)
+  -> Furnishing interior of container (press)
+  -> Placing container (production x IT x bitstream)
+  -> Equipping container with utilities (production x IT x bitstream)
+  -> Furnishing interior of container (production x IT x bitstream)
+  -> Placing container (checkout Petermans)
+  -> Equipping container with utilities (checkout Petermans)
+  -> Furnishing interior of container (checkout Petermans)
+  -> Placing container (checkout 1 main toilet)
+  -> Equipping container with utilities (checkout 1 main toilet)
+  -> Furnishing interior of container (checkout 1 main toilet)
+  -> Placing container (checkout 2 main toilet)
+  -> Equipping container with utilities (checkout 2 main toilet)
+  -> Furnishing interior of container (checkout 2 main toilet)
+  -> Placing container (checkout container K1)
+  -> Equipping container with utilities (checkout container K1)
+  -> Furnishing interior of container (checkout container K1)
+  -> Placing container (checkout container K2)
+  -> Equipping container with utilities (checkout container K2)
+  -> Furnishing interior of container (checkout container K2)
+  -> Placing container (checkout container K3)
+  -> Equipping container with utilities (checkout container K3)
+  -> Furnishing interior of container (checkout container K3)
+  -> Placing container (checkout container K4)
+  -> Equipping container with utilities (checkout container K4)
+  -> Furnishing interior of container (checkout container K4)
+  -> Placing container (checkout container K5)
+  -> Equipping container with utilities (checkout container K5)
+  -> Furnishing interior of container (checkout container K5)
+  -> Placing container (core container)
+  -> Equipping container with utilities (core container)
+  -> Furnishing interior of container (core container)
+  -> Placing container (toilet container VIP)
+  -> Equipping container with utilities (toilet container VIP)
+  -> Equipping container with supplies (toilet container VIP)
+  -> Placing container (checkout container 1 Kramersplein)
+  -> Equipping container with utilities (checkout container 1 Kramersplein)
+  -> Furnishing interior of container (checkout container 1 Kramersplein)
+  -> Placing container (checkout container 2 Kramersplein)
+  -> Equipping container with utilities (checkout container 2 Kramersplein)
+  -> Furnishing interior of container (checkout container 2 Kramersplein)
+  -> Placing container (DJ booth)
+  -> Equipping container with utilities (DJ booth)
+  -> Positioning container fridge
+  -> Equipping with utilities (container fridge)
+  -> Equipping with utilities (storage Buysse)
+
+========================================================================================================================
+FILE: C2022-02 Student kick-off Sint-Pietersplein.xlsx
+Project: Project
+Total Tasks: 159 | Logistics-matched Tasks: 62
+Logistics Tasks:
+  -> Placing bottom container (bar 3)
+  -> Placing top container (bar3)
+  -> Equipping both containers with utilities (bar3)
+  -> Filling the fridges in the bottom container (bar 3)
+  -> Furnishing interior of upper container (bar 3)
+  -> Placing fully equipped container (bar 4)
+  -> Equipping container with utilities (bar 4)
+  -> Placing container (desk container boxoffices)
+  -> Equipping container with utilities (desk container boxoffices)
+  -> Furnishing interior of container (desk container boxoffices)
+  -> Placing container (desk container coordinators)
+  -> Equipping container with utilities (desk container coordinators)
+  -> Furnishing interior of container (desk container coordinators)
+  -> Placing container (first-aid)
+  -> Equipping container with utilities (first-aid)
+  -> Furnishing interior of container (first-aid)
+  -> Placing bottom container (warehouse + SS)
+  -> Placing top container (warehouse + SS)
+  -> Installing the stairs (warehouse + SS)
+  -> Equipping both containers with utilities (warehouse + SS)
+  -> Furnishing interior of both containers (warehouse + SS)
+  -> Placing container (press)
+  -> Equipping container with utilities (press)
+  -> Furnishing interior of container (press)
+  -> Placing container (production x IT x bitstream)
+  -> Equipping container with utilities (production x IT x bitstream)
+  -> Furnishing interior of container (production x IT x bitstream)
+  -> Placing container (checkout Petermans)
+  -> Equipping container with utilities (checkout Petermans)
+  -> Furnishing interior of container (checkout Petermans)
+  -> Placing container (checkout 1 main toilet)
+  -> Equipping container with utilities (checkout 1 main toilet)
+  -> Furnishing interior of container (checkout 1 main toilet)
+  -> Placing container (checkout 2 main toilet)
+  -> Equipping container with utilities (checkout 2 main toilet)
+  -> Furnishing interior of container (checkout 2 main toilet)
+  -> Placing container (checkout container K1)
+  -> Equipping container with utilities (checkout container K1)
+  -> Furnishing interior of container (checkout container K1)
+  -> Placing container (checkout container K2)
+  -> Equipping container with utilities (checkout container K2)
+  -> Furnishing interior of container (checkout container K2)
+  -> Placing container (checkout container K3)
+  -> Equipping container with utilities (checkout container K3)
+  -> Furnishing interior of container (checkout container K3)
+  -> Placing container (checkout container K4)
+  -> Equipping container with utilities (checkout container K4)
+  -> Furnishing interior of container (checkout container K4)
+  -> Placing container (checkout container K5)
+  -> Equipping container with utilities (checkout container K5)
+  -> Furnishing interior of container (checkout container K5)
+  -> Placing container (core container)
+  -> Equipping container with utilities (core container)
+  -> Furnishing interior of container (core container)
+  -> Placing container (toilet container VIP)
+  -> Equipping container with utilities (toilet container VIP)
+  -> Equipping container with supplies (toilet container VIP)
+  -> Placing container (DJ booth)
+  -> Equipping container with utilities (DJ booth)
+  -> Positioning container fridge
+  -> Equipping with utilities (container fridge)
+  -> Equipping with utilities (storage Buysse)
+
+========================================================================================================================
+FILE: C2023-03 metaBOF.xlsx
+Project: Project
+Total Tasks: 110 | Logistics-matched Tasks: 9
+Logistics Tasks:
+  -> Count of Alarms Lists, Cameras, Concurrent users, Exports, reports, Features
+  -> Listing up all missing info to be delivered and documented by Partner
+  -> Alarm Lists list (inventory existing Lists + planned ones)
+  -> Camera List (inventory existing cameras + planned ones)
+  -> Live tests on import data from existing cameras 
+  -> Legal issues (important - can take a lot of time)
+  -> All settings defined, Lists Uploaded, Cameras & sensors connected
+  -> Acceptance of delivery, start of Acceptance Testing based on plan
+  -> Load Testing, is infrastructure sufficient?
+
+========================================================================================================================
+FILE: C2023-05 IT Data migration.xlsx
+Project: Project Data migration 
+Total Tasks: 77 | Logistics-matched Tasks: 6
+Logistics Tasks:
+  -> Build environment  (Depending on Charlotte's report)
+  -> Automate software updates / packages
+  -> Deploy Storage
+  -> Build UI for Ansible and Ansible Inventory
+  -> Hardware (Hypervisors, storage, availability)
+  -> Client specific (load, availability) 
+
+========================================================================================================================
+FILE: C2023-06 Steel industry.xlsx
+Project: Totale Intercampagne installatie 2:                               2958 ladingen
+Total Tasks: 802 | Logistics-matched Tasks: 16
+Logistics Tasks:
+  ->  Zandbunker PM leegmaken en reinigen weeggedeelte + verwijderen pallet met zand.
+  ->  Kap van S32 wegnemen en transportband achteruit rijden in garagestand.
+  ->  Reinigen omgeving rond transportband S32 en bunkers op niveau 17m.
+  ->  Heftruck H60 koppelen aan tunnel (+ tegengewicht) en deze klaarstellen voor convertordeuren (taak zonder inbeslagnames).
+  ->  Plaatsen afscherming aan transportband S7 om veilig de stelling te kunnen plaatsen.
+  ->  Instellen inbeslagname op transportband S7, verdeelwagen en muizenval.
+  ->  Verwijderen tijdelijke afscherming aan transportband S7 en terug alles origineel plaatsen.
+  -> Transportbanden:
+  -> Transportband S22 op niveau 28m:
+  ->  Algemeen onderhoud op transportband S22.
+  -> Transportband S32 op niveau 17m:
+  ->  Beschermkap van S32 wegnemen en transportband achteruit rijden in garagestand.
+  ->  Reinigen omgeving rond transportband S32 en bunkers op niveau 17m.
+  ->  Algemeen onderhoud op transportband S32 + vervangen olie.
+  ->  Terugplaatsen transportband S32.
+  ->  Afvoeren van afval (paletten, bigbags, …) gedurend het metselen van de convertor naar containers niveau 0m.
+
+========================================================================================================================
+FILE: C2023-11 Rail-net communication point 1.xlsx
+Project: Train One
+Total Tasks: 288 | Logistics-matched Tasks: 4
+Logistics Tasks:
+  -> Installatie kasten in container en aansluiting kabels
+  -> Installatie basis voor container
+  -> Transport and laying of container
+  -> Voeding voor container beschikbaar
+
+========================================================================================================================
+FILE: C2023-12 Railroad construction.xlsx
+Project: start
+Total Tasks: 85 | Logistics-matched Tasks: 13
+Logistics Tasks:
+  -> Packing, Transport and Delivery
+  -> Transport & Delivery
+  -> Packing, Transport and Delivery
+  -> Transport & Delivery
+  -> Packing, Transport and Delivery
+  -> Transport & Delivery
+  -> Packing, Transport and Delivery
+  -> Transport & Delivery
+  -> Packing, Transport and Delivery
+  -> Transport & Delivery
+  -> Packing, Transport and Delivery
+  -> Transport & Delivery
+  -> Transport & Delivery
+
+========================================================================================================================
+FILE: C2023-13 Rail-net communication point 2.xlsx
+Project: Train Three
+Total Tasks: 240 | Logistics-matched Tasks: 25
+Logistics Tasks:
+  -> opdracht van ProRail
+  -> Opdrachtbevestiging 2 ProRail
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> ProRail Review
+  -> Monitoringsupport SNL
+  -> Monitoringsrapport
+  -> ProRail Review
+  -> Acceptatie ProRail
+
+========================================================================================================================
+FILE: C2025-24  CONSTRUSSION DE CERCO.xlsx
+Project: CONSTRUSSION DE CERCO PERIMETRICO Y VEREDA, ADQUISICION DE EQUIPO, EN EL (LA) PARQUE DE LA SOBERANIA DISTRITO DE CERRO COLORADO, PROVINCIA DE AREQUIPA, DEPARTAMENTO AREQUIPA
+Total Tasks: 110 | Logistics-matched Tasks: 5
+Logistics Tasks:
+  -> TRANSPORTE DE EQUIPO Y HERRAMIENTAS
+  -> LAVADERO DE MANOS PORTATIL
+  -> JUNTAS ASFALTICAS CON TECKNOPORT E=1"
+  -> TRABAJOS EN PORTAL DE INGRESO
+  -> LETRAS FORJADAS DE METAL (32 LETRAS POR CADA PORTAL)
+

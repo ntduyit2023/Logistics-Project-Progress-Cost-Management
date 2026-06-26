@@ -1,6 +1,7 @@
 -- ==============================================================================
 -- GLPO Database Initialization Script (PostgreSQL)
--- Architecture: Topic-based Snowflake Schema + Application Management Layer
+-- Architecture: Topic-based Snowflake Schema + AI Constraint Domains
+-- Hỗ trợ mở rộng (Dynamic Features) thông qua các cột metadata JSONB
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
@@ -19,8 +20,10 @@ CREATE TABLE app_projects (
     user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     project_name VARCHAR(255) NOT NULL,
     search_vector tsvector GENERATED ALWAYS AS (to_tsvector('simple', project_name)) STORED,
-    working_hours JSONB,
-    working_days JSONB,
+    
+    -- Metadata mở rộng: Giải quyết bài toán "Các dự án khác năm có thể có thêm Feature"
+    metadata JSONB DEFAULT '{}'::jsonb, 
+    
     num_tasks INTEGER DEFAULT 0,
     num_edges INTEGER DEFAULT 0,
     network_density NUMERIC(5,4) DEFAULT 0,
@@ -30,6 +33,35 @@ CREATE TABLE app_projects (
 );
 
 CREATE INDEX idx_project_search ON app_projects USING GIN(search_vector);
+CREATE INDEX idx_project_metadata ON app_projects USING GIN(metadata);
+
+-- ------------------------------------------------------------------------------
+-- 2. THE 3 CONSTRAINT DOMAINS (3 TRỤC RÀNG BUỘC CHO AI)
+-- ------------------------------------------------------------------------------
+
+-- Trục 1: Lịch trình làm việc (Agenda)
+CREATE TABLE project_constraint_time (
+    id SERIAL PRIMARY KEY,
+    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE UNIQUE, -- Quan hệ 1-1
+    weekly_schedule JSONB NOT NULL, -- Thay thế cho working_days & working_hours nguyên thủy
+    holidays_list JSONB DEFAULT '[]'::jsonb,
+    overtime_multiplier NUMERIC(5,2) DEFAULT 1.5
+);
+
+-- Trục 2: Giới hạn Tài nguyên (Resources)
+CREATE TABLE project_constraint_resource (
+    id SERIAL PRIMARY KEY,
+    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
+    resource_name VARCHAR(100) NOT NULL,
+    resource_type VARCHAR(50) NOT NULL, -- Renewable, Consumable
+    max_availability NUMERIC(10,2) NOT NULL,
+    cost_per_use NUMERIC(15,2) DEFAULT 0, -- Fixed charge penalty
+    cost_per_unit NUMERIC(15,2) DEFAULT 0 -- Rate per hour/day
+);
+
+-- ------------------------------------------------------------------------------
+-- 3. AI SIMULATION & INSIGHTS (TẦNG ĐẦU RA CỦA AI)
+-- ------------------------------------------------------------------------------
 
 CREATE TABLE ai_simulation_runs (
     id SERIAL PRIMARY KEY,
@@ -37,6 +69,18 @@ CREATE TABLE ai_simulation_runs (
     ai_weights JSONB DEFAULT '{"time": 50, "cost": 50}'::jsonb,
     status VARCHAR(50) DEFAULT 'Running', -- Pending, Running, Success, Failed
     results_summary JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE ai_insights (
+    id SERIAL PRIMARY KEY,
+    simulation_run_id INTEGER REFERENCES ai_simulation_runs(id) ON DELETE CASCADE,
+    action_type JSONB NOT NULL, -- Dạng mảng ["CRASHING", "AGENDA_OVERRIDE"]
+    target_tasks JSONB NOT NULL, -- Danh sách ID các task bị tác động
+    human_message TEXT,
+    modifications JSONB, -- Vết sửa đổi ràng buộc
+    impact JSONB, -- Tính toán Time Saved & Cost Penalty
+    risk JSONB, -- Rủi ro (Float tiêu thụ, Peak variance)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -49,7 +93,7 @@ CREATE TABLE project_baselines (
 );
 
 -- ------------------------------------------------------------------------------
--- 2. DIMENSION TOPICS (NGĂN KÉO CHỦ ĐỀ CHO SNOWFLAKE SCHEMA)
+-- 4. DIMENSION TOPICS (NGĂN KÉO CHỦ ĐỀ CHO SNOWFLAKE SCHEMA)
 -- ------------------------------------------------------------------------------
 
 CREATE TABLE dim_topic_time (
@@ -61,7 +105,9 @@ CREATE TABLE dim_topic_time (
 
 CREATE TABLE dim_topic_cost (
     id SERIAL PRIMARY KEY,
-    total_cost NUMERIC(15,2) DEFAULT 0
+    resource_cost NUMERIC(15,2) DEFAULT 0, -- Chi phí biến đổi (AI có thể bẻ cong)
+    fixed_cost NUMERIC(15,2) DEFAULT 0, -- Chi phí tĩnh (AI không đụng được)
+    total_cost NUMERIC(15,2) GENERATED ALWAYS AS (resource_cost + fixed_cost) STORED
 );
 
 CREATE TABLE dim_topic_risk (
@@ -78,7 +124,7 @@ CREATE TABLE dim_topic_resources (
 );
 
 -- ------------------------------------------------------------------------------
--- 3. CORE FACT & GRAPH TABLES (LÕI DỮ LIỆU)
+-- 5. CORE FACT & GRAPH TABLES (LÕI DỮ LIỆU)
 -- ------------------------------------------------------------------------------
 
 CREATE TABLE fact_tasks (
@@ -88,7 +134,10 @@ CREATE TABLE fact_tasks (
     wbs VARCHAR(100),
     task_name VARCHAR(255),
     
-    -- Topic Foreign Keys (Zero-or-One relationships - Nullable to control sparsity)
+    -- Metadata mở rộng: Dành cho các Task có feature đặc thù tùy năm
+    metadata JSONB DEFAULT '{}'::jsonb,
+    
+    -- Topic Foreign Keys (Zero-or-One relationships)
     topic_time_id INTEGER REFERENCES dim_topic_time(id) ON DELETE SET NULL,
     topic_cost_id INTEGER REFERENCES dim_topic_cost(id) ON DELETE SET NULL,
     topic_risk_id INTEGER REFERENCES dim_topic_risk(id) ON DELETE SET NULL,
@@ -97,9 +146,10 @@ CREATE TABLE fact_tasks (
 
 -- Indexing for fast analytical queries
 CREATE INDEX idx_fact_tasks_project ON fact_tasks(project_id);
+CREATE INDEX idx_fact_tasks_metadata ON fact_tasks USING GIN(metadata);
 
--- GRAPH BRIDGE: Bảng phục vụ đệ quy CTE (Edges)
-CREATE TABLE bridge_task_dependencies (
+-- Trục 3: Ràng buộc Logic Đồ thị (GRAPH BRIDGE - Edges)
+CREATE TABLE project_constraint_logic (
     project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
     predecessor_id INTEGER REFERENCES fact_tasks(task_id) ON DELETE CASCADE,
     successor_id INTEGER REFERENCES fact_tasks(task_id) ON DELETE CASCADE,
@@ -109,6 +159,6 @@ CREATE TABLE bridge_task_dependencies (
 );
 
 -- Indexing heavily optimized for graph traversal (CTE)
-CREATE INDEX idx_bridge_project ON bridge_task_dependencies(project_id);
-CREATE INDEX idx_bridge_predecessor ON bridge_task_dependencies(predecessor_id);
-CREATE INDEX idx_bridge_successor ON bridge_task_dependencies(successor_id);
+CREATE INDEX idx_logic_project ON project_constraint_logic(project_id);
+CREATE INDEX idx_logic_predecessor ON project_constraint_logic(predecessor_id);
+CREATE INDEX idx_logic_successor ON project_constraint_logic(successor_id);
