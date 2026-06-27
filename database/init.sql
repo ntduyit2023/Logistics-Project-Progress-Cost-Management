@@ -1,11 +1,11 @@
 -- ==============================================================================
 -- GLPO Database Initialization Script (PostgreSQL)
--- Architecture: Topic-based Snowflake Schema + AI Constraint Domains
--- Hỗ trợ mở rộng (Dynamic Features) thông qua các cột metadata JSONB
+-- Architecture: Hub-and-Spoke (9 Spokes) - 100% User Input
+-- Phase 3 Purge Applied
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
--- 1. APPLICATION MANAGEMENT LAYER (TẦNG PHẦN MỀM)
+-- 1. MANAGEMENT LAYER
 -- ------------------------------------------------------------------------------
 
 CREATE TABLE users (
@@ -15,150 +15,192 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE app_projects (
+CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     project_name VARCHAR(255) NOT NULL,
-    search_vector tsvector GENERATED ALWAYS AS (to_tsvector('simple', project_name)) STORED,
+    status VARCHAR(50) DEFAULT 'Planning',
     
-    -- Metadata mở rộng: Giải quyết bài toán "Các dự án khác năm có thể có thêm Feature"
-    metadata JSONB DEFAULT '{}'::jsonb, 
+    -- Contractual Project Constraints
+    target_deadline TIMESTAMP,
+    penalty_per_day NUMERIC(15,2),
+    bonus_per_day NUMERIC(15,2),
     
-    num_tasks INTEGER DEFAULT 0,
-    num_edges INTEGER DEFAULT 0,
-    network_density NUMERIC(5,4) DEFAULT 0,
-    status VARCHAR(50) DEFAULT 'Planning', -- Planning, Executing, Closed
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_project_search ON app_projects USING GIN(search_vector);
-CREATE INDEX idx_project_metadata ON app_projects USING GIN(metadata);
-
 -- ------------------------------------------------------------------------------
--- 2. THE 3 CONSTRAINT DOMAINS (3 TRỤC RÀNG BUỘC CHO AI)
+-- 2. CONSTRAINT & RESOURCES LAYER
 -- ------------------------------------------------------------------------------
 
--- Trục 1: Lịch trình làm việc (Agenda)
-CREATE TABLE project_constraint_time (
+CREATE TABLE project_constraint_agenda (
     id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE UNIQUE, -- Quan hệ 1-1
-    weekly_schedule JSONB NOT NULL, -- Thay thế cho working_days & working_hours nguyên thủy
-    holidays_list JSONB DEFAULT '[]'::jsonb,
-    overtime_multiplier NUMERIC(5,2) DEFAULT 1.5
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE UNIQUE,
+    weekly_schedule JSONB NOT NULL,
+    holidays_list JSONB DEFAULT '[]'::jsonb
 );
 
--- Trục 2: Giới hạn Tài nguyên (Resources)
-CREATE TABLE project_constraint_resource (
+CREATE TABLE project_constraint_resources (
     id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     resource_name VARCHAR(100) NOT NULL,
-    resource_type VARCHAR(50) NOT NULL, -- Renewable, Consumable
-    max_availability NUMERIC(10,2) NOT NULL,
-    cost_per_use NUMERIC(15,2) DEFAULT 0, -- Fixed charge penalty
-    cost_per_unit NUMERIC(15,2) DEFAULT 0 -- Rate per hour/day
+    capacity INTEGER NOT NULL,
+    internal_cost NUMERIC(15,2) DEFAULT 0,
+    external_cost NUMERIC(15,2) DEFAULT 0
 );
 
 -- ------------------------------------------------------------------------------
--- 3. AI SIMULATION & INSIGHTS (TẦNG ĐẦU RA CỦA AI)
+-- 3. AI PIPELINE & RESULTS
 -- ------------------------------------------------------------------------------
 
 CREATE TABLE ai_simulation_runs (
     id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     ai_weights JSONB DEFAULT '{"time": 50, "cost": 50}'::jsonb,
-    status VARCHAR(50) DEFAULT 'Running', -- Pending, Running, Success, Failed
+    status VARCHAR(50) DEFAULT 'Running',
     results_summary JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE ai_insights (
+CREATE TABLE ai_recommendations (
     id SERIAL PRIMARY KEY,
-    simulation_run_id INTEGER REFERENCES ai_simulation_runs(id) ON DELETE CASCADE,
-    action_type JSONB NOT NULL, -- Dạng mảng ["CRASHING", "AGENDA_OVERRIDE"]
-    target_tasks JSONB NOT NULL, -- Danh sách ID các task bị tác động
+    simulation_run_id INTEGER NOT NULL REFERENCES ai_simulation_runs(id) ON DELETE CASCADE,
+    option_name VARCHAR(255),
+    action_type JSONB NOT NULL,
+    target_tasks JSONB NOT NULL,
     human_message TEXT,
-    modifications JSONB, -- Vết sửa đổi ràng buộc
-    impact JSONB, -- Tính toán Time Saved & Cost Penalty
-    risk JSONB, -- Rủi ro (Float tiêu thụ, Peak variance)
+    modifications JSONB,
+    impact JSONB,
+    risk JSONB,
+    is_applied BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE project_baselines (
     id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     simulation_run_id INTEGER REFERENCES ai_simulation_runs(id) ON DELETE SET NULL,
     is_active BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ------------------------------------------------------------------------------
--- 4. DIMENSION TOPICS (NGĂN KÉO CHỦ ĐỀ CHO SNOWFLAKE SCHEMA)
+-- 4. HUB TABLE (TASKS)
 -- ------------------------------------------------------------------------------
 
-CREATE TABLE dim_topic_time (
+CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
-    duration NUMERIC(10,3),
-    baseline_start TIMESTAMP,
-    baseline_end TIMESTAMP
-);
-
-CREATE TABLE dim_topic_cost (
-    id SERIAL PRIMARY KEY,
-    resource_cost NUMERIC(15,2) DEFAULT 0, -- Chi phí biến đổi (AI có thể bẻ cong)
-    fixed_cost NUMERIC(15,2) DEFAULT 0, -- Chi phí tĩnh (AI không đụng được)
-    total_cost NUMERIC(15,2) GENERATED ALWAYS AS (resource_cost + fixed_cost) STORED
-);
-
-CREATE TABLE dim_topic_risk (
-    id SERIAL PRIMARY KEY,
-    optimistic_time NUMERIC(10,3),
-    pessimistic_time NUMERIC(10,3),
-    variance NUMERIC(10,2),
-    criticality_index NUMERIC(5,2)
-);
-
-CREATE TABLE dim_topic_resources (
-    id SERIAL PRIMARY KEY,
-    resource_demand TEXT
-);
-
--- ------------------------------------------------------------------------------
--- 5. CORE FACT & GRAPH TABLES (LÕI DỮ LIỆU)
--- ------------------------------------------------------------------------------
-
-CREATE TABLE fact_tasks (
-    task_id SERIAL PRIMARY KEY,
-    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
-    task_label VARCHAR(50) NOT NULL,
-    wbs VARCHAR(100),
-    task_name VARCHAR(255),
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    task_name VARCHAR(255) NOT NULL,
+    task_type VARCHAR(100),
+    planned_duration NUMERIC(15,2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Pending',
     
-    -- Metadata mở rộng: Dành cho các Task có feature đặc thù tùy năm
-    metadata JSONB DEFAULT '{}'::jsonb,
-    
-    -- Topic Foreign Keys (Zero-or-One relationships)
-    topic_time_id INTEGER REFERENCES dim_topic_time(id) ON DELETE SET NULL,
-    topic_cost_id INTEGER REFERENCES dim_topic_cost(id) ON DELETE SET NULL,
-    topic_risk_id INTEGER REFERENCES dim_topic_risk(id) ON DELETE SET NULL,
-    topic_resources_id INTEGER REFERENCES dim_topic_resources(id) ON DELETE SET NULL
+    -- Optional Hard Constraint for AI
+    baseline_start TIMESTAMP
 );
 
--- Indexing for fast analytical queries
-CREATE INDEX idx_fact_tasks_project ON fact_tasks(project_id);
-CREATE INDEX idx_fact_tasks_metadata ON fact_tasks USING GIN(metadata);
-
--- Trục 3: Ràng buộc Logic Đồ thị (GRAPH BRIDGE - Edges)
+-- Logic Table (Edges between tasks)
 CREATE TABLE project_constraint_logic (
-    project_id INTEGER REFERENCES app_projects(id) ON DELETE CASCADE,
-    predecessor_id INTEGER REFERENCES fact_tasks(task_id) ON DELETE CASCADE,
-    successor_id INTEGER REFERENCES fact_tasks(task_id) ON DELETE CASCADE,
-    dependency_type VARCHAR(10) DEFAULT 'FS', -- Finish-to-Start, Start-to-Start
-    lag_days INTEGER DEFAULT 0,
-    PRIMARY KEY (predecessor_id, successor_id)
+    predecessor_task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    successor_task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    dependency_type VARCHAR(50) NOT NULL DEFAULT 'FS',
+    lag_time INTEGER DEFAULT 0,
+    PRIMARY KEY (predecessor_task_id, successor_task_id)
 );
 
--- Indexing heavily optimized for graph traversal (CTE)
-CREATE INDEX idx_logic_project ON project_constraint_logic(project_id);
-CREATE INDEX idx_logic_predecessor ON project_constraint_logic(predecessor_id);
-CREATE INDEX idx_logic_successor ON project_constraint_logic(successor_id);
+-- ------------------------------------------------------------------------------
+-- 5. SPOKE TABLES (USER INPUT FEATURES)
+-- ------------------------------------------------------------------------------
+
+CREATE TABLE task_g1_direct_costs (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    internal_labor_cost NUMERIC(15,2),
+    subcontracting_cost NUMERIC(15,2),
+    overtime_crashing_cost NUMERIC(15,2),
+    material_cost NUMERIC(15,2),
+    equipment_cost NUMERIC(15,2), -- Merged procurement & depreciation
+    direct_transportation NUMERIC(15,2),
+    energy_fuel_cost NUMERIC(15,2),
+    testing_and_inspection NUMERIC(15,2)
+);
+
+CREATE TABLE task_g2_indirect_costs (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    pm_overhead NUMERIC(15,2),
+    facility_rent NUMERIC(15,2),
+    utilities NUMERIC(15,2),
+    communication_cost NUMERIC(15,2),
+    internal_training NUMERIC(15,2),
+    quality_mgmt_overhead NUMERIC(15,2)
+);
+
+CREATE TABLE task_g4_contractual (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    permits_and_licensing NUMERIC(15,2),
+    project_insurance NUMERIC(15,2),
+    warranty_and_after_sales NUMERIC(15,2),
+    regulatory_compliance NUMERIC(15,2)
+);
+
+CREATE TABLE task_g5_logistics (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    inventory_holding_cost NUMERIC(15,2),
+    ordering_cost NUMERIC(15,2),
+    shortage_stockout NUMERIC(15,2),
+    obsolescence_cost NUMERIC(15,2),
+    international_freight NUMERIC(15,2),
+    packaging_and_handling NUMERIC(15,2),
+    reverse_logistics NUMERIC(15,2)
+);
+
+CREATE TABLE task_g6_temporal (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    wait_queue_time NUMERIC(15,2),
+    setup_transition_time NUMERIC(15,2),
+    induction_time NUMERIC(15,2),
+    lead_time NUMERIC(15,2),
+    pert_3_point_estimate NUMERIC(15,2)
+);
+
+CREATE TABLE task_g7_resources (
+    task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    resource_id INTEGER NOT NULL REFERENCES project_constraint_resources(id) ON DELETE CASCADE,
+    requested_quantity NUMERIC(15,2) NOT NULL,
+    allocated_quantity NUMERIC(15,2),
+    labor_productivity NUMERIC(15,2),
+    equipment_utilization NUMERIC(15,2),
+    resource_substitutability INTEGER,
+    PRIMARY KEY (task_id, resource_id)
+);
+
+CREATE TABLE task_g9_risks (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    technical_complexity NUMERIC(15,2),
+    rework_probability NUMERIC(15,2),
+    external_dependency_level NUMERIC(15,2),
+    contingency_reserve NUMERIC(15,2),
+    management_reserve NUMERIC(15,2),
+    weather_seasonal_risk NUMERIC(15,2),
+    technology_risk NUMERIC(15,2)
+);
+
+CREATE TABLE task_g11_human_org (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    required_skill_level INTEGER,
+    staff_experience NUMERIC(15,2),
+    learning_curve_effect NUMERIC(15,2),
+    hr_stability_risk NUMERIC(15,2), -- Merged turnover and fatigue
+    cross_functional_coordination INTEGER,
+    occupational_safety_risk INTEGER
+);
+
+CREATE TABLE task_g12_esg (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
+    environmental_impact INTEGER,
+    waste_disposal_cost NUMERIC(15,2),
+    community_social_impact INTEGER,
+    carbon_tax_credit NUMERIC(15,2),
+    esg_compliance INTEGER
+);
