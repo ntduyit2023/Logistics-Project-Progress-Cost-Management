@@ -1,9 +1,0 @@
-node_id,wbs,task_name,duration,optimistic_time,pessimistic_time,baseline_start,baseline_end,resource_demand,total_cost
-0,1.0,PROJECT Labeling MACHINE,158.375,158.375,158.375,2017-09-04 08:00:00,2018-02-09 17:00:00,,114700
-1,1.1,Vereenvoudigen huidige werkpost,11.375,11.26,11.49,2017-09-04 08:00:00,2017-09-15 17:00:00,,1000
-2,1.2,vastleggen instructies en procedures,18.375,18.19,18.56,2017-09-21 08:00:00,2017-10-09 17:00:00,,700
-3,1.3,ontwerp semi automatische applicatie unit,11.375,11.26,11.49,2017-09-11 08:00:00,2017-09-22 17:00:00,,10000
-4,1.4,bestellen print &amp; apply,77.375,76.6,78.15,2017-09-25 08:00:00,2017-12-11 17:00:00,,90000
-5,1.5,"voorbereiden werken (hardwarde, dataconnectie)",18.375,18.19,18.56,2017-12-18 08:00:00,2018-01-05 17:00:00,,5000
-6,1.6,integratie met shopfloor software (printbaar maken),10.375,10.27,10.48,2018-01-08 08:00:00,2018-01-18 17:00:00,,5000
-7,1.7,"implementatie in productie, opstart en opleiding",17.375,17.2,17.55,2018-01-23 08:00:00,2018-02-09 17:00:00,,3000
