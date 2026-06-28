@@ -1,0 +1,6 @@
+ID,Name,Type,Availability,Cost/Use,Cost/Unit
+1,Project Leader,Renewable,1.0,0.0,30.0
+2,Engineer,Renewable,3.0,0.0,50.0
+3,Worker,Renewable,2.0,0.0,24.0
+4,Marketeer,Renewable,1.0,0.0,28.0
+5,Administrator,Renewable,1.0,0.0,30.0

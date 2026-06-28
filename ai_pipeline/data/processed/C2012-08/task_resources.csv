@@ -1,0 +1,1213 @@
+Task ID,Resource Name,Requested Quantity
+3,Laborer,5.0
+3,Skipper,1.0
+3,Engineer,3.0
+3,Vessel Buzzard,1.0
+6,Laborer,5.0
+6,Skipper,1.0
+6,Vessel Pompei,1.0
+7,Laborer,22.0
+7,Skipper,1.0
+7,Engineer,6.0
+7,Vessel Pompei,1.0
+526,Laborer,5.0
+526,Skipper,0.5
+526,Vessel Maersk,0.5
+526,Crane,1.0
+527,Laborer,5.0
+527,Skipper,0.5
+527,Vessel Maersk,0.5
+527,Crane,1.0
+528,Laborer,5.0
+528,Skipper,0.5
+528,Vessel Maersk,0.5
+528,Crane,1.0
+529,Laborer,5.0
+529,Skipper,0.5
+529,Vessel Maersk,0.5
+529,Crane,1.0
+530,Laborer,5.0
+530,Skipper,0.5
+530,Vessel Maersk,0.5
+530,Crane,1.0
+531,Laborer,5.0
+531,Skipper,0.5
+531,Vessel Maersk,0.5
+531,Crane,1.0
+532,Laborer,5.0
+532,Skipper,0.5
+532,Vessel Maersk,0.5
+532,Crane,1.0
+533,Laborer,5.0
+533,Skipper,0.5
+533,Vessel Maersk,0.5
+533,Crane,1.0
+534,Laborer,5.0
+534,Skipper,0.5
+534,Vessel Maersk,0.5
+534,Crane,1.0
+535,Laborer,5.0
+535,Skipper,0.5
+535,Vessel Maersk,0.5
+535,Crane,1.0
+536,Laborer,5.0
+536,Skipper,0.5
+536,Vessel Maersk,0.5
+536,Crane,1.0
+537,Laborer,5.0
+537,Skipper,0.5
+537,Vessel Maersk,0.5
+537,Crane,1.0
+538,Laborer,5.0
+538,Skipper,0.5
+538,Vessel Maersk,0.5
+538,Crane,1.0
+539,Laborer,5.0
+539,Skipper,0.5
+539,Vessel Maersk,0.5
+539,Crane,1.0
+540,Laborer,5.0
+540,Skipper,0.5
+540,Vessel Maersk,0.5
+540,Crane,1.0
+541,Laborer,5.0
+541,Skipper,0.5
+541,Vessel Maersk,0.5
+541,Crane,1.0
+542,Laborer,5.0
+542,Skipper,0.5
+542,Vessel Maersk,0.5
+542,Crane,1.0
+543,Laborer,5.0
+543,Skipper,0.5
+543,Vessel Maersk,0.5
+543,Crane,1.0
+544,Laborer,5.0
+544,Skipper,0.5
+544,Vessel Maersk,0.5
+544,Crane,1.0
+545,Laborer,5.0
+545,Skipper,0.5
+545,Vessel Maersk,0.5
+545,Crane,1.0
+546,Laborer,5.0
+546,Skipper,0.5
+546,Vessel Maersk,0.5
+546,Crane,1.0
+547,Laborer,5.0
+547,Skipper,0.5
+547,Vessel Maersk,0.5
+547,Crane,1.0
+548,Laborer,5.0
+548,Skipper,0.5
+548,Vessel Maersk,0.5
+548,Crane,1.0
+549,Laborer,5.0
+549,Skipper,0.5
+549,Vessel Maersk,0.5
+549,Crane,1.0
+550,Laborer,5.0
+550,Skipper,0.5
+550,Vessel Maersk,0.5
+550,Crane,1.0
+12,Laborer,22.0
+12,Skipper,1.0
+12,Engineer,6.0
+12,Vessel Buzzard,1.0
+13,Laborer,22.0
+13,Skipper,1.0
+13,Engineer,6.0
+13,Vessel Buzzard,1.0
+14,Laborer,22.0
+14,Skipper,1.0
+14,Engineer,6.0
+14,Vessel Buzzard,1.0
+196,Laborer,22.0
+196,Skipper,1.0
+196,Engineer,6.0
+196,Vessel Buzzard,1.0
+197,Laborer,22.0
+197,Skipper,1.0
+197,Engineer,6.0
+197,Vessel Buzzard,1.0
+198,Laborer,22.0
+198,Skipper,1.0
+198,Engineer,6.0
+198,Vessel Buzzard,1.0
+199,Laborer,22.0
+199,Skipper,1.0
+199,Engineer,6.0
+199,Vessel Buzzard,1.0
+200,Laborer,22.0
+200,Skipper,1.0
+200,Engineer,6.0
+200,Vessel Buzzard,1.0
+201,Laborer,22.0
+201,Skipper,1.0
+201,Engineer,6.0
+201,Vessel Buzzard,1.0
+202,Laborer,22.0
+202,Skipper,1.0
+202,Engineer,6.0
+202,Vessel Buzzard,1.0
+203,Laborer,22.0
+203,Skipper,1.0
+203,Engineer,6.0
+203,Vessel Buzzard,1.0
+204,Laborer,22.0
+204,Skipper,1.0
+204,Engineer,6.0
+204,Vessel Buzzard,1.0
+205,Laborer,22.0
+205,Skipper,1.0
+205,Engineer,6.0
+205,Vessel Buzzard,1.0
+206,Laborer,22.0
+206,Skipper,1.0
+206,Engineer,6.0
+206,Vessel Buzzard,1.0
+207,Laborer,22.0
+207,Skipper,1.0
+207,Engineer,6.0
+207,Vessel Buzzard,1.0
+208,Laborer,22.0
+208,Skipper,1.0
+208,Engineer,6.0
+208,Vessel Buzzard,1.0
+209,Laborer,22.0
+209,Skipper,1.0
+209,Engineer,6.0
+209,Vessel Buzzard,1.0
+210,Laborer,22.0
+210,Skipper,1.0
+210,Engineer,6.0
+210,Vessel Buzzard,1.0
+211,Laborer,22.0
+211,Skipper,1.0
+211,Engineer,6.0
+211,Vessel Buzzard,1.0
+212,Laborer,22.0
+212,Skipper,1.0
+212,Engineer,6.0
+212,Vessel Buzzard,1.0
+213,Laborer,22.0
+213,Skipper,1.0
+213,Engineer,6.0
+213,Vessel Buzzard,1.0
+214,Laborer,22.0
+214,Skipper,1.0
+214,Engineer,6.0
+214,Vessel Buzzard,1.0
+215,Laborer,22.0
+215,Skipper,1.0
+215,Engineer,6.0
+215,Vessel Buzzard,1.0
+216,Laborer,22.0
+216,Skipper,1.0
+216,Engineer,6.0
+216,Vessel Buzzard,1.0
+217,Laborer,22.0
+217,Skipper,1.0
+217,Engineer,6.0
+217,Vessel Buzzard,1.0
+16,Laborer,18.0
+16,Skipper,1.0
+16,Engineer,6.0
+16,Vessel Pompei,1.0
+17,Laborer,20.0
+17,Skipper,1.0
+17,Engineer,6.0
+17,Vessel Buzzard,1.0
+162,Laborer,18.0
+162,Skipper,1.0
+162,Engineer,6.0
+162,Vessel Pompei,1.0
+218,Laborer,18.0
+218,Skipper,1.0
+218,Engineer,6.0
+218,Vessel Pompei,1.0
+219,Laborer,18.0
+219,Skipper,1.0
+219,Engineer,6.0
+219,Vessel Pompei,1.0
+220,Laborer,18.0
+220,Skipper,1.0
+220,Engineer,6.0
+220,Vessel Pompei,1.0
+221,Laborer,18.0
+221,Skipper,1.0
+221,Engineer,6.0
+221,Vessel Pompei,1.0
+222,Laborer,18.0
+222,Skipper,1.0
+222,Engineer,6.0
+222,Vessel Pompei,1.0
+223,Laborer,18.0
+223,Skipper,1.0
+223,Engineer,6.0
+223,Vessel Pompei,1.0
+224,Laborer,18.0
+224,Skipper,1.0
+224,Engineer,6.0
+224,Vessel Pompei,1.0
+225,Laborer,18.0
+225,Skipper,1.0
+225,Engineer,6.0
+225,Vessel Pompei,1.0
+226,Laborer,18.0
+226,Skipper,1.0
+226,Engineer,6.0
+226,Vessel Pompei,1.0
+227,Laborer,18.0
+227,Skipper,1.0
+227,Engineer,6.0
+227,Vessel Pompei,1.0
+228,Laborer,18.0
+228,Skipper,1.0
+228,Engineer,6.0
+228,Vessel Pompei,1.0
+229,Laborer,18.0
+229,Skipper,1.0
+229,Engineer,6.0
+229,Vessel Pompei,1.0
+230,Laborer,18.0
+230,Skipper,1.0
+230,Engineer,6.0
+230,Vessel Pompei,1.0
+231,Laborer,18.0
+231,Skipper,1.0
+231,Engineer,6.0
+231,Vessel Pompei,1.0
+232,Laborer,18.0
+232,Skipper,1.0
+232,Engineer,6.0
+232,Vessel Pompei,1.0
+233,Laborer,18.0
+233,Skipper,1.0
+233,Engineer,6.0
+233,Vessel Pompei,1.0
+234,Laborer,18.0
+234,Skipper,1.0
+234,Engineer,6.0
+234,Vessel Pompei,1.0
+235,Laborer,18.0
+235,Skipper,1.0
+235,Engineer,6.0
+235,Vessel Pompei,1.0
+236,Laborer,18.0
+236,Skipper,1.0
+236,Engineer,6.0
+236,Vessel Pompei,1.0
+237,Laborer,18.0
+237,Skipper,1.0
+237,Engineer,6.0
+237,Vessel Pompei,1.0
+238,Laborer,18.0
+238,Skipper,1.0
+238,Engineer,6.0
+238,Vessel Pompei,1.0
+239,Laborer,18.0
+239,Skipper,1.0
+239,Engineer,6.0
+239,Vessel Pompei,1.0
+240,Laborer,18.0
+240,Skipper,1.0
+240,Engineer,6.0
+240,Vessel Pompei,1.0
+241,Laborer,20.0
+241,Skipper,1.0
+241,Engineer,6.0
+241,Vessel Buzzard,1.0
+242,Laborer,20.0
+242,Skipper,1.0
+242,Engineer,6.0
+242,Vessel Buzzard,1.0
+243,Laborer,20.0
+243,Skipper,1.0
+243,Engineer,6.0
+243,Vessel Buzzard,1.0
+244,Laborer,20.0
+244,Skipper,1.0
+244,Engineer,6.0
+244,Vessel Buzzard,1.0
+245,Laborer,20.0
+245,Skipper,1.0
+245,Engineer,6.0
+245,Vessel Buzzard,1.0
+246,Laborer,20.0
+246,Skipper,1.0
+246,Engineer,6.0
+246,Vessel Buzzard,1.0
+247,Laborer,20.0
+247,Skipper,1.0
+247,Engineer,6.0
+247,Vessel Buzzard,1.0
+248,Laborer,20.0
+248,Skipper,1.0
+248,Engineer,6.0
+248,Vessel Buzzard,1.0
+249,Laborer,20.0
+249,Skipper,1.0
+249,Engineer,6.0
+249,Vessel Buzzard,1.0
+250,Laborer,20.0
+250,Skipper,1.0
+250,Engineer,6.0
+250,Vessel Buzzard,1.0
+251,Laborer,20.0
+251,Skipper,1.0
+251,Engineer,6.0
+251,Vessel Buzzard,1.0
+252,Laborer,20.0
+252,Skipper,1.0
+252,Engineer,6.0
+252,Vessel Buzzard,1.0
+253,Laborer,20.0
+253,Skipper,1.0
+253,Engineer,6.0
+253,Vessel Buzzard,1.0
+254,Laborer,20.0
+254,Skipper,1.0
+254,Engineer,6.0
+254,Vessel Buzzard,1.0
+255,Laborer,20.0
+255,Skipper,1.0
+255,Engineer,6.0
+255,Vessel Buzzard,1.0
+256,Laborer,20.0
+256,Skipper,1.0
+256,Engineer,6.0
+256,Vessel Buzzard,1.0
+257,Laborer,20.0
+257,Skipper,1.0
+257,Engineer,6.0
+257,Vessel Buzzard,1.0
+258,Laborer,20.0
+258,Skipper,1.0
+258,Engineer,6.0
+258,Vessel Buzzard,1.0
+259,Laborer,20.0
+259,Skipper,1.0
+259,Engineer,6.0
+259,Vessel Buzzard,1.0
+260,Laborer,20.0
+260,Skipper,1.0
+260,Engineer,6.0
+260,Vessel Buzzard,1.0
+261,Laborer,20.0
+261,Skipper,1.0
+261,Engineer,6.0
+261,Vessel Buzzard,1.0
+262,Laborer,20.0
+262,Skipper,1.0
+262,Engineer,6.0
+262,Vessel Buzzard,1.0
+263,Laborer,20.0
+263,Skipper,1.0
+263,Engineer,6.0
+263,Vessel Buzzard,1.0
+264,Laborer,20.0
+264,Skipper,1.0
+264,Engineer,6.0
+264,Vessel Buzzard,1.0
+313,Laborer,6.0
+313,Skipper,1.0
+313,Towning tugs,1.0
+313,Transport barges,1.0
+313,Crane,2.0
+314,Laborer,6.0
+314,Skipper,1.0
+314,Towning tugs,1.0
+314,Transport barges,1.0
+314,Crane,2.0
+315,Laborer,6.0
+315,Skipper,1.0
+315,Towning tugs,1.0
+315,Transport barges,1.0
+315,Crane,2.0
+316,Laborer,6.0
+316,Skipper,1.0
+316,Towning tugs,1.0
+316,Transport barges,1.0
+316,Crane,2.0
+317,Laborer,6.0
+317,Skipper,1.0
+317,Towning tugs,1.0
+317,Transport barges,1.0
+317,Crane,2.0
+318,Laborer,6.0
+318,Skipper,1.0
+318,Towning tugs,1.0
+318,Transport barges,1.0
+318,Crane,2.0
+319,Laborer,6.0
+319,Skipper,1.0
+319,Towning tugs,1.0
+319,Transport barges,1.0
+319,Crane,2.0
+320,Laborer,6.0
+320,Skipper,1.0
+320,Towning tugs,1.0
+320,Transport barges,1.0
+320,Crane,2.0
+321,Laborer,6.0
+321,Skipper,1.0
+321,Towning tugs,1.0
+321,Transport barges,1.0
+321,Crane,2.0
+322,Laborer,6.0
+322,Skipper,1.0
+322,Towning tugs,1.0
+322,Transport barges,1.0
+322,Crane,2.0
+323,Laborer,6.0
+323,Skipper,1.0
+323,Towning tugs,1.0
+323,Transport barges,1.0
+323,Crane,2.0
+324,Laborer,6.0
+324,Skipper,1.0
+324,Towning tugs,1.0
+324,Transport barges,1.0
+324,Crane,2.0
+325,Laborer,6.0
+325,Skipper,1.0
+325,Towning tugs,1.0
+325,Transport barges,1.0
+325,Crane,2.0
+326,Laborer,6.0
+326,Skipper,1.0
+326,Towning tugs,1.0
+326,Transport barges,1.0
+326,Crane,2.0
+327,Laborer,6.0
+327,Skipper,1.0
+327,Towning tugs,1.0
+327,Transport barges,1.0
+327,Crane,2.0
+328,Laborer,6.0
+328,Skipper,1.0
+328,Towning tugs,1.0
+328,Transport barges,1.0
+328,Crane,2.0
+329,Laborer,6.0
+329,Skipper,1.0
+329,Towning tugs,1.0
+329,Transport barges,1.0
+329,Crane,2.0
+330,Laborer,6.0
+330,Skipper,1.0
+330,Towning tugs,1.0
+330,Transport barges,1.0
+330,Crane,2.0
+331,Laborer,6.0
+331,Skipper,1.0
+331,Towning tugs,1.0
+331,Transport barges,1.0
+331,Crane,2.0
+332,Laborer,6.0
+332,Skipper,1.0
+332,Towning tugs,1.0
+332,Transport barges,1.0
+332,Crane,2.0
+333,Laborer,6.0
+333,Skipper,1.0
+333,Towning tugs,1.0
+333,Transport barges,1.0
+333,Crane,2.0
+334,Laborer,6.0
+334,Skipper,1.0
+334,Towning tugs,1.0
+334,Transport barges,1.0
+334,Crane,2.0
+335,Laborer,6.0
+335,Skipper,1.0
+335,Towning tugs,1.0
+335,Transport barges,1.0
+335,Crane,2.0
+336,Laborer,6.0
+336,Skipper,1.0
+336,Towning tugs,1.0
+336,Transport barges,1.0
+336,Crane,2.0
+289,Laborer,22.0
+289,Skipper,1.0
+289,Engineer,6.0
+289,Vessel Rambiz,1.0
+290,Laborer,22.0
+290,Skipper,1.0
+290,Engineer,6.0
+290,Vessel Rambiz,1.0
+291,Laborer,22.0
+291,Skipper,1.0
+291,Engineer,6.0
+291,Vessel Rambiz,1.0
+292,Laborer,22.0
+292,Skipper,1.0
+292,Engineer,6.0
+292,Vessel Rambiz,1.0
+293,Laborer,22.0
+293,Skipper,1.0
+293,Engineer,6.0
+293,Vessel Rambiz,1.0
+294,Laborer,22.0
+294,Skipper,1.0
+294,Engineer,6.0
+294,Vessel Rambiz,1.0
+295,Laborer,22.0
+295,Skipper,1.0
+295,Engineer,6.0
+295,Vessel Rambiz,1.0
+296,Laborer,22.0
+296,Skipper,1.0
+296,Engineer,6.0
+296,Vessel Rambiz,1.0
+297,Laborer,22.0
+297,Skipper,1.0
+297,Engineer,6.0
+297,Vessel Rambiz,1.0
+298,Laborer,22.0
+298,Skipper,1.0
+298,Engineer,6.0
+298,Vessel Rambiz,1.0
+299,Laborer,22.0
+299,Skipper,1.0
+299,Engineer,6.0
+299,Vessel Rambiz,1.0
+300,Laborer,22.0
+300,Skipper,1.0
+300,Engineer,6.0
+300,Vessel Rambiz,1.0
+301,Laborer,22.0
+301,Skipper,1.0
+301,Engineer,6.0
+301,Vessel Rambiz,1.0
+302,Laborer,22.0
+302,Skipper,1.0
+302,Engineer,6.0
+302,Vessel Rambiz,1.0
+303,Laborer,22.0
+303,Skipper,1.0
+303,Engineer,6.0
+303,Vessel Rambiz,1.0
+304,Laborer,22.0
+304,Skipper,1.0
+304,Engineer,6.0
+304,Vessel Rambiz,1.0
+305,Laborer,22.0
+305,Skipper,1.0
+305,Engineer,6.0
+305,Vessel Rambiz,1.0
+306,Laborer,22.0
+306,Skipper,1.0
+306,Engineer,6.0
+306,Vessel Rambiz,1.0
+307,Laborer,22.0
+307,Skipper,1.0
+307,Engineer,6.0
+307,Vessel Rambiz,1.0
+308,Laborer,22.0
+308,Skipper,1.0
+308,Engineer,6.0
+308,Vessel Rambiz,1.0
+309,Laborer,22.0
+309,Skipper,1.0
+309,Engineer,6.0
+309,Vessel Rambiz,1.0
+310,Laborer,22.0
+310,Skipper,1.0
+310,Engineer,6.0
+310,Vessel Rambiz,1.0
+311,Laborer,22.0
+311,Skipper,1.0
+311,Engineer,6.0
+311,Vessel Rambiz,1.0
+312,Laborer,22.0
+312,Skipper,1.0
+312,Engineer,6.0
+312,Vessel Rambiz,1.0
+265,Laborer,12.0
+265,Skipper,1.0
+265,Engineer,6.0
+265,Diving team,1.0
+265,Vessel Rambiz,1.0
+266,Laborer,12.0
+266,Skipper,1.0
+266,Engineer,6.0
+266,Diving team,1.0
+266,Vessel Rambiz,1.0
+267,Laborer,12.0
+267,Skipper,1.0
+267,Engineer,6.0
+267,Diving team,1.0
+267,Vessel Rambiz,1.0
+268,Laborer,12.0
+268,Skipper,1.0
+268,Engineer,6.0
+268,Diving team,1.0
+268,Vessel Rambiz,1.0
+269,Laborer,12.0
+269,Skipper,1.0
+269,Engineer,6.0
+269,Diving team,1.0
+269,Vessel Rambiz,1.0
+270,Laborer,12.0
+270,Skipper,1.0
+270,Engineer,6.0
+270,Diving team,1.0
+270,Vessel Rambiz,1.0
+271,Laborer,12.0
+271,Skipper,1.0
+271,Engineer,6.0
+271,Diving team,1.0
+271,Vessel Rambiz,1.0
+272,Laborer,12.0
+272,Skipper,1.0
+272,Engineer,6.0
+272,Diving team,1.0
+272,Vessel Rambiz,1.0
+273,Laborer,12.0
+273,Skipper,1.0
+273,Engineer,6.0
+273,Diving team,1.0
+273,Vessel Rambiz,1.0
+274,Laborer,12.0
+274,Skipper,1.0
+274,Engineer,6.0
+274,Diving team,1.0
+274,Vessel Rambiz,1.0
+275,Laborer,12.0
+275,Skipper,1.0
+275,Engineer,6.0
+275,Diving team,1.0
+275,Vessel Rambiz,1.0
+276,Laborer,12.0
+276,Skipper,1.0
+276,Engineer,6.0
+276,Diving team,1.0
+276,Vessel Rambiz,1.0
+277,Laborer,12.0
+277,Skipper,1.0
+277,Engineer,6.0
+277,Diving team,1.0
+277,Vessel Rambiz,1.0
+278,Laborer,12.0
+278,Skipper,1.0
+278,Engineer,6.0
+278,Diving team,1.0
+278,Vessel Rambiz,1.0
+279,Laborer,12.0
+279,Skipper,1.0
+279,Engineer,6.0
+279,Diving team,1.0
+279,Vessel Rambiz,1.0
+280,Laborer,12.0
+280,Skipper,1.0
+280,Engineer,6.0
+280,Diving team,1.0
+280,Vessel Rambiz,1.0
+281,Laborer,12.0
+281,Skipper,1.0
+281,Engineer,6.0
+281,Diving team,1.0
+281,Vessel Rambiz,1.0
+282,Laborer,12.0
+282,Skipper,1.0
+282,Engineer,6.0
+282,Diving team,1.0
+282,Vessel Rambiz,1.0
+283,Laborer,12.0
+283,Skipper,1.0
+283,Engineer,6.0
+283,Diving team,1.0
+283,Vessel Rambiz,1.0
+284,Laborer,12.0
+284,Skipper,1.0
+284,Engineer,6.0
+284,Diving team,1.0
+284,Vessel Rambiz,1.0
+285,Laborer,12.0
+285,Skipper,1.0
+285,Engineer,6.0
+285,Diving team,1.0
+285,Vessel Rambiz,1.0
+286,Laborer,12.0
+286,Skipper,1.0
+286,Engineer,6.0
+286,Diving team,1.0
+286,Vessel Rambiz,1.0
+287,Laborer,12.0
+287,Skipper,1.0
+287,Engineer,6.0
+287,Diving team,1.0
+287,Vessel Rambiz,1.0
+288,Laborer,12.0
+288,Skipper,1.0
+288,Engineer,6.0
+288,Diving team,1.0
+288,Vessel Rambiz,1.0
+56,Laborer,32.0
+56,Engineer,6.0
+56,Crane,3.0
+57,Laborer,16.0
+57,Welder,1.0
+57,Engineer,3.0
+57,Crane,1.0
+58,Laborer,19.0
+58,Welder,1.0
+58,Engineer,3.0
+58,Crane,1.0
+502,Laborer,16.0
+502,Skipper,2.0
+502,Engineer,8.0
+502,Vessel Neptune,1.0
+502,Vessel Vagant,1.0
+502,Crane,1.0
+503,Laborer,16.0
+503,Skipper,2.0
+503,Engineer,8.0
+503,Vessel Neptune,1.0
+503,Vessel Vagant,1.0
+503,Crane,1.0
+504,Laborer,16.0
+504,Skipper,2.0
+504,Engineer,8.0
+504,Vessel Neptune,1.0
+504,Vessel Vagant,1.0
+504,Crane,1.0
+505,Laborer,16.0
+505,Skipper,2.0
+505,Engineer,8.0
+505,Vessel Neptune,1.0
+505,Vessel Vagant,1.0
+505,Crane,1.0
+506,Laborer,16.0
+506,Skipper,2.0
+506,Engineer,8.0
+506,Vessel Neptune,1.0
+506,Vessel Vagant,1.0
+506,Crane,1.0
+507,Laborer,16.0
+507,Skipper,2.0
+507,Engineer,8.0
+507,Vessel Neptune,1.0
+507,Vessel Vagant,1.0
+507,Crane,1.0
+508,Laborer,16.0
+508,Skipper,2.0
+508,Engineer,8.0
+508,Vessel Neptune,1.0
+508,Vessel Vagant,1.0
+508,Crane,1.0
+509,Laborer,16.0
+509,Skipper,2.0
+509,Engineer,8.0
+509,Vessel Neptune,1.0
+509,Vessel Vagant,1.0
+509,Crane,1.0
+510,Laborer,16.0
+510,Skipper,2.0
+510,Engineer,8.0
+510,Vessel Neptune,1.0
+510,Vessel Vagant,1.0
+510,Crane,1.0
+511,Laborer,16.0
+511,Skipper,2.0
+511,Engineer,8.0
+511,Vessel Neptune,1.0
+511,Vessel Vagant,1.0
+511,Crane,1.0
+512,Laborer,16.0
+512,Skipper,2.0
+512,Engineer,8.0
+512,Vessel Neptune,1.0
+512,Vessel Vagant,1.0
+512,Crane,1.0
+513,Laborer,16.0
+513,Skipper,2.0
+513,Engineer,8.0
+513,Vessel Neptune,1.0
+513,Vessel Vagant,1.0
+513,Crane,1.0
+514,Laborer,16.0
+514,Skipper,2.0
+514,Engineer,8.0
+514,Vessel Neptune,1.0
+514,Vessel Vagant,1.0
+514,Crane,1.0
+515,Laborer,16.0
+515,Skipper,2.0
+515,Engineer,8.0
+515,Vessel Neptune,1.0
+515,Vessel Vagant,1.0
+515,Crane,1.0
+516,Laborer,16.0
+516,Skipper,2.0
+516,Engineer,8.0
+516,Vessel Neptune,1.0
+516,Vessel Vagant,1.0
+516,Crane,1.0
+517,Laborer,16.0
+517,Skipper,2.0
+517,Engineer,8.0
+517,Vessel Neptune,1.0
+517,Vessel Vagant,1.0
+517,Crane,1.0
+518,Laborer,16.0
+518,Skipper,2.0
+518,Engineer,8.0
+518,Vessel Neptune,1.0
+518,Vessel Vagant,1.0
+518,Crane,1.0
+519,Laborer,16.0
+519,Skipper,2.0
+519,Engineer,8.0
+519,Vessel Neptune,1.0
+519,Vessel Vagant,1.0
+519,Crane,1.0
+520,Laborer,16.0
+520,Skipper,2.0
+520,Engineer,8.0
+520,Vessel Neptune,1.0
+520,Vessel Vagant,1.0
+520,Crane,1.0
+521,Laborer,16.0
+521,Skipper,2.0
+521,Engineer,8.0
+521,Vessel Neptune,1.0
+521,Vessel Vagant,1.0
+521,Crane,1.0
+522,Laborer,16.0
+522,Skipper,2.0
+522,Engineer,8.0
+522,Vessel Neptune,1.0
+522,Vessel Vagant,1.0
+522,Crane,1.0
+523,Laborer,16.0
+523,Skipper,2.0
+523,Engineer,8.0
+523,Vessel Neptune,1.0
+523,Vessel Vagant,1.0
+523,Crane,1.0
+524,Laborer,16.0
+524,Skipper,2.0
+524,Engineer,8.0
+524,Vessel Neptune,1.0
+524,Vessel Vagant,1.0
+524,Crane,1.0
+525,Laborer,16.0
+525,Skipper,2.0
+525,Engineer,8.0
+525,Vessel Neptune,1.0
+525,Vessel Vagant,1.0
+525,Crane,1.0
+478,Laborer,16.0
+478,Skipper,2.0
+478,Engineer,8.0
+478,Vessel Neptune,1.0
+478,Vessel Vagant,1.0
+479,Laborer,16.0
+479,Skipper,2.0
+479,Engineer,8.0
+479,Vessel Neptune,1.0
+479,Vessel Vagant,1.0
+480,Laborer,16.0
+480,Skipper,2.0
+480,Engineer,8.0
+480,Vessel Neptune,1.0
+480,Vessel Vagant,1.0
+481,Laborer,16.0
+481,Skipper,2.0
+481,Engineer,8.0
+481,Vessel Neptune,1.0
+481,Vessel Vagant,1.0
+482,Laborer,16.0
+482,Skipper,2.0
+482,Engineer,8.0
+482,Vessel Neptune,1.0
+482,Vessel Vagant,1.0
+483,Laborer,16.0
+483,Skipper,2.0
+483,Engineer,8.0
+483,Vessel Neptune,1.0
+483,Vessel Vagant,1.0
+484,Laborer,16.0
+484,Skipper,2.0
+484,Engineer,8.0
+484,Vessel Neptune,1.0
+484,Vessel Vagant,1.0
+485,Laborer,16.0
+485,Skipper,2.0
+485,Engineer,8.0
+485,Vessel Neptune,1.0
+485,Vessel Vagant,1.0
+486,Laborer,16.0
+486,Skipper,2.0
+486,Engineer,8.0
+486,Vessel Neptune,1.0
+486,Vessel Vagant,1.0
+487,Laborer,16.0
+487,Skipper,2.0
+487,Engineer,8.0
+487,Vessel Neptune,1.0
+487,Vessel Vagant,1.0
+488,Laborer,16.0
+488,Skipper,2.0
+488,Engineer,8.0
+488,Vessel Neptune,1.0
+488,Vessel Vagant,1.0
+489,Laborer,16.0
+489,Skipper,2.0
+489,Engineer,8.0
+489,Vessel Neptune,1.0
+489,Vessel Vagant,1.0
+490,Laborer,16.0
+490,Skipper,2.0
+490,Engineer,8.0
+490,Vessel Neptune,1.0
+490,Vessel Vagant,1.0
+491,Laborer,16.0
+491,Skipper,2.0
+491,Engineer,8.0
+491,Vessel Neptune,1.0
+491,Vessel Vagant,1.0
+492,Laborer,16.0
+492,Skipper,2.0
+492,Engineer,8.0
+492,Vessel Neptune,1.0
+492,Vessel Vagant,1.0
+493,Laborer,16.0
+493,Skipper,2.0
+493,Engineer,8.0
+493,Vessel Neptune,1.0
+493,Vessel Vagant,1.0
+494,Laborer,16.0
+494,Skipper,2.0
+494,Engineer,8.0
+494,Vessel Neptune,1.0
+494,Vessel Vagant,1.0
+495,Laborer,16.0
+495,Skipper,2.0
+495,Engineer,8.0
+495,Vessel Neptune,1.0
+495,Vessel Vagant,1.0
+496,Laborer,16.0
+496,Skipper,2.0
+496,Engineer,8.0
+496,Vessel Neptune,1.0
+496,Vessel Vagant,1.0
+497,Laborer,16.0
+497,Skipper,2.0
+497,Engineer,8.0
+497,Vessel Neptune,1.0
+497,Vessel Vagant,1.0
+498,Laborer,16.0
+498,Skipper,2.0
+498,Engineer,8.0
+498,Vessel Neptune,1.0
+498,Vessel Vagant,1.0
+499,Laborer,16.0
+499,Skipper,2.0
+499,Engineer,8.0
+499,Vessel Neptune,1.0
+499,Vessel Vagant,1.0
+500,Laborer,16.0
+500,Skipper,2.0
+500,Engineer,8.0
+500,Vessel Neptune,1.0
+500,Vessel Vagant,1.0
+501,Laborer,16.0
+501,Skipper,2.0
+501,Engineer,8.0
+501,Vessel Neptune,1.0
+501,Vessel Vagant,1.0
+454,Special team,1.0
+455,Special team,1.0
+456,Special team,1.0
+457,Special team,1.0
+458,Special team,1.0
+459,Special team,1.0
+460,Special team,1.0
+461,Special team,1.0
+462,Special team,1.0
+463,Special team,1.0
+464,Special team,1.0
+465,Special team,1.0
+466,Special team,1.0
+467,Special team,1.0
+468,Special team,1.0
+469,Special team,1.0
+470,Special team,1.0
+471,Special team,1.0
+472,Special team,1.0
+473,Special team,1.0
+474,Special team,1.0
+475,Special team,1.0
+476,Special team,1.0
+477,Special team,1.0
+430,Commissioning team,1.0
+431,Commissioning team,1.0
+432,Commissioning team,1.0
+433,Commissioning team,1.0
+434,Commissioning team,1.0
+435,Commissioning team,1.0
+436,Commissioning team,1.0
+437,Commissioning team,1.0
+438,Commissioning team,1.0
+439,Commissioning team,1.0
+440,Commissioning team,1.0
+441,Commissioning team,1.0
+442,Commissioning team,1.0
+443,Commissioning team,1.0
+444,Commissioning team,1.0
+445,Commissioning team,1.0
+446,Commissioning team,1.0
+447,Commissioning team,1.0
+448,Commissioning team,1.0
+449,Commissioning team,1.0
+450,Commissioning team,1.0
+451,Commissioning team,1.0
+452,Commissioning team,1.0
+453,Commissioning team,1.0
+406,Testing team,0.2
+407,Testing team,0.2
+408,Testing team,0.2
+409,Testing team,0.2
+410,Testing team,0.2
+411,Testing team,0.2
+412,Testing team,0.2
+413,Testing team,0.2
+414,Testing team,0.2
+415,Testing team,0.2
+416,Testing team,0.2
+417,Testing team,0.2
+418,Testing team,0.2
+419,Testing team,0.2
+421,Testing team,0.2
+420,Testing team,0.2
+422,Testing team,0.2
+423,Testing team,0.2
+424,Testing team,0.2
+425,Testing team,0.2
+426,Testing team,0.2
+427,Testing team,0.2
+428,Testing team,0.2
+429,Testing team,0.2
+77,Laborer,8.0
+77,Skipper,1.0
+77,Towning tugs,1.0
+77,Transport barges,1.0
+77,Crane,1.0
+82,Laborer,8.0
+82,Skipper,1.0
+82,Engineer,4.0
+82,Towning tugs,1.0
+82,Transport barges,1.0
+82,Crane,1.0
+81,Laborer,18.0
+81,Skipper,1.0
+81,Engineer,6.0
+81,Vessel Rambiz,1.0
+94,Laborer,4.0
+94,Skipper,1.0
+94,Engineer,1.0
+94,Towning tugs,1.0
+94,Transport barges,1.0
+94,Crane,1.0
+95,Laborer,18.0
+95,Skipper,1.0
+95,Engineer,6.0
+95,Vessel Rambiz,1.0
+100,Laborer,5.0
+100,Skipper,1.0
+100,Engineer,4.0
+100,Vessel Pompei,1.0
+101,Laborer,5.0
+101,Skipper,1.0
+101,Engineer,4.0
+101,Vessel Pompei,1.0
+102,Laborer,5.0
+102,Skipper,1.0
+102,Engineer,3.0
+102,Vessel Pompei,1.0
+105,Laborer,10.0
+105,Skipper,1.0
+105,Vessel Souverreign,1.0
+105,Crane,1.0
+106,Laborer,18.0
+106,Skipper,1.0
+106,Engineer,3.0
+106,Vessel Pompei,1.0
+107,Laborer,12.0
+107,Testing team,1.0
+108,Laborer,22.0
+108,Skipper,1.0
+108,Vessel Innovator,1.0
+109,Special team,2.0
+110,Laborer,22.0
+110,Skipper,1.0
+110,Engineer,4.0
+110,Vessel Innovator,1.0
+111,Engineer,4.0
+112,Laborer,22.0
+112,Skipper,1.0
+112,Engineer,4.0
+112,Vessel Innovator,1.0
+126,Laborer,5.0
+126,Skipper,1.0
+126,Engineer,3.0
+126,Vessel Pompei,1.0
+130,Laborer,6.0
+130,Skipper,1.0
+130,Vessel Sternat Spirit,1.0
+131,Laborer,6.0
+131,Skipper,1.0
+131,Vessel Sternat Spirit,1.0
+131,Crane,2.0
+133,Laborer,18.0
+133,Skipper,1.0
+133,Engineer,4.0
+133,Vessel Breughel,1.0
+134,Laborer,18.0
+134,Skipper,1.0
+134,Engineer,4.0
+134,Vessel Breughel,1.0
+193,Laborer,12.0
+193,Welder,8.0
+193,Crane,1.0
+193,Engineer,1.0
+137,Laborer,16.0
+137,Engineer,4.0
+137,Drilling machine,2.0
+138,Laborer,14.0
+138,Engineer,4.0
+138,Pulling machine,1.0
+139,Testing team,1.0
+140,Laborer,13.0
+140,Engineer,4.0
+140,Pulling machine,1.0
+140,Crane,1.0
+141,Disconnecting team,1.0
+194,Testing team,1.0
+149,Laborer,17.0
+149,Skipper,1.0
+149,Engineer,4.0
+149,Vessel Breydel,1.0
+150,Laborer,13.0
+150,Engineer,3.0
+150,Pulling machine,1.0
+195,Disconnecting team,1.0
+151,Laborer,12.0
+151,Skipper,1.0
+151,Engineer,6.0
+151,Vessel Pearl River,1.0
+152,Laborer,20.0
+152,Engineer,6.0
+153,Disconnecting team,1.0
+154,Testing team,1.0
+157,Laborer,5.0
+157,Skipper,1.0
+157,Vessel Pompei,1.0
+158,Laborer,5.0
+158,Skipper,1.0
+158,Vessel Pompei,1.0

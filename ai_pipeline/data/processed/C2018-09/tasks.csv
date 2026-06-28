@@ -1,0 +1,38 @@
+ID,Name,WBS,Calendar_Type,Baseline Start,Duration_Raw,Duration_Months,Duration_Weeks,Duration_Days,Duration_Hours,Fixed Cost,Variable Cost,Optimistic,Most Probable,Pessimistic,PERT Expected,Reserve
+3,"1. Analysis of car usage in general, link to car sharing, environment, cost of parking",1.1.1.1,Agenda,2019-01-01 08:00:00,10d,0.0,0.0,10.0,0.0,0.0,0.0,64.0,80.0,96.0,80.0,32.0
+4,2. Type of cars,1.1.1.2,Agenda,2019-01-15 08:00:00,6d,0.0,0.0,6.0,0.0,0.0,0.0,38.4,48.0,57.6,48.0,19.2
+5,3. Determine amount of ars needed and parking place,1.1.1.3,Agenda,2019-01-23 08:00:00,6d,0.0,0.0,6.0,0.0,0.0,0.0,38.4,48.0,57.6,48.0,19.2
+6,4. Research for charging stations (suppliers),1.1.1.4,Agenda,2019-01-31 08:00:00,2d,0.0,0.0,2.0,0.0,0.0,0.0,12.8,16.0,19.2,16.0,6.4
+7,5. Research use of exsisting charging stations,1.1.1.5,Agenda,2019-01-31 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+8,6. Research for traffic sign supplier (Trafiroad),1.1.1.6,Agenda,2019-01-31 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+9,7. Research amount of staff needed (extra contractors),1.1.1.7,Agenda,2019-02-04 08:00:00,3d,0.0,0.0,3.0,0.0,0.0,0.0,19.2,24.0,28.8,24.0,9.6
+10,8. Feasibility study,1.1.1.8,Agenda,2019-02-07 08:00:00,7d,0.0,0.0,7.0,0.0,0.0,0.0,44.8,56.0,67.2,56.0,22.4
+11,"9. Search for funding (VC, Business angels, bankloan)",1.1.1.9,Agenda,2019-02-18 08:00:00,12d,0.0,0.0,12.0,0.0,0.0,0.0,76.8,96.0,115.2,96.0,38.4
+13,10. Contact city to get the approval,1.1.2.1,Agenda,2019-03-06 08:00:00,20d,0.0,0.0,20.0,0.0,0.0,0.0,128.0,160.0,192.0,160.0,64.0
+14,11. Asking city for blue prints power network,1.1.2.2,Agenda,2019-04-10 08:00:00,20d,0.0,0.0,20.0,0.0,0.0,0.0,128.0,160.0,192.0,160.0,64.0
+15,12. Meeting with car leasers + quotation,1.1.2.3,Agenda,2019-04-10 08:00:00,25d,0.0,0.0,25.0,0.0,0.0,0.0,160.0,200.0,240.0,200.0,80.0
+16,13. Meeting with docking station suppliers,1.1.2.4,Agenda,2019-05-08 08:00:00,25d,0.0,0.0,25.0,0.0,0.0,0.0,160.0,200.0,240.0,200.0,80.0
+17,14. Meeting with possible contractors,1.1.2.5,Agenda,2019-06-12 08:00:00,10d,0.0,0.0,10.0,0.0,0.0,0.0,64.0,80.0,96.0,80.0,32.0
+19,15. Web/app developer search,1.1.3.1,Agenda,2019-04-03 08:00:00,5d,0.0,0.0,5.0,0.0,0.0,0.0,32.0,40.0,48.0,40.0,16.0
+20,16. Developing website/app,1.1.3.2,Agenda,2019-04-10 08:00:00,70d,0.0,0.0,70.0,0.0,90000.0,0.0,448.0,560.0,672.0,560.0,224.0
+21,17. Developing payment system,1.1.3.3,Agenda,2019-07-17 08:00:00,55d,0.0,0.0,55.0,0.0,20000.0,0.0,352.0,440.0,528.0,440.0,176.0
+22,18. Testing & approving app,1.1.3.4,Agenda,2019-10-02 08:00:00,15d,0.0,0.0,15.0,0.0,4500.0,0.0,96.0,120.0,144.0,120.0,48.0
+23,19. Testing & approving payment system,1.1.3.5,Agenda,2019-10-02 08:00:00,15d,0.0,0.0,15.0,0.0,1500.0,0.0,96.0,120.0,144.0,120.0,48.0
+25,20. Negotiate maintenance contract with possible partners,1.1.4.1,Agenda,2019-06-19 08:00:00,20d,0.0,0.0,20.0,0.0,0.0,0.0,128.0,160.0,192.0,160.0,64.0
+27,21. Drilling the holes where the charging blocks will be put by Eandis and where the traffic signs will be put,1.1.5.1,Agenda,2019-06-26 08:00:00,12d,0.0,0.0,12.0,0.0,10599.0,0.0,76.8,96.0,115.2,96.0,38.4
+28,22. Delivery and placing of the charging blocks (UwLaadpunt),1.1.5.2,Elapsed (24/7),2019-07-12 08:00:00,12d,0.0,0.0,12.0,0.0,78715.0,0.0,76.8,96.0,115.2,96.0,38.4
+29,23. Access power network: connecting charging blocks to power grid (Eandis),1.1.5.3,Agenda,2019-07-30 08:00:00,12d,0.0,0.0,12.0,0.0,19500.0,0.0,76.8,96.0,115.2,96.0,38.4
+30,24. Installation of visibility marks (Trafiroad),1.1.5.4,Agenda,2019-07-30 08:00:00,6d,0.0,0.0,6.0,0.0,2480.0,0.0,38.4,48.0,57.6,48.0,19.2
+31,25. Installation of trafic signs (Trafiroad),1.1.5.5,Agenda,2019-07-30 08:00:00,6d,0.0,0.0,6.0,0.0,8500.0,0.0,38.4,48.0,57.6,48.0,19.2
+32,26. Testing of the charging blocks,1.1.5.6,Agenda,2019-08-15 08:00:00,6d,0.0,0.0,6.0,0.0,0.0,0.0,38.4,48.0,57.6,48.0,19.2
+34,27. Delivery cars,1.1.6.1,Elapsed (24/7),2019-08-23 08:00:00,6d,0.0,0.0,6.0,0.0,144000.0,0.0,38.4,48.0,57.6,48.0,19.2
+36,28. Placing cars,1.1.7.1,Agenda,2019-09-02 08:00:00,5d,0.0,0.0,5.0,0.0,0.0,0.0,32.0,40.0,48.0,40.0,16.0
+37,29. Final testing of the finished system,1.1.7.2,Agenda,2019-09-09 08:00:00,20d,0.0,0.0,20.0,0.0,0.0,0.0,128.0,160.0,192.0,160.0,64.0
+39,30. Publicity campaign for our company,1.1.8.1,Agenda,2019-10-07 08:00:00,15d,0.0,0.0,15.0,0.0,0.0,0.0,96.0,120.0,144.0,120.0,48.0
+41,31. Payment of Web/app developers,1.1.9.1,Agenda,2019-10-23 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+42,32. Payment 'UwLaadpunt',1.1.9.2,Agenda,2019-07-30 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+43,33. Payment 'Eandis',1.1.9.3,Agenda,2019-08-15 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+44,34. Payment 'Traffiroad',1.1.9.4,Agenda,2019-08-07 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+45,35. Payment of the construction firm,1.1.9.5,Agenda,2019-07-12 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+46,36. Payment carleasing,1.1.9.6,Agenda,2019-09-02 08:00:00,1d,0.0,0.0,1.0,0.0,0.0,0.0,6.4,8.0,9.6,8.0,3.2
+48,37. Launch,1.1.10.1,Agenda,2019-10-23 17:00:00,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0

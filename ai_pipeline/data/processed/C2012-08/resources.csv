@@ -1,0 +1,28 @@
+ID,Name,Type,Availability,Cost/Use,Cost/Unit
+1,Skipper,Renewable,4.0,0.0,60.0
+2,Welder,Renewable,8.0,0.0,60.0
+3,Engineer,Renewable,18.0,0.0,160.0
+4,Special team,Renewable,2.0,0.0,800.0
+5,Disconnecting team,Renewable,1.0,0.0,800.0
+6,Commissioning team,Renewable,1.0,0.0,800.0
+7,Testing team,Renewable,1.0,0.0,800.0
+8,Diving team,Renewable,1.0,0.0,900.0
+9,Crane,Renewable,3.0,0.0,200.0
+10,Vessel Pompei,Renewable,1.0,0.0,3320.0
+11,Vessel Neptune,Renewable,1.0,0.0,3750.0
+12,Vessel Vagant,Renewable,1.0,0.0,3180.0
+13,Vessel Sternat Spirit,Renewable,1.0,0.0,3250.0
+14,Vessel Souverreign,Renewable,1.0,0.0,3250.0
+15,Vessel Rambiz,Renewable,1.0,0.0,3620.0
+16,Vessel Buzzard,Renewable,1.0,0.0,3200.0
+17,Vessel Breydel,Renewable,2.0,0.0,3200.0
+18,Vessel Breughel,Renewable,1.0,0.0,3200.0
+19,Vessel Pearl River,Renewable,1.0,0.0,3250.0
+20,Vessel Maersk,Renewable,1.0,0.0,800.0
+21,Vessel Innovator,Renewable,1.0,0.0,3250.0
+22,Pre-piling template,Renewable,1.0,0.0,200.0
+23,Towning tugs,Renewable,2.0,0.0,450.0
+24,Transport barges,Renewable,2.0,0.0,400.0
+25,Drilling machine,Renewable,2.0,0.0,1200.0
+26,Pulling machine,Renewable,1.0,0.0,1300.0
+27,Laborer,Renewable,60.0,0.0,40.0

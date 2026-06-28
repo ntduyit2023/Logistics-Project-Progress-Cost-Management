@@ -1,0 +1,19 @@
+ID,Name,Type,Availability,Cost/Use,Cost/Unit
+1,Labourers,Renewable,10.0,0.0,60.0
+2,Truck IVECO Trakker,Renewable,6.0,0.0,70.0
+3,Bulldozer D8T,Renewable,1.0,0.0,75.0
+4,Wheel Loader,Renewable,2.0,0.0,60.0
+5,Sheepfoot rolles,Renewable,2.0,0.0,70.0
+6,Smooth Roller,Renewable,2.0,0.0,60.0
+7,Crawler Excavator,Renewable,2.0,0.0,98.0
+8,Drilling Rid,Renewable,1.0,0.0,75.0
+9,Concrete Mixer Truck,Renewable,1.0,0.0,95.0
+10,Crane,Renewable,1.0,0.0,105.0
+11,Paler,Renewable,1.0,0.0,65.0
+12,Cold Milling Machine,Renewable,1.0,0.0,230.0
+13,Pile Driver,Renewable,1.0,0.0,48.0
+14,Pruning Machine,Renewable,1.0,0.0,40.0
+15,Tank Truck,Renewable,1.0,0.0,78.0
+16,Line Striper Machine,Renewable,1.0,0.0,30.0
+17,Materials,Consumable,1.0,0.0,1.0
+18,Paving Material,Consumable,1.0,0.0,1.0
