@@ -5,9 +5,10 @@ import os
 from datetime import datetime
 
 class DSLIBExtractor:
-    def __init__(self, file_path, output_dir):
+    def __init__(self, file_path, output_dir, project_id):
         self.file_path = file_path
         self.output_dir = output_dir
+        self.project_id = project_id
         self.wb = openpyxl.load_workbook(file_path, data_only=True)
         self.xl = pd.ExcelFile(file_path)
         
@@ -179,6 +180,14 @@ class DSLIBExtractor:
     def parse_baseline_schedule(self):
         df = self.xl.parse("Baseline Schedule")
         
+        # Build ID to WBS mapping
+        self.id_to_wbs = {}
+        for idx, row in df.iterrows():
+            t_id = str(row.iloc[0]).strip()
+            wbs = str(row.iloc[2]).strip()
+            if t_id and t_id != 'nan' and t_id.lower() != 'id':
+                self.id_to_wbs[t_id] = wbs
+                
         seen_edges = set()
         
         for idx, row in df.iterrows():
@@ -192,6 +201,10 @@ class DSLIBExtractor:
                 
                 name = str(row.iloc[1]).strip()
                 wbs = str(row.iloc[2]).strip()
+                
+                global_task_id = f"{self.project_id}_{wbs}"
+                global_task_name = f"{wbs} - {name}"
+                
                 b_start = row.iloc[5]
                 dur_str = str(row.iloc[7])
                 dur_comps = self.parse_time_components(dur_str)
@@ -200,8 +213,6 @@ class DSLIBExtractor:
                 agenda_override_kws = [r'loading', r'installation', r'assembly', r'preparation', r'grouting', r'fabrication', r'mounting', r'joint', r'connection', r'commissioning', r'research', r'supplier', r'system', r'training', r'design', r'development', r'dev', r'testing', r'test']
                 
                 def has_kw(kws, text):
-                    # For Vietnamese like "vận chuyển", simple \b works.
-                    # We remove spaces in kws and text to make it simpler? No, \b works with spaces inside the phrase.
                     pattern = r'\b(?:' + '|'.join(kws) + r')\b'
                     return bool(re.search(pattern, text, re.IGNORECASE))
                 
@@ -213,18 +224,17 @@ class DSLIBExtractor:
                     cal_type = "Agenda"
                 
                 self.tasks.append({
-                    "ID": task_id,
-                    "Name": name,
-                    "WBS": wbs,
-                    "Calendar_Type": cal_type,
-                    "Baseline Start": b_start,
-                    "Duration_Raw": dur_str,
-                    "Duration_Months": dur_comps["m"],
-                    "Duration_Weeks": dur_comps["w"],
-                    "Duration_Days": dur_comps["d"],
-                    "Duration_Hours": dur_comps["h"],
-                    "Fixed Cost": self.clean_cost(row.iloc[10]),
-                    "Variable Cost": self.clean_cost(row.iloc[12])
+                    "id": global_task_id,
+                    "task_name": global_task_name,
+                    "calendar_type": cal_type,
+                    "baseline_start": b_start,
+                    "duration_raw": dur_str,
+                    "duration_months": dur_comps["m"],
+                    "duration_weeks": dur_comps["w"],
+                    "duration_days": dur_comps["d"],
+                    "duration_hours": dur_comps["h"],
+                    "material_cost": self.clean_cost(row.iloc[10]),
+                    "internal_labor_cost": self.clean_cost(row.iloc[12])
                 })
                 
                 # Parse Predecessors
@@ -237,23 +247,23 @@ class DSLIBExtractor:
                             m = re.match(r'^(\d+)(FS|SS|FF|SF)?(.*)$', p)
                             if m:
                                 p_id = m.group(1).strip()
+                                p_wbs = self.id_to_wbs.get(p_id, p_id)
+                                global_p_id = f"{self.project_id}_{p_wbs}"
                                 p_type = m.group(2).strip() if m.group(2) else "FS"
                                 p_lag_str = m.group(3).strip()
                                 
-                                edge_key = f"{task_id}_{p_id}_{p_type}_{p_lag_str}"
+                                edge_key = f"{global_task_id}_{global_p_id}_{p_type}_{p_lag_str}"
                                 if edge_key not in seen_edges:
                                     seen_edges.add(edge_key)
                                     p_comps = self.parse_time_components(p_lag_str)
                                     self.logic_edges.append({
-                                        "Task ID": task_id,
-                                        "Predecessors": p_id,
-                                        "Type": p_type,
-                                        "Lag": p_lag_str,
-                                        "Lag_Sign": "+" if p_comps["sign"] > 0 else "-",
-                                        "Lag_Months": p_comps["m"],
-                                        "Lag_Weeks": p_comps["w"],
-                                        "Lag_Days": p_comps["d"],
-                                        "Lag_Hours": p_comps["h"]
+                                        "successor_task_id": global_task_id,
+                                        "predecessor_task_id": global_p_id,
+                                        "dependency_type": p_type,
+                                        "lag_months": p_comps["m"],
+                                        "lag_weeks": p_comps["w"],
+                                        "lag_days": p_comps["d"],
+                                        "lag_hours": p_comps["h"]
                                     })
                                     
                 # Parse Successors -> Flip to Predecessors!
@@ -269,21 +279,21 @@ class DSLIBExtractor:
                                 s_id = m.group(2).strip()
                                 s_lag_str = m.group(3).strip()
                                 
-                                # Task `s_id` has predecessor `task_id`
-                                edge_key = f"{s_id}_{task_id}_{s_type}_{s_lag_str}"
+                                s_wbs = self.id_to_wbs.get(s_id, s_id)
+                                global_s_id = f"{self.project_id}_{s_wbs}"
+                                
+                                edge_key = f"{global_s_id}_{global_task_id}_{s_type}_{s_lag_str}"
                                 if edge_key not in seen_edges:
                                     seen_edges.add(edge_key)
                                     s_comps = self.parse_time_components(s_lag_str)
                                     self.logic_edges.append({
-                                        "Task ID": s_id,
-                                        "Predecessors": task_id,
-                                        "Type": s_type,
-                                        "Lag": s_lag_str,
-                                        "Lag_Sign": "+" if s_comps["sign"] > 0 else "-",
-                                        "Lag_Months": s_comps["m"],
-                                        "Lag_Weeks": s_comps["w"],
-                                        "Lag_Days": s_comps["d"],
-                                        "Lag_Hours": s_comps["h"]
+                                        "successor_task_id": global_s_id,
+                                        "predecessor_task_id": global_task_id,
+                                        "dependency_type": s_type,
+                                        "lag_months": s_comps["m"],
+                                        "lag_weeks": s_comps["w"],
+                                        "lag_days": s_comps["d"],
+                                        "lag_hours": s_comps["h"]
                                     })
                 
                 # Parse Resource Demand
@@ -299,26 +309,24 @@ class DSLIBExtractor:
                                 r_qty = float(m.group(2)) if m.group(2) else 1.0
                                 
                                 self.task_resources.append({
-                                    "Task ID": task_id,
-                                    "Resource Name": r_name,
-                                    "Requested Quantity": r_qty
+                                    "task_id": global_task_id,
+                                    "resource_id": r_name,
+                                    "request_quantity": r_qty
                                 })
                                 
         # Post-process: Add orphan tasks (tasks with no predecessors and no incoming flipped successors)
-        edge_task_ids = set(edge["Task ID"] for edge in self.logic_edges)
+        edge_task_ids = set(edge["successor_task_id"] for edge in self.logic_edges)
         for t in self.tasks:
-            t_id = t["ID"]
-            if t_id not in edge_task_ids:
+            global_t_id = t["id"]
+            if global_t_id not in edge_task_ids:
                 self.logic_edges.append({
-                    "Task ID": t_id,
-                    "Predecessors": "",
-                    "Type": "",
-                    "Lag": "",
-                    "Lag_Sign": "",
-                    "Lag_Months": 0.0,
-                    "Lag_Weeks": 0.0,
-                    "Lag_Days": 0.0,
-                    "Lag_Hours": 0.0
+                    "successor_task_id": global_t_id,
+                    "predecessor_task_id": "",
+                    "dependency_type": "",
+                    "lag_months": 0.0,
+                    "lag_weeks": 0.0,
+                    "lag_days": 0.0,
+                    "lag_hours": 0.0
                 })
                                 
         print(f"[Baseline] Parsed {len(self.tasks)} leaf tasks, {len(self.logic_edges)} total logic edges, {len(self.task_resources)} resource demands.")
@@ -335,8 +343,11 @@ class DSLIBExtractor:
                     if not task_id or task_id.lower() == 'id' or task_id == 'nan':
                         continue
                     
+                    t_wbs = self.id_to_wbs.get(task_id, task_id)
+                    global_task_id = f"{self.project_id}_{t_wbs}"
+                    
                     desc = str(row.iloc[3]).lower()
-                    self.risks[task_id] = {
+                    self.risks[global_task_id] = {
                         "desc": desc,
                         "o_raw": row.iloc[4],
                         "m_raw": row.iloc[5],
@@ -347,8 +358,8 @@ class DSLIBExtractor:
 
     def merge_and_transform(self):
         for task in self.tasks:
-            t_id = task['ID']
-            b_dur = self.parse_time_to_hours(task['Duration_Raw'])
+            t_id = task['id']
+            b_dur = self.parse_time_to_hours(task.pop('duration_raw'))
             
             if t_id in self.risks:
                 r = self.risks[t_id]
@@ -374,17 +385,86 @@ class DSLIBExtractor:
                 pert_estimate = (o_abs + 4 * m_abs + p_abs) / 6.0
                 reserve = p_abs - o_abs
                 
-                task['Optimistic'] = round(o_abs, 2)
-                task['Most Probable'] = round(m_abs, 2)
-                task['Pessimistic'] = round(p_abs, 2)
-                task['PERT Expected'] = round(pert_estimate, 2)
-                task['Reserve'] = round(reserve, 2)
+                task['optimistic_duration'] = round(o_abs, 2)
+                task['most_probable_duration'] = round(m_abs, 2)
+                task['pessimistic_duration'] = round(p_abs, 2)
+                task['pert_3_point_estimate'] = round(pert_estimate, 2)
+                task['contingency_reserve'] = round(reserve, 2)
             else:
-                task['Optimistic'] = b_dur
-                task['Most Probable'] = b_dur
-                task['Pessimistic'] = b_dur
-                task['PERT Expected'] = b_dur
-                task['Reserve'] = 0.0
+                task['optimistic_duration'] = b_dur
+                task['most_probable_duration'] = b_dur
+                task['pessimistic_duration'] = b_dur
+                task['pert_3_point_estimate'] = b_dur
+                task['contingency_reserve'] = 0.0
+                
+            # Initialize all other PMBOK 72 features to 0.0 to maintain consistent schema
+            task['baseline_start_relative'] = 0.0
+            
+            # G1
+            task['subcontracting_cost'] = 0.0
+            task['overtime_crashing_cost'] = 0.0
+            task['equipment_cost'] = 0.0
+            task['direct_transportation'] = 0.0
+            task['energy_fuel_cost'] = 0.0
+            task['testing_and_inspection'] = 0.0
+            
+            # G2
+            task['pm_overhead'] = 0.0
+            task['facility_rent'] = 0.0
+            task['utilities'] = 0.0
+            task['communication_cost'] = 0.0
+            task['internal_training'] = 0.0
+            task['quality_mgmt_overhead'] = 0.0
+            
+            # G4
+            task['permits_and_licensing'] = 0.0
+            task['project_insurance'] = 0.0
+            task['warranty_and_after_sales'] = 0.0
+            task['regulatory_compliance'] = 0.0
+            
+            # G5
+            task['inventory_holding_cost'] = 0.0
+            task['ordering_cost'] = 0.0
+            task['shortage_stockout'] = 0.0
+            task['obsolescence_cost'] = 0.0
+            task['international_freight'] = 0.0
+            task['packaging_and_handling'] = 0.0
+            task['reverse_logistics'] = 0.0
+            
+            # G6
+            task['wait_queue_time'] = 0.0
+            task['setup_transition_time'] = 0.0
+            task['induction_time'] = 0.0
+            task['lead_time'] = 0.0
+            
+            # G7
+            task['allocated_quantity'] = 0.0
+            task['labor_productivity'] = 0.0
+            task['equipment_utilization'] = 0.0
+            task['resource_substitutability'] = 0.0
+            
+            # G9
+            task['technical_complexity'] = 0.0
+            task['rework_probability'] = 0.0
+            task['external_dependency_level'] = 0.0
+            task['management_reserve'] = 0.0
+            task['weather_seasonal_risk'] = 0.0
+            task['technology_risk'] = 0.0
+            
+            # G11
+            task['required_skill_level'] = 0.0
+            task['staff_experience'] = 0.0
+            task['learning_curve_effect'] = 0.0
+            task['hr_stability_risk'] = 0.0
+            task['cross_functional_coordination'] = 0.0
+            task['occupational_safety_risk'] = 0.0
+            
+            # G12
+            task['environmental_impact'] = 0.0
+            task['waste_disposal_cost'] = 0.0
+            task['community_social_impact'] = 0.0
+            task['carbon_tax_credit'] = 0.0
+            task['esg_compliance'] = 0.0
 
     def export_csv(self):
         os.makedirs(self.output_dir, exist_ok=True)
@@ -411,7 +491,7 @@ if __name__ == "__main__":
             out_dir = os.path.join(base_out_dir, proj_code)
             
             try:
-                extractor = DSLIBExtractor(file_path, out_dir)
+                extractor = DSLIBExtractor(file_path, out_dir, proj_code)
                 extractor.execute()
             except Exception as e:
                 print(f"Failed to process {filename}: {e}")

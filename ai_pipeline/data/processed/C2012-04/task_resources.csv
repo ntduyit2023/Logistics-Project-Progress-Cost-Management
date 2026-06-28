@@ -1,213 +1,213 @@
-Task ID,Resource Name,Requested Quantity
-1,Labourers,2.0
-1,Truck IVECO Trakker,1.0
-2,Labourers,4.0
-2,Truck IVECO Trakker,3.0
-2,Wheel Loader,1.0
-3,Labourers,3.0
-3,Bulldozer D8T,1.0
-3,Wheel Loader,1.0
-3,Truck IVECO Trakker,1.0
-4,Labourers,2.0
-4,Truck IVECO Trakker,1.0
-4,Crane,1.0
-5,Labourers,3.0
-5,Truck IVECO Trakker,1.0
-6,Labourers,2.0
-6,Truck IVECO Trakker,1.0
-7,Labourers,7.0
-7,Truck IVECO Trakker,5.0
-7,Wheel Loader,2.0
-7,Sheepfoot rolles,1.0
-7,Concrete Mixer Truck,1.0
-8,Labourers,4.0
-8,Truck IVECO Trakker,2.0
-8,Crawler Excavator,1.0
-8,Paler,1.0
-9,Labourers,3.0
-9,Truck IVECO Trakker,1.0
-9,Bulldozer D8T,1.0
-9,Wheel Loader,1.0
-14,Labourers,3.0
-14,Truck IVECO Trakker,1.0
-14,Crane,1.0
-11,Labourers,4.0
-11,Truck IVECO Trakker,1.0
-11,Concrete Mixer Truck,1.0
-11,Crane,1.0
-19,Labourers,10.0
-19,Truck IVECO Trakker,6.0
-19,Wheel Loader,2.0
-19,Sheepfoot rolles,1.0
-19,Concrete Mixer Truck,1.0
-20,Labourers,4.0
-20,Truck IVECO Trakker,1.0
-20,Crane,1.0
-17,Labourers,9.0
-17,Crawler Excavator,2.0
-17,Truck IVECO Trakker,6.0
-17,Sheepfoot rolles,1.0
-22,Labourers,4.0
-22,Truck IVECO Trakker,1.0
-22,Crane,1.0
-22,Crawler Excavator,1.0
-24,Labourers,4.0
-24,Truck IVECO Trakker,3.0
-24,Crawler Excavator,1.0
-25,Labourers,6.0
-25,Truck IVECO Trakker,1.0
-25,Drilling Rid,1.0
-25,Crane,1.0
-25,Wheel Loader,1.0
-25,Concrete Mixer Truck,1.0
-27,Labourers,4.0
-27,Truck IVECO Trakker,1.0
-27,Concrete Mixer Truck,1.0
-27,Crane,1.0
-29,Labourers,4.0
-29,Truck IVECO Trakker,1.0
-29,Concrete Mixer Truck,1.0
-29,Crane,1.0
-31,Labourers,4.0
-31,Truck IVECO Trakker,1.0
-31,Concrete Mixer Truck,1.0
-31,Crane,1.0
-33,Labourers,4.0
-33,Truck IVECO Trakker,1.0
-33,Crane,1.0
-34,Labourers,5.0
-34,Truck IVECO Trakker,1.0
-34,Concrete Mixer Truck,1.0
-34,Crane,1.0
-36,Labourers,5.0
-36,Truck IVECO Trakker,3.0
-36,Wheel Loader,1.0
-36,Sheepfoot rolles,1.0
-41,Labourers,3.0
-41,Truck IVECO Trakker,2.0
-41,Cold Milling Machine,1.0
-42,Labourers,3.0
-42,Truck IVECO Trakker,1.0
-42,Wheel Loader,1.0
-42,Bulldozer D8T,1.0
-38,Labourers,10.0
-38,Truck IVECO Trakker,6.0
-38,Wheel Loader,2.0
-38,Sheepfoot rolles,1.0
-38,Concrete Mixer Truck,1.0
-39,Labourers,4.0
-39,Truck IVECO Trakker,1.0
-39,Crane,1.0
-63,Labourers,2.0
-63,Truck IVECO Trakker,1.0
-63,Crane,1.0
-62,Labourers,4.0
-62,Truck IVECO Trakker,2.0
-62,Crawler Excavator,1.0
-62,Crane,1.0
-66,Labourers,5.0
-66,Crane,1.0
-66,Truck IVECO Trakker,1.0
-66,Concrete Mixer Truck,1.0
-68,Labourers,4.0
-68,Truck IVECO Trakker,1.0
-68,Crane,1.0
-69,Labourers,5.0
-69,Truck IVECO Trakker,1.0
-69,Crane,1.0
-82,Labourers,3.0
-82,Truck IVECO Trakker,2.0
-82,Cold Milling Machine,1.0
-83,Labourers,4.0
-83,Truck IVECO Trakker,2.0
-83,Bulldozer D8T,1.0
-83,Wheel Loader,1.0
-75,Labourers,10.0
-75,Truck IVECO Trakker,6.0
-75,Wheel Loader,2.0
-75,Sheepfoot rolles,1.0
-75,Tank Truck,1.0
-73,Labourers,3.0
-73,Crawler Excavator,1.0
-73,Sheepfoot rolles,1.0
-73,Tank Truck,1.0
-72,Labourers,10.0
-72,Truck IVECO Trakker,6.0
-72,Wheel Loader,2.0
-72,Sheepfoot rolles,1.0
-72,Tank Truck,1.0
-80,Labourers,3.0
-80,Crane,1.0
-80,Truck IVECO Trakker,1.0
-78,Labourers,4.0
-78,Truck IVECO Trakker,2.0
-78,Crawler Excavator,1.0
-78,Crane,1.0
-77,Labourers,3.0
-77,Truck IVECO Trakker,1.0
-77,Crawler Excavator,1.0
-77,Crane,1.0
-48,Labourers,3.0
-48,Truck IVECO Trakker,2.0
-48,Cold Milling Machine,1.0
-49,Labourers,3.0
-49,Truck IVECO Trakker,1.0
-49,Wheel Loader,1.0
-49,Bulldozer D8T,1.0
-46,Labourers,10.0
-46,Truck IVECO Trakker,6.0
-46,Wheel Loader,2.0
-46,Sheepfoot rolles,1.0
-46,Tank Truck,1.0
-44,Labourers,4.0
-44,Truck IVECO Trakker,2.0
-44,Crawler Excavator,1.0
-44,Crane,1.0
-58,Labourers,3.0
-58,Truck IVECO Trakker,2.0
-58,Cold Milling Machine,1.0
-59,Labourers,4.0
-59,Bulldozer D8T,1.0
-59,Truck IVECO Trakker,2.0
-59,Wheel Loader,1.0
-52,Labourers,3.0
-52,Crawler Excavator,1.0
-52,Sheepfoot rolles,1.0
-52,Tank Truck,1.0
-51,Labourers,8.0
-51,Truck IVECO Trakker,6.0
-51,Crawler Excavator,2.0
-55,Labourers,3.0
-55,Crawler Excavator,1.0
-55,Truck IVECO Trakker,1.0
-55,Crane,1.0
-56,Labourers,4.0
-56,Truck IVECO Trakker,2.0
-56,Crawler Excavator,1.0
-56,Crane,1.0
-85,Labourers,7.0
-85,Truck IVECO Trakker,5.0
-85,Paler,1.0
-85,Smooth Roller,1.0
-86,Labourers,4.0
-86,Truck IVECO Trakker,1.0
-86,Pile Driver,1.0
-87,Labourers,5.0
-87,Truck IVECO Trakker,2.0
-87,Wheel Loader,2.0
-87,Pruning Machine,1.0
-88,Labourers,3.0
-88,Truck IVECO Trakker,1.0
-89,Labourers,2.0
-89,Truck IVECO Trakker,1.0
-89,Line Striper Machine,1.0
-91,Labourers,2.0
-91,Truck IVECO Trakker,1.0
-92,Labourers,2.0
-92,Truck IVECO Trakker,1.0
-92,Crane,1.0
-93,Labourers,2.0
-93,Truck IVECO Trakker,1.0
-93,Wheel Loader,1.0
-94,Labourers,2.0
-94,Truck IVECO Trakker,1.0
+task_id,resource_id,request_quantity
+C2012-04_1.1.1,Labourers,2.0
+C2012-04_1.1.1,Truck IVECO Trakker,1.0
+C2012-04_1.1.2,Labourers,4.0
+C2012-04_1.1.2,Truck IVECO Trakker,3.0
+C2012-04_1.1.2,Wheel Loader,1.0
+C2012-04_1.1.3,Labourers,3.0
+C2012-04_1.1.3,Bulldozer D8T,1.0
+C2012-04_1.1.3,Wheel Loader,1.0
+C2012-04_1.1.3,Truck IVECO Trakker,1.0
+C2012-04_1.1.4,Labourers,2.0
+C2012-04_1.1.4,Truck IVECO Trakker,1.0
+C2012-04_1.1.4,Crane,1.0
+C2012-04_1.1.5,Labourers,3.0
+C2012-04_1.1.5,Truck IVECO Trakker,1.0
+C2012-04_1.1.6,Labourers,2.0
+C2012-04_1.1.6,Truck IVECO Trakker,1.0
+C2012-04_1.1.7,Labourers,7.0
+C2012-04_1.1.7,Truck IVECO Trakker,5.0
+C2012-04_1.1.7,Wheel Loader,2.0
+C2012-04_1.1.7,Sheepfoot rolles,1.0
+C2012-04_1.1.7,Concrete Mixer Truck,1.0
+C2012-04_1.2.1,Labourers,4.0
+C2012-04_1.2.1,Truck IVECO Trakker,2.0
+C2012-04_1.2.1,Crawler Excavator,1.0
+C2012-04_1.2.1,Paler,1.0
+C2012-04_1.2.2,Labourers,3.0
+C2012-04_1.2.2,Truck IVECO Trakker,1.0
+C2012-04_1.2.2,Bulldozer D8T,1.0
+C2012-04_1.2.2,Wheel Loader,1.0
+C2012-04_1.2.3.1,Labourers,3.0
+C2012-04_1.2.3.1,Truck IVECO Trakker,1.0
+C2012-04_1.2.3.1,Crane,1.0
+C2012-04_1.2.3.2.1,Labourers,4.0
+C2012-04_1.2.3.2.1,Truck IVECO Trakker,1.0
+C2012-04_1.2.3.2.1,Concrete Mixer Truck,1.0
+C2012-04_1.2.3.2.1,Crane,1.0
+C2012-04_1.2.4.1,Labourers,10.0
+C2012-04_1.2.4.1,Truck IVECO Trakker,6.0
+C2012-04_1.2.4.1,Wheel Loader,2.0
+C2012-04_1.2.4.1,Sheepfoot rolles,1.0
+C2012-04_1.2.4.1,Concrete Mixer Truck,1.0
+C2012-04_1.2.4.2,Labourers,4.0
+C2012-04_1.2.4.2,Truck IVECO Trakker,1.0
+C2012-04_1.2.4.2,Crane,1.0
+C2012-04_1.2.4.3.1,Labourers,9.0
+C2012-04_1.2.4.3.1,Crawler Excavator,2.0
+C2012-04_1.2.4.3.1,Truck IVECO Trakker,6.0
+C2012-04_1.2.4.3.1,Sheepfoot rolles,1.0
+C2012-04_1.2.5.1,Labourers,4.0
+C2012-04_1.2.5.1,Truck IVECO Trakker,1.0
+C2012-04_1.2.5.1,Crane,1.0
+C2012-04_1.2.5.1,Crawler Excavator,1.0
+C2012-04_1.3.1,Labourers,4.0
+C2012-04_1.3.1,Truck IVECO Trakker,3.0
+C2012-04_1.3.1,Crawler Excavator,1.0
+C2012-04_1.3.2,Labourers,6.0
+C2012-04_1.3.2,Truck IVECO Trakker,1.0
+C2012-04_1.3.2,Drilling Rid,1.0
+C2012-04_1.3.2,Crane,1.0
+C2012-04_1.3.2,Wheel Loader,1.0
+C2012-04_1.3.2,Concrete Mixer Truck,1.0
+C2012-04_1.3.4,Labourers,4.0
+C2012-04_1.3.4,Truck IVECO Trakker,1.0
+C2012-04_1.3.4,Concrete Mixer Truck,1.0
+C2012-04_1.3.4,Crane,1.0
+C2012-04_1.3.6,Labourers,4.0
+C2012-04_1.3.6,Truck IVECO Trakker,1.0
+C2012-04_1.3.6,Concrete Mixer Truck,1.0
+C2012-04_1.3.6,Crane,1.0
+C2012-04_1.3.8,Labourers,4.0
+C2012-04_1.3.8,Truck IVECO Trakker,1.0
+C2012-04_1.3.8,Concrete Mixer Truck,1.0
+C2012-04_1.3.8,Crane,1.0
+C2012-04_1.3.10,Labourers,4.0
+C2012-04_1.3.10,Truck IVECO Trakker,1.0
+C2012-04_1.3.10,Crane,1.0
+C2012-04_1.3.11,Labourers,5.0
+C2012-04_1.3.11,Truck IVECO Trakker,1.0
+C2012-04_1.3.11,Concrete Mixer Truck,1.0
+C2012-04_1.3.11,Crane,1.0
+C2012-04_1.3.13,Labourers,5.0
+C2012-04_1.3.13,Truck IVECO Trakker,3.0
+C2012-04_1.3.13,Wheel Loader,1.0
+C2012-04_1.3.13,Sheepfoot rolles,1.0
+C2012-04_1.4.1,Labourers,3.0
+C2012-04_1.4.1,Truck IVECO Trakker,2.0
+C2012-04_1.4.1,Cold Milling Machine,1.0
+C2012-04_1.4.2,Labourers,3.0
+C2012-04_1.4.2,Truck IVECO Trakker,1.0
+C2012-04_1.4.2,Wheel Loader,1.0
+C2012-04_1.4.2,Bulldozer D8T,1.0
+C2012-04_1.4.3.1,Labourers,10.0
+C2012-04_1.4.3.1,Truck IVECO Trakker,6.0
+C2012-04_1.4.3.1,Wheel Loader,2.0
+C2012-04_1.4.3.1,Sheepfoot rolles,1.0
+C2012-04_1.4.3.1,Concrete Mixer Truck,1.0
+C2012-04_1.4.3.2,Labourers,4.0
+C2012-04_1.4.3.2,Truck IVECO Trakker,1.0
+C2012-04_1.4.3.2,Crane,1.0
+C2012-04_1.4.4.1,Labourers,2.0
+C2012-04_1.4.4.1,Truck IVECO Trakker,1.0
+C2012-04_1.4.4.1,Crane,1.0
+C2012-04_1.4.5.1,Labourers,4.0
+C2012-04_1.4.5.1,Truck IVECO Trakker,2.0
+C2012-04_1.4.5.1,Crawler Excavator,1.0
+C2012-04_1.4.5.1,Crane,1.0
+C2012-04_1.5.1,Labourers,5.0
+C2012-04_1.5.1,Crane,1.0
+C2012-04_1.5.1,Truck IVECO Trakker,1.0
+C2012-04_1.5.1,Concrete Mixer Truck,1.0
+C2012-04_1.5.3,Labourers,4.0
+C2012-04_1.5.3,Truck IVECO Trakker,1.0
+C2012-04_1.5.3,Crane,1.0
+C2012-04_1.5.4,Labourers,5.0
+C2012-04_1.5.4,Truck IVECO Trakker,1.0
+C2012-04_1.5.4,Crane,1.0
+C2012-04_1.6.1,Labourers,3.0
+C2012-04_1.6.1,Truck IVECO Trakker,2.0
+C2012-04_1.6.1,Cold Milling Machine,1.0
+C2012-04_1.6.2,Labourers,4.0
+C2012-04_1.6.2,Truck IVECO Trakker,2.0
+C2012-04_1.6.2,Bulldozer D8T,1.0
+C2012-04_1.6.2,Wheel Loader,1.0
+C2012-04_1.6.3.1,Labourers,10.0
+C2012-04_1.6.3.1,Truck IVECO Trakker,6.0
+C2012-04_1.6.3.1,Wheel Loader,2.0
+C2012-04_1.6.3.1,Sheepfoot rolles,1.0
+C2012-04_1.6.3.1,Tank Truck,1.0
+C2012-04_1.6.3.2.1,Labourers,3.0
+C2012-04_1.6.3.2.1,Crawler Excavator,1.0
+C2012-04_1.6.3.2.1,Sheepfoot rolles,1.0
+C2012-04_1.6.3.2.1,Tank Truck,1.0
+C2012-04_1.6.3.2.2,Labourers,10.0
+C2012-04_1.6.3.2.2,Truck IVECO Trakker,6.0
+C2012-04_1.6.3.2.2,Wheel Loader,2.0
+C2012-04_1.6.3.2.2,Sheepfoot rolles,1.0
+C2012-04_1.6.3.2.2,Tank Truck,1.0
+C2012-04_1.6.4.1,Labourers,3.0
+C2012-04_1.6.4.1,Crane,1.0
+C2012-04_1.6.4.1,Truck IVECO Trakker,1.0
+C2012-04_1.6.5.1,Labourers,4.0
+C2012-04_1.6.5.1,Truck IVECO Trakker,2.0
+C2012-04_1.6.5.1,Crawler Excavator,1.0
+C2012-04_1.6.5.1,Crane,1.0
+C2012-04_1.6.5.2,Labourers,3.0
+C2012-04_1.6.5.2,Truck IVECO Trakker,1.0
+C2012-04_1.6.5.2,Crawler Excavator,1.0
+C2012-04_1.6.5.2,Crane,1.0
+C2012-04_1.7.1,Labourers,3.0
+C2012-04_1.7.1,Truck IVECO Trakker,2.0
+C2012-04_1.7.1,Cold Milling Machine,1.0
+C2012-04_1.7.2,Labourers,3.0
+C2012-04_1.7.2,Truck IVECO Trakker,1.0
+C2012-04_1.7.2,Wheel Loader,1.0
+C2012-04_1.7.2,Bulldozer D8T,1.0
+C2012-04_1.7.3.1,Labourers,10.0
+C2012-04_1.7.3.1,Truck IVECO Trakker,6.0
+C2012-04_1.7.3.1,Wheel Loader,2.0
+C2012-04_1.7.3.1,Sheepfoot rolles,1.0
+C2012-04_1.7.3.1,Tank Truck,1.0
+C2012-04_1.7.4.1,Labourers,4.0
+C2012-04_1.7.4.1,Truck IVECO Trakker,2.0
+C2012-04_1.7.4.1,Crawler Excavator,1.0
+C2012-04_1.7.4.1,Crane,1.0
+C2012-04_1.8.1,Labourers,3.0
+C2012-04_1.8.1,Truck IVECO Trakker,2.0
+C2012-04_1.8.1,Cold Milling Machine,1.0
+C2012-04_1.8.2,Labourers,4.0
+C2012-04_1.8.2,Bulldozer D8T,1.0
+C2012-04_1.8.2,Truck IVECO Trakker,2.0
+C2012-04_1.8.2,Wheel Loader,1.0
+C2012-04_1.8.3.1.1,Labourers,3.0
+C2012-04_1.8.3.1.1,Crawler Excavator,1.0
+C2012-04_1.8.3.1.1,Sheepfoot rolles,1.0
+C2012-04_1.8.3.1.1,Tank Truck,1.0
+C2012-04_1.8.3.1.2,Labourers,8.0
+C2012-04_1.8.3.1.2,Truck IVECO Trakker,6.0
+C2012-04_1.8.3.1.2,Crawler Excavator,2.0
+C2012-04_1.8.4.1,Labourers,3.0
+C2012-04_1.8.4.1,Crawler Excavator,1.0
+C2012-04_1.8.4.1,Truck IVECO Trakker,1.0
+C2012-04_1.8.4.1,Crane,1.0
+C2012-04_1.8.4.2,Labourers,4.0
+C2012-04_1.8.4.2,Truck IVECO Trakker,2.0
+C2012-04_1.8.4.2,Crawler Excavator,1.0
+C2012-04_1.8.4.2,Crane,1.0
+C2012-04_1.9,Labourers,7.0
+C2012-04_1.9,Truck IVECO Trakker,5.0
+C2012-04_1.9,Paler,1.0
+C2012-04_1.9,Smooth Roller,1.0
+C2012-04_1.10.1,Labourers,4.0
+C2012-04_1.10.1,Truck IVECO Trakker,1.0
+C2012-04_1.10.1,Pile Driver,1.0
+C2012-04_1.10.2,Labourers,5.0
+C2012-04_1.10.2,Truck IVECO Trakker,2.0
+C2012-04_1.10.2,Wheel Loader,2.0
+C2012-04_1.10.2,Pruning Machine,1.0
+C2012-04_1.10.3,Labourers,3.0
+C2012-04_1.10.3,Truck IVECO Trakker,1.0
+C2012-04_1.10.4,Labourers,2.0
+C2012-04_1.10.4,Truck IVECO Trakker,1.0
+C2012-04_1.10.4,Line Striper Machine,1.0
+C2012-04_1.11.1,Labourers,2.0
+C2012-04_1.11.1,Truck IVECO Trakker,1.0
+C2012-04_1.11.2,Labourers,2.0
+C2012-04_1.11.2,Truck IVECO Trakker,1.0
+C2012-04_1.11.2,Crane,1.0
+C2012-04_1.11.3,Labourers,2.0
+C2012-04_1.11.3,Truck IVECO Trakker,1.0
+C2012-04_1.11.3,Wheel Loader,1.0
+C2012-04_1.11.4,Labourers,2.0
+C2012-04_1.11.4,Truck IVECO Trakker,1.0
