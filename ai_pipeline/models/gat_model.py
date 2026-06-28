@@ -7,8 +7,23 @@ from hierarchical_encoder import HierarchicalAttentionEncoder
 
 class LogisticsGATModel(nn.Module):
     """
-    Khối 2: Graph Attention Network (GAT)
-    Kết hợp Khối 1 (Hierarchical Encoder) để đọc cấu trúc Đồ thị.
+    Mô tả (Description):
+        Khối 2: Graph Attention Network (GAT) - Lõi AI của hệ thống.
+        Kết hợp với Khối 1 (Hierarchical Encoder) để đọc và thấu hiểu cấu trúc Đồ thị dự án.
+        Mô hình này giúp từng Công việc (Task) học hỏi thông tin từ các Công việc trước (Predecessors)
+        và sau (Successors) nó thông qua cơ chế Message Passing của GNN.
+        
+    Đầu vào (Args):
+        feature_dim (int): Số lượng tính năng gốc (mặc định 72).
+        hidden_dim (int): Số chiều không gian ẩn của GAT (mặc định 64).
+        num_groups (int): Số lượng nhóm tính năng từ Encoder (mặc định 13).
+        out_dim (int): Số chiều Vector nhúng đầu ra (Embedding) cho mỗi Đỉnh (mặc định 32).
+        heads (int): Số lượng Attention Heads song song (Multi-head Attention) (mặc định 4).
+        
+    Thuộc tính (Attributes):
+        hierarchical_encoder (nn.Module): Trạm xử lý dữ liệu Khối 1.
+        node_proj (nn.Linear): Lớp Linear phóng chiếu Vector 13-chiều lên không gian ẩn.
+        gat1, gat2, gat3 (nn.Module): Các lớp chập đồ thị (Graph Convolutional Layers).
     """
     def __init__(self, feature_dim=72, hidden_dim=64, num_groups=13, out_dim=32, heads=4):
         super(LogisticsGATModel, self).__init__()
@@ -30,10 +45,18 @@ class LogisticsGATModel(nn.Module):
 
     def forward(self, data):
         """
-        data: PyG Data object (x, edge_index, edge_attr, u)
+        Mô tả (Description):
+            Hàm truyền tiến cho đồ thị PyTorch Geometric. Nén thông tin của Đỉnh,
+            cộng gộp Ràng buộc Toàn cục (Agenda), và truyền thông điệp (Message Passing) qua các Cạnh.
+            
+        Đầu vào (Args):
+            data (torch_geometric.data.Data): Đối tượng Đồ thị đầu vào chứa data.x, data.edge_index, data.u.
+            
+        Đầu ra (Returns):
+            x (torch.Tensor): Node Embeddings - Vector tinh hoa 128-chiều của TỪNG Đỉnh (shape: [Số_Task, 128]).
+            graph_emb (torch.Tensor): Graph Embedding - Vector tinh hoa của TOÀN BỘ Đồ thị (shape: [1, 128]).
         """
-        x, edge_index = data.x, data.edge_index
-        
+        x, edge_index, u = data.x, data.edge_index, data.u       
         # Bước 1: Trích xuất S_g (Tầng 1 & 2 của Evaluation Architecture)
         # S_g shape: (num_nodes, 13)
         S_g, group_masks = self.hierarchical_encoder(x)

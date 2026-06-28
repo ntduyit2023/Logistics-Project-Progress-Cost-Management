@@ -329,7 +329,18 @@ INTERACTIONS = [
 
 
 def build_sparse_matrix(interactions, size=72):
-    """Xây dựng ma trận 72x72 từ danh sách tương tác Sparse."""
+    """
+    Mô tả (Description):
+        Xây dựng Ma trận thưa (Sparse Matrix) kích thước 72x72 từ danh sách cấu hình.
+        Đây là bước Số hóa "Cuốn Từ Điển PMBOK" để nạp vào PyTorch.
+        
+    Đầu vào (Args):
+        interactions (list): Danh sách các bộ Tuple (index_nguồn, index_đích, giá_trị, ghi_chú).
+        size (int): Kích thước ma trận vuông (mặc định 72).
+        
+    Đầu ra (Returns):
+        matrix (np.ndarray): Ma trận Numpy 2D chứa các giá trị trọng số tương tác.
+    """
     import numpy as np
     matrix = np.zeros((size, size), dtype=np.float32)
     
@@ -346,7 +357,17 @@ def build_sparse_matrix(interactions, size=72):
 
 
 def get_interaction_stats(interactions):
-    """Thống kê ma trận."""
+    """
+    Mô tả (Description):
+        Hàm tiện ích để thống kê tổng quan về Ma trận Tương tác (Domain Knowledge).
+        Đếm số lượng các mối quan hệ tích cực (Khuếch đại) và tiêu cực (Đối kháng).
+        
+    Đầu vào (Args):
+        interactions (list): Danh sách các bộ Tuple tương tác.
+        
+    Đầu ra (Returns):
+        dict: Từ điển chứa các con số thống kê (Tổng số, Số quan hệ dương, Số quan hệ âm, Độ thưa...).
+    """
     total = len(interactions)
     positive = sum(1 for _, _, v, _ in interactions if v > 0)
     negative = sum(1 for _, _, v, _ in interactions if v < 0)

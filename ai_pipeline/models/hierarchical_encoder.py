@@ -6,10 +6,20 @@ from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
 
 class HierarchicalAttentionEncoder(nn.Module):
     """
-    Khối 1: Custom Hierarchical Attention Encoder (72 Features -> 9/12 Group Embeddings)
-    Dựa trên thiết kế Phân cấp 3 Tầng:
-    - Tầng 1: Feature <-> Feature (Intra-group Attention)
-    - Tầng 2: Feature -> Group (Cross-group Influence)
+    Mô tả (Description):
+        Khối 1: Custom Hierarchical Attention Encoder (Bộ mã hóa dựa trên sự chú ý phân cấp).
+        Biến đổi 72 Tính năng (Features) của mỗi Đỉnh thành 13 Vector Đại diện (Group Embeddings)
+        dựa trên thiết kế Phân cấp 3 Tầng:
+        - Tầng 1: Feature <-> Feature (Intra-group Attention): Tính toán sự tương tác nội bộ nhóm.
+        - Tầng 2: Feature -> Group (Cross-group Influence): Tính toán ảnh hưởng giữa các nhóm.
+        
+    Đầu vào (Args):
+        feature_dim (int): Tổng số lượng tính năng đầu vào (mặc định 72).
+        num_groups (int): Số lượng nhóm tính năng (mặc định 12 nhóm Spoke + 1 Hub = 13 nhóm).
+        
+    Thuộc tính (Attributes):
+        interaction_matrix (nn.Parameter): Ma trận Tương tác (Domain Knowledge) 72x72 không huấn luyện.
+        group_indices (dict): Từ điển lưu trữ ranh giới (chỉ số) của từng nhóm trong mảng 72.
     """
     def __init__(self, feature_dim=72, num_groups=12):
         super(HierarchicalAttentionEncoder, self).__init__()
@@ -48,10 +58,32 @@ class HierarchicalAttentionEncoder(nn.Module):
         
         # Cấu trúc mạng phụ để học thêm (nếu cần)
         self.feature_transform = nn.Linear(feature_dim, feature_dim)
+        
+        # Xây dựng Ma trận Tương tác Tầng 2: F-G (Feature to Group) từ Ma trận Tầng 1 (72x72)
+        # Kích thước: (72 features, 13 groups)
+        # X_{f->g} = Tổng các tương tác từ feature f tới tất cả features trong nhóm g
+        X_fg = torch.zeros((72, 13))
+        for f in range(72):
+            for g_id, indices in self.group_indices.items():
+                if f not in indices and len(indices) > 0: # f không thuộc nhóm g
+                    X_fg[f, g_id] = float(np_matrix[f, indices].sum())
+                    
+        # Đóng băng ma trận F-G (Domain Knowledge)
+        self.X_fg = nn.Parameter(X_fg, requires_grad=False)
 
     def forward(self, x):
         """
-        x: Tensor shape (num_nodes, 72)
+        Mô tả (Description):
+            Hàm tính toán truyền tiến (Forward Pass) của mô hình.
+            Áp dụng Intra-group Attention để gom các feature riêng lẻ thành 13 con số đại diện.
+            Đồng thời áp dụng Masking để vô hiệu hóa (set về 0) các nhóm không có dữ liệu (toàn số 0).
+            
+        Đầu vào (Args):
+            x (torch.Tensor): Tensor chứa tính năng các Đỉnh, kích thước (batch_size, 72).
+            
+        Đầu ra (Returns):
+            S_g (torch.Tensor): Vector đại diện của 13 Nhóm, kích thước (batch_size, 13).
+            group_masks (torch.Tensor): Ma trận lưu trạng thái đóng/mở của các Nhóm (1.0 là mở, 0.0 là đóng), kích thước (batch_size, 13).
         """
         # Bước 0: Adaptive Masking (Xác định Group nào "sống")
         # m = 1 nếu group có ít nhất 1 giá trị != 0
@@ -87,12 +119,24 @@ class HierarchicalAttentionEncoder(nn.Module):
             # Tính giá trị đại diện S_g
             S_g[:, g_id] = torch.sum(alpha * v_g, dim=1) * group_masks[:, g_id]
             
-        # Bước 2: Tầng 2 - Cross-group Influence
-        # (Ở phiên bản đơn giản này, ta cho mạng tự học cross-influence thông qua 1 Linear Layer
-        # thay vì code cứng từng cặp, vì Ma trận Domain Knowledge đã cover phần lớn rồi)
+        # Bước 2: Tầng 2 - Feature ↔ Group (Cross-group Feature Influence)
+        # S_g đang chứa 13 giá trị đại diện từ Tầng 1.
+        # Ta cần tính S'_g = S_g * (1 + ảnh hưởng từ các feature nằm ngoài nhóm)
         
-        # Đầu ra: Vector đại diện (batch, 13)
-        return S_g, group_masks
+        # Tính tổng ảnh hưởng của tất cả features lên từng group: (batch_size, 72) x (72, 13) -> (batch_size, 13)
+        fg_influence = torch.matmul(x, self.X_fg)
+        
+        # Áp dụng công thức khuếch đại / triệt tiêu: S'_g = S_g * (1 + tanh(influence))
+        S_prime_g = S_g * (1.0 + F.tanh(fg_influence))
+        
+        # Áp dụng Mask để dập tắt các Nhóm đã bị vô hiệu hóa
+        S_prime_g = S_prime_g * group_masks
+        
+        # Tầng 3 (G-G) KHÔNG nằm ở đây. Tầng 3 (Tính Tổng Chi phí TGC) sẽ được xử lý 
+        # bởi Môi trường PPO (Reward Function). Mạng Nơ-ron chỉ dừng ở Tầng 2 (S'_g).
+        
+        # Đầu ra: Vector đại diện đã chứa tương tác F-G (batch, 13)
+        return S_prime_g, group_masks
 
 if __name__ == "__main__":
     # Test Encoder

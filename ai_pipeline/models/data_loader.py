@@ -7,8 +7,23 @@ from torch_geometric.data import Data, Dataset
 
 class GlPoProjectGraph:
     """
-    Parses CSV files for a specific project into a PyTorch Geometric Data object.
-    Implements 72-Dim Feature Vector (60 User-Input + 12 AI-Computed) and Bi-directional ID mapping.
+    Mô tả (Description):
+        Đọc các file CSV của một dự án và xây dựng thành đối tượng Đồ thị (PyTorch Geometric Data).
+        Tự động tính toán các feature mồi (In-degree, Out-degree, Float...)
+        và ép khuôn 72-Dim Feature Vector (60 Cost user + 12 Feature AI).
+        
+    Đầu vào (Args):
+        project_dir (str): Đường dẫn đến thư mục chứa các file CSV của dự án.
+        
+    Đầu ra / Thuộc tính (Outputs / Attributes):
+        project_id (str): Mã dự án được trích xuất từ tên thư mục.
+        node_to_idx (dict): Từ điển ánh xạ từ Mã Task (string) sang số thứ tự Đỉnh trong Đồ thị (int).
+        idx_to_node (dict): Từ điển ánh xạ ngược từ số thứ tự Đỉnh (int) sang Mã Task (string).
+        data (torch_geometric.data.Data): Đối tượng Đồ thị cuối cùng, bao gồm:
+            - data.x: Tensor [Số_lượng_Task, 72] chứa các tính năng của Đỉnh.
+            - data.edge_index: Tensor [2, Số_lượng_Cạnh] chứa Bản đồ liên kết logic.
+            - data.edge_attr: Tensor [Số_lượng_Cạnh, 8] chứa Tính năng của Cạnh (FS, SS, FF, SF, Lags).
+            - data.u: Tensor [1, 3] chứa Luật Ràng buộc Toàn cục (Giờ/ngày, Ngày/tuần, Số ngày nghỉ).
     """
     def __init__(self, project_dir):
         self.project_dir = project_dir
@@ -169,56 +184,92 @@ class GlPoProjectGraph:
             
             # === G1: Direct Costs (7-14) ===
             x_row[7] = float(row.get('internal_labor_cost', 0))
-            x_row[8] = 0.0  # subcontracting_cost
-            x_row[9] = 0.0  # overtime_crashing_cost
+            x_row[8] = float(row.get('subcontracting_cost', 0))
+            x_row[9] = float(row.get('overtime_crashing_cost', 0))
             x_row[10] = float(row.get('material_cost', 0))
-            x_row[11] = 0.0  # equipment_cost
-            x_row[12] = 0.0  # direct_transportation
-            x_row[13] = 0.0  # energy_fuel_cost
-            x_row[14] = 0.0  # testing_and_inspection
+            x_row[11] = float(row.get('equipment_cost', 0))
+            x_row[12] = float(row.get('direct_transportation', 0))
+            x_row[13] = float(row.get('energy_fuel_cost', 0))
+            x_row[14] = float(row.get('testing_and_inspection', 0))
             
             # === G2: Indirect Costs (15-20) ===
-            # Indexes 15-20 are initialized to 0.0 automatically, skipping explicit assignment to save space
+            x_row[15] = float(row.get('pm_overhead', 0))
+            x_row[16] = float(row.get('facility_rent', 0))
+            x_row[17] = float(row.get('utilities', 0))
+            x_row[18] = float(row.get('communication_cost', 0))
+            x_row[19] = float(row.get('internal_training', 0))
+            x_row[20] = float(row.get('quality_mgmt_overhead', 0))
             
             # === G4: Contractual (21-24) ===
-            # Indexes 21-24 are initialized to 0.0 automatically
+            x_row[21] = float(row.get('permits_and_licensing', 0))
+            x_row[22] = float(row.get('project_insurance', 0))
+            x_row[23] = float(row.get('warranty_and_after_sales', 0))
+            x_row[24] = float(row.get('regulatory_compliance', 0))
             
             # === G5: Logistics (25-31) ===
-            # Indexes 25-31 are initialized to 0.0 automatically
+            x_row[25] = float(row.get('inventory_holding_cost', 0))
+            x_row[26] = float(row.get('ordering_cost', 0))
+            x_row[27] = float(row.get('shortage_stockout', 0))
+            x_row[28] = float(row.get('obsolescence_cost', 0))
+            x_row[29] = float(row.get('international_freight', 0))
+            x_row[30] = float(row.get('packaging_and_handling', 0))
+            x_row[31] = float(row.get('reverse_logistics', 0))
             
             # === G6: Temporal (32-36) ===
-            x_row[32] = 0.0  # wait_queue_time
-            x_row[33] = 0.0  # setup_transition_time
-            x_row[34] = 0.0  # induction_time
-            x_row[35] = 0.0  # lead_time
+            x_row[32] = float(row.get('wait_queue_time', 0))
+            x_row[33] = float(row.get('setup_transition_time', 0))
+            x_row[34] = float(row.get('induction_time', 0))
+            x_row[35] = float(row.get('lead_time', 0))
             x_row[36] = float(row.get('pert_3_point_estimate', 0))
             
             # === G7: Resources (37-41) ===
             r_stats = res_agg.get(t_id, {'total_demand': 0.0, 'unique_res': 0.0})
             x_row[37] = float(r_stats['total_demand']) # request_quantity
-            x_row[38] = 0.0  # allocated_quantity
-            x_row[39] = 0.0  # labor_productivity
-            x_row[40] = 0.0  # equipment_utilization
-            x_row[41] = 0.0  # resource_substitutability
+            x_row[38] = float(row.get('allocated_quantity', 0))
+            x_row[39] = float(row.get('labor_productivity', 0))
+            x_row[40] = float(row.get('equipment_utilization', 0))
+            x_row[41] = float(row.get('resource_substitutability', 0))
             
             # === G9: Risks (42-48) ===
-            x_row[42] = 0.0  # technical_complexity
-            x_row[43] = 0.0  # rework_probability
-            x_row[44] = 0.0  # external_dependency_level
+            x_row[42] = float(row.get('technical_complexity', 0))
+            x_row[43] = float(row.get('rework_probability', 0))
+            x_row[44] = float(row.get('external_dependency_level', 0))
             x_row[45] = float(row.get('contingency_reserve', 0))
-            x_row[46] = 0.0  # management_reserve
-            x_row[47] = 0.0  # weather_seasonal_risk
-            x_row[48] = 0.0  # technology_risk
+            x_row[46] = float(row.get('management_reserve', 0))
+            x_row[47] = float(row.get('weather_seasonal_risk', 0))
+            x_row[48] = float(row.get('technology_risk', 0))
             
             # === G11 & G12: Org & ESG (49-59) ===
-            # Indexes 49-59 initialized to 0.0
+            x_row[49] = float(row.get('required_skill_level', 0))
+            x_row[50] = float(row.get('staff_experience', 0))
+            x_row[51] = float(row.get('learning_curve_effect', 0))
+            x_row[52] = float(row.get('hr_stability_risk', 0))
+            x_row[53] = float(row.get('cross_functional_coordination', 0))
+            x_row[54] = float(row.get('occupational_safety_risk', 0))
+            x_row[55] = float(row.get('environmental_impact', 0))
+            x_row[56] = float(row.get('waste_disposal_cost', 0))
+            x_row[57] = float(row.get('community_social_impact', 0))
+            x_row[58] = float(row.get('carbon_tax_credit', 0))
+            x_row[59] = float(row.get('esg_compliance', 0))
             
-            # === AI-Computed: G3 (60-62), G8 (63-67), G10 (68-71) ===
+            # === AI-Computed: G3, G8, G10 ===
+            # G3: Opportunity Cost (60-62) initialized to 0.0, updated dynamically during simulation
+            x_row[60] = 0.0  # schedule_flexibility
+            x_row[61] = 0.0  # resource_alternative_cost
+            x_row[62] = 0.0  # delay_impact_cost
+            
+            # G8: Network Topology (63-67) computed statically by Data Loader
             x_row[63] = float(in_degree[idx])
             x_row[64] = float(out_degree[idx])
             x_row[65] = float(is_critical[idx])
             x_row[66] = float(total_float[idx])
             x_row[67] = float(path_length[idx])
+            
+            # G10: Earned Value (68-71) initialized to 0.0, updated dynamically during execution
+            x_row[68] = 0.0  # planned_value
+            x_row[69] = 0.0  # earned_value
+            x_row[70] = 0.0  # cpi
+            x_row[71] = 0.0  # spi
             
             node_features.append(x_row)
             
@@ -270,15 +321,28 @@ class GlPoProjectGraph:
 
 class GlPoDataset(Dataset):
     """
-    Loads all project graphs from the processed CSV directory.
+    Mô tả (Description):
+        Bộ Dataset của PyTorch Geometric, làm nhiệm vụ quét toàn bộ thư mục gốc,
+        nhặt tất cả các dự án đã xử lý (processed) và đóng gói thành một danh sách Đồ thị.
+        
+    Đầu vào (Args):
+        processed_dir (str): Đường dẫn tuyệt đối đến thư mục gốc chứa nhiều dự án.
+        
+    Đầu ra / Thuộc tính (Outputs / Attributes):
+        project_dirs (list): Danh sách các đường dẫn dự án hợp lệ tìm thấy.
+        graphs (list): Danh sách các đối tượng GlPoProjectGraph đã được khởi tạo.
+        
+    Phương thức (Methods):
+        len(): Trả về tổng số lượng Đồ thị dự án có trong bộ Dataset.
+        get(idx): Trả về đối tượng Đồ thị (data) của dự án tại vị trí idx.
     """
-    def __init__(self, processed_dir):
+    def __init__(self, base_dir):
         super().__init__(root=None, transform=None, pre_transform=None)
-        self.processed_dir = processed_dir
+        self.base_dir = base_dir
         
         self.project_dirs = []
-        for item in os.listdir(processed_dir):
-            path = os.path.join(processed_dir, item)
+        for item in os.listdir(base_dir):
+            path = os.path.join(base_dir, item)
             if os.path.isdir(path) and os.path.exists(os.path.join(path, 'tasks.csv')):
                 self.project_dirs.append(path)
                 
@@ -316,3 +380,65 @@ if __name__ == "__main__":
         
         print("\n--- Feature G8 Check for First Node ---")
         print(f"Node 0: In-degree={data.x[0, 63]}, Out-degree={data.x[0, 64]}, Is_Critical={data.x[0, 65]}, Total_Float={data.x[0, 66]}, Path_Length={data.x[0, 67]}")
+
+
+class ProjectEnvironmentWrapper:
+    """
+    Mô tả (Description):
+        Một lớp tích hợp API cấp cao (Wrapper) viết riêng cho đồng nghiệp làm RL (PPO).
+        Chỉ cần truyền ID Dự án, nó sẽ tự động nạp toàn bộ Dữ liệu Đồ thị (Graph),
+        Sức chứa Tài nguyên (Capacity), và Luật Lịch trình (Agenda).
+        
+    Đầu vào (Args):
+        processed_dir (str): Đường dẫn gốc chứa tất cả các thư mục dự án.
+        project_id (str): Mã dự án cần load (Ví dụ: 'C2012-08').
+        
+    Đầu ra / Thuộc tính (Outputs / Attributes):
+        project_id (str): Mã dự án đã load.
+        project_dir (str): Đường dẫn cụ thể của dự án đó.
+        graph (GlPoProjectGraph): Đối tượng khởi tạo đồ thị.
+        data (torch_geometric.data.Data): Đồ thị PyTorch Geometric đã sẵn sàng nạp vào Mạng Nơ-ron.
+        global_resources (dict): Từ điển chứa các Ràng buộc Tài nguyên toàn cục.
+            Cấu trúc: {'Mã_Tài_Nguyên': {'name': str, 'type': str, 'capacity': float, 'cost_use': float, 'cost_unit': float}}
+        agenda (dict): Từ điển chứa các Luật Lịch trình toàn cục.
+            Cấu trúc: {'hours_per_day': float, 'days_per_week': float, 'total_holidays': float}
+    """
+    def __init__(self, processed_dir: str, project_id: str):
+        self.project_id = project_id
+        self.project_dir = os.path.join(processed_dir, project_id)
+        
+        if not os.path.exists(self.project_dir):
+            raise FileNotFoundError(f"Project directory not found: {self.project_dir}")
+            
+        # 1. Load the Neural Network Graph Data
+        self.graph = GlPoProjectGraph(self.project_dir)
+        self.data = self.graph.data
+        
+        # 2. Load Global Resources (Supply / Capacity)
+        self.global_resources = {}
+        res_file = os.path.join(self.project_dir, 'resources.csv')
+        if os.path.exists(res_file):
+            res_df = pd.read_csv(res_file)
+            for _, row in res_df.iterrows():
+                r_id = str(row['ID'])
+                self.global_resources[r_id] = {
+                    'name': str(row.get('Name', '')),
+                    'type': str(row.get('Type', '')),
+                    'capacity': float(row.get('Availability', 1.0)),
+                    'cost_use': float(row.get('Cost/Use', 0.0)),
+                    'cost_unit': float(row.get('Cost/Unit', 0.0))
+                }
+                
+        # 3. Expose Agenda Variables cleanly
+        self.agenda = {
+            'hours_per_day': float(self.data.u[0, 0]),
+            'days_per_week': float(self.data.u[0, 1]),
+            'total_holidays': float(self.data.u[0, 2])
+        }
+        
+    def summary(self):
+        print(f"=== Project Environment: {self.project_id} ===")
+        print(f"- Graph Nodes: {self.data.num_nodes}")
+        print(f"- Graph Edges: {self.data.num_edges}")
+        print(f"- Global Resources Loaded: {len(self.global_resources)} types")
+        print(f"- Agenda: {self.agenda['hours_per_day']}h/day, {self.agenda['days_per_week']}days/week, {self.agenda['total_holidays']} holidays")
