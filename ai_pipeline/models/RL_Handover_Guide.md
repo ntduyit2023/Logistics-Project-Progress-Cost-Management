@@ -82,14 +82,32 @@ with torch.no_grad():
     # Nạp Đồ thị vào não AI
     node_embeddings, graph_embedding = model(env_data.data)
 
-print(node_embeddings.shape) # (Số_lượng_Task, 32) -> Dùng để ra Action cho từng Task
-print(graph_embedding.shape) # (1, 32) -> Dùng để dự đoán Value (Actor-Critic)
+print(node_embeddings.shape) # (Số_lượng_Task, 32) 
+print(graph_embedding.shape) # (1, 32) 
 ```
 
+### Chi Tiết Cấu Trúc Outputs (Đầu Ra)
+
+Sau khi truyền Đồ thị qua `LogisticsGATModel`, bạn sẽ nhận được 2 Output cốt lõi, là nền tảng (State) để đưa vào tác tử PPO (Actor-Critic):
+
+#### Output 1: `node_embeddings` (Kích thước: `[Số_Task, 32]`)
+- **Bản chất:** Là các Vector đại diện cho từng công việc (Task). Kích thước mặc định là `32` (có thể tùy chỉnh qua `out_dim`).
+- **Ý nghĩa học được:** Chứa thông tin đã được "nhúng" (embedded) về chi phí, rủi ro, và mức độ quan trọng (criticality) của chính Task đó, CỘNG VỚI thông tin lan truyền từ các Task lân cận.
+- **Cách dùng (Actor Network):** 
+  - Đưa `node_embeddings` này qua mạng MLP (Multi-Layer Perceptron) của Actor để xuất ra **Xác suất Hành động (Action Probabilities)** cho TỪNG TASK độc lập.
+  - Ví dụ Action Space (Discrete): `0` = Giữ nguyên (Do Nothing), `1` = Rút ngắn thời gian/Làm thêm giờ (Crashing), `2` = Làm song song (Fast-tracking).
+
+#### Output 2: `graph_embedding` (Kích thước: `[1, 32]`)
+- **Bản chất:** Là Vector đại diện cho TOÀN BỘ DỰ ÁN. Được tạo ra bằng cơ chế Global Mean Pool, tổng hợp tinh hoa từ tất cả các `node_embeddings`.
+- **Ý nghĩa học được:** Chứa "sức khỏe" tổng thể của dự án hiện tại (tổng chi phí đang cháy, tiến độ đang trễ hay sớm, tổng rủi ro...).
+- **Cách dùng (Critic Network):**
+  - Đưa `graph_embedding` này qua mạng MLP của Critic để dự đoán **Giá trị Trạng thái (State Value / V-value)** duy nhất (1 con số Scalar).
+  - Giá trị này được dùng để tính Advantage $\to$ Cập nhật trọng số của PPO.
+
 > [!TIP]
-> Trong mô hình **Actor-Critic (PPO)**:
-> - Dùng `node_embeddings` để đưa vào mạng **Actor** $\to$ Dự đoán xác suất Action (Crash, Fast-track, Delay) cho từng Task.
-> - Dùng `graph_embedding` để đưa vào mạng **Critic** $\to$ Đánh giá State Value hiện tại của cả dự án.
+> Kiến trúc của bạn sẽ trông như thế này:
+> - **Actor(node_embeddings)** $\to$ `Action_Logits [Số_Task, Số_Action]`
+> - **Critic(graph_embedding)** $\to$ `State_Value [1]`
 
 ---
 
@@ -102,12 +120,16 @@ Mạng Nơ-ron của chúng tôi chỉ dừng lại ở Tầng 2 (Feature to Gro
 Hàm **Total Generalized Cost (TGC)** ở Tầng 3 chính là **Reward Function** của bạn. Bạn phải tự viết hàm tính Tổng Chi phí (Direct + Indirect + Phạt trễ hạn) dựa theo file `docs/22-6/hierarchical_3level_evaluation.md`. 
 *Mỗi Step, nếu TGC giảm $\to$ Reward dương. Nếu TGC tăng $\to$ Reward âm.*
 
-### B. Môi trường Mô phỏng (Simulator)
-Mạng Nơ-ron của chúng tôi tĩnh (Static). Bạn cần viết một vòng lặp (Timeline / Environment Step) để:
+### B. Môi trường Mô phỏng (Simulator) & Dynamic State
+Mạng Nơ-ron (GAT) của chúng tôi về bản chất là "Tĩnh" (Static) tại mỗi bước. Để AI hiểu được diễn biến thời gian thực, bạn cần viết một vòng lặp (Environment Step) để:
 1. Nhận Action từ Actor.
-2. Dịch chuyển ngày bắt đầu/kết thúc của Task.
+2. Dịch chuyển ngày bắt đầu/kết thúc của Task, trừ lùi thời gian.
 3. Check `env_data.global_resources` xem có lố Capacity không.
 4. Check Logic (Predecessor) xem có vi phạm đường găng không.
-5. Cập nhật lại G3 (Opportunity Cost) và G10 (Earned Value) rồi nhét ngược lại vào `env_data.data.x[60:62]` và `[68:71]`.
+5. **Cập nhật Dynamic State:** Bạn phải tính toán lại G3 (Opportunity Cost), G10 (Earned Value) và các thông số tiến độ... sau đó NHÉT NGƯỢC LẠI vào `env_data.data.x`. Chỉ khi `data.x` thay đổi, lần forward tiếp theo GAT mới nhả ra Embedding mới!
+
+### C. Action Masking (Mặt nạ hành động)
+Mạng Actor có thể thỉnh thoảng sẽ "ngốc nghếch" khi dự đoán ra hành động: *Rút ngắn thời gian (Crashing) cho một công việc ĐÃ HOÀN THÀNH*, hoặc *Bắt đầu một công việc khi CÔNG VIỆC TRƯỚC ĐÓ CHƯA XONG*.
+$\to$ Bắt buộc bạn phải tự code một mảng `action_mask` (Boolean True/False array) trong hàm `step()` để đánh dấu các hành động bất hợp lý, và lọc bỏ chúng (set probability = 0) trước khi Agent ra quyết định cuối cùng.
 
 Chúc bạn may mắn với Khối PPO! Hệ thống Data & GNN đã vững như bàn thạch để bạn yên tâm "bay nhảy" rồi.
