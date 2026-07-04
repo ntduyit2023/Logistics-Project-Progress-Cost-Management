@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
+from feature_normalizer import FeatureNormalizer
 
 class HierarchicalAttentionEncoder(nn.Module):
     """
@@ -51,7 +52,7 @@ class HierarchicalAttentionEncoder(nn.Module):
             12: list(range(55, 60))  # G12
         }
         
-        # Ánh xạ Group ID 1-12 vào index 0-11
+        # Ánh xạ Group ID 1-12 vào index 0-11 
         self.group_mapping = {
             0: 0, 1: 1, 2: 2, 4: 3, 5: 4, 6: 5, 7: 6, 9: 7, 11: 8, 12: 9, 3: 10, 8: 11, 10: 12
         }
@@ -70,6 +71,8 @@ class HierarchicalAttentionEncoder(nn.Module):
                     
         # Đóng băng ma trận F-G (Domain Knowledge)
         self.X_fg = nn.Parameter(X_fg, requires_grad=False)
+        
+        self.normalizer = FeatureNormalizer(feature_dim)
 
     def forward(self, x):
         """
@@ -85,6 +88,9 @@ class HierarchicalAttentionEncoder(nn.Module):
             S_g (torch.Tensor): Vector đại diện của 13 Nhóm, kích thước (batch_size, 13).
             group_masks (torch.Tensor): Ma trận lưu trạng thái đóng/mở của các Nhóm (1.0 là mở, 0.0 là đóng), kích thước (batch_size, 13).
         """
+        # Chuẩn hóa dữ liệu trước khi tính toán
+        x_norm = self.normalizer(x)
+        
         # Bước 0: Adaptive Masking (Xác định Group nào "sống")
         # m = 1 nếu group có ít nhất 1 giá trị != 0
         batch_size = x.shape[0]
@@ -93,11 +99,11 @@ class HierarchicalAttentionEncoder(nn.Module):
         group_masks = torch.zeros((batch_size, 13), device=device) # 13 vì có Hub (0) + 12 groups
         for g_id, indices in self.group_indices.items():
             # Sum absolute values to see if group is active
-            group_sum = torch.sum(torch.abs(x[:, indices]), dim=1)
+            group_sum = torch.sum(torch.abs(x_norm[:, indices]), dim=1)
             group_masks[:, g_id] = (group_sum > 0).float()
             
         # Transform raw features (tùy chọn)
-        x_transformed = F.relu(self.feature_transform(x))
+        x_transformed = F.relu(self.feature_transform(x_norm))
         
         # Bước 1: Tầng 1 - Intra-group Attention
         S_g = torch.zeros((batch_size, 13), device=device)
@@ -109,7 +115,7 @@ class HierarchicalAttentionEncoder(nn.Module):
             A_intra = self.interaction_matrix[indices][:, indices]  # shape (n_g, n_g)
             
             # Trích xuất features của nhóm
-            v_g = x[:, indices]  # shape (batch, n_g)
+            v_g = x_norm[:, indices]  # shape (batch, n_g)
             
             # Tính Attention: alpha = softmax(v_g * A_intra)
             # v_g: (batch, n_g), A_intra: (n_g, n_g) -> (batch, n_g)
@@ -124,7 +130,7 @@ class HierarchicalAttentionEncoder(nn.Module):
         # Ta cần tính S'_g = S_g * (1 + ảnh hưởng từ các feature nằm ngoài nhóm)
         
         # Tính tổng ảnh hưởng của tất cả features lên từng group: (batch_size, 72) x (72, 13) -> (batch_size, 13)
-        fg_influence = torch.matmul(x, self.X_fg)
+        fg_influence = torch.matmul(x_norm, self.X_fg)
         
         # Áp dụng công thức khuếch đại / triệt tiêu: S'_g = S_g * (1 + tanh(influence))
         S_prime_g = S_g * (1.0 + F.tanh(fg_influence))

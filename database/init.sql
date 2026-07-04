@@ -98,14 +98,76 @@ CREATE TABLE tasks (
     baseline_start TIMESTAMP,
     type VARCHAR(255),
     
-    -- Extracted Time Components
+    -- Extracted Time Components (Hub)
     duration_months NUMERIC(15,2),
     duration_weeks NUMERIC(15,2),
     duration_days NUMERIC(15,2),
     duration_hours NUMERIC(15,2),
+    calendar_type VARCHAR(50),
     
-    -- Custom addition for heuristics
-    calendar_type VARCHAR(50)
+    -- G1: Direct Costs
+    internal_labor_cost NUMERIC(15,2),
+    subcontracting_cost NUMERIC(15,2),
+    overtime_crashing_cost NUMERIC(15,2),
+    material_cost NUMERIC(15,2),
+    equipment_cost NUMERIC(15,2), 
+    direct_transportation NUMERIC(15,2),
+    energy_fuel_cost NUMERIC(15,2),
+    testing_and_inspection NUMERIC(15,2),
+    
+    -- G2: Indirect Costs
+    pm_overhead NUMERIC(15,2),
+    facility_rent NUMERIC(15,2),
+    utilities NUMERIC(15,2),
+    communication_cost NUMERIC(15,2),
+    internal_training NUMERIC(15,2),
+    quality_mgmt_overhead NUMERIC(15,2),
+    
+    -- G4: Contractual
+    permits_and_licensing NUMERIC(15,2),
+    project_insurance NUMERIC(15,2),
+    warranty_and_after_sales NUMERIC(15,2),
+    regulatory_compliance NUMERIC(15,2),
+    
+    -- G5: Logistics
+    inventory_holding_cost NUMERIC(15,2),
+    ordering_cost NUMERIC(15,2),
+    shortage_stockout NUMERIC(15,2),
+    obsolescence_cost NUMERIC(15,2),
+    international_freight NUMERIC(15,2),
+    packaging_and_handling NUMERIC(15,2),
+    reverse_logistics NUMERIC(15,2),
+    
+    -- G6: Temporal
+    wait_queue_time NUMERIC(15,2),
+    setup_transition_time NUMERIC(15,2),
+    induction_time NUMERIC(15,2),
+    lead_time NUMERIC(15,2),
+    pert_3_point_estimate NUMERIC(15,2),
+    
+    -- G9: Risks
+    technical_complexity NUMERIC(15,2),
+    rework_probability NUMERIC(15,2),
+    external_dependency_level NUMERIC(15,2),
+    contingency_reserve NUMERIC(15,2),
+    management_reserve NUMERIC(15,2),
+    weather_seasonal_risk NUMERIC(15,2),
+    technology_risk NUMERIC(15,2),
+    
+    -- G11: Human & Org
+    required_skill_level INTEGER,
+    staff_experience NUMERIC(15,2),
+    learning_curve_effect NUMERIC(15,2),
+    hr_stability_risk NUMERIC(15,2), 
+    cross_functional_coordination INTEGER,
+    occupational_safety_risk INTEGER,
+    
+    -- G12: ESG
+    environmental_impact INTEGER,
+    waste_disposal_cost NUMERIC(15,2),
+    community_social_impact INTEGER,
+    carbon_tax_credit NUMERIC(15,2),
+    esg_compliance INTEGER
 );
 
 -- Logic Table (Edges between tasks)
@@ -124,60 +186,10 @@ CREATE TABLE project_constraint_logic (
 );
 
 -- ------------------------------------------------------------------------------
--- 5. SPOKE TABLES (USER INPUT FEATURES)
+-- 5. RESOURCE MAPPING (G7)
 -- ------------------------------------------------------------------------------
 
-CREATE TABLE task_g1_direct_costs (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    internal_labor_cost NUMERIC(15,2),
-    subcontracting_cost NUMERIC(15,2),
-    overtime_crashing_cost NUMERIC(15,2),
-    material_cost NUMERIC(15,2),
-    equipment_cost NUMERIC(15,2), 
-    direct_transportation NUMERIC(15,2),
-    energy_fuel_cost NUMERIC(15,2),
-    testing_and_inspection NUMERIC(15,2)
-);
-
-CREATE TABLE task_g2_indirect_costs (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    pm_overhead NUMERIC(15,2),
-    facility_rent NUMERIC(15,2),
-    utilities NUMERIC(15,2),
-    communication_cost NUMERIC(15,2),
-    internal_training NUMERIC(15,2),
-    quality_mgmt_overhead NUMERIC(15,2)
-);
-
-CREATE TABLE task_g4_contractual (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    permits_and_licensing NUMERIC(15,2),
-    project_insurance NUMERIC(15,2),
-    warranty_and_after_sales NUMERIC(15,2),
-    regulatory_compliance NUMERIC(15,2)
-);
-
-CREATE TABLE task_g5_logistics (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    inventory_holding_cost NUMERIC(15,2),
-    ordering_cost NUMERIC(15,2),
-    shortage_stockout NUMERIC(15,2),
-    obsolescence_cost NUMERIC(15,2),
-    international_freight NUMERIC(15,2),
-    packaging_and_handling NUMERIC(15,2),
-    reverse_logistics NUMERIC(15,2)
-);
-
-CREATE TABLE task_g6_temporal (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    wait_queue_time NUMERIC(15,2),
-    setup_transition_time NUMERIC(15,2),
-    induction_time NUMERIC(15,2),
-    lead_time NUMERIC(15,2),
-    pert_3_point_estimate NUMERIC(15,2)
-);
-
-CREATE TABLE task_g7_resources (
+CREATE TABLE task_resources (
     task_id VARCHAR(255) NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
     resource_id INTEGER NOT NULL REFERENCES project_constraint_resources(id) ON DELETE CASCADE,
     request_quantity NUMERIC(15,2) NOT NULL,
@@ -186,34 +198,4 @@ CREATE TABLE task_g7_resources (
     equipment_utilization NUMERIC(15,2),
     resource_substitutability INTEGER,
     PRIMARY KEY (task_id, resource_id)
-);
-
-CREATE TABLE task_g9_risks (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    technical_complexity NUMERIC(15,2),
-    rework_probability NUMERIC(15,2),
-    external_dependency_level NUMERIC(15,2),
-    contingency_reserve NUMERIC(15,2),
-    management_reserve NUMERIC(15,2),
-    weather_seasonal_risk NUMERIC(15,2),
-    technology_risk NUMERIC(15,2)
-);
-
-CREATE TABLE task_g11_human_org (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    required_skill_level INTEGER,
-    staff_experience NUMERIC(15,2),
-    learning_curve_effect NUMERIC(15,2),
-    hr_stability_risk NUMERIC(15,2), 
-    cross_functional_coordination INTEGER,
-    occupational_safety_risk INTEGER
-);
-
-CREATE TABLE task_g12_esg (
-    task_id VARCHAR(255) PRIMARY KEY REFERENCES tasks(id) ON DELETE CASCADE,
-    environmental_impact INTEGER,
-    waste_disposal_cost NUMERIC(15,2),
-    community_social_impact INTEGER,
-    carbon_tax_credit NUMERIC(15,2),
-    esg_compliance INTEGER
 );

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import Select
 
 from app.db.database import Base
-from app.schemas.schemas import PaginatedResponse
+from app.schemas import PaginatedResponse
 
 # Định nghĩa Type Variables cho Generic Type Hinting
 ModelType = TypeVar("ModelType", bound=Base)

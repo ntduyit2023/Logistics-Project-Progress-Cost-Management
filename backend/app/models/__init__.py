@@ -1,11 +1,18 @@
-from app.models.models import (
-    User, AppProject, AISimulationRun, ProjectBaseline,
-    DimTopicTime, DimTopicCost, DimTopicRisk, DimTopicResources,
-    FactTask, BridgeTaskDependency
-)
+from app.models.user import User
+from app.models.project import AppProject, ProjectBaseline
+from app.models.task import Task, TaskResource
+from app.models.constraint import ProjectConstraintTime, ProjectConstraintResource, ProjectConstraintLogic
+from app.models.ai import AISimulationRun, AIInsight
 
 __all__ = [
-    "User", "AppProject", "AISimulationRun", "ProjectBaseline",
-    "DimTopicTime", "DimTopicCost", "DimTopicRisk", "DimTopicResources",
-    "FactTask", "BridgeTaskDependency"
+    "User",
+    "AppProject",
+    "ProjectBaseline",
+    "Task",
+    "TaskResource",
+    "ProjectConstraintTime",
+    "ProjectConstraintResource",
+    "ProjectConstraintLogic",
+    "AISimulationRun",
+    "AIInsight"
 ]

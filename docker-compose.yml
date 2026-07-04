@@ -55,6 +55,7 @@ services:
     profiles: [ "dev", "prod" ]
     volumes:
       - ./backend:/app
+      - ./ai_pipeline:/ai_pipeline
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     environment:

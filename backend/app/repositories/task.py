@@ -3,42 +3,27 @@ GLPO Backend - Task Repository
 """
 from typing import List
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.models import FactTask
+from app.models import Task
 from app.repositories.base import BaseRepository
+from app.schemas import TaskCreate, TaskUpdate
 
 
-class TaskRepository(BaseRepository[FactTask, None, None]):
+class TaskRepository(BaseRepository[Task, TaskCreate, TaskUpdate]):
     """
-    Repository thao tác với bảng fact_tasks.
+    Repository thao tác với bảng tasks (Wide Table).
     """
     
-    async def get_by_project(self, db: AsyncSession, project_id: int) -> List[FactTask]:
+    async def get_by_project(self, db: AsyncSession, project_id: int) -> List[Task]:
         """
-        Lấy danh sách tất cả các công việc (Nodes) của một dự án,
-        Eager-load luôn toàn bộ các Dimensions đi kèm.
-
-        Args:
-            db (AsyncSession): Phiên kết nối DB.
-            project_id (int): ID dự án.
-
-        Returns:
-            List[FactTask]: Danh sách các Tasks (Nodes).
+        Lấy danh sách tất cả các công việc (Nodes) của một dự án.
+        Vì dùng kiến trúc Wide Table, toàn bộ Features đã nằm sẵn trong bảng Tasks, 
+        không cần phải JOIN hay selectinload các Dimensions nữa.
         """
-        stmt = (
-            select(self.model)
-            .filter(self.model.project_id == project_id)
-            .options(
-                selectinload(self.model.time_info),
-                selectinload(self.model.cost_info),
-                selectinload(self.model.risk_info),
-                selectinload(self.model.resource_info),
-            )
-        )
+        stmt = select(self.model).filter(self.model.project_id == project_id)
         result = await db.execute(stmt)
         return list(result.scalars().all())
 
 # Cung cấp instance Singleton
-task_repo = TaskRepository(FactTask)
+task_repo = TaskRepository(Task)

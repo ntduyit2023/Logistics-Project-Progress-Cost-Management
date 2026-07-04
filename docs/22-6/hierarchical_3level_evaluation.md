@@ -200,6 +200,23 @@ G10 (Earned Value)     ← Tính TRONG QUÁ TRÌNH tối ưu hóa
 ```
 
 > **Lưu ý:** G8 luôn có giá trị. G3 có giá trị sau khi CPM chạy xong. G10 chỉ có giá trị đầy đủ khi RL Agent đang chạy (vì cần so sánh Proposed vs Baseline).
+---
+
+## BƯỚC 0: Chuẩn hóa Dữ liệu (Data Normalization)
+
+Trước khi 72 Features đi vào Tầng 1, chúng **bắt buộc phải đi qua lớp Chuẩn hóa**. Nguyên nhân là do các giá trị thô có sự chênh lệch đơn vị khổng lồ (ví dụ: `material_cost` = $1,000,000, trong khi `rework_probability` = 0.05). Nếu đưa trực tiếp vào hàm Softmax ($e^x$) của Tầng 1, sẽ gây ra lỗi `NaN` (Gradient Explosion).
+
+Chúng ta phân loại 72 features thành 5 nhóm và áp dụng thuật toán riêng biệt:
+
+| Nhóm Feature | Khoảng giá trị (Range) | Chiến lược xử lý | Công thức chuẩn hóa |
+|:---|:---|:---|:---|
+| **Tiền tệ / Thời gian / Đếm** | $[0, \infty)$ (Đuôi dài) | **Log1p** | $x' = \log(1 + x)$ |
+| **Phần trăm** | $[0, 100]$ | **Chia 100** | $x' = x / 100$ |
+| **Điểm số (Scores)** | $[1, 5]$ | **Min-Max** | $x' = (x - 1) / 4$ |
+| **Chỉ số Hiệu suất (EVM)** | Quanh $1.0$ (Tốt/Xấu) | **Clamp + Scale** | $x' = \text{clamp}(x, 0, 3) / 3$ |
+| **Tỷ lệ / Boolean** | $[0, 1]$ hoặc $\{0, 1\}$ | **Pass-through** | $x' = x$ |
+
+Sau Bước 0, tất cả 72 features đều được nén về những khoảng giá trị an toàn (thường $\le 15$), đảm bảo Attention ở Tầng 1 hoạt động mượt mà.
 
 ---
 
@@ -345,6 +362,13 @@ Trong đó:
 │         → schedule_flexibility, delay_impact_cost            │
 │                                                               │
 │  → Vector đầy đủ: 60 + 12 = 72 Features                     │
+└────────────────────────┬────────────────────────────────────┘
+                         ▼
+┌─ BƯỚC 0: Data Normalization (Chuẩn hóa số liệu) ───────────┐
+│                                                              │
+│  Log1p: Tiền tệ, Thời gian, Số đếm (Tránh nổ Gradient)       │
+│  Min-Max / Div100: Tỷ lệ, Xác suất                           │
+│  Pass-through: Boolean (Giữ nguyên logic 0/1)                │
 └────────────────────────┬────────────────────────────────────┘
                          ▼
 ┌─ TẦNG 1: Feature ↔ Feature (trong nhóm) ───────────────────┐
