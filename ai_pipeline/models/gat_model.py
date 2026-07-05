@@ -3,7 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GATConv, global_mean_pool
 
-from hierarchical_encoder import HierarchicalAttentionEncoder
+try:
+    from ai_pipeline.models.hierarchical_encoder import HierarchicalAttentionEncoder
+except ImportError:
+    from hierarchical_encoder import HierarchicalAttentionEncoder
 
 class LogisticsGATModel(nn.Module):
     """
@@ -82,7 +85,10 @@ class LogisticsGATModel(nn.Module):
 
 if __name__ == "__main__":
     # Test GAT Model
-    from data_loader import GlPoDataset
+    try:
+        from ai_pipeline.models.data_loader import GlPoDataset
+    except ImportError:
+        from data_loader import GlPoDataset
     import os
     
     processed_dir = r"E:\University\Year 3-3\DA3\ai_pipeline\data\processed"

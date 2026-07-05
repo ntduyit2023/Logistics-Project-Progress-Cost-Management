@@ -2,7 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
+try:
+    from ai_pipeline.models.feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
+except ImportError:
+    from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
 
 class HierarchicalAttentionEncoder(nn.Module):
     """
@@ -86,7 +89,6 @@ class HierarchicalAttentionEncoder(nn.Module):
             group_masks (torch.Tensor): Ma trận lưu trạng thái đóng/mở của các Nhóm (1.0 là mở, 0.0 là đóng), kích thước (batch_size, 13).
         """
         # Bước 0: Adaptive Masking (Xác định Group nào "sống")
-        # m = 1 nếu group có ít nhất 1 giá trị != 0
         batch_size = x.shape[0]
         device = x.device
         
@@ -96,6 +98,11 @@ class HierarchicalAttentionEncoder(nn.Module):
             group_sum = torch.sum(torch.abs(x[:, indices]), dim=1)
             group_masks[:, g_id] = (group_sum > 0).float()
             
+        # Chuẩn hóa đặc trưng bằng RMS (Root Mean Square) để tránh bùng nổ trị số (Cost $10^5$)
+        # Giữ nguyên cấu trúc thưa (0 vẫn là 0) để không làm hỏng group masks
+        rms = torch.sqrt(torch.mean(x**2, dim=0, keepdim=True)) + 1e-6
+        x = x / rms
+        
         # Transform raw features (tùy chọn)
         x_transformed = F.relu(self.feature_transform(x))
         

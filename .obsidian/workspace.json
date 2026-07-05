@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "dataset_analysis.md",
+                "file": "ai_pipeline/data_workflow_architecture.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "dataset_analysis"
+              "title": "data_workflow_architecture"
             }
           }
         ],
@@ -93,7 +93,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "568f07911e93d0fe",
@@ -200,18 +201,31 @@
   },
   "active": "5fb6762d102661d0",
   "lastOpenFiles": [
+    "docs/unsupervised_pretraining_report.md",
+    "ai_pipeline/data/output_C2018-09_backup.json",
+    "ai_pipeline/data/output_C2018-09_main.json",
+    "ai_pipeline/data/output_C2012-08_backup.json",
+    "ai_pipeline/data/output_C2012-08_main.json",
+    "ai_pipeline/data/output_C2012-04_backup.json",
+    "ai_pipeline/data/output_C2012-04_main.json",
+    "ai_pipeline/data/output_C2011-07_backup.json",
+    "ai_pipeline/data/output_C2011-07_main.json",
+    "ai_pipeline/data/dashboard.html",
+    "ai_pipeline/data/output_C2019-16_main.json",
+    "docs/22-6/hierarchical_3level_evaluation.md",
+    "ai_pipeline/models/RL_Handover_Guide.md",
+    "docs/22-6/model_architecture_selection.md",
+    "docs/models_for_optimal_path.md",
+    "docs/foundations/ai_ml_models.md",
+    "docs/foundations/casestudy_technical_analysis.md",
+    "docs/foundations/graph_optimization_methods.md",
+    "docs/foundations/graph_theory_basics.md",
+    "docs/foundations/logistics_project_management.md",
+    "docs/foundations/logistics_theories.md",
+    "docs/foundations/node_features_comprehensive.md",
+    "docs/foundations/ppc_casestudy_deep_analysis.md",
     "models_for_optimal_path.md",
     "dataset_analysis.md",
-    "Chương 6.pdf",
-    "tests/test_output.txt",
-    "tests/verify_cpm.py",
-    "tests/__pycache__/case_study_data.cpython-313.pyc",
-    "algorithms/__pycache__/eva_engine.cpython-313.pyc",
-    "algorithms/__pycache__/crashing_engine.cpython-313.pyc",
-    "algorithms/__pycache__/resource_smoothing.cpython-313.pyc",
-    "algorithms/__pycache__/__init__.cpython-313.pyc",
-    "algorithms/__pycache__/cpm_engine.cpython-313.pyc",
-    "algorithms/__pycache__",
     "PPC_casestudy_2010_V1_vi.md",
     "2.canvas",
     "algorithm_math_and_code.md",
