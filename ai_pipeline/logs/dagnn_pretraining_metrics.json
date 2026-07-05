@@ -1,0 +1,42 @@
+[
+  {
+    "epoch": 1,
+    "total_loss": 21.08810806274414,
+    "cpm_loss": 1.7137935161590576,
+    "masked_duration_loss": 67.16046142578125,
+    "topological_distance_loss": 0.8481640815734863,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 2,
+    "total_loss": 29.474470138549805,
+    "cpm_loss": 1.714113712310791,
+    "masked_duration_loss": 95.49617004394531,
+    "topological_distance_loss": 0.46657416224479675,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 3,
+    "total_loss": 26.49710464477539,
+    "cpm_loss": 1.6983482837677002,
+    "masked_duration_loss": 85.81785583496094,
+    "topological_distance_loss": 0.24136218428611755,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 4,
+    "total_loss": 20.686660766601562,
+    "cpm_loss": 1.6388202905654907,
+    "masked_duration_loss": 66.61141204833984,
+    "topological_distance_loss": 0.15902473032474518,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 5,
+    "total_loss": 56.517215728759766,
+    "cpm_loss": 1.558701992034912,
+    "masked_duration_loss": 186.1609344482422,
+    "topological_distance_loss": 0.15150707960128784,
+    "learning_rate": 0.005
+  }
+]

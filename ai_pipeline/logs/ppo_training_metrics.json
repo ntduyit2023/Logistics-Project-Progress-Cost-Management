@@ -1,0 +1,54 @@
+[
+  {
+    "episode": 1,
+    "global_step": 49,
+    "actor_loss": 0.0,
+    "critic_loss": 0.0,
+    "entropy": 0.0,
+    "average_reward": -54.344587407134576,
+    "average_makespan": 1042.0,
+    "average_cost": 67.75208869464768,
+    "average_resource_utilization": 0.0,
+    "encoder_stage": 2,
+    "training_time": 0.6609411239624023
+  },
+  {
+    "episode": 2,
+    "global_step": 98,
+    "actor_loss": 0.0,
+    "critic_loss": 0.0,
+    "entropy": 0.0,
+    "average_reward": -48.689862601598364,
+    "average_makespan": 1042.0,
+    "average_cost": 67.75208869464768,
+    "average_resource_utilization": 0.0,
+    "encoder_stage": 2,
+    "training_time": 1.2869772911071777
+  },
+  {
+    "episode": 3,
+    "global_step": 165,
+    "actor_loss": 3.969762474298477e-08,
+    "critic_loss": 205.6914768218994,
+    "entropy": 0.0,
+    "average_reward": -99.58370656280562,
+    "average_makespan": 2748.0,
+    "average_cost": 103.51393073544023,
+    "average_resource_utilization": 0.0,
+    "encoder_stage": 1,
+    "training_time": 2.6504006385803223
+  },
+  {
+    "episode": 4,
+    "global_step": 232,
+    "actor_loss": 3.969762474298477e-08,
+    "critic_loss": 205.6914768218994,
+    "entropy": 0.0,
+    "average_reward": -77.11974234418611,
+    "average_makespan": 2748.0,
+    "average_cost": 103.51393073544023,
+    "average_resource_utilization": 0.0,
+    "encoder_stage": 1,
+    "training_time": 3.775718927383423
+  }
+]

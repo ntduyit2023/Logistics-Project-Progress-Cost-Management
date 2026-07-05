@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
-from feature_normalizer import FeatureNormalizer
 
 class HierarchicalAttentionEncoder(nn.Module):
     """
@@ -92,7 +91,6 @@ class HierarchicalAttentionEncoder(nn.Module):
         x_norm = self.normalizer(x)
         
         # Bước 0: Adaptive Masking (Xác định Group nào "sống")
-        # m = 1 nếu group có ít nhất 1 giá trị != 0
         batch_size = x.shape[0]
         device = x.device
         
@@ -102,6 +100,11 @@ class HierarchicalAttentionEncoder(nn.Module):
             group_sum = torch.sum(torch.abs(x_norm[:, indices]), dim=1)
             group_masks[:, g_id] = (group_sum > 0).float()
             
+        # Chuẩn hóa đặc trưng bằng RMS (Root Mean Square) để tránh bùng nổ trị số (Cost $10^5$)
+        # Giữ nguyên cấu trúc thưa (0 vẫn là 0) để không làm hỏng group masks
+        rms = torch.sqrt(torch.mean(x**2, dim=0, keepdim=True)) + 1e-6
+        x = x / rms
+        
         # Transform raw features (tùy chọn)
         x_transformed = F.relu(self.feature_transform(x_norm))
         
