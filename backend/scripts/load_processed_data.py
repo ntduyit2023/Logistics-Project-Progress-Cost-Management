@@ -12,7 +12,7 @@ backend_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(backend_dir))
 
 from app.db.database import async_session
-from app.models.models import (
+from app.models import (
     AppProject, Task, ProjectConstraintLogic, 
     ProjectConstraintResource, TaskResource, ProjectConstraintTime
 )

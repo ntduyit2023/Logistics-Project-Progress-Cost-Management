@@ -481,8 +481,8 @@ class DSLIBExtractor:
         print(f"Exported 7 CSV files to {self.output_dir}")
 
 if __name__ == "__main__":
-    input_dir = r"E:\University\Year 3-3\DA3\ai_pipeline\data\raw\DSLIB_Logistics_Subset\use"
-    base_out_dir = r"E:\University\Year 3-3\DA3\ai_pipeline\data\processed"
+    input_dir = r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB_Logistics_Subset\use"
+    base_out_dir = r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\processed"
     
     for filename in os.listdir(input_dir):
         if filename.endswith(".xlsx") and not filename.startswith("~$"):

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
   const menuItems = [
-    { name: 'Workspace', icon: <Columns size={20} />, path: '/workspace' },
+    { name: 'Projects', icon: <Columns size={20} />, path: '/projects' },
     { name: 'Tasks', icon: <ListTodo size={20} />, path: '/tasks' },
     { name: 'Settings', icon: <Settings size={20} />, path: '/settings' },
   ];

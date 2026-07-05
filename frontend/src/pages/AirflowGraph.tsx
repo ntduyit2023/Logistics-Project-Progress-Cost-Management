@@ -6,12 +6,10 @@ import ReactFlow, {
   useEdgesState,
   Panel,
   MarkerType,
-  MiniMap,
 } from 'reactflow';
 import dagre from '@dagrejs/dagre';
 import 'reactflow/dist/style.css';
 import { X, Clock, DollarSign, Calendar, Activity, AlertTriangle } from 'lucide-react';
-import mockData from '../mocks/project_583.json';
 import TaskNode from '../components/graph/TaskNode';
 
 const nodeTypes = {
@@ -27,10 +25,10 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   const isHorizontal = direction === 'LR';
   dagreGraph.setGraph({ 
     rankdir: direction, 
-    nodesep: 50, // Trả lại khoảng trống dọc để đường nối (edges) có đường đi
-    ranksep: 180, // Kéo giãn ngang để mũi tên hiển thị rõ
+    nodesep: 50, 
+    ranksep: 180, 
     edgesep: 20,
-    ranker: 'network-simplex' // Thuật toán tốt nhất để chống rối và đan chéo đường nối
+    ranker: 'network-simplex'
   });
 
   nodes.forEach((node) => {
@@ -58,37 +56,35 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   return { nodes, edges };
 };
 
-const AirflowGraph = () => {
-  const { initialNodesLayout, initialEdgesLayout } = useMemo(() => {
-    const projectTasks = mockData.data.tasks;
-    const projectDependencies = mockData.data.dependencies;
+interface AirflowGraphProps {
+  tasks: any[];
+  dependencies: any[];
+  onConnectEdge?: (source: string, target: string) => void;
+  onDeleteTask?: (taskId: string) => void;
+  onEditTask?: (task: any) => void;
+}
 
-    const rawNodes = projectTasks
-      .filter((task: any) => {
-        const isConnected = projectDependencies.some(
-          (dep: any) => dep.predecessor_id === task.task_id || dep.successor_id === task.task_id
-        );
-        return isConnected;
-      })
-      .map((task: any) => ({
-        id: String(task.task_id),
+const AirflowGraph: React.FC<AirflowGraphProps> = ({ tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask }) => {
+  const { initialNodesLayout, initialEdgesLayout } = useMemo(() => {
+    const rawNodes = tasks.map((task: any) => ({
+        id: String(task.id),
         type: 'taskNode',
         position: { x: 0, y: 0 },
         data: {
-          task_label: task.task_label,
-          wbs: task.wbs,
+          task_label: task.id,
+          wbs: task.wbs || task.id,
           task_name: task.task_name,
-          duration: task.time_info?.duration,
-          baseline_start: task.time_info?.baseline_start,
-          baseline_end: task.time_info?.baseline_end,
-          total_cost: task.cost_info?.total_cost,
-          optimistic_time: task.risk_info?.optimistic_time,
-          pessimistic_time: task.risk_info?.pessimistic_time,
-          is_critical: task.time_info?.duration > 100, // Dummy critical logic
+          duration: task.duration_days,
+          baseline_start: task.baseline_start,
+          baseline_end: null, // need to compute or pass
+          total_cost: (task.internal_labor_cost || 0) + (task.equipment_cost || 0),
+          optimistic_time: task.duration_days ? task.duration_days * 0.8 : 0,
+          pessimistic_time: task.duration_days ? task.duration_days * 1.5 : 0,
+          is_critical: task.duration_days > 50,
         },
       }));
 
-    const rawEdges = projectDependencies.map((dep: any) => ({
+    const rawEdges = dependencies.map((dep: any) => ({
       id: `e-${dep.predecessor_id}-${dep.successor_id}`,
       source: String(dep.predecessor_id),
       target: String(dep.successor_id),
@@ -109,11 +105,22 @@ const AirflowGraph = () => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesLayout);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdgesLayout);
+
+  React.useEffect(() => {
+    setNodes(initialNodesLayout);
+    setEdges(initialEdgesLayout);
+  }, [initialNodesLayout, initialEdgesLayout, setNodes, setEdges]);
   const [selectedTask, setSelectedTask] = useState<any>(null);
 
   const onNodeClick = useCallback((_: React.MouseEvent, node: any) => {
     setSelectedTask(node.data);
   }, []);
+
+  const onConnect = useCallback((connection: any) => {
+    if (onConnectEdge && connection.source && connection.target) {
+      onConnectEdge(connection.source, connection.target);
+    }
+  }, [onConnectEdge]);
 
   return (
     <div className="w-full h-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex">
@@ -124,6 +131,7 @@ const AirflowGraph = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
           fitViewOptions={{ padding: 0.2 }}
@@ -199,6 +207,32 @@ const AirflowGraph = () => {
                   </div>
                   <div className="text-xl font-bold text-slate-800">${selectedTask.total_cost?.toLocaleString() || 0}</div>
                 </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mb-6 flex gap-3">
+                <button 
+                  onClick={() => {
+                    if (onEditTask) {
+                      // find the raw task object from tasks list
+                      const t = tasks.find(x => String(x.id) === selectedTask.task_label);
+                      if (t) onEditTask(t);
+                    }
+                  }}
+                  className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 rounded-lg border border-blue-200 transition-colors"
+                >
+                  Edit Node
+                </button>
+                <button 
+                  onClick={async () => {
+                    if (window.confirm("Delete this node?")) {
+                      if (onDeleteTask) onDeleteTask(selectedTask.task_label);
+                    }
+                  }}
+                  className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-lg border border-red-200 transition-colors"
+                >
+                  Delete Node
+                </button>
               </div>
 
               {/* PERT Estimates */}

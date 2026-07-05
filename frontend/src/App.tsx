@@ -6,14 +6,16 @@ import MainLayout from './components/layout/MainLayout';
 const TaskTable = () => <div className="glass-panel p-6 rounded-xl h-full flex items-center justify-center text-slate-500">Task Table Page (Coming Soon)</div>;
 
 import Workspace from './pages/Workspace';
+import ProjectList from './pages/ProjectList';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route index element={<Navigate to="/workspace" replace />} />
-          <Route path="workspace" element={<Workspace />} />
+          <Route index element={<Navigate to="/projects" replace />} />
+          <Route path="projects" element={<ProjectList />} />
+          <Route path="projects/:projectId/workspace" element={<Workspace />} />
           <Route path="tasks" element={<TaskTable />} />
           <Route path="settings" element={<Navigate to="/" replace />} />
         </Route>

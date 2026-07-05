@@ -83,3 +83,43 @@ async def delete_task_api(
     """
     await task_service.delete_task(db, project_id, task_id)
     return APIResponse(success=True, message="Đã xóa công việc thành công.")
+
+
+# --- TASK RESOURCES ---
+
+from app.schemas.task import TaskResourceCreate, TaskResourceResponse
+from typing import List
+
+@router.get("/{project_id}/tasks/{task_id}/resources", response_model=APIResponse[List[TaskResourceResponse]], summary="Lấy danh sách tài nguyên của Task")
+async def get_task_resources_api(
+    project_id: int = Path(...),
+    task_id: str = Path(...),
+    db: AsyncSession = Depends(get_db)
+):
+    data = await task_service.get_task_resources(db, project_id, task_id)
+    return APIResponse(success=True, message="Lấy danh sách tài nguyên thành công.", data=data)
+
+@router.post("/{project_id}/tasks/{task_id}/resources", response_model=APIResponse[TaskResourceResponse], summary="Phân bổ tài nguyên cho Task")
+async def assign_task_resource_api(
+    project_id: int = Path(...),
+    task_id: str = Path(...),
+    resource_in: TaskResourceCreate = ...,
+    db: AsyncSession = Depends(get_db)
+):
+    data = await task_service.assign_resource(db, project_id, task_id, resource_in)
+    
+    # We need to return it in the schema format, so fetch again to get name/type joined
+    all_res = await task_service.get_task_resources(db, project_id, task_id)
+    assigned = next((r for r in all_res if r["resource_id"] == resource_in.resource_id), None)
+    
+    return APIResponse(success=True, message="Phân bổ tài nguyên thành công.", data=assigned)
+
+@router.delete("/{project_id}/tasks/{task_id}/resources/{resource_id}", response_model=APIResponse, summary="Xóa phân bổ tài nguyên")
+async def delete_task_resource_api(
+    project_id: int = Path(...),
+    task_id: str = Path(...),
+    resource_id: int = Path(...),
+    db: AsyncSession = Depends(get_db)
+):
+    await task_service.remove_task_resource(db, project_id, task_id, resource_id)
+    return APIResponse(success=True, message="Xóa phân bổ tài nguyên thành công.")

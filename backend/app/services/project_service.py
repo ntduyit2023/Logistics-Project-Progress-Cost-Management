@@ -112,6 +112,16 @@ async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail
     tasks = await task_repo.get_by_project(db, project_id)
     dependencies = await dependency_repo.get_by_project(db, project_id)
     
+    from sqlalchemy import select
+    from app.models import ProjectConstraintResource, ProjectConstraintTime
+    res_stmt = select(ProjectConstraintResource).where(ProjectConstraintResource.project_id == project_id)
+    res_result = await db.execute(res_stmt)
+    resources = res_result.scalars().all()
+    
+    time_stmt = select(ProjectConstraintTime).where(ProjectConstraintTime.project_id == project_id)
+    time_result = await db.execute(time_stmt)
+    time_constraint = time_result.scalars().first()
+    
     return ProjectDetail(
         id=project.id,
         project_name=project.project_name,
@@ -124,8 +134,8 @@ async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail
         updated_at=project.updated_at,
         tasks=tasks,
         constraint_logic=dependencies,
-        constraint_resources=[],
-        constraint_time=None
+        constraint_resources=list(resources),
+        constraint_time=time_constraint
     )
 
 

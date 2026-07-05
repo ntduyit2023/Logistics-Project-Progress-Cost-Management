@@ -7,7 +7,7 @@ sys.path.append(str(backend_dir))
 
 from app.db.database import engine, Base
 # Import all models to ensure they are registered with Base
-from app.models.models import *
+from app.models import *
 
 async def init_db():
     print("Dropping all tables...")

@@ -99,3 +99,23 @@ class TaskResponse(TaskBase):
     model_config = ConfigDict(from_attributes=True)
     id: str
     project_id: int
+
+# --- G7: Task Resource Assignment ---
+
+class TaskResourceBase(BaseModel):
+    request_quantity: float = Field(..., ge=0, description="Số lượng tài nguyên yêu cầu")
+    allocated_quantity: Optional[float] = Field(None, ge=0)
+    labor_productivity: Optional[float] = Field(None, ge=0)
+    equipment_utilization: Optional[float] = Field(None, ge=0)
+    resource_substitutability: Optional[int] = Field(None)
+
+class TaskResourceCreate(TaskResourceBase):
+    resource_id: int = Field(..., description="ID của ProjectConstraintResource")
+
+class TaskResourceResponse(TaskResourceBase):
+    model_config = ConfigDict(from_attributes=True)
+    task_id: str
+    resource_id: int
+    resource_name: Optional[str] = None # Will be populated if joined
+    resource_type: Optional[str] = None
+

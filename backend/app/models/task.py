@@ -38,7 +38,7 @@ class Task(Base):
     task_name: Mapped[str] = mapped_column(String(255))
     task_type: Mapped[Optional[str]] = mapped_column(String(100))
     status: Mapped[str] = mapped_column(String(50), default="Pending")
-    baseline_start: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    baseline_start: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     type: Mapped[Optional[str]] = mapped_column(String(255))
     
     # Hub Time Components

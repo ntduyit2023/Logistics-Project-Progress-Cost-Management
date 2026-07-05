@@ -1,8 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import AirflowGraph from './AirflowGraph';
 import { Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Bar, Legend, Line, ReferenceLine } from 'recharts';
-import mockData from '../mocks/project_583.json';
+import { api } from '../services/api';
+
+import TaskFormModal from '../components/TaskFormModal';
+import ResourceManagerModal from '../components/ResourceManagerModal';
+import TimeManagerModal from '../components/TimeManagerModal';
 
 const StatCard = ({ title, value, icon: Icon, color }: any) => (
   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center">
@@ -47,19 +52,118 @@ const RecommendationCard = ({ type, title, desc, impact, confidence, icon: Icon,
 );
 
 const Workspace = () => {
-  const { project_name, status, num_tasks, num_edges, network_density, tasks } = mockData.data;
+  const { projectId } = useParams();
+  const [projectData, setProjectData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Modal State
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<any | null>(null);
+  const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        setLoading(true);
+        const res = await api.getProject(Number(projectId));
+        setProjectData(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (projectId) fetchProject();
+  }, [projectId]);
+
+  const handleSaveTask = async (data: any) => {
+    try {
+      const { predecessor_id, dependency_type, lag_days, stagedResources, ...taskData } = data;
+      let newTaskId = editingTask?.id;
+
+      if (editingTask) {
+        await api.updateTask(Number(projectId), editingTask.id, taskData);
+      } else {
+        newTaskId = "T-" + Math.random().toString(36).substr(2, 6);
+        await api.createTask(Number(projectId), { id: newTaskId, ...taskData });
+      }
+
+      // Sync Logic Constraint (Predecessor)
+      if (newTaskId) {
+        const oldEdge = projectData.constraint_logic?.find((e: any) => e.successor_id === newTaskId);
+        try {
+          if (predecessor_id) {
+            if (oldEdge && oldEdge.predecessor_id !== predecessor_id) {
+              await api.deleteLogicConstraint(Number(projectId), oldEdge.predecessor_id, newTaskId);
+            }
+            if (!oldEdge || oldEdge.predecessor_id !== predecessor_id || oldEdge.dependency_type !== dependency_type || oldEdge.lag_days !== lag_days) {
+              if (oldEdge && oldEdge.predecessor_id === predecessor_id) {
+                // Delete to recreate with new lag/type
+                await api.deleteLogicConstraint(Number(projectId), oldEdge.predecessor_id, newTaskId);
+              }
+              await api.createLogicConstraint(Number(projectId), {
+                predecessor_id: predecessor_id,
+                successor_id: newTaskId,
+                dependency_type: dependency_type || 'FS',
+                lag_days: lag_days || 0
+              });
+            }
+          } else if (!predecessor_id && oldEdge) {
+            await api.deleteLogicConstraint(Number(projectId), oldEdge.predecessor_id, newTaskId);
+          }
+        } catch (e) {
+          console.error("Failed to sync logic constraint", e);
+        }
+      }
+
+      // Save staged resources
+      if (stagedResources && newTaskId) {
+        try {
+          // 1. Fetch current from backend to know what to delete
+          const currentRes = await api.getTaskResources(Number(projectId), newTaskId);
+          const currentIds = currentRes.data.map((r: any) => r.resource_id);
+          const stagedIds = stagedResources.map((r: any) => r.resource_id);
+          
+          // 2. Delete ones that are no longer staged
+          const toDelete = currentIds.filter((id: number) => !stagedIds.includes(id));
+          for (const id of toDelete) {
+            await api.removeTaskResource(Number(projectId), newTaskId, id);
+          }
+          
+          // 3. Upsert staged ones
+          for (const res of stagedResources) {
+            await api.assignTaskResource(Number(projectId), newTaskId, {
+              resource_id: res.resource_id,
+              request_quantity: res.request_quantity
+            });
+          }
+        } catch (err) {
+          console.error("Failed to sync task resources", err);
+        }
+      }
+
+      setIsTaskModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      alert('Failed to save task: ' + (err as Error).message);
+    }
+  };
 
   // Xử lý dữ liệu gộp chung cho biểu đồ
   const { combinedData, bellCurveData, ganttData } = useMemo(() => {
+    if (!projectData) return { combinedData: [], bellCurveData: [], ganttData: [] };
+    const tasks = projectData.tasks || [];
+    
     // 1. Dữ liệu Master Analytics
-    const leafTasks = tasks.filter((t: any) => !tasks.some((other: any) => other.wbs.startsWith(`${t.wbs}.`)));
+    const leafTasks = tasks; // Tạm thời dùng tất cả tasks
     const monthlyCost: Record<string, number> = {};
     const monthlyTasks: Record<string, Set<string>> = {};
 
     leafTasks.forEach((task: any) => {
-      const startStr = task.time_info?.baseline_start;
-      const duration = Math.max(1, Math.ceil(task.time_info?.duration || 0));
-      const totalCost = task.cost_info?.total_cost || 0;
+      const startStr = task.baseline_start;
+      const duration = Math.max(1, Math.ceil(task.duration_days || 0));
+      const totalCost = (task.internal_labor_cost || 0) + (task.equipment_cost || 0) + (task.material_cost || 0);
       
       if (!startStr) return;
       const startMs = new Date(startStr).getTime();
@@ -72,7 +176,7 @@ const Workspace = () => {
         monthlyCost[monthStr] = (monthlyCost[monthStr] || 0) + dailyCost;
         
         if (!monthlyTasks[monthStr]) monthlyTasks[monthStr] = new Set();
-        monthlyTasks[monthStr].add(task.task_id);
+        monthlyTasks[monthStr].add(task.id);
       }
     });
 
@@ -106,32 +210,40 @@ const Workspace = () => {
     }
 
     // 3. Dữ liệu Mini Gantt Chart (Lấy 20 công việc thực tế đầu tiên, bỏ qua Summary Task)
-    const sortedTasks = [...leafTasks].sort((a, b) => new Date(a.time_info?.baseline_start).getTime() - new Date(b.time_info?.baseline_start).getTime());
+    const sortedTasks = [...leafTasks]
+      .filter(t => t.baseline_start)
+      .sort((a, b) => new Date(a.baseline_start).getTime() - new Date(b.baseline_start).getTime());
     const displayTasks = sortedTasks.slice(0, 20);
-    const minStart = new Date(displayTasks[0]?.time_info?.baseline_start || 0).getTime();
+    const minStart = new Date(displayTasks[0]?.baseline_start || 0).getTime();
     let maxEnd = minStart;
     displayTasks.forEach(t => {
-      const end = new Date(t.time_info?.baseline_end || t.time_info?.baseline_start).getTime();
+      const end = new Date(t.baseline_start).getTime() + (t.duration_days || 0) * 24*60*60*1000;
       if(end > maxEnd) maxEnd = end;
     });
     // Thêm 5% padding cho thời gian trục X để render đẹp hơn
     const totalMs = (maxEnd - minStart) * 1.05 || 1;
 
     const gantt = displayTasks.map((t: any) => {
-      const startMs = new Date(t.time_info?.baseline_start).getTime();
-      const endMs = new Date(t.time_info?.baseline_end || t.time_info?.baseline_start).getTime();
+      const startMs = new Date(t.baseline_start).getTime();
+      const endMs = startMs + (t.duration_days || 0) * 24*60*60*1000;
       return {
-        id: t.task_id,
+        id: t.id,
         name: t.task_name,
-        wbs: t.wbs,
-        isCritical: t.is_critical || (t.risk_info?.criticality_index > 0.8),
+        wbs: t.wbs || t.id,
+        isCritical: t.duration_days > 50,
         leftPercent: ((startMs - minStart) / totalMs) * 100,
         widthPercent: Math.max(0.5, ((endMs - startMs) / totalMs) * 100)
       };
     });
 
     return { combinedData: combined, bellCurveData: bellCurve, ganttData: gantt };
-  }, [tasks]);
+  }, [projectData]);
+
+  if (loading || !projectData) {
+    return <div className="h-full flex items-center justify-center">Loading Workspace...</div>;
+  }
+
+  const { project_name, status, num_tasks, num_edges, network_density, tasks, constraint_logic, constraint_resources } = projectData;
 
   return (
     <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-slate-50 p-6 custom-scrollbar">
@@ -142,6 +254,29 @@ const Workspace = () => {
             Grafana-style Workspace
           </h1>
           <p className="text-slate-500 mt-1">{project_name}</p>
+        </div>
+        <div className="flex gap-3">
+          <button 
+            onClick={() => setIsTimeModalOpen(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+          >
+            Manage Calendar
+          </button>
+          <button 
+            onClick={() => setIsResourceModalOpen(true)}
+            className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+          >
+            Manage Resources
+          </button>
+          <button 
+            onClick={() => {
+              setEditingTask(null);
+              setIsTaskModalOpen(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+          >
+            + Add Node
+          </button>
         </div>
       </div>
 
@@ -168,7 +303,34 @@ const Workspace = () => {
             </div>
             <div className="flex-1 relative min-h-0">
               <div className="absolute inset-0">
-                <AirflowGraph />
+                <AirflowGraph 
+                  tasks={tasks} 
+                  dependencies={constraint_logic} 
+                  onConnectEdge={async (source, target) => {
+                    try {
+                      await api.createLogicConstraint(Number(projectId), {
+                        predecessor_id: source,
+                        successor_id: target,
+                        dependency_type: "FS"
+                      });
+                      window.location.reload();
+                    } catch (err) {
+                      alert("Failed to connect nodes: " + (err as Error).message);
+                    }
+                  }}
+                  onDeleteTask={async (taskId) => {
+                    try {
+                      await api.deleteTask(Number(projectId), taskId);
+                      window.location.reload();
+                    } catch (err) {
+                      alert("Failed to delete task: " + (err as Error).message);
+                    }
+                  }}
+                  onEditTask={(task) => {
+                    setEditingTask(task);
+                    setIsTaskModalOpen(true);
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -208,131 +370,124 @@ const Workspace = () => {
                 colorClass="text-blue-600"
                 title="Tăng tốc WBS 4.1 (Critical)"
                 desc="Công việc WBS 4.1 nằm trên đường găng (Critical Path) có rủi ro trễ hạn cao. Đề xuất bổ sung thêm 2 nhân sự."
-                impact="Time -8d, Cost +$5k"
-                confidence="78%"
+                impact="Tránh trễ 5 ngày"
+                confidence="88%"
               />
             </div>
           </div>
 
         </div>
 
-        {/* ROW 3: MASTER ANALYTICS & PERT BELL CURVE */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* COMBINED CHART (Chiếm 2/3) */}
-          <div className="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
-            <div className="mb-4 shrink-0">
-              <h3 className="font-bold text-slate-800">Master Analytics (Financial S-Curve & Task Density)</h3>
-              <p className="text-xs text-slate-500">Combined view of Monthly Cost, Cumulative Cost, and Concurrent Tasks</p>
+        {/* ROW 3: CHARTS */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-80">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-slate-800">Master Analytics</h3>
+              <select className="text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1 outline-none">
+                <option>Cost & Activity</option>
+              </select>
             </div>
-            <div className="flex-1 min-h-0 w-full">
+            <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={combinedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorCumulative" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.5}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
+                <ComposedChart data={combinedData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="month" tickFormatter={(tick) => `${tick.split('-')[1]}/${tick.split('-')[0].slice(2)}`} minTickGap={20} stroke="#94a3b8" fontSize={11} />
-                  <YAxis yAxisId="cost" orientation="left" tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} stroke="#94a3b8" fontSize={11} />
-                  <YAxis yAxisId="cumulative" orientation="right" tickFormatter={(val) => `$${(val/1000000).toFixed(1)}M`} stroke="#3b82f6" fontSize={11} />
-                  <YAxis yAxisId="density" orientation="right" tickFormatter={(val) => `${val} tasks`} stroke="#10b981" fontSize={11} />
-                  <Tooltip formatter={(value: any, name: string) => {
-                    if (name === 'monthlyCost') return [`$${Number(value).toLocaleString()}`, 'Monthly Cost'];
-                    if (name === 'cumulativeCost') return [`$${Number(value).toLocaleString()}`, 'Cumulative Cost'];
-                    return [`${value} tasks`, 'Concurrent Tasks'];
-                  }} labelFormatter={(label) => `Month: ${label}`} />
-                  <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '12px' }}/>
-                  <Bar yAxisId="cost" dataKey="monthlyCost" name="monthlyCost" fill="#cbd5e1" barSize={16} radius={[2, 2, 0, 0]} />
-                  <Area yAxisId="cumulative" type="monotone" dataKey="cumulativeCost" name="cumulativeCost" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorCumulative)" />
-                  <Line yAxisId="density" type="monotone" dataKey="activeCount" name="activeCount" stroke="#10b981" strokeWidth={3} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 6 }} />
+                  <XAxis dataKey="month" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="left" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value/1000}k`} />
+                  <YAxis yAxisId="right" orientation="right" fontSize={10} tickLine={false} axisLine={false} />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    formatter={(value: any, name: string): [string, string] => {
+                      if (name === 'Cumulative Cost') return [`$${value.toLocaleString()}`, name];
+                      if (name === 'Monthly Cost') return [`$${value.toLocaleString()}`, name];
+                      return [`${value} tasks`, name];
+                    }}
+                  />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+                  <Bar yAxisId="right" dataKey="activeCount" name="Active Tasks" fill="#94a3b8" radius={[4, 4, 0, 0]} barSize={20} />
+                  <Area yAxisId="left" type="monotone" dataKey="cumulativeCost" name="Cumulative Cost" fill="#cbd5e1" stroke="#94a3b8" fillOpacity={0.3} />
+                  <Line yAxisId="left" type="monotone" dataKey="monthlyCost" name="Monthly Cost" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* PERT BELL CURVE (Chiếm 1/3) */}
-          <div className="lg:col-span-1 bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
-            <div className="mb-4 shrink-0">
-              <h3 className="font-bold text-slate-800">PERT Risk Analysis (AI Model)</h3>
-              <p className="text-xs text-slate-500">Probability Distribution of Project Completion</p>
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-80">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-slate-800">Monte Carlo Simulation</h3>
+              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Normal Dist.</span>
             </div>
-            <div className="flex-1 min-h-0 w-full relative">
+            <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={bellCurveData} margin={{ top: 30, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorBell" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.6}/>
-                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="days" stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}d`} />
-                  <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={() => ''} />
+                <AreaChart data={bellCurveData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  <XAxis dataKey="days" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val: number) => `${val}%`} />
                   <Tooltip 
-                    formatter={(val: number) => [`${val.toFixed(1)}% Relative Probability`, 'Probability']}
-                    labelFormatter={(label) => `Completion Time: ${label} Days`}
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    formatter={(val: number): [string, string] => [`${val.toFixed(2)}%`, 'Probability']}
                   />
-                  <ReferenceLine 
-                    x={1070} 
-                    stroke="#8b5cf6" 
-                    strokeDasharray="3 3" 
-                    label={{ position: 'top', value: 'Most Likely: 1070d', fill: '#6d28d9', fontSize: 12, fontWeight: 'bold' }} 
-                  />
-                  <Area type="monotone" dataKey="probability" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorBell)" />
+                  <ReferenceLine x={1070} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'Mean (1070d)', fill: '#ef4444', fontSize: 10 }} />
+                  <Area type="monotone" dataKey="probability" stroke="#3b82f6" fill="#bfdbfe" fillOpacity={0.5} strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
-
         </div>
 
-        {/* ROW 4: MINI GANTT CHART (FULL WIDTH) */}
-        <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden mb-8">
-          <div className="bg-slate-50 border-b border-slate-200 px-5 py-4 flex justify-between items-center">
-            <div>
-              <h3 className="font-bold text-slate-800">Timeline WBS View (Gantt Chart)</h3>
-              <p className="text-xs text-slate-500 mt-1">Showing first 20 chronological tasks</p>
-            </div>
+        {/* GANTT CHART */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-bold text-slate-800">Critical Path Gantt View</h3>
+            <span className="text-xs text-slate-500">First 20 tasks</span>
           </div>
-          <div className="p-0">
-            {/* Gantt Header */}
-            <div className="flex border-b border-slate-200 bg-slate-100 py-2 px-4 text-xs font-bold text-slate-600">
-              <div className="w-1/3">Task Name</div>
-              <div className="w-2/3 border-l border-slate-300 pl-4 relative">
-                <span className="absolute left-0">Start</span>
-                <span className="absolute right-0 text-right pr-4">End</span>
-                <span className="w-full text-center block text-slate-400 font-medium">Project Timeline Axis</span>
-              </div>
-            </div>
-            {/* Gantt Rows */}
-            <div className="flex flex-col">
-              {ganttData.map((task, idx) => (
-                <div key={task.id} className={`flex py-2 px-4 border-b border-slate-100 hover:bg-slate-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
-                  <div className="w-1/3 flex flex-col justify-center pr-4">
-                    <span className="text-xs font-bold text-slate-500">WBS {task.wbs}</span>
-                    <span className="text-sm font-medium text-slate-800 truncate" title={task.name}>{task.name}</span>
-                  </div>
-                  <div className="w-2/3 border-l border-slate-200 pl-4 relative h-10 flex items-center">
-                    <div 
-                      className={`absolute h-5 rounded shadow-sm ${task.isCritical ? 'bg-red-500' : 'bg-blue-500'}`}
-                      style={{ 
-                        left: `calc(${task.leftPercent}% + 1rem)`, 
-                        width: `${task.widthPercent}%`,
-                        minWidth: '4px'
-                      }}
-                      title={`${task.name} (${task.isCritical ? 'Critical' : 'Standard'})`}
-                    ></div>
-                  </div>
+          <div className="space-y-3">
+            {ganttData.map((task: any) => (
+              <div key={task.id} className="flex items-center text-xs">
+                <div className="w-48 shrink-0 font-medium text-slate-700 truncate pr-4" title={task.name}>
+                  <span className="text-slate-400 mr-2">{task.wbs}</span>
+                  {task.name}
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 h-6 bg-slate-100 rounded-md relative">
+                  <div 
+                    className={`absolute h-full rounded-md shadow-sm transition-all ${
+                      task.isCritical ? 'bg-red-400' : 'bg-blue-400'
+                    }`}
+                    style={{ left: `${task.leftPercent}%`, width: `${task.widthPercent}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+            {ganttData.length === 0 && (
+              <div className="text-center text-slate-400 py-6">No scheduled tasks available</div>
+            )}
           </div>
         </div>
 
       </div>
+      
+      <TaskFormModal 
+        isOpen={isTaskModalOpen}
+        onClose={() => setIsTaskModalOpen(false)}
+        onSubmit={handleSaveTask}
+        initialData={editingTask}
+        availableTasks={tasks}
+        projectResources={constraint_resources || []}
+        constraintLogic={constraint_logic || []}
+      />
+      
+      <ResourceManagerModal
+        isOpen={isResourceModalOpen}
+        onClose={() => setIsResourceModalOpen(false)}
+        projectId={Number(projectId)}
+        initialResources={constraint_resources || []}
+      />
+
+      <TimeManagerModal
+        isOpen={isTimeModalOpen}
+        onClose={() => setIsTimeModalOpen(false)}
+        projectId={Number(projectId)}
+        initialTimeConstraint={projectData.constraint_time}
+      />
     </div>
   );
 };
