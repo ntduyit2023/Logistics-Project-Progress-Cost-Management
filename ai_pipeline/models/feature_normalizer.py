@@ -50,6 +50,9 @@ class FeatureNormalizer(nn.Module):
         total_indices = len(self.log1p_indices) + len(self.passthrough_indices) + \
                         len(self.div100_indices) + len(self.minmax_indices) + len(self.clamp_scale_indices)
         assert total_indices == self.feature_dim, f"Tổng số features không khớp! ({total_indices} != {self.feature_dim})"
+        
+        # Layer Normalization: Chống lạm phát quy mô dự án (Scale Invariance)
+        self.layer_norm = nn.LayerNorm(feature_dim)
 
     def forward(self, x):
         """
@@ -76,5 +79,8 @@ class FeatureNormalizer(nn.Module):
         # 5. Clamp + Scale: x' = clamp(x, 0, 3) / 3
         if len(self.clamp_scale_indices) > 0:
             x_norm[:, self.clamp_scale_indices] = torch.clamp(x[:, self.clamp_scale_indices], min=0.0, max=3.0) / 3.0
+            
+        # Áp dụng Layer Normalization để ép về phân phối chuẩn
+        x_norm = self.layer_norm(x_norm)
             
         return x_norm

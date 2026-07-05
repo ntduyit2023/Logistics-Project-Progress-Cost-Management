@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
+from feature_normalizer import FeatureNormalizer
 
 class HierarchicalAttentionEncoder(nn.Module):
     """
@@ -33,6 +34,9 @@ class HierarchicalAttentionEncoder(nn.Module):
         # Đóng băng ma trận (không train phần này, đây là Domain Knowledge)
         # Nhưng có thể cho phép train một chút (fine-tuning) bằng cách gán requires_grad=True sau này
         self.interaction_matrix = nn.Parameter(torch.tensor(np_matrix, dtype=torch.float), requires_grad=False)
+        
+        # Thêm Learnable Interaction (Residual Priors)
+        self.learnable_interaction = nn.Parameter(torch.zeros_like(self.interaction_matrix), requires_grad=True)
         
         # Định nghĩa ranh giới các Group (Index mapping)
         self.group_indices = {
@@ -69,7 +73,8 @@ class HierarchicalAttentionEncoder(nn.Module):
                     X_fg[f, g_id] = float(np_matrix[f, indices].sum())
                     
         # Đóng băng ma trận F-G (Domain Knowledge)
-        self.X_fg = nn.Parameter(X_fg, requires_grad=False)
+        # Nâng cấp: Cho phép học để tối ưu hóa ảnh hưởng chéo (Cross-group Influence)
+        self.X_fg = nn.Parameter(X_fg, requires_grad=True)
         
         self.normalizer = FeatureNormalizer(feature_dim)
 
@@ -114,8 +119,9 @@ class HierarchicalAttentionEncoder(nn.Module):
         for g_id, indices in self.group_indices.items():
             if len(indices) == 0: continue
             
-            # Extract sub-matrix A_intra cho nhóm g
-            A_intra = self.interaction_matrix[indices][:, indices]  # shape (n_g, n_g)
+            # Extract sub-matrix A_intra cho nhóm g (Kết hợp Domain Knowledge và Learnable Prior)
+            combined_matrix = self.interaction_matrix + self.learnable_interaction
+            A_intra = combined_matrix[indices][:, indices]  # shape (n_g, n_g)
             
             # Trích xuất features của nhóm
             v_g = x_norm[:, indices]  # shape (batch, n_g)
