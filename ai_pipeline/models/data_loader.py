@@ -273,7 +273,25 @@ class GlPoProjectGraph:
             
             node_features.append(x_row)
             
-        x = torch.tensor(node_features, dtype=torch.float)
+        # 5.5 Optimal Feature Group Normalization Layer (72-D Matrix)
+        node_features_mat = np.array(node_features, dtype=np.float32)
+        
+        # 1. Log Transform for Costs (G1, G2, G4, G5: 7-31, 45, 46, 56, 58) -> Maps [0, 5e8] to [0, 20.03]
+        cost_indices = list(range(7, 32)) + [45, 46, 56, 58]
+        node_features_mat[:, cost_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, cost_indices]))
+
+        # 2. Log Scaling for Durations (Hub 1-4, G6 32-36) -> Maps [0, 1500h] to [0, 7.31]
+        dur_indices = [1, 2, 3, 4, 32, 33, 34, 35, 36]
+        node_features_mat[:, dur_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, dur_indices]))
+
+        # 3. Min-Max Graph Scaling for Topology & Resource Demands (G7: 37-38, G8: 63-64, 66-67) -> Maps to [0, 1]
+        topo_res_indices = [37, 38, 63, 64, 66, 67]
+        for c in topo_res_indices:
+            max_v = float(np.max(np.abs(node_features_mat[:, c])))
+            if max_v > 1e-6:
+                node_features_mat[:, c] /= max_v
+                
+        x = torch.tensor(node_features_mat, dtype=torch.float)
         
         # 6. Edge Topology & Features (8 Dims)
         source_nodes = []
