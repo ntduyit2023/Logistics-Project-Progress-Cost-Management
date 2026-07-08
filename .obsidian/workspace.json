@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "PPC_casestudy_2010_V1_vi.md",
+                "file": "ai_pipeline/unsupervised_self_supervised_representation_learning_thesis_chapter.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PPC_casestudy_2010_V1_vi"
+              "title": "unsupervised_self_supervised_representation_learning_thesis_chapter"
             }
           },
           {
@@ -27,16 +27,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ai_pipeline/data_workflow_architecture.md",
+                "file": "ai_pipeline/REPORT.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "data_workflow_architecture"
+              "title": "REPORT"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -93,8 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "568f07911e93d0fe",
@@ -199,8 +197,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "5fb6762d102661d0",
+  "active": "3dcee85953044e58",
   "lastOpenFiles": [
+    "ai_pipeline/project_type_integration_roadmap.md",
+    "ai_pipeline/REPORT.md",
+    "ai_pipeline/unsupervised_self_supervised_representation_learning_thesis_chapter.md",
+    "ai_pipeline/data_workflow_architecture.md",
     "docs/unsupervised_pretraining_report.md",
     "ai_pipeline/data/output_C2018-09_backup.json",
     "ai_pipeline/data/output_C2018-09_main.json",
@@ -236,8 +238,6 @@
     "PPC_case_study_report.md",
     "project_mindmap.canvas",
     "plan.md",
-    "project_mindmap 1.canvas",
-    "timeseries_logistics_presentation.md",
-    "event_impact_analysis_report.md"
+    "project_mindmap 1.canvas"
   ]
 }

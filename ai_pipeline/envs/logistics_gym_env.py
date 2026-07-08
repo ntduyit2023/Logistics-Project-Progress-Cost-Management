@@ -287,6 +287,9 @@ class LogisticsGymEnv(gym.Env):
                 es = state['cpm_results']['ES'][task_idx]
                 ef = state['cpm_results']['EF'][task_idx]
                 if es <= time_point < ef:
+                    # Nếu thuê ngoài, không tiêu thụ tài nguyên nội bộ
+                    if state['modes'][task_idx] == MODE_OUTSOURCE:
+                        continue
                     demands = self._resource_demands.get(task_idx, {})
                     for res_id, qty in demands.items():
                         usage[res_id] += qty

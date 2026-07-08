@@ -204,268 +204,467 @@
     "tasks_metadata": [
         {
             "id": "C2018-09_1.1.1.1",
+            "name": "1.1.1.1 - 1. Analysis of car usage in general, link to car sharing, environment, cost of parking",
             "most_probable_duration": 80.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 800.0
+            "outsource_cost": 800.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.2",
+            "name": "1.1.1.2 - 2. Type of cars",
             "most_probable_duration": 48.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 480.0
+            "outsource_cost": 480.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.3",
+            "name": "1.1.1.3 - 3. Determine amount of ars needed and parking place",
             "most_probable_duration": 48.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 480.0
+            "outsource_cost": 480.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.4",
+            "name": "1.1.1.4 - 4. Research for charging stations (suppliers)",
             "most_probable_duration": 16.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 160.0
+            "outsource_cost": 160.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.5",
+            "name": "1.1.1.5 - 5. Research use of exsisting charging stations",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.6",
+            "name": "1.1.1.6 - 6. Research for traffic sign supplier (Trafiroad)",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.7",
+            "name": "1.1.1.7 - 7. Research amount of staff needed (extra contractors)",
             "most_probable_duration": 24.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 240.0
+            "outsource_cost": 240.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.8",
+            "name": "1.1.1.8 - 8. Feasibility study",
             "most_probable_duration": 56.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 560.0
+            "outsource_cost": 560.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.1.9",
+            "name": "1.1.1.9 - 9. Search for funding (VC, Business angels, bankloan)",
             "most_probable_duration": 96.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 960.0
+            "outsource_cost": 960.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.2.1",
+            "name": "1.1.2.1 - 10. Contact city to get the approval",
             "most_probable_duration": 160.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 1600.0
+            "outsource_cost": 1600.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.2.2",
+            "name": "1.1.2.2 - 11. Asking city for blue prints power network",
             "most_probable_duration": 160.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 1600.0
+            "outsource_cost": 1600.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.2.3",
+            "name": "1.1.2.3 - 12. Meeting with car leasers + quotation",
             "most_probable_duration": 200.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 2000.0
+            "outsource_cost": 2000.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.2.4",
+            "name": "1.1.2.4 - 13. Meeting with docking station suppliers",
             "most_probable_duration": 200.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 2000.0
+            "outsource_cost": 2000.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.2.5",
+            "name": "1.1.2.5 - 14. Meeting with possible contractors",
             "most_probable_duration": 80.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 800.0
+            "outsource_cost": 800.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.3.1",
+            "name": "1.1.3.1 - 15. Web/app developer search",
             "most_probable_duration": 40.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 400.0
+            "outsource_cost": 400.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.3.2",
+            "name": "1.1.3.2 - 16. Developing website/app",
             "most_probable_duration": 560.0,
             "normal_cost": 90000.0,
             "crash_cost": 135000.0,
-            "outsource_cost": 185600.0
+            "outsource_cost": 185600.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.3.3",
+            "name": "1.1.3.3 - 17. Developing payment system",
             "most_probable_duration": 440.0,
             "normal_cost": 20000.0,
             "crash_cost": 30000.0,
-            "outsource_cost": 44400.0
+            "outsource_cost": 44400.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.3.4",
+            "name": "1.1.3.4 - 18. Testing & approving app",
             "most_probable_duration": 120.0,
             "normal_cost": 4500.0,
             "crash_cost": 6750.0,
-            "outsource_cost": 10200.0
+            "outsource_cost": 10200.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.3.5",
+            "name": "1.1.3.5 - 19. Testing & approving payment system",
             "most_probable_duration": 120.0,
             "normal_cost": 1500.0,
             "crash_cost": 2250.0,
-            "outsource_cost": 4200.0
+            "outsource_cost": 4200.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.4.1",
+            "name": "1.1.4.1 - 20. Negotiate maintenance contract with possible partners",
             "most_probable_duration": 160.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 1600.0
+            "outsource_cost": 1600.0,
+            "resources": [
+                {
+                    "resource_id": "Project Leader",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.5.1",
+            "name": "1.1.5.1 - 21. Drilling the holes where the charging blocks will be put by Eandis and where the traffic signs will be put",
             "most_probable_duration": 96.0,
             "normal_cost": 10599.0,
             "crash_cost": 15898.5,
-            "outsource_cost": 22158.0
+            "outsource_cost": 22158.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.5.2",
+            "name": "1.1.5.2 - 22. Delivery and placing of the charging blocks (UwLaadpunt)",
             "most_probable_duration": 96.0,
             "normal_cost": 78715.0,
             "crash_cost": 118072.5,
-            "outsource_cost": 158390.0
+            "outsource_cost": 158390.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.5.3",
+            "name": "1.1.5.3 - 23. Access power network: connecting charging blocks to power grid (Eandis)",
             "most_probable_duration": 96.0,
             "normal_cost": 19500.0,
             "crash_cost": 29250.0,
-            "outsource_cost": 39960.0
+            "outsource_cost": 39960.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.5.4",
+            "name": "1.1.5.4 - 24. Installation of visibility marks (Trafiroad)",
             "most_probable_duration": 48.0,
             "normal_cost": 2480.0,
             "crash_cost": 3720.0,
-            "outsource_cost": 5440.0
+            "outsource_cost": 5440.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.5.5",
+            "name": "1.1.5.5 - 25. Installation of trafic signs (Trafiroad)",
             "most_probable_duration": 48.0,
             "normal_cost": 8500.0,
             "crash_cost": 12750.0,
-            "outsource_cost": 17480.0
+            "outsource_cost": 17480.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.5.6",
+            "name": "1.1.5.6 - 26. Testing of the charging blocks",
             "most_probable_duration": 48.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 480.0
+            "outsource_cost": 480.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.6.1",
+            "name": "1.1.6.1 - 27. Delivery cars",
             "most_probable_duration": 48.0,
             "normal_cost": 144000.0,
             "crash_cost": 216000.0,
-            "outsource_cost": 288480.0
+            "outsource_cost": 288480.0,
+            "resources": []
         },
         {
             "id": "C2018-09_1.1.7.1",
+            "name": "1.1.7.1 - 28. Placing cars",
             "most_probable_duration": 40.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 400.0
+            "outsource_cost": 400.0,
+            "resources": [
+                {
+                    "resource_id": "Worker",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.7.2",
+            "name": "1.1.7.2 - 29. Final testing of the finished system",
             "most_probable_duration": 160.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 1600.0
+            "outsource_cost": 1600.0,
+            "resources": [
+                {
+                    "resource_id": "Engineer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.8.1",
+            "name": "1.1.8.1 - 30. Publicity campaign for our company",
             "most_probable_duration": 120.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 1200.0
+            "outsource_cost": 1200.0,
+            "resources": [
+                {
+                    "resource_id": "Marketeer",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.9.1",
+            "name": "1.1.9.1 - 31. Payment of Web/app developers",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Administrator",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.9.2",
+            "name": "1.1.9.2 - 32. Payment 'UwLaadpunt'",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Administrator",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.9.3",
+            "name": "1.1.9.3 - 33. Payment 'Eandis'",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Administrator",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.9.4",
+            "name": "1.1.9.4 - 34. Payment 'Traffiroad'",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Administrator",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.9.5",
+            "name": "1.1.9.5 - 35. Payment of the construction firm",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Administrator",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.9.6",
+            "name": "1.1.9.6 - 36. Payment carleasing",
             "most_probable_duration": 8.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 80.0
+            "outsource_cost": 80.0,
+            "resources": [
+                {
+                    "resource_id": "Administrator",
+                    "quantity": 1.0
+                }
+            ]
         },
         {
             "id": "C2018-09_1.1.10.1",
+            "name": "1.1.10.1 - 37. Launch",
             "most_probable_duration": 0.0,
             "normal_cost": 0.0,
             "crash_cost": 0.0,
-            "outsource_cost": 0.0
+            "outsource_cost": 0.0,
+            "resources": []
         }
     ],
     "monte_carlo": {
-        "mean_makespan": 1728.9812615373423,
+        "mean_makespan": 1730.7896014009737,
         "on_time_prob": 1.0,
-        "P90": 1737.0457303555036,
+        "P90": 1739.6880904281977,
         "criticality_indices": {
             "C2018-09_1.1.1.1": 1.0,
             "C2018-09_1.1.1.2": 1.0,
@@ -477,130 +676,86 @@
             "C2018-09_1.1.1.8": 1.0,
             "C2018-09_1.1.1.9": 1.0,
             "C2018-09_1.1.2.1": 1.0,
-            "C2018-09_1.1.2.2": 0.034,
+            "C2018-09_1.1.2.2": 0.064,
             "C2018-09_1.1.2.3": 0.0,
-            "C2018-09_1.1.3.1": 0.966,
-            "C2018-09_1.1.2.4": 0.034,
+            "C2018-09_1.1.3.1": 0.936,
+            "C2018-09_1.1.2.4": 0.064,
             "C2018-09_1.1.4.1": 0.0,
-            "C2018-09_1.1.3.2": 0.966,
-            "C2018-09_1.1.2.5": 0.034,
-            "C2018-09_1.1.3.3": 0.966,
-            "C2018-09_1.1.5.1": 0.034,
-            "C2018-09_1.1.3.4": 0.479,
-            "C2018-09_1.1.3.5": 0.487,
-            "C2018-09_1.1.5.2": 0.034,
+            "C2018-09_1.1.3.2": 0.936,
+            "C2018-09_1.1.2.5": 0.064,
+            "C2018-09_1.1.3.3": 0.936,
+            "C2018-09_1.1.5.1": 0.064,
+            "C2018-09_1.1.3.4": 0.474,
+            "C2018-09_1.1.3.5": 0.462,
+            "C2018-09_1.1.5.2": 0.064,
             "C2018-09_1.1.9.5": 0.0,
-            "C2018-09_1.1.9.1": 0.966,
-            "C2018-09_1.1.5.3": 0.034,
+            "C2018-09_1.1.9.1": 0.936,
+            "C2018-09_1.1.5.3": 0.064,
             "C2018-09_1.1.5.4": 0.0,
             "C2018-09_1.1.5.5": 0.0,
             "C2018-09_1.1.9.2": 0.0,
-            "C2018-09_1.1.5.6": 0.034,
+            "C2018-09_1.1.5.6": 0.064,
             "C2018-09_1.1.9.3": 0.0,
             "C2018-09_1.1.9.4": 0.0,
-            "C2018-09_1.1.6.1": 0.034,
-            "C2018-09_1.1.7.1": 0.034,
+            "C2018-09_1.1.6.1": 0.064,
+            "C2018-09_1.1.7.1": 0.064,
             "C2018-09_1.1.9.6": 0.0,
-            "C2018-09_1.1.7.2": 0.034,
-            "C2018-09_1.1.10.1": 0.966,
-            "C2018-09_1.1.8.1": 0.034
+            "C2018-09_1.1.7.2": 0.064,
+            "C2018-09_1.1.10.1": 0.936,
+            "C2018-09_1.1.8.1": 0.064
         }
     },
     "pareto_nsga2": {
         "solutions_found": 39,
         "selected": {
-            "makespan": 1323.9999999999998,
-            "cost": 447643.0,
-            "risk": 5.618400000000002,
+            "makespan": 1247.2,
+            "cost": 521843.5,
+            "risk": 5.840799999999998,
             "modes": [
                 1,
                 1,
                 1,
                 1,
                 0,
-                2,
                 1,
                 1,
-                1,
-                2,
-                0,
-                1,
-                1,
-                2,
-                0,
-                1,
-                1,
-                1,
-                0,
-                2,
-                2,
-                0,
-                0,
-                0,
-                0,
-                1,
-                0,
-                1,
-                1,
-                1,
-                2,
                 1,
                 1,
                 1,
                 1,
                 0,
-                0
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                1,
+                1,
+                0,
+                1,
+                0,
+                0,
+                1,
+                1,
+                0,
+                1,
+                0,
+                1,
+                0,
+                1,
+                1,
+                1,
+                0,
+                1
             ]
         },
         "options": [
             {
-                "makespan": 1323.9999999999998,
-                "cost": 447643.0,
-                "risk": 5.618400000000002,
-                "modes": [
-                    1,
-                    1,
-                    1,
-                    1,
-                    0,
-                    2,
-                    1,
-                    1,
-                    1,
-                    2,
-                    0,
-                    1,
-                    1,
-                    2,
-                    0,
-                    1,
-                    1,
-                    1,
-                    0,
-                    2,
-                    2,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    1,
-                    1,
-                    1,
-                    2,
-                    1,
-                    1,
-                    1,
-                    1,
-                    0,
-                    0
-                ]
-            },
-            {
-                "makespan": 1343.1999999999998,
-                "cost": 440093.5,
-                "risk": 5.833300000000002,
+                "makespan": 1247.2,
+                "cost": 521843.5,
+                "risk": 5.840799999999998,
                 "modes": [
                     1,
                     1,
@@ -610,30 +765,30 @@
                     1,
                     1,
                     1,
-                    0,
-                    1,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
                     1,
                     1,
-                    0,
-                    0,
-                    1,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
                     1,
                     0,
                     1,
                     1,
                     1,
-                    2,
                     1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
                     1,
                     1,
                     1,
@@ -642,98 +797,142 @@
                 ]
             },
             {
-                "makespan": 1351.2,
-                "cost": 442343.5,
-                "risk": 5.588800000000002,
+                "makespan": 1258.4,
+                "cost": 529393.0,
+                "risk": 5.633799999999999,
                 "modes": [
                     1,
                     1,
-                    2,
-                    1,
-                    1,
-                    1,
-                    0,
-                    2,
-                    0,
-                    1,
-                    1,
-                    1,
-                    1,
                     1,
                     2,
+                    0,
+                    1,
                     1,
                     1,
                     1,
-                    0,
-                    0,
                     1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
                     1,
                     0,
                     1,
                     1,
+                    1,
+                    1,
+                    1,
+                    1,
                     0,
+                    1,
+                    2,
+                    0,
+                    1,
                     0,
                     0,
                     1,
-                    0
+                    1,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
                 ]
             },
             {
-                "makespan": 1351.2,
-                "cost": 442343.5,
-                "risk": 5.588800000000002,
+                "makespan": 1258.4,
+                "cost": 529393.0,
+                "risk": 5.633799999999999,
                 "modes": [
                     1,
                     1,
-                    2,
-                    1,
-                    0,
-                    0,
-                    0,
-                    2,
-                    0,
-                    1,
-                    1,
-                    0,
-                    1,
                     1,
                     2,
+                    0,
+                    1,
                     1,
                     1,
                     1,
-                    0,
-                    0,
                     1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
                     1,
                     0,
                     1,
                     1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    0,
+                    1,
+                    2,
+                    0,
+                    1,
                     0,
                     0,
+                    1,
+                    1,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    0,
+                    1
+                ]
+            },
+            {
+                "makespan": 1283.2,
+                "cost": 528343.5,
+                "risk": 5.793399999999998,
+                "modes": [
+                    1,
+                    1,
+                    1,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
                     0,
                     0,
-                    0
+                    1,
+                    0,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    0,
+                    1
                 ]
             }
         ]
     },
     "cp_sat_schedule": {
         "status": "OPTIMAL",
-        "makespan": 1192,
+        "makespan": 1200,
         "schedule": {
             "C2018-09_1.1.1.1": {
                 "start": 0,
@@ -761,9 +960,9 @@
                 "duration": 8
             },
             "C2018-09_1.1.1.6": {
-                "start": 124,
+                "start": 123,
                 "end": 128,
-                "duration": 4
+                "duration": 5
             },
             "C2018-09_1.1.1.7": {
                 "start": 128,
@@ -782,150 +981,150 @@
             },
             "C2018-09_1.1.2.1": {
                 "start": 245,
-                "end": 325,
-                "duration": 80
+                "end": 352,
+                "duration": 107
             },
             "C2018-09_1.1.2.2": {
-                "start": 325,
-                "end": 485,
-                "duration": 160
+                "start": 352,
+                "end": 459,
+                "duration": 107
             },
             "C2018-09_1.1.2.3": {
-                "start": 797,
-                "end": 930,
-                "duration": 133
+                "start": 701,
+                "end": 901,
+                "duration": 200
             },
             "C2018-09_1.1.2.4": {
-                "start": 485,
-                "end": 618,
+                "start": 459,
+                "end": 592,
                 "duration": 133
             },
             "C2018-09_1.1.2.5": {
-                "start": 618,
-                "end": 658,
-                "duration": 40
+                "start": 592,
+                "end": 645,
+                "duration": 53
             },
             "C2018-09_1.1.3.1": {
-                "start": 361,
-                "end": 401,
-                "duration": 40
+                "start": 381,
+                "end": 408,
+                "duration": 27
             },
             "C2018-09_1.1.3.2": {
-                "start": 401,
-                "end": 774,
+                "start": 408,
+                "end": 781,
                 "duration": 373
             },
             "C2018-09_1.1.3.3": {
-                "start": 774,
-                "end": 1067,
+                "start": 781,
+                "end": 1074,
                 "duration": 293
             },
             "C2018-09_1.1.3.4": {
-                "start": 1107,
-                "end": 1187,
-                "duration": 80
+                "start": 1074,
+                "end": 1194,
+                "duration": 120
             },
             "C2018-09_1.1.3.5": {
-                "start": 1067,
-                "end": 1187,
+                "start": 1074,
+                "end": 1194,
                 "duration": 120
             },
             "C2018-09_1.1.4.1": {
-                "start": 1112,
-                "end": 1192,
-                "duration": 80
+                "start": 1093,
+                "end": 1200,
+                "duration": 107
             },
             "C2018-09_1.1.5.1": {
-                "start": 658,
-                "end": 706,
-                "duration": 48
+                "start": 645,
+                "end": 709,
+                "duration": 64
             },
             "C2018-09_1.1.5.2": {
-                "start": 706,
-                "end": 802,
+                "start": 709,
+                "end": 805,
                 "duration": 96
             },
             "C2018-09_1.1.5.3": {
-                "start": 802,
-                "end": 898,
-                "duration": 96
+                "start": 805,
+                "end": 869,
+                "duration": 64
             },
             "C2018-09_1.1.5.4": {
-                "start": 882,
-                "end": 930,
+                "start": 853,
+                "end": 901,
                 "duration": 48
             },
             "C2018-09_1.1.5.5": {
-                "start": 882,
-                "end": 930,
+                "start": 853,
+                "end": 901,
                 "duration": 48
             },
             "C2018-09_1.1.5.6": {
-                "start": 898,
-                "end": 930,
+                "start": 869,
+                "end": 901,
                 "duration": 32
             },
             "C2018-09_1.1.6.1": {
-                "start": 930,
-                "end": 978,
-                "duration": 48
+                "start": 901,
+                "end": 933,
+                "duration": 32
             },
             "C2018-09_1.1.7.1": {
-                "start": 978,
-                "end": 1005,
-                "duration": 27
+                "start": 933,
+                "end": 973,
+                "duration": 40
             },
             "C2018-09_1.1.7.2": {
-                "start": 1005,
-                "end": 1112,
+                "start": 973,
+                "end": 1080,
                 "duration": 107
             },
             "C2018-09_1.1.8.1": {
-                "start": 1112,
-                "end": 1192,
-                "duration": 80
+                "start": 1080,
+                "end": 1200,
+                "duration": 120
             },
             "C2018-09_1.1.9.1": {
-                "start": 1187,
-                "end": 1191,
-                "duration": 4
-            },
-            "C2018-09_1.1.9.2": {
-                "start": 1186,
-                "end": 1191,
+                "start": 1194,
+                "end": 1199,
                 "duration": 5
             },
+            "C2018-09_1.1.9.2": {
+                "start": 1191,
+                "end": 1199,
+                "duration": 8
+            },
             "C2018-09_1.1.9.3": {
-                "start": 1186,
-                "end": 1191,
+                "start": 1194,
+                "end": 1199,
                 "duration": 5
             },
             "C2018-09_1.1.9.4": {
-                "start": 1186,
-                "end": 1191,
+                "start": 1194,
+                "end": 1199,
                 "duration": 5
             },
             "C2018-09_1.1.9.5": {
-                "start": 1186,
-                "end": 1191,
+                "start": 1194,
+                "end": 1199,
                 "duration": 5
             },
             "C2018-09_1.1.9.6": {
-                "start": 1183,
-                "end": 1191,
+                "start": 1191,
+                "end": 1199,
                 "duration": 8
             },
             "C2018-09_1.1.10.1": {
-                "start": 1191,
-                "end": 1192,
+                "start": 1199,
+                "end": 1200,
                 "duration": 1
             }
         }
     },
     "ppo_schedule": {
-        "makespan": 1960.0,
-        "tgc": 57.75296154982061,
-        "reward": -46.649913654319874,
+        "makespan": 427.05047607421875,
+        "tgc": 533.1314816297963,
+        "reward": -5321.116842107847,
         "modes": [
             0,
             0,
@@ -964,6 +1163,400 @@
             0,
             0,
             0
+        ]
+    },
+    "project_state_evolution": {
+        "current_state_id": 1,
+        "before_after_comparison": {
+            "before_state_id": 0,
+            "after_state_id": 1,
+            "action_applied": {
+                "action_type": "Crash",
+                "affected_tasks": [
+                    "C2018-09_1.1.1.1",
+                    "C2018-09_1.1.1.2",
+                    "C2018-09_1.1.1.3",
+                    "C2018-09_1.1.1.4",
+                    "C2018-09_1.1.1.6",
+                    "C2018-09_1.1.1.7",
+                    "C2018-09_1.1.1.8",
+                    "C2018-09_1.1.1.9",
+                    "C2018-09_1.1.2.1",
+                    "C2018-09_1.1.2.2",
+                    "C2018-09_1.1.2.4",
+                    "C2018-09_1.1.2.5",
+                    "C2018-09_1.1.3.1",
+                    "C2018-09_1.1.3.2",
+                    "C2018-09_1.1.3.3",
+                    "C2018-09_1.1.4.1",
+                    "C2018-09_1.1.5.1",
+                    "C2018-09_1.1.5.3",
+                    "C2018-09_1.1.5.6",
+                    "C2018-09_1.1.6.1",
+                    "C2018-09_1.1.7.2",
+                    "C2018-09_1.1.9.1",
+                    "C2018-09_1.1.9.3",
+                    "C2018-09_1.1.9.4",
+                    "C2018-09_1.1.9.5",
+                    "C2018-09_1.1.10.1"
+                ],
+                "priority": 1,
+                "overlap_ratio": 0.3,
+                "crash_level": 1.5,
+                "outsource_level": 2.0,
+                "resource_delta": {},
+                "expected_duration_delta": 1247.2,
+                "expected_cost_delta": 521843.5,
+                "expected_risk_delta": 5.840799999999998,
+                "custom_params": {
+                    "modes": [
+                        1,
+                        1,
+                        1,
+                        1,
+                        0,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        0,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        0,
+                        0,
+                        1,
+                        1,
+                        0,
+                        1,
+                        0,
+                        0,
+                        1,
+                        1,
+                        0,
+                        1,
+                        0,
+                        1,
+                        0,
+                        1,
+                        1,
+                        1,
+                        0,
+                        1
+                    ]
+                }
+            },
+            "metrics_comparison": {
+                "makespan": {
+                    "before": 1696.0,
+                    "after": 1200.0,
+                    "delta": -496.0,
+                    "percent_change": -29.245283018867923
+                },
+                "total_cost": {
+                    "before": 379794.0,
+                    "after": 379794.0,
+                    "delta": 0.0,
+                    "percent_change": 0.0
+                },
+                "on_time_probability": {
+                    "before": 1.0,
+                    "after": 1.0,
+                    "delta": 0.0
+                },
+                "P90_makespan": {
+                    "before": 1739.0397486147658,
+                    "after": 1256.0058078877182,
+                    "delta": -483.0339407270476
+                }
+            },
+            "critical_path_evolution": {
+                "before_count": 0,
+                "after_count": 19,
+                "newly_critical_tasks": [
+                    "C2018-09_1.1.1.8",
+                    "C2018-09_1.1.5.3",
+                    "C2018-09_1.1.5.2",
+                    "C2018-09_1.1.1.1",
+                    "C2018-09_1.1.2.4",
+                    "C2018-09_1.1.6.1",
+                    "C2018-09_1.1.1.7",
+                    "C2018-09_1.1.2.5",
+                    "C2018-09_1.1.1.3",
+                    "C2018-09_1.1.5.1",
+                    "C2018-09_1.1.7.2",
+                    "C2018-09_1.1.1.9",
+                    "C2018-09_1.1.2.2",
+                    "C2018-09_1.1.8.1",
+                    "C2018-09_1.1.2.1",
+                    "C2018-09_1.1.1.2",
+                    "C2018-09_1.1.1.4",
+                    "C2018-09_1.1.7.1",
+                    "C2018-09_1.1.5.6"
+                ],
+                "no_longer_critical_tasks": []
+            },
+            "resource_utilization_evolution": {
+                "before": {
+                    "total_demand": {
+                        "Project Leader": 9.0,
+                        "Engineer": 8.0,
+                        "Worker": 1.0,
+                        "Marketeer": 1.0,
+                        "Administrator": 6.0
+                    },
+                    "capacities": {
+                        "1": 1.0,
+                        "2": 3.0,
+                        "3": 2.0,
+                        "4": 1.0,
+                        "5": 1.0
+                    },
+                    "utilization_rate": {
+                        "1": 0.0,
+                        "2": 0.0,
+                        "3": 0.0,
+                        "4": 0.0,
+                        "5": 0.0
+                    }
+                },
+                "after": {
+                    "total_demand": {
+                        "Project Leader": 17.0,
+                        "Engineer": 15.0,
+                        "Worker": 1.0,
+                        "Marketeer": 1.0,
+                        "Administrator": 10.0
+                    },
+                    "capacities": {
+                        "1": 1.0,
+                        "2": 3.0,
+                        "3": 2.0,
+                        "4": 1.0,
+                        "5": 1.0
+                    },
+                    "utilization_rate": {
+                        "1": 0.0,
+                        "2": 0.0,
+                        "3": 0.0,
+                        "4": 0.0,
+                        "5": 0.0
+                    }
+                }
+            },
+            "top_attention_shifts": [
+                {
+                    "task_id": "C2018-09_1.1.1.7",
+                    "score_before": 0.47252923250198364,
+                    "score_after": 0.592156171798706,
+                    "delta": 0.11962693929672241
+                },
+                {
+                    "task_id": "C2018-09_1.1.1.8",
+                    "score_before": 0.4594866931438446,
+                    "score_after": 0.559174656867981,
+                    "delta": 0.09968796372413635
+                },
+                {
+                    "task_id": "C2018-09_1.1.1.9",
+                    "score_before": 0.4624864459037781,
+                    "score_after": 0.5606829524040222,
+                    "delta": 0.09819650650024414
+                },
+                {
+                    "task_id": "C2018-09_1.1.2.1",
+                    "score_before": 0.4725430905818939,
+                    "score_after": 0.5699031352996826,
+                    "delta": 0.0973600447177887
+                },
+                {
+                    "task_id": "C2018-09_1.1.2.3",
+                    "score_before": 0.48751774430274963,
+                    "score_after": 0.5845891833305359,
+                    "delta": 0.09707143902778625
+                }
+            ]
+        },
+        "state_history": [
+            {
+                "state_id": 0,
+                "timestamp": 1783510342.6196783,
+                "action_applied": null,
+                "makespan": 1696.0,
+                "critical_path": [],
+                "total_cost": 379794.0,
+                "direct_cost": 379794.0,
+                "indirect_cost": 0.0,
+                "monte_carlo": {
+                    "mean_makespan": 1730.7306944961213,
+                    "on_time_prob": 1.0,
+                    "P90": 1739.0397486147658
+                },
+                "resource_metrics": {
+                    "total_demand": {
+                        "Project Leader": 9.0,
+                        "Engineer": 8.0,
+                        "Worker": 1.0,
+                        "Marketeer": 1.0,
+                        "Administrator": 6.0
+                    },
+                    "capacities": {
+                        "1": 1.0,
+                        "2": 3.0,
+                        "3": 2.0,
+                        "4": 1.0,
+                        "5": 1.0
+                    },
+                    "utilization_rate": {
+                        "1": 0.0,
+                        "2": 0.0,
+                        "3": 0.0,
+                        "4": 0.0,
+                        "5": 0.0
+                    }
+                }
+            },
+            {
+                "state_id": 1,
+                "timestamp": 1783510342.7870998,
+                "action_applied": {
+                    "action_type": "Crash",
+                    "affected_tasks": [
+                        "C2018-09_1.1.1.1",
+                        "C2018-09_1.1.1.2",
+                        "C2018-09_1.1.1.3",
+                        "C2018-09_1.1.1.4",
+                        "C2018-09_1.1.1.6",
+                        "C2018-09_1.1.1.7",
+                        "C2018-09_1.1.1.8",
+                        "C2018-09_1.1.1.9",
+                        "C2018-09_1.1.2.1",
+                        "C2018-09_1.1.2.2",
+                        "C2018-09_1.1.2.4",
+                        "C2018-09_1.1.2.5",
+                        "C2018-09_1.1.3.1",
+                        "C2018-09_1.1.3.2",
+                        "C2018-09_1.1.3.3",
+                        "C2018-09_1.1.4.1",
+                        "C2018-09_1.1.5.1",
+                        "C2018-09_1.1.5.3",
+                        "C2018-09_1.1.5.6",
+                        "C2018-09_1.1.6.1",
+                        "C2018-09_1.1.7.2",
+                        "C2018-09_1.1.9.1",
+                        "C2018-09_1.1.9.3",
+                        "C2018-09_1.1.9.4",
+                        "C2018-09_1.1.9.5",
+                        "C2018-09_1.1.10.1"
+                    ],
+                    "priority": 1,
+                    "overlap_ratio": 0.3,
+                    "crash_level": 1.5,
+                    "outsource_level": 2.0,
+                    "resource_delta": {},
+                    "expected_duration_delta": 1247.2,
+                    "expected_cost_delta": 521843.5,
+                    "expected_risk_delta": 5.840799999999998,
+                    "custom_params": {
+                        "modes": [
+                            1,
+                            1,
+                            1,
+                            1,
+                            0,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            0,
+                            1,
+                            1,
+                            1,
+                            1,
+                            1,
+                            0,
+                            0,
+                            1,
+                            1,
+                            0,
+                            1,
+                            0,
+                            0,
+                            1,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            0,
+                            1,
+                            1,
+                            1,
+                            0,
+                            1
+                        ]
+                    }
+                },
+                "makespan": 1200.0,
+                "critical_path": [
+                    "C2018-09_1.1.1.1",
+                    "C2018-09_1.1.1.2",
+                    "C2018-09_1.1.1.3",
+                    "C2018-09_1.1.1.4",
+                    "C2018-09_1.1.1.7",
+                    "C2018-09_1.1.1.8",
+                    "C2018-09_1.1.1.9",
+                    "C2018-09_1.1.2.1",
+                    "C2018-09_1.1.2.2",
+                    "C2018-09_1.1.2.4",
+                    "C2018-09_1.1.2.5",
+                    "C2018-09_1.1.5.1",
+                    "C2018-09_1.1.5.2",
+                    "C2018-09_1.1.5.3",
+                    "C2018-09_1.1.5.6",
+                    "C2018-09_1.1.6.1",
+                    "C2018-09_1.1.7.1",
+                    "C2018-09_1.1.7.2",
+                    "C2018-09_1.1.8.1"
+                ],
+                "total_cost": 379794.0,
+                "direct_cost": 379794.0,
+                "indirect_cost": 0.0,
+                "monte_carlo": {
+                    "mean_makespan": 1245.0632270548022,
+                    "on_time_prob": 1.0,
+                    "P90": 1256.0058078877182
+                },
+                "resource_metrics": {
+                    "total_demand": {
+                        "Project Leader": 17.0,
+                        "Engineer": 15.0,
+                        "Worker": 1.0,
+                        "Marketeer": 1.0,
+                        "Administrator": 10.0
+                    },
+                    "capacities": {
+                        "1": 1.0,
+                        "2": 3.0,
+                        "3": 2.0,
+                        "4": 1.0,
+                        "5": 1.0
+                    },
+                    "utilization_rate": {
+                        "1": 0.0,
+                        "2": 0.0,
+                        "3": 0.0,
+                        "4": 0.0,
+                        "5": 0.0
+                    }
+                }
+            }
         ]
     }
 }

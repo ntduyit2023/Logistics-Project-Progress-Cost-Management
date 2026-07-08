@@ -254,6 +254,8 @@ def main():
             t_copy['most_probable_duration'] = max(1, int(round(d_val / 1.5)))
         elif mode == 2: # Outsource
             t_copy['most_probable_duration'] = max(1, int(round(d_val / 2.0)))
+            # Giải phóng tài nguyên nội bộ khi thuê ngoài
+            t_copy['resource_demand'] = {}
         else:
             t_copy['most_probable_duration'] = max(1, int(round(d_val)))
         tasks_with_modes.append(t_copy)
@@ -373,17 +375,31 @@ def main():
     print(f"   └───────────────────────────┴──────────────┴──────────────┘")
     
     # Save output json
-    # Prepare minimal task info for frontend CPM scheduler
+    # Map task resources
+    task_resources_map = {}
+    for _, row in task_res_df.iterrows():
+        tid = str(row['task_id'])
+        rid = str(row['resource_id'])
+        qty = float(row['request_quantity'])
+        if tid not in task_resources_map:
+            task_resources_map[tid] = []
+        task_resources_map[tid].append({
+            'resource_id': rid,
+            'quantity': qty
+        })
+
     tasks_metadata = []
     for idx, t in enumerate(tasks):
         # Calculate normal cost
         c_norm = sum(float(t.get(k, 0.0)) for k in cost_keys)
         tasks_metadata.append({
             'id': t['id'],
+            'name': str(t.get('task_name', '')),
             'most_probable_duration': float(t.get('most_probable_duration', t.get('duration', 0.0))),
             'normal_cost': c_norm,
             'crash_cost': c_norm * 1.5,
-            'outsource_cost': c_norm * 2.0 + float(t.get('most_probable_duration', 0.0)) * 10.0
+            'outsource_cost': c_norm * 2.0 + float(t.get('most_probable_duration', 0.0)) * 10.0,
+            'resources': task_resources_map.get(t['id'], [])
         })
 
     output_data = {

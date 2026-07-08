@@ -21,12 +21,13 @@ flowchart TD
         subgraph GAT_SSL["GAT Encoder Pre-training"]
             GAE["GAE Reconstruction Loss: GAT phục dựng Ma trận kề Z * Z^T"]
             DGI["DGI Loss: Tối đa hóa lượng tin tương hỗ giữa nút và Biểu đồ toàn cục"]
+            CPNT["CPNT Triplet Loss: Đẩy cụm không gian của nút găng sát nhau"]
         end
         
         subgraph DAGNN_SSL["DAGNN Temporal Encoder Pre-training"]
             SelfSupervised["CPM Self-Supervised Loss: Dự đoán 7 chỉ số CPM (ES, EF, LS, LF, TF, IsCritical, Path Length)"]
-            MaskedDuration["Masked Duration Loss: Mask 15% thời lượng nút và học khôi phục"]
-            TopoDistance["Topological Distance Loss: Dự đoán khoảng cách topo ngắn nhất giữa các nút"]
+            MaskedDuration["Masked Duration Loss: Khôi phục thời lượng qua Adaptive Masking"]
+            PCR["PCR Loss: Dự đoán khoảng cách thời gian găng logic (Predecessor Chain Reconstruction)"]
         end
         
         SaveChk["💾 Lưu Checkpoints: gat_pretrained.pth & dagnn_pretrained.pth"]
@@ -76,8 +77,8 @@ flowchart TD
     CSV --> DataLoader
     DataLoader --> GraphData
     GraphData --> Phase1
-    GAE & DGI --> SaveChk
-    SelfSupervised & MaskedDuration & TopoDistance --> SaveChk
+    GAE & DGI & CPNT --> SaveChk
+    SelfSupervised & MaskedDuration & PCR --> SaveChk
 
     %% Kết nối Luồng dữ liệu Offline SSL -> Online Execution
     SaveChk --> LoadChk
