@@ -1,0 +1,2 @@
+project_id,project_name,project_type,working_hours_per_day,working_days_per_week,project_start,total_effort_hours,project_calendar_days,project_working_hours,total_baseline_cost
+C2018-09,CarSharing platform,ITLG,8,5,2019-01-01 08:00:00,3472.0,297.375,1704.0,439234.0
