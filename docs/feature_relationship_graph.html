@@ -681,18 +681,13 @@
   // DATA: 91 Features organized into 12 groups with relationships
   // ============================================================
   const GROUPS = [
-    { id: 0,  name: "Chi phí Trực tiếp",         color: "#f5a623", short: "CP Trực tiếp" },
-    { id: 1,  name: "Chi phí Gián tiếp",          color: "#b0b8c0", short: "CP Gián tiếp" },
-    { id: 2,  name: "Chi phí Cơ hội & Chìm",      color: "#7ed321", short: "CP Cơ hội" },
-    { id: 3,  name: "Chi phí Hợp đồng & Pháp lý", color: "#ff6b6b", short: "Hợp đồng & Pháp lý" },
-    { id: 4,  name: "Chi phí Logistics & SCM",     color: "#4ecdc4", short: "Hậu cần & SCM" },
-    { id: 5,  name: "Yếu tố Thời gian",           color: "#45b7d1", short: "Thời gian" },
-    { id: 6,  name: "Yếu tố Tài nguyên",          color: "#f093fb", short: "Tài nguyên" },
-    { id: 7,  name: "Cấu trúc Đồ thị",            color: "#a18cd1", short: "Cấu trúc Đồ thị" },
-    { id: 8,  name: "Rủi ro & Bất định",           color: "#ff8a5c", short: "Rủi ro" },
-    { id: 9,  name: "Chất lượng & Giá trị",        color: "#00d2ff", short: "CP Chất lượng" },
-    { id: 10, name: "Con người & Tổ chức",         color: "#ffd93d", short: "Nhân sự & Tổ chức" },
-    { id: 11, name: "ESG",                         color: "#6bcb77", short: "ESG" },
+    { id: 0, name: "Chi phí Trực tiếp", color: "#f5a623", short: "CP Trực tiếp" },
+    { id: 1, name: "Chi phí Gián tiếp", color: "#b0b8c0", short: "CP Gián tiếp" },
+    { id: 2, name: "Nhân công", color: "#f093fb", short: "Nhân công" },
+    { id: 3, name: "Chi phí Hợp đồng", color: "#ff6b6b", short: "CP Hợp đồng" },
+    { id: 4, name: "Rủi ro", color: "#ff8a5c", short: "Rủi ro" },
+    { id: 5, name: "Chi phí Logistic", color: "#4ecdc4", short: "Logistic" },
+    { id: 6, name: "Thời gian", color: "#45b7d1", short: "Thời gian" },
   ];
 
   const REL_NAMES = {
@@ -700,176 +695,83 @@
     time: "Thời gian",
     risk: "Rủi ro",
     resource: "Tài nguyên",
-    quality: "Chất lượng",
     structural: "Cấu trúc"
   };
 
   // Node definitions: [id, label, group, description]
   const NODES_RAW = [
-    [0, "Khởi công tương đối", 5, "Tiếng Anh: Baseline Start Relative. Số ngày kể từ khi dự án bắt đầu đến lúc khởi công. Đơn vị: Ngày. Nguồn: Lịch trình"],
-    [1, "Thời gian thực hiện (Tháng)", 5, "Tiếng Anh: Duration Months. Thời gian thực hiện tính bằng tháng. Đơn vị: Tháng. Nguồn: PMBOK"],
-    [2, "Thời gian thực hiện (Tuần)", 5, "Tiếng Anh: Duration Weeks. Thời gian thực hiện tính bằng tuần. Đơn vị: Tuần. Nguồn: PMBOK"],
-    [3, "Thời gian thực hiện (Ngày)", 5, "Tiếng Anh: Duration Days. Thời gian thực hiện tính bằng ngày. Đơn vị: Ngày. Nguồn: PMBOK"],
-    [4, "Thời gian thực hiện (Giờ)", 5, "Tiếng Anh: Duration Hours. Thời gian thực hiện tính bằng giờ. Đơn vị: Giờ. Nguồn: PMBOK"],
-    [5, "Lịch làm việc (Hành chính)", 5, "Tiếng Anh: Calendar Type Agenda. Chỉ định lịch làm việc giờ hành chính. Đơn vị: Boolean. Nguồn: Hệ thống"],
-    [6, "Lịch làm việc (24/7)", 5, "Tiếng Anh: Calendar Type 247. Chỉ định lịch làm việc liên tục 24/7. Đơn vị: Boolean. Nguồn: Hệ thống"],
-    [7, "Chi phí nhân công nội bộ", 0, "Tiếng Anh: Internal Labor Cost. Lương cơ bản × số ngày × số nhân sự cần cho công việc. Đơn vị: $/ngày/người. Nguồn: PMBOK"],
-    [8, "Chi phí thuê ngoài", 0, "Tiếng Anh: Subcontracting Cost. Chi phí thuê thầu phụ. Đơn giá thường cao hơn nội bộ. Đơn vị: $/ngày/người. Nguồn: PMBOK"],
-    [9, "Chi phí làm thêm giờ", 0, "Tiếng Anh: Overtime / Crashing Cost. Hệ số nhân lương (1.5x, 2x). Đơn vị: $/ngày. Nguồn: PMBOK"],
-    [10, "Chi phí nguyên vật liệu", 0, "Tiếng Anh: Material Cost. Giá mua nguyên liệu, linh kiện, bán thành phẩm. Đơn vị: $/đơn vị. Nguồn: PMBOK"],
-    [11, "Chi phí mua sắm thiết bị", 0, "Tiếng Anh: Equipment Procurement. Giá mua/thuê thiết bị chuyên dụng. Đơn vị: $/thiết bị. Nguồn: PMBOK"],
-    [12, "Chi phí vận chuyển trực tiếp", 0, "Tiếng Anh: Direct Transportation. Phí vận chuyển gắn liền công việc. Đơn vị: $/chuyến. Nguồn: Logistics"],
-    [13, "Chi phí năng lượng", 0, "Tiếng Anh: Energy / Fuel Cost. Điện, nhiên liệu tiêu thụ trực tiếp. Đơn vị: $/kWh. Nguồn: Khảo sát"],
-    [14, "Chi phí kiểm thử & kiểm định", 0, "Tiếng Anh: Testing & Inspection. Chi phí kiểm tra chất lượng. Đơn vị: $/lần. Nguồn: PMBOK"],
-    [15, "Chi phí quản lý dự án", 1, "Tiếng Anh: PM Overhead. Lương PM, hành chính. Tỷ lệ thuận với thời gian. Đơn vị: $/tuần. Nguồn: PMBOK"],
-    [16, "Chi phí mặt bằng & thuê VP", 1, "Tiếng Anh: Facility Rent. Tiền thuê nhà xưởng, văn phòng chung. Đơn vị: $/tháng. Nguồn: PMBOK"],
-    [17, "Chi phí tiện ích chung", 1, "Tiếng Anh: Utilities. Điện, nước, internet toàn dự án. Đơn vị: $/tháng. Nguồn: PMBOK"],
-    [18, "Chi phí truyền thông", 1, "Tiếng Anh: Communication Cost. Thời gian họp, báo cáo, đồng bộ. Đơn vị: giờ/tuần. Nguồn: PMBOK"],
-    [19, "Chi phí đào tạo nội bộ", 1, "Tiếng Anh: Internal Training. Chi phí đào tạo công nghệ mới. Đơn vị: $/người. Nguồn: HR"],
-    [20, "Chi phí QL Chất lượng chung", 1, "Tiếng Anh: Quality Mgmt Overhead. Duy trì ISO, kiểm toán. Đơn vị: $/dự án. Nguồn: PMBOK"],
-    [21, "Chi phí giấy phép & phê duyệt", 3, "Tiếng Anh: Permits & Licensing. Phí xin giấy phép, an toàn. Đơn vị: $/lần. Nguồn: Legal"],
-    [22, "Chi phí bảo hiểm dự án", 3, "Tiếng Anh: Project Insurance. Bảo hiểm tai nạn, thiết bị. Đơn vị: $/giai đoạn. Nguồn: Legal"],
-    [23, "Chi phí bảo hành & hậu mãi", 3, "Tiếng Anh: Warranty & After-sales. Cam kết bảo hành sau bàn giao. Đơn vị: $/năm. Nguồn: Legal"],
-    [24, "Chi phí tuân thủ quy định", 3, "Tiếng Anh: Regulatory Compliance. Tuân thủ an toàn, PCCC. Đơn vị: $/công việc. Nguồn: ESG"],
-    [25, "Chi phí lưu kho & bảo quản", 4, "Tiếng Anh: Inventory Holding Cost. Thuê kho, bảo hiểm, hao hụt. Đơn vị: $/ngày. Nguồn: Logistics"],
-    [26, "Chi phí đặt hàng", 4, "Tiếng Anh: Ordering Cost. Chi phí hành chính mỗi lần đặt hàng. Đơn vị: $/đơn hàng. Nguồn: Logistics"],
-    [27, "Chi phí thiếu hụt hàng", 4, "Tiếng Anh: Shortage / Stockout. Bị trễ hoặc mua gấp giá cao do thiếu vật tư. Đơn vị: $/lần. Nguồn: Logistics"],
-    [28, "Chi phí hàng lỗi thời", 4, "Tiếng Anh: Obsolescence Cost. Vật tư mua sớm bị hỏng hoặc lỗi công nghệ. Đơn vị: $/đơn vị. Nguồn: Logistics"],
-    [29, "Chi phí vận chuyển quốc tế", 4, "Tiếng Anh: International Freight. Cước hải quan, container. Đơn vị: $/container. Nguồn: Logistics"],
-    [30, "Chi phí đóng gói & bốc xếp", 4, "Tiếng Anh: Packaging & Handling. Đóng gói, palletizing. Đơn vị: $/đơn vị. Nguồn: Logistics"],
-    [31, "Chi phí Logistics ngược", 4, "Tiếng Anh: Reverse Logistics. Thu hồi, trả hàng, tiêu hủy. Đơn vị: $/đơn vị. Nguồn: Logistics"],
-    [32, "Thời gian chờ đầu vào", 5, "Tiếng Anh: Wait / Queue Time. Phải chờ predecessors chưa xong. Đơn vị: ngày. Nguồn: PMBOK"],
-    [33, "Thời gian thiết lập", 5, "Tiếng Anh: Setup / Transition Time. Thời gian chuẩn bị máy móc/người. Đơn vị: giờ. Nguồn: PMBOK"],
-    [34, "Thời gian làm quen dự án", 5, "Tiếng Anh: Induction Time. Thời gian cho thầu phụ mới. Đơn vị: ngày. Nguồn: HR"],
-    [35, "Thời gian dẫn đầu (Lead time)", 5, "Tiếng Anh: Lead Time. Đặt hàng đến khi nhận hàng. Đơn vị: ngày. Nguồn: Logistics"],
-    [36, "Ước lượng 3 điểm PERT", 5, "Tiếng Anh: PERT 3-Point Estimate. Trung bình = (O + 4M + P)/6. Đơn vị: ngày. Nguồn: PERT"],
-    [37, "Tài nguyên: Yêu cầu", 6, "Tiếng Anh: Request Quantity. Số lượng tài nguyên cần thiết. Đơn vị: số lượng. Nguồn: Resource Mgmt"],
-    [38, "Tài nguyên: Cấp phát", 6, "Tiếng Anh: Allocated Quantity. Số lượng tài nguyên thực cấp. Đơn vị: số lượng. Nguồn: Resource Mgmt"],
-    [39, "Năng suất nhân sự", 6, "Tiếng Anh: Labor Productivity. Hiệu suất thực tế so với kế hoạch. Đơn vị: %. Nguồn: HR"],
-    [40, "Tỷ lệ sử dụng thiết bị", 6, "Tiếng Anh: Equipment Utilization. Thời gian máy chạy thực tế. Đơn vị: %. Nguồn: Resource Mgmt"],
-    [41, "Thay thế tài nguyên", 6, "Tiếng Anh: Resource Substitutability. Có thể đổi loại tài nguyên khác không. Đơn vị: boolean. Nguồn: Resource Mgmt"],
-    [42, "Mức độ phức tạp", 8, "Tiếng Anh: Technical Complexity. Số lượng yêu cầu công nghệ. Đơn vị: thang đo 1-5. Nguồn: Risk Mgmt"],
-    [43, "Rủi ro làm lại", 8, "Tiếng Anh: Rework Probability. Xác suất phải làm lại do lỗi. Đơn vị: %. Nguồn: Risk Mgmt"],
-    [44, "Mức độ phụ thuộc ngoại vi", 8, "Tiếng Anh: External Dependency Level. Phụ thuộc nhà cung cấp, cơ quan. Đơn vị: điểm 0-1. Nguồn: Risk Mgmt"],
-    [45, "Dự phòng rủi ro đã biết", 8, "Tiếng Anh: Contingency Reserve. Ngân sách cho Risk Register. Đơn vị: $. Nguồn: PMBOK"],
-    [46, "Dự phòng rủi ro chưa biết", 8, "Tiếng Anh: Management Reserve. Ngân sách sự cố bất ngờ. Đơn vị: $. Nguồn: PMBOK"],
-    [47, "Rủi ro thời tiết & mùa vụ", 8, "Tiếng Anh: Weather / Seasonal Risk. Ảnh hưởng bởi thời tiết. Đơn vị: điểm 0-1. Nguồn: Risk Mgmt"],
-    [48, "Rủi ro công nghệ", 8, "Tiếng Anh: Technology Risk. Rủi ro do công nghệ mới. Đơn vị: điểm 0-1. Nguồn: Risk Mgmt"],
-    [49, "Chuyên môn yêu cầu", 10, "Tiếng Anh: Required Skill Level. Trình độ kỹ năng tối thiểu. Đơn vị: Cấp độ. Nguồn: HR"],
-    [50, "Kinh nghiệm nhân sự", 10, "Tiếng Anh: Staff Experience. Số năm kinh nghiệm thực tế. Đơn vị: năm. Nguồn: HR"],
-    [51, "Đường cong học tập", 10, "Tiếng Anh: Learning Curve Effect. Năng suất tăng dần khi quen việc. Đơn vị: %. Nguồn: HR"],
-    [52, "Rủi ro bất ổn nhân sự", 10, "Tiếng Anh: HR Stability Risk. Khả năng nhân sự nghỉ đột xuất. Đơn vị: %. Nguồn: HR"],
-    [53, "Phối hợp liên phòng ban", 10, "Tiếng Anh: Cross Functional Coordination. Số nhóm cần phối hợp. Đơn vị: số lượng. Nguồn: Tổ chức"],
-    [54, "Rủi ro an toàn lao động", 10, "Tiếng Anh: Occupational Safety Risk. Nguy hiểm sức khỏe nghề nghiệp. Đơn vị: cấp độ. Nguồn: HSE"],
-    [55, "Tác động môi trường", 11, "Tiếng Anh: Environmental Impact. Phát sinh khí thải, tiếng ồn. Đơn vị: định lượng. Nguồn: ESG"],
-    [56, "Chi phí xử lý chất thải", 11, "Tiếng Anh: Waste Disposal Cost. Phí tiêu hủy, tái chế rác. Đơn vị: $/tấn. Nguồn: ESG"],
-    [57, "Tác động cộng đồng", 11, "Tiếng Anh: Community Social Impact. Ảnh hưởng giao thông, tiếng ồn cư dân. Đơn vị: định tính. Nguồn: ESG"],
-    [58, "Thuế / Tín chỉ Carbon", 11, "Tiếng Anh: Carbon Tax Credit. Chi phí phạt hoặc mua tín chỉ CO2. Đơn vị: $/tấn. Nguồn: ESG"],
-    [59, "Tuân thủ ESG", 11, "Tiếng Anh: ESG Compliance. Đáp ứng tiêu chuẩn ESG. Đơn vị: mức độ. Nguồn: ESG"],
-    [60, "Độ linh hoạt lịch trình", 2, "Tiếng Anh: Schedule Flexibility. Khả năng dịch chuyển công việc. Đơn vị: Boolean. Nguồn: Khảo sát"],
-    [61, "Chi phí tài nguyên thay thế", 2, "Tiếng Anh: Resource Alternative Cost. Khả năng linh động chuyển chi phí. Đơn vị: $. Nguồn: Khảo sát"],
-    [62, "Thiệt hại khi trễ hạn", 2, "Tiếng Anh: Delay Impact Cost. Thiệt hại kinh tế khi trễ việc. Đơn vị: $. Nguồn: Khảo sát"],
-    [63, "Bậc vào (In-degree)", 7, "Tiếng Anh: In Degree. Số lượng công việc đi trước (predecessor). Đơn vị: số lượng. Nguồn: Graph AI"],
-    [64, "Bậc ra (Out-degree)", 7, "Tiếng Anh: Out Degree. Số lượng công việc đi sau (successor). Đơn vị: số lượng. Nguồn: Graph AI"],
-    [65, "Thuộc đường găng (Critical)", 7, "Tiếng Anh: Is Critical. Nằm trên đường găng (ảnh hưởng 100% dự án). Đơn vị: Boolean. Nguồn: Graph AI"],
-    [66, "Thời gian dự trữ toàn phần", 7, "Tiếng Anh: Total Float. Số ngày tối đa có thể trễ mà dự án không trễ. Đơn vị: Ngày. Nguồn: Graph AI"],
-    [67, "Chiều dài đường đi dài nhất", 7, "Tiếng Anh: Path Length. Tổng thời lượng dọc theo chuỗi. Đơn vị: Ngày. Nguồn: Graph AI"],
-    [68, "Ngân sách Kế hoạch (PV)", 9, "Tiếng Anh: Planned Value. Ngân sách dự kiến tại mốc thời gian. Đơn vị: $. Nguồn: EVM AI"],
-    [69, "Giá trị Đạt được (EV)", 9, "Tiếng Anh: Earned Value. Giá trị thực tế đã làm ra. Đơn vị: $. Nguồn: EVM AI"],
-    [70, "Hiệu suất Chi phí (CPI)", 9, "Tiếng Anh: CPI. Tỷ lệ EV/AC. >1 là tốt. Đơn vị: Hệ số. Nguồn: EVM AI"],
-    [71, "Hiệu suất Tiến độ (SPI)", 9, "Tiếng Anh: SPI. Tỷ lệ EV/PV. >1 là tốt. Đơn vị: Hệ số. Nguồn: EVM AI"],
+    // 0. Chi phí trực tiếp
+    [0, "Chi phí nhân công nội bộ", 0, "Tiếng Anh: Internal Labor Cost. Tổng (số lượng nhân công × giờ làm × đơn giá). Đơn vị: $. Nguồn: Tính toán"],
+    [1, "Chi phí làm thêm giờ", 0, "Tiếng Anh: Overtime Cost. Tổng (số lượng nhân công × giờ làm thêm × đơn giá OT). Đơn vị: $. Nguồn: Tính toán"],
+    [2, "Chi phí nhiên liệu", 0, "Tiếng Anh: Fuel Cost. Tiêu hao của thiết bị/máy móc. Đơn vị: $. Nguồn: Tính toán"],
+    [3, "Chi phí QA/QC", 0, "Tiếng Anh: QA/QC Cost. Chi phí kiểm định, đảm bảo chất lượng. Đơn vị: $. Nguồn: Khảo sát"],
+    [4, "Chi phí vật liệu", 0, "Tiếng Anh: Material Cost. Chi phí mua nguyên vật liệu. Đơn vị: $. Nguồn: Hóa đơn"],
+    [5, "Chi phí thuê ngoài", 0, "Tiếng Anh: Subcontracting. Chi phí thầu phụ. Đơn vị: $. Nguồn: Hợp đồng"],
+
+    // 1. Chi phí gián tiếp
+    [6, "Đào tạo nhân công", 1, "Tiếng Anh: Training. Huấn luyện an toàn, công nghệ. Đơn vị: $. Nguồn: HR"],
+    [7, "Chi phí mặt bằng văn phòng", 1, "Tiếng Anh: Facility Rent. Thuê văn phòng, lán trại. Đơn vị: $. Nguồn: Kế toán"],
+    [8, "Chi phí truyền thông", 1, "Tiếng Anh: Communication. Họp hành, phần mềm quản lý. Đơn vị: $. Nguồn: Kế toán"],
+    [9, "Chi phí tiện ích", 1, "Tiếng Anh: Utilities. Điện, nước, internet văn phòng. Đơn vị: $. Nguồn: Kế toán"],
+
+    // 2. Nhân công
+    [10, "Chi phí thay thế", 2, "Tiếng Anh: Replacement Cost. Chi phí phát sinh khi thay người. Đơn vị: $. Nguồn: HR"],
+    [11, "Chi phí làm thêm giờ / người", 2, "Tiếng Anh: OT Rate. Đơn giá làm thêm (OT Rate). Đơn vị: $/giờ. Nguồn: HR"],
+    [12, "Số lượng nhân công", 2, "Tiếng Anh: Worker Count. Tổng số người tham gia. Đơn vị: người. Nguồn: Resource Mgmt"],
+    [13, "Đơn giá giờ làm / người", 2, "Tiếng Anh: Hourly Rate. Đơn giá tiêu chuẩn. Đơn vị: $/giờ. Nguồn: HR"],
+
+    // 3. Chi phí hợp đồng
+    [14, "Chi phí Bảo hiểm", 3, "Tiếng Anh: Insurance. Bảo hiểm công trình, lao động. Đơn vị: $. Nguồn: Pháp lý"],
+    [15, "Chi phí Giấy phép", 3, "Tiếng Anh: Licensing. Xin phép xây dựng, phê duyệt. Đơn vị: $. Nguồn: Pháp lý"],
+    [16, "Chi phí Bảo hành", 3, "Tiếng Anh: Warranty. Quỹ bảo hành sau bàn giao. Đơn vị: $. Nguồn: Pháp lý"],
+
+    // 4. Rủi ro
+    [17, "Độ phức tạp của task", 4, "Tiếng Anh: Complexity. Mức độ khó kỹ thuật. Đơn vị: thang đo. Nguồn: Kỹ thuật"],
+    [18, "Chi phí dự trù thời tiết", 4, "Tiếng Anh: Weather Contingency. Dự phòng mưa bão, mùa vụ. Đơn vị: $. Nguồn: Risk Mgmt"],
+    [19, "Chi phí dự phòng bất ngờ", 4, "Tiếng Anh: Unexpected Risk. Quỹ dự phòng chung. Đơn vị: $. Nguồn: Risk Mgmt"],
+    [20, "Chi phí làm lại", 4, "Tiếng Anh: Rework Cost. Phạt hoặc khắc phục lỗi. Đơn vị: $. Nguồn: Risk Mgmt"],
+
+    // 5. Chi phí logistic
+    [21, "Chi phí lưu kho", 5, "Tiếng Anh: Holding Cost. Lưu bãi, bảo quản vật tư. Đơn vị: $. Nguồn: Logistics"],
+    [22, "Chi phí vận tải quốc tế", 5, "Tiếng Anh: Int. Freight. Nhập khẩu thiết bị/vật tư. Đơn vị: $. Nguồn: Logistics"],
+    [23, "Chi phí bốc xếp", 5, "Tiếng Anh: Handling. Cẩu, nâng hạ hàng hóa. Đơn vị: $. Nguồn: Logistics"],
+    [24, "Chi phí thu hồi", 5, "Tiếng Anh: Reverse Logistics. Logistics ngược, dọn dẹp phế thải. Đơn vị: $. Nguồn: Logistics"],
+    [25, "Chi phí lỗi", 5, "Tiếng Anh: Obsolescence. Hàng lỗi thời, hư hỏng. Đơn vị: $. Nguồn: Logistics"],
+
+    // 6. Thời gian
+    [26, "Thời gian thực hiện", 6, "Tiếng Anh: Duration. Thời gian kế hoạch để hoàn thành task. Đơn vị: ngày/giờ. Nguồn: PMBOK"],
+    [27, "Thời gian lag", 6, "Tiếng Anh: Lag time. Thời gian chờ giữa các task. Đơn vị: ngày/giờ. Nguồn: PMBOK"]
   ];
 
   // Edges: [sourceId, targetId, relationship_type]
   const EDGES_RAW = [
-    // --- Liên kết Cấu trúc Thời gian ---
-    [1, 2, "structural"], // Tháng bao trùm Tuần
-    [2, 3, "structural"], // Tuần bao trùm Ngày
-    [3, 4, "structural"], // Ngày bao trùm Giờ
-    [32, 35, "structural"], // Thời gian chờ (Wait Time) kéo dài Lead Time
-    [33, 35, "structural"], // Thời gian thiết lập (Setup) làm tăng Lead Time
-    [34, 35, "structural"], // Làm quen dự án (Induction) tăng Lead Time
-    [35, 36, "structural"], // Lead Time dài làm tăng thời gian Bi quan trong PERT (3-point)
+    // Nhân công -> Trực tiếp
+    [12, 0, "structural"], // Số lượng nhân công -> Chi phí nhân công nội bộ
+    [13, 0, "structural"], // Đơn giá giờ làm -> Chi phí nhân công nội bộ
+    [26, 0, "structural"], // Thời gian thực hiện -> Chi phí nhân công nội bộ
+    [12, 1, "structural"], // Số lượng nhân công -> Chi phí làm thêm giờ
+    [11, 1, "structural"], // Đơn giá làm thêm -> Chi phí làm thêm giờ
+
+    // Gián tiếp
+    [26, 7, "structural"], // Thời gian thực hiện -> Chi phí mặt bằng (thuê theo tgian)
+    [26, 9, "structural"], // Thời gian thực hiện -> Chi phí tiện ích
     
-    // --- Liên kết Chi phí Trực tiếp & Nguồn lực ---
-    [7, 9, "structural"], // Nhân sự nội bộ làm thêm giờ sinh ra Chi phí OT
-    [7, 14, "structural"], // Nhân sự nội bộ thực hiện khâu Kiểm thử
-    [10, 12, "structural"], // Khối lượng Vật liệu lớn tốn Chi phí vận chuyển
-    [10, 30, "structural"], // Khối lượng Vật liệu lớn tốn Chi phí đóng gói
-    [11, 13, "structural"], // Sử dụng Máy móc tiêu tốn Năng lượng/Nhiên liệu
-    [12, 13, "structural"], // Vận chuyển trực tiếp tiêu tốn Nhiên liệu
-    [37, 38, "structural"], // Số lượng Yêu cầu định hình Số lượng Cấp phát
-    [37, 7, "structural"], // Yêu cầu tài nguyên lớn làm tăng Chi phí Nhân công
-    [37, 11, "structural"], // Yêu cầu tài nguyên lớn làm tăng Chi phí Thiết bị
+    // Hợp đồng
+    [14, 16, "structural"], // Bảo hiểm -> Bảo hành
+
+    // Rủi ro -> Trực tiếp / Phạt
+    [17, 20, "risk"], // Độ phức tạp -> Chi phí làm lại
+    [20, 0, "structural"], // Chi phí làm lại -> Đội chi phí nhân công
+    [20, 4, "structural"], // Chi phí làm lại -> Đội chi phí vật liệu
+    [20, 19, "structural"], // Làm lại -> Bào mòn quỹ dự phòng bất ngờ
     
-    // --- Liên kết Chi phí Gián tiếp & Vận hành ---
-    [1, 15, "structural"], // Thời gian dự án kéo dài làm tăng Chi phí PM Overhead
-    [1, 16, "structural"], // Thời gian kéo dài tốn thêm tiền Thuê Mặt bằng
-    [1, 17, "structural"], // Thời gian kéo dài tốn thêm Chi phí Tiện ích
-    [15, 18, "structural"], // PM Overhead bao gồm Chi phí Truyền thông/Họp hành
-    [16, 17, "structural"], // Thuê mặt bằng mặc định đi kèm Chi phí Tiện ích
-    [19, 20, "structural"], // Đào tạo nâng cao chất lượng làm tăng Quản lý Chất lượng
-    [20, 14, "structural"], // Quản lý chất lượng khắt khe đòi hỏi Kiểm thử nhiều hơn
+    // Logistic -> Trực tiếp
+    [21, 25, "risk"], // Lưu kho lâu -> Chi phí lỗi (hư hỏng)
+    [22, 21, "structural"], // Vận tải quốc tế -> Cần lưu kho
+    [22, 23, "structural"], // Vận tải quốc tế -> Bốc xếp
     
-    // --- Liên kết Logistics & Chuỗi cung ứng ---
-    [26, 25, "structural"], // Đặt hàng (Ordering) sinh ra Chi phí Lưu kho (Holding)
-    [27, 29, "structural"], // Thiếu hụt (Shortage) buộc phải Vận chuyển Quốc tế khẩn cấp
-    [29, 12, "structural"], // Vận chuyển Quốc tế kéo theo Vận chuyển Nội địa trực tiếp
-    [29, 30, "structural"], // Vận chuyển Quốc tế đòi hỏi Đóng gói cẩn thận hơn
-    [31, 56, "structural"], // Logistics ngược (Thu hồi) sinh ra Chi phí xử lý Rác thải
-    
-    // --- Liên kết Pháp lý, Tuân thủ & ESG ---
-    [21, 24, "structural"], // Giấy phép gắn liền với Tuân thủ Quy định
-    [21, 32, "structural"], // Chờ xin Giấy phép tạo ra Thời gian chờ (Wait Time)
-    [22, 23, "structural"], // Bảo hiểm dự án liên quan đến cam kết Bảo hành
-    [24, 59, "structural"], // Tuân thủ Quy định bao gồm cả Tuân thủ ESG
-    [55, 24, "structural"], // Tác động môi trường bị kiểm soát bởi Quy định
-    [55, 56, "structural"], // Tác động môi trường cao sinh ra Chi phí xử lý Rác
-    [57, 59, "structural"], // Tác động xã hội là một phần của ESG
-    
-    // --- Liên kết Rủi ro & Dự phòng ---
-    [42, 43, "structural"], // Độ phức tạp kỹ thuật cao làm tăng Xác suất Làm lại (Rework)
-    [42, 48, "structural"], // Phức tạp kỹ thuật đi kèm Rủi ro Công nghệ
-    [43, 1, "structural"], // Phải làm lại (Rework) kéo dài Thời gian dự án
-    [43, 7, "structural"], // Làm lại tốn thêm Chi phí Nhân công
-    [43, 10, "structural"], // Làm lại tốn thêm Chi phí Vật liệu
-    [43, 45, "structural"], // Làm lại bào mòn Dự phòng Rủi ro đã biết
-    [44, 35, "structural"], // Phụ thuộc bên ngoài cao kéo dài Lead Time
-    [44, 47, "structural"], // Phụ thuộc ngoại vi dễ bị ảnh hưởng bởi Rủi ro Thời tiết
-    [45, 46, "structural"], // Quỹ dự phòng rủi ro đã biết và chưa biết có liên hệ ngân sách
-    [52, 9, "structural"], // Bất ổn nhân sự buộc những người ở lại phải làm thêm giờ (OT)
-    [52, 43, "structural"], // Nhân sự mới/thay thế dễ mắc lỗi gây ra Rework
-    [54, 22, "structural"], // Rủi ro an toàn lao động cao làm tăng Phí bảo hiểm
-    
-    // --- Liên kết Nhân sự & Hiệu suất ---
-    [49, 7, "structural"], // Chuyên môn yêu cầu cao làm tăng Đơn giá Nhân công
-    [49, 50, "structural"], // Chuyên môn cao thường đi đôi với Kinh nghiệm
-    [50, 39, "structural"], // Kinh nghiệm dày dặn tăng Năng suất nhân sự
-    [50, 51, "structural"], // Kinh nghiệm tăng thúc đẩy Hiệu ứng đường cong học tập
-    [51, 39, "structural"], // Học tập nhanh giúp Năng suất tăng vọt
-    
-    // --- Mối quan hệ Xung đột (Trade-offs / Risks) ---
-    [5, 6, "risk"], // Lịch Hành chính (Agenda) ⚔️ Lịch 24/7 (Triệt tiêu lẫn nhau)
-    [7, 8, "risk"], // Nhân công Nội bộ ⚔️ Thuê ngoài (Subcontracting) - Lựa chọn thay thế
-    [25, 27, "risk"], // Tồn kho nhiều (Holding) ⚔️ Rủi ro Thiếu hụt (Shortage) giảm đi
-    [37, 41, "risk"], // Yêu cầu tài nguyên cao ⚔️ Khả năng thay thế tài nguyên giảm
-    [39, 9, "risk"], // Năng suất cao ⚔️ Ít phải làm thêm giờ (OT)
-    [55, 58, "risk"], // Tác động Môi trường cao ⚔️ Mất Tín chỉ Carbon
-    [60, 62, "risk"], // Độ linh hoạt lịch trình cao ⚔️ Giảm thiểu Thiệt hại khi trễ hạn
-    [70, 71, "risk"], // CPI (Chi phí) ⚔️ SPI (Tiến độ) - Đẩy nhanh tiến độ thường tốn kém hơn
-    
-    // --- Các Liên kết Hệ thống AI & Đồ thị (Đã phân tích kỹ) ---
-    [63, 44, "structural"], // Bậc vào (In-degree) lớn → Phụ thuộc nhiều task trước → Phụ thuộc ngoại vi cao
-    [64, 62, "structural"], // Bậc ra (Out-degree) lớn → Lỗi trễ hạn lan truyền → Thiệt hại trễ (Delay Impact) khổng lồ
-    [65, 45, "structural"], // Nằm trên Đường găng (Critical) → Đốt Quỹ dự phòng nhanh hơn nếu có biến
-    [65, 9, "structural"], // Nằm trên Đường găng (Critical) → Thường xuyên bị ép làm thêm giờ (Crashing)
-    [65, 43, "structural"], // Nằm trên Đường găng (Critical) → Áp lực tiến độ dễ dẫn đến Làm lại (Rework)
-    [65, 66, "risk"],       // Đường găng (Critical) ⚔️ Float = 0 (Nghịch đảo tuyệt đối)
-    [66, 60, "structural"], // Float lớn → Độ linh hoạt lịch trình (Flexibility) cực cao
-    [67, 62, "structural"], // Chiều dài đường đi dài → Gần mốc bàn giao → Thiệt hại trễ cực lớn
-    [68, 69, "structural"], // Ngân sách Kế hoạch (PV) là cơ sở tham chiếu của EV
-    [70, 45, "risk"],       // CPI Tốt (Hiệu quả chi phí) ⚔️ Ít phải dùng đến Quỹ dự phòng
-    [71, 9, "risk"],        // SPI Tốt (Vượt tiến độ) ⚔️ Không cần làm thêm giờ (OT)
+    // Thời gian
+    [27, 26, "structural"] // Thời gian lag ảnh hưởng đến thời gian thực hiện
   ];
 
   // ============================================================

@@ -216,7 +216,12 @@ Chúng ta phân loại 72 features thành 5 nhóm và áp dụng thuật toán r
 | **Chỉ số Hiệu suất (EVM)** | Quanh $1.0$ (Tốt/Xấu) | **Clamp + Scale** | $x' = \text{clamp}(x, 0, 3) / 3$ |
 | **Tỷ lệ / Boolean** | $[0, 1]$ hoặc $\{0, 1\}$ | **Pass-through** | $x' = x$ |
 
-Sau Bước 0, tất cả 72 features đều được nén về những khoảng giá trị an toàn (thường $\le 15$), đảm bảo Attention ở Tầng 1 hoạt động mượt mà.
+**Đột phá Kỹ thuật (Layer Normalization):**
+Sau khi áp dụng các biến đổi phi tuyến ở trên, toàn bộ 72 features tiếp tục đi qua một lớp **Layer Normalization** (`nn.LayerNorm`). 
+- **Công dụng:** Đảm bảo **Tính Bất khả tri về Quy mô (Scale Invariance)**. Thay vì để các dự án ngàn tỷ lấn át dự án triệu đô, Layer Normalization sẽ ép toàn bộ đặc trưng của mỗi Task về chung một Phân phối Chuẩn (Standard Normal Distribution: $\mu = 0, \sigma = 1$). 
+- Nhờ đó, AI sẽ đánh giá mức độ khẩn cấp của chi phí dựa trên tỷ trọng tương đối của nó trong dự án, thay vì độ lớn tuyệt đối của đồng tiền.
+
+Sau Bước 0, tất cả 72 features đều được nén về những khoảng giá trị an toàn, đảm bảo Attention ở Tầng 1 hoạt động mượt mà và triệt tiêu hoàn toàn rủi ro bùng nổ Gradient (Gradient Explosion).
 
 ---
 
@@ -236,21 +241,18 @@ Xử lý **bên trong từng Nhóm** trước. Mỗi Nhóm $g$ chứa $n_g$ feat
 
 ### Công thức Tầng 1: Giá trị Đại diện của Nhóm ($S_g$)
 
-Bước 1: Tính **Ma trận Tương tác nội bộ** $A^{intra}_g$ cho mỗi nhóm $g$
+Bước 1: Tính **Ma trận Tương tác nội bộ** $A^{intra}_g$ cho mỗi nhóm $g$. Ở Phiên bản 2.0, Ma trận này là sự kết hợp giữa **Kiến thức Chuyên gia (PMBOK)** và **Học sâu (Learnable Priors)**:
 
 $$
-A^{intra}_g = \begin{bmatrix}
-  1      & a_{1,2} & \cdots & a_{1,n_g} \\
-  a_{2,1} & 1      & \cdots & a_{2,n_g} \\
-  \vdots  & \vdots  & \ddots & \vdots    \\
-  a_{n_g,1} & a_{n_g,2} & \cdots & 1
-\end{bmatrix}
+A^{intra}_g = A^{PMBOK}_g + A^{Learnable}_g
 $$
 
-Trong đó:
+Trong đó, $A^{PMBOK}_g$ là ma trận tĩnh (Hardcoded Domain Knowledge):
 *   $a_{p,q} > 0$: Feature $p$ **bổ trợ/khuếch đại** Feature $q$ (cùng tăng cùng giảm)
 *   $a_{p,q} < 0$: Feature $p$ **cạnh tranh/triệt tiêu** Feature $q$ (tăng cái này ép giảm cái kia)
 *   $a_{p,q} = 0$: Không có tương tác
+
+Còn $A^{Learnable}_g$ là một Ma trận tham số (`requires_grad=True`), cho phép mạng GNN tự động nắn chỉnh (Fine-tune) các quy luật tĩnh của PMBOK sao cho khớp nhất với dữ liệu lịch sử của từng loại dự án thực tế.
 
 Bước 2: Tính **Trọng số Attention nội bộ** ($\alpha$) cho mỗi feature trong nhóm
 
@@ -289,17 +291,17 @@ Xử lý **quan hệ xuyên Nhóm**. Một feature đơn lẻ có thể tác đ�
 
 ### Công thức Tầng 2: Điều chỉnh Giá trị Nhóm
 
-Gọi $X_{f \to g}$ là **Hệ số xuyên nhóm** (Cross-group Influence) từ Feature $f$ (thuộc nhóm $g'$) lên Nhóm $g$ (với $g' \neq g$).
+Gọi $X_{f \to g}$ là **Hệ số xuyên nhóm** (Cross-group Influence) từ Feature $f$ (thuộc nhóm $g'$) lên Nhóm $g$ (với $g' \neq g$). Ở Phiên bản 2.0, Ma trận $X$ này **được giải phóng (Unfrozen)** thành một siêu tham số tự học (`requires_grad=True`), cho phép mô hình tối ưu hóa sự ảnh hưởng chéo dựa trên Reward.
 
 $$ S'_g = S_g \times \prod_{f \in CrossInfluence(g)} \left(1 + X_{f \to g} \cdot \hat{v}_f \right) $$
 
 Trong đó:
 *   $S_g$: Giá trị đại diện nhóm $g$ từ Tầng 1.
-*   $\hat{v}_f$: Giá trị chuẩn hóa (0 → 1) của feature $f$ gây ảnh hưởng.
+*   $\hat{v}_f$: Giá trị chuẩn hóa của feature $f$ gây ảnh hưởng.
 *   $X_{f \to g} > 0$: Feature $f$ làm **phình to** (Amplify) chi phí Nhóm $g$.
 *   $X_{f \to g} < 0$: Feature $f$ làm **co lại** (Dampen) chi phí Nhóm $g$.
 
-> **Ý nghĩa:** Tầng 2 cho phép một Feature đơn lẻ "vươn tay" sang Nhóm khác và bóp méo toàn bộ kết quả của nhóm đó.
+> **Ý nghĩa:** Tầng 2 cho phép một Feature đơn lẻ "vươn tay" sang Nhóm khác và bóp méo toàn bộ kết quả của nhóm đó. Nhờ cơ chế tự học (Learnable), AI có thể tự phát hiện những sự "phình to" bất thường mà chuyên gia PMBOK có thể đã bỏ sót.
 
 ---
 
