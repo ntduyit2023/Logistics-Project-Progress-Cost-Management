@@ -199,7 +199,11 @@ class SequentialGLPOModel(nn.Module):
                 - 'graph_embedding': Tensor [1, gat_out_dim] — Graph Embedding (cho PPO State).
                 - 'h_dagnn': Tensor [N, dagnn_out_dim] — Embeddings từ DAGNN.
         """
-        x, edge_index = data.x, data.edge_index
+        # Chống rò rỉ dữ liệu (Data Leakage) bằng cách xóa sạch đặc trưng CPM gán sẵn trong x
+        x = data.x.clone()
+        if x.shape[1] >= 68:
+            x[:, [65, 66, 67]] = 0.0
+        edge_index = data.edge_index
 
         # ── TẦNG 1 & 2: Encoder ──────────────────────────────────
         S_prime_g, group_masks = self.encoder(x)
@@ -267,7 +271,11 @@ class SequentialGLPOModel(nn.Module):
                 - 'tgc_details': Dict từ TGCLayer3.forward_detailed().
                 - 'dagnn_info': Dict từ DAGNNPropagator.forward_with_attention().
         """
-        x, edge_index = data.x, data.edge_index
+        # Chống rò rỉ dữ liệu (Data Leakage) bằng cách xóa sạch đặc trưng CPM gán sẵn trong x
+        x = data.x.clone()
+        if x.shape[1] >= 68:
+            x[:, [65, 66, 67]] = 0.0
+        edge_index = data.edge_index
 
         # Tầng 1 & 2
         S_prime_g, group_masks = self.encoder(x)

@@ -31,7 +31,7 @@ def main():
     parser.add_argument("--project_id", type=str, default="C2019-16", help="Project ID to run schedule (e.g. C2019-16)")
     parser.add_argument("--deadline", type=float, default=None, help="Custom deadline (hours)")
     parser.add_argument("--budget", type=float, default=None, help="Custom budget threshold")
-    parser.add_argument("--pretrain_epochs", type=int, default=30, help="Epochs for unsupervised pre-training")
+    parser.add_argument("--pretrain_epochs", type=int, default=-1, help="Epochs for unsupervised pre-training (-1 for optimal defaults: GAT=300, DAGNN=500)")
     parser.add_argument("--output_json", type=str, default=None, help="Path to save output JSON")
     parser.add_argument("--force_pretrain", action="store_true", help="Force running offline pre-training")
     parser.add_argument("--only_pretrain", action="store_true", help="Run only offline pre-training phase and exit")
@@ -138,8 +138,10 @@ def main():
         print("1. OFFLINE PRETRAINING (GAT + DAGNN Multi-Task SSL)")
         print("----------------------------------------------------------------------")
         pretrainer = UnsupervisedPretrainer(model, device=device)
-        print(f"   • Đang huấn luyện Offline: GAE + DGI + CPM + MASK + TOPO ({args.pretrain_epochs} epochs)...")
-        pretrainer.pretrain_all(data_pyg, gae_epochs=args.pretrain_epochs, cpm_epochs=args.pretrain_epochs, verbose=True)
+        gae_eps = 300 if args.pretrain_epochs == -1 else args.pretrain_epochs
+        cpm_eps = 500 if args.pretrain_epochs == -1 else args.pretrain_epochs
+        print(f"   • Đang huấn luyện Offline: GAE + DGI + CPM + MASK + TOPO (GAT={gae_eps}, DAGNN={cpm_eps} epochs)...")
+        pretrainer.pretrain_all(data_pyg, gae_epochs=gae_eps, cpm_epochs=cpm_eps, verbose=True)
         print("   • Đã lưu weights thành công.")
         
         # Nếu chỉ chạy ở chế độ offline, dừng tại đây
@@ -215,6 +217,31 @@ def main():
         print("   ⚠️ Không tìm thấy giải pháp Pareto hợp lệ, sử dụng Normal modes.")
         selected_modes = [0] * len(tasks)
         
+    # ── BƯỚC 4.5: PROJECT STATE MANAGER (DYNAMIC PROJECT STATE EVOLUTION) ─────
+    print("\n🔄 [BƯỚC 4.5] Project State Manager (Dynamic Project State Evolution)...")
+    from ai_pipeline.src.state.action_model import ActionObject
+    from ai_pipeline.src.state.project_state_manager import ProjectStateManager
+    
+    state_manager = ProjectStateManager(
+        initial_project_graph=project_graph,
+        initial_tasks=tasks,
+        initial_dependencies=dependencies,
+        initial_resource_capacities=resource_capacities,
+        model=model,
+        device=device,
+        deadline=deadline
+    )
+    
+    if best_sol:
+        action_obj = ActionObject.from_pareto_option(best_sol, tasks)
+        evolved_state = state_manager.apply_action(action_obj)
+        comparison_report = state_manager.get_before_after_comparison(before_index=0, after_index=1)
+        print(f"   • Trạng thái đồ thị tiến hóa: State 0 → State {evolved_state.state_id}")
+        print(f"   • Re-inference GAT & DAGNN: Đã cập nhật embeddings mới mà không cần train lại.")
+        print(f"   • Makespan tiến hóa: {comparison_report['metrics_comparison']['makespan']['before']:.1f}h → {comparison_report['metrics_comparison']['makespan']['after']:.1f}h ({comparison_report['metrics_comparison']['makespan']['percent_change']:.1f}%)")
+    else:
+        comparison_report = state_manager.get_before_after_comparison(before_index=0, after_index=0)
+
     # ── BƯỚC 5: CP-SAT RCPSP SOLVER ────────────────────────────────────────────
     print("\n⚙️ [BƯỚC 5] CP-SAT Constraint Programming Solver...")
     # Inject NSGA-II selected modes into tasks for CP-SAT baseline schedule
@@ -227,6 +254,8 @@ def main():
             t_copy['most_probable_duration'] = max(1, int(round(d_val / 1.5)))
         elif mode == 2: # Outsource
             t_copy['most_probable_duration'] = max(1, int(round(d_val / 2.0)))
+            # Giải phóng tài nguyên nội bộ khi thuê ngoài
+            t_copy['resource_demand'] = {}
         else:
             t_copy['most_probable_duration'] = max(1, int(round(d_val)))
         tasks_with_modes.append(t_copy)
@@ -346,17 +375,31 @@ def main():
     print(f"   └───────────────────────────┴──────────────┴──────────────┘")
     
     # Save output json
-    # Prepare minimal task info for frontend CPM scheduler
+    # Map task resources
+    task_resources_map = {}
+    for _, row in task_res_df.iterrows():
+        tid = str(row['task_id'])
+        rid = str(row['resource_id'])
+        qty = float(row['request_quantity'])
+        if tid not in task_resources_map:
+            task_resources_map[tid] = []
+        task_resources_map[tid].append({
+            'resource_id': rid,
+            'quantity': qty
+        })
+
     tasks_metadata = []
     for idx, t in enumerate(tasks):
         # Calculate normal cost
         c_norm = sum(float(t.get(k, 0.0)) for k in cost_keys)
         tasks_metadata.append({
             'id': t['id'],
+            'name': str(t.get('task_name', '')),
             'most_probable_duration': float(t.get('most_probable_duration', t.get('duration', 0.0))),
             'normal_cost': c_norm,
             'crash_cost': c_norm * 1.5,
-            'outsource_cost': c_norm * 2.0 + float(t.get('most_probable_duration', 0.0)) * 10.0
+            'outsource_cost': c_norm * 2.0 + float(t.get('most_probable_duration', 0.0)) * 10.0,
+            'resources': task_resources_map.get(t['id'], [])
         })
 
     output_data = {
@@ -387,6 +430,11 @@ def main():
             'tgc': ppo_tgc,
             'reward': ppo_reward,
             'modes': ppo_modes
+        },
+        'project_state_evolution': {
+            'current_state_id': state_manager.get_current_state().state_id,
+            'before_after_comparison': comparison_report,
+            'state_history': state_manager.get_replay_history()
         }
     }
     

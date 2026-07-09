@@ -135,7 +135,7 @@ const Dashboard = () => {
                 fontSize={11}
               />
               <Tooltip 
-                formatter={(value: any, name: string) => [
+                formatter={(value: any, name: any) => [
                   `$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 
                   name === 'monthlyCost' ? 'Chi tiêu tháng' : 'Lũy kế'
                 ]}

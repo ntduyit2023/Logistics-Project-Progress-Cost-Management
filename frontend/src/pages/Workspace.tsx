@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import AirflowGraph from './AirflowGraph';
-import { Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown } from 'lucide-react';
+import { 
+  Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown, Cpu, Database, Sliders, DollarSign
+} from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Bar, Legend, Line, ReferenceLine } from 'recharts';
 import { api } from '../services/api';
 
@@ -9,43 +11,54 @@ import TaskFormModal from '../components/TaskFormModal';
 import ResourceManagerModal from '../components/ResourceManagerModal';
 import TimeManagerModal from '../components/TimeManagerModal';
 
+// Import các file kết quả chạy của 5 dự án từ mocks
+import projectC2011 from '../mocks/output_C2011-07_main.json';
+import projectC2012_04 from '../mocks/output_C2012-04_main.json';
+import projectC2012_08 from '../mocks/output_C2012-08_main.json';
+import projectC2018 from '../mocks/output_C2018-09_main.json';
+import projectC2019 from '../mocks/output_C2019-16_main.json';
+
+const projectsData: Record<string, any> = {
+  'C2011-07': projectC2011,
+  'C2012-04': projectC2012_04,
+  'C2012-08': projectC2012_08,
+  'C2018-09': projectC2018,
+  'C2019-16': projectC2019,
+};
+
 const StatCard = ({ title, value, icon: Icon, color }: any) => (
-  <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center">
+  <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center transition-all hover:shadow-md">
     <div className={`p-3 rounded-lg mr-4 ${color}`}>
       <Icon size={20} className="text-white" />
     </div>
     <div>
-      <p className="text-xs font-medium text-slate-500 mb-0.5 uppercase tracking-wide">{title}</p>
-      <h3 className="text-xl font-bold text-slate-800">{value}</h3>
+      <p className="text-xs font-semibold text-slate-400 mb-0.5 uppercase tracking-wider">{title}</p>
+      <h3 className="text-xl font-black text-slate-800">{value}</h3>
     </div>
   </div>
 );
 
-const RecommendationCard = ({ type, title, desc, impact, confidence, icon: Icon, colorClass }: any) => (
-  <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+const RecommendationCard = ({ type, icon: Icon, colorClass, title, desc, impact, confidence }: any) => (
+  <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md group">
     <div className="flex justify-between items-start mb-2">
-      <div className={`flex items-center text-xs font-bold uppercase tracking-wider ${colorClass}`}>
-        <Icon size={14} className="mr-1.5" />
-        {type}
+      <div className="flex items-center">
+        <div className={`p-2 rounded-lg bg-slate-50 mr-3 group-hover:scale-110 transition-transform ${colorClass}`}>
+          <Icon size={18} />
+        </div>
+        <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">{type}</span>
       </div>
-      <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-slate-200">
-        {confidence} Match
+      <span className="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-full border border-indigo-100 flex items-center">
+        <Sparkles size={10} className="mr-1" /> {confidence}
       </span>
     </div>
-    <h4 className="font-bold text-slate-800 text-sm mb-1">{title}</h4>
-    <p className="text-xs text-slate-500 leading-relaxed mb-3">{desc}</p>
-    
-    <div className="bg-slate-50 rounded p-2 mb-3 border border-slate-100 flex items-center justify-center">
-      <span className="text-xs font-bold text-slate-700">Expected Impact: </span>
-      <span className="text-xs font-bold text-emerald-600 ml-2 bg-emerald-100 px-2 py-0.5 rounded">{impact}</span>
-    </div>
-
-    <div className="flex gap-2">
-      <button className="flex-1 bg-violet-600 text-white py-1.5 rounded-md text-xs font-bold hover:bg-violet-700 transition flex justify-center items-center">
-        Apply <ArrowRight size={14} className="ml-1" />
-      </button>
-      <button className="px-3 bg-white border border-slate-300 text-slate-600 rounded-md text-xs font-medium hover:bg-slate-50 transition">
-        Dismiss
+    <h4 className="font-bold text-slate-800 text-sm mb-1.5 leading-tight">{title}</h4>
+    <p className="text-xs text-slate-500 mb-3 leading-relaxed">{desc}</p>
+    <div className="flex justify-between items-center pt-3 border-t border-slate-100">
+      <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded">
+        Dự kiến: <span className={colorClass}>{impact}</span>
+      </span>
+      <button className="text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center group-hover:translate-x-1 transition-transform">
+        Apply <ArrowRight size={12} className="ml-1" />
       </button>
     </div>
   </div>
@@ -53,8 +66,13 @@ const RecommendationCard = ({ type, title, desc, impact, confidence, icon: Icon,
 
 const Workspace = () => {
   const { projectId } = useParams();
+  const navigate = useNavigate();
   const [projectData, setProjectData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const [selectedProject, setSelectedProject] = useState<string>('C2011-07');
+  const [activeTab, setActiveTab] = useState<'recommendations' | 'baseline' | 'pareto' | 'ppo'>('pareto');
+  const [selectedParetoOptionIndex, setSelectedParetoOptionIndex] = useState<number>(0);
 
   // Modal State
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -66,19 +84,31 @@ const Workspace = () => {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const res = await api.getProject(Number(projectId));
-        setProjectData(res.data);
+        if (projectId && !isNaN(Number(projectId))) {
+          const res = await api.getProject(Number(projectId));
+          setProjectData(res.data);
+          setActiveTab('recommendations');
+        } else {
+          setProjectData(projectsData[selectedProject]);
+          setActiveTab('pareto');
+        }
       } catch (err) {
         console.error(err);
+        setProjectData(projectsData[selectedProject]);
+        setActiveTab('pareto');
       } finally {
         setLoading(false);
       }
     };
-    if (projectId) fetchProject();
-  }, [projectId]);
+    fetchProject();
+  }, [projectId, selectedProject]);
 
   const handleSaveTask = async (data: any) => {
     try {
+      if (!projectId || isNaN(Number(projectId))) {
+         alert("Editing is only supported for API projects, not mocks.");
+         return;
+      }
       const { predecessor_id, dependency_type, lag_days, stagedResources, ...taskData } = data;
       let newTaskId = editingTask?.id;
 
@@ -89,7 +119,6 @@ const Workspace = () => {
         await api.createTask(Number(projectId), { id: newTaskId, ...taskData });
       }
 
-      // Sync Logic Constraint (Predecessor)
       if (newTaskId) {
         const oldEdge = projectData.constraint_logic?.find((e: any) => e.successor_id === newTaskId);
         try {
@@ -99,7 +128,6 @@ const Workspace = () => {
             }
             if (!oldEdge || oldEdge.predecessor_id !== predecessor_id || oldEdge.dependency_type !== dependency_type || oldEdge.lag_days !== lag_days) {
               if (oldEdge && oldEdge.predecessor_id === predecessor_id) {
-                // Delete to recreate with new lag/type
                 await api.deleteLogicConstraint(Number(projectId), oldEdge.predecessor_id, newTaskId);
               }
               await api.createLogicConstraint(Number(projectId), {
@@ -117,32 +145,6 @@ const Workspace = () => {
         }
       }
 
-      // Save staged resources
-      if (stagedResources && newTaskId) {
-        try {
-          // 1. Fetch current from backend to know what to delete
-          const currentRes = await api.getTaskResources(Number(projectId), newTaskId);
-          const currentIds = currentRes.data.map((r: any) => r.resource_id);
-          const stagedIds = stagedResources.map((r: any) => r.resource_id);
-          
-          // 2. Delete ones that are no longer staged
-          const toDelete = currentIds.filter((id: number) => !stagedIds.includes(id));
-          for (const id of toDelete) {
-            await api.removeTaskResource(Number(projectId), newTaskId, id);
-          }
-          
-          // 3. Upsert staged ones
-          for (const res of stagedResources) {
-            await api.assignTaskResource(Number(projectId), newTaskId, {
-              resource_id: res.resource_id,
-              request_quantity: res.request_quantity
-            });
-          }
-        } catch (err) {
-          console.error("Failed to sync task resources", err);
-        }
-      }
-
       setIsTaskModalOpen(false);
       window.location.reload();
     } catch (err) {
@@ -150,31 +152,87 @@ const Workspace = () => {
     }
   };
 
-  // Xử lý dữ liệu gộp chung cho biểu đồ
-  const { combinedData, bellCurveData, ganttData } = useMemo(() => {
-    if (!projectData) return { combinedData: [], bellCurveData: [], ganttData: [] };
-    const tasks = projectData.tasks || [];
-    
-    // 1. Dữ liệu Master Analytics
-    const leafTasks = tasks; // Tạm thời dùng tất cả tasks
+  const isMock = !projectData?.project_name;
+  
+  const tasks = useMemo(() => isMock ? projectData?.tasks_metadata || [] : projectData?.tasks || [], [isMock, projectData]);
+  const dependencies = useMemo(() => isMock ? projectData?.dependencies || [] : projectData?.constraint_logic || [], [isMock, projectData]);
+  const cpm_static_makespan = isMock ? projectData?.cpm_static_makespan || 0 : projectData?.tasks?.length * 5 || 0;
+  const budget = isMock ? projectData?.budget || 0 : projectData?.tasks?.reduce((sum: number, t: any) => sum + (t.internal_labor_cost || 0), 0) || 0;
+  const deadline = isMock ? projectData?.deadline || 0 : 0;
+
+  const paretoOptions = useMemo(() => projectData?.pareto_nsga2?.options || [], [projectData]);
+  const monte_carlo = useMemo(() => projectData?.monte_carlo || null, [projectData]);
+  const ppo_schedule = useMemo(() => projectData?.ppo_schedule || null, [projectData]);
+  const project_state_evolution = useMemo(() => projectData?.project_state_evolution || null, [projectData]);
+
+  const { selectedOptionModes, optionLabel, optionMakespan, optionCost, optionRisk } = useMemo(() => {
+    let modes: number[] = new Array(tasks.length).fill(0);
+    let label = 'Baseline (Normal)';
+    let msk = cpm_static_makespan;
+    let cost = budget / 1.5 || 0;
+    let risk = 0.5;
+
+    if (activeTab === 'recommendations' || activeTab === 'baseline') {
+      modes = new Array(tasks.length).fill(0);
+      label = activeTab === 'recommendations' ? 'API Live Data' : 'Baseline (Normal)';
+      msk = cpm_static_makespan;
+      cost = tasks.reduce((sum: number, t: any) => sum + (t.normal_cost || t.total_cost || t.internal_labor_cost || 0), 0);
+      risk = 0.5;
+    } else if (activeTab === 'pareto' && paretoOptions.length > 0) {
+      const opt = paretoOptions[selectedParetoOptionIndex] || paretoOptions[0];
+      modes = opt.modes;
+      label = `Pareto Option ${selectedParetoOptionIndex + 1}`;
+      msk = opt.makespan;
+      cost = opt.cost;
+      risk = opt.risk;
+    } else if (activeTab === 'ppo') {
+      modes = ppo_schedule?.modes || new Array(tasks.length).fill(0);
+      label = 'PPO RL Adaptive Control';
+      msk = ppo_schedule?.makespan || cpm_static_makespan;
+      cost = ppo_schedule?.tgc || (budget * 0.8);
+      risk = 0.15;
+    }
+
+    return { selectedOptionModes: modes, optionLabel: label, optionMakespan: msk, optionCost: cost, optionRisk: risk };
+  }, [activeTab, selectedParetoOptionIndex, tasks, cpm_static_makespan, budget, paretoOptions, ppo_schedule]);
+
+  const criticalityIndices = useMemo(() => monte_carlo?.criticality_indices || {}, [monte_carlo]);
+
+  const { combinedData, bellCurveData, ganttData, maxEndHour } = useMemo(() => {
     const monthlyCost: Record<string, number> = {};
     const monthlyTasks: Record<string, Set<string>> = {};
+    const startTime = new Date('2026-07-08').getTime();
 
-    leafTasks.forEach((task: any) => {
-      const startStr = task.baseline_start;
-      const duration = Math.max(1, Math.ceil(task.duration_days || 0));
-      const totalCost = (task.internal_labor_cost || 0) + (task.equipment_cost || 0) + (task.material_cost || 0);
+    tasks.forEach((task: any, idx: number) => {
+      const mode = selectedOptionModes[idx] || 0;
+      const duration = mode === 1 
+        ? Math.round((task.most_probable_duration || task.duration_days || 10) / 1.5) 
+        : mode === 2 
+          ? Math.round((task.most_probable_duration || task.duration_days || 10) / 2.0) 
+          : (task.most_probable_duration || task.duration_days || 10);
       
-      if (!startStr) return;
-      const startMs = new Date(startStr).getTime();
-      const dailyCost = totalCost / duration;
-      
-      for (let i = 0; i < duration; i++) {
+      const cost = mode === 1 
+        ? (task.crash_cost || 1500)
+        : mode === 2 
+          ? (task.outsource_cost || 2000)
+          : (task.normal_cost || task.total_cost || task.internal_labor_cost || 0);
+
+      let startMs = startTime;
+      if (task.baseline_start) {
+        startMs = new Date(task.baseline_start).getTime();
+      } else {
+        const startHour = idx * 12;
+        startMs = startTime + (startHour / 8) * 24 * 60 * 60 * 1000;
+      }
+
+      const durationDays = Math.max(1, Math.ceil(duration / 8) || 1);
+      const dailyCost = cost / durationDays;
+
+      for (let i = 0; i < durationDays; i++) {
         const d = new Date(startMs + i * 24 * 60 * 60 * 1000);
         const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        
         monthlyCost[monthStr] = (monthlyCost[monthStr] || 0) + dailyCost;
-        
+
         if (!monthlyTasks[monthStr]) monthlyTasks[monthStr] = new Set();
         monthlyTasks[monthStr].add(task.id);
       }
@@ -182,131 +240,140 @@ const Workspace = () => {
 
     const sortedMonths = Object.keys(monthlyCost).sort();
     let cumulative = 0;
-    
     const combined = sortedMonths.map(month => {
       cumulative += monthlyCost[month];
-      return { 
-        month, 
-        monthlyCost: monthlyCost[month], 
+      return {
+        month,
+        monthlyCost: monthlyCost[month],
         cumulativeCost: cumulative,
         activeCount: monthlyTasks[month]?.size || 0
       };
     });
 
-    // 2. Dữ liệu PERT Bell Curve (Mô phỏng Phân phối xác suất Normal Distribution)
-    const meanDays = 1070; // Giả định thời lượng trung bình dự án
-    const stdDev = 45; // Độ lệch chuẩn (rủi ro)
-    const bellCurve = [];
-    const steps = 5;
-    const startX = meanDays - Math.ceil((stdDev * 3.5) / steps) * steps;
-    const endX = meanDays + stdDev * 3.5;
-    
-    for (let x = startX; x <= endX; x += steps) {
-      const prob = Math.exp(-0.5 * Math.pow((x - meanDays) / stdDev, 2)); 
-      bellCurve.push({ 
-        days: Math.round(x), 
-        probability: prob * 100, // Chuẩn hóa lên 100% để hiển thị
+    const mean = monte_carlo?.mean_makespan || cpm_static_makespan || 1000;
+    const p90Val = monte_carlo?.P90 || (mean * 1.15);
+    const stdDev = Math.max(5, (p90Val - mean) / 1.28 || mean * 0.05);
+
+    const bellCurve: any[] = [];
+    const steps = 30;
+    const startX = mean - stdDev * 3.5;
+    const endX = mean + stdDev * 3.5;
+    const delta = (endX - startX) / steps;
+
+    for (let x = startX; x <= endX; x += delta) {
+      const prob = Math.exp(-0.5 * Math.pow((x - mean) / stdDev, 2));
+      bellCurve.push({
+        days: Math.round(x),
+        probability: prob * 100
       });
     }
 
-    // 3. Dữ liệu Mini Gantt Chart (Lấy 20 công việc thực tế đầu tiên, bỏ qua Summary Task)
-    const sortedTasks = [...leafTasks]
-      .filter(t => t.baseline_start)
-      .sort((a, b) => new Date(a.baseline_start).getTime() - new Date(b.baseline_start).getTime());
-    const displayTasks = sortedTasks.slice(0, 20);
-    const minStart = new Date(displayTasks[0]?.baseline_start || 0).getTime();
-    let maxEnd = minStart;
-    displayTasks.forEach(t => {
-      const end = new Date(t.baseline_start).getTime() + (t.duration_days || 0) * 24*60*60*1000;
-      if(end > maxEnd) maxEnd = end;
-    });
-    // Thêm 5% padding cho thời gian trục X để render đẹp hơn
-    const totalMs = (maxEnd - minStart) * 1.05 || 1;
+    const cpSatSchedule = projectData?.cp_sat_schedule?.schedule || {};
+    const displayGanttTasks = tasks.slice(0, 20);
 
-    const gantt = displayTasks.map((t: any) => {
-      const startMs = new Date(t.baseline_start).getTime();
-      const endMs = startMs + (t.duration_days || 0) * 24*60*60*1000;
-      return {
-        id: t.id,
-        name: t.task_name,
-        wbs: t.wbs || t.id,
-        isCritical: t.duration_days > 50,
-        leftPercent: ((startMs - minStart) / totalMs) * 100,
-        widthPercent: Math.max(0.5, ((endMs - startMs) / totalMs) * 100)
-      };
+    let maxEndHour = 1;
+    displayGanttTasks.forEach((t: any) => {
+      const sched = cpSatSchedule[t.id];
+      if (sched && sched.end > maxEndHour) maxEndHour = sched.end;
+      if (t.duration_days && t.duration_days > maxEndHour) maxEndHour = t.duration_days;
     });
 
-    return { combinedData: combined, bellCurveData: bellCurve, ganttData: gantt };
-  }, [projectData]);
+    return { combinedData: combined, bellCurveData: bellCurve, ganttData: [], maxEndHour };
+  }, [tasks, selectedOptionModes, monte_carlo, cpm_static_makespan, projectData]);
 
   if (loading || !projectData) {
     return <div className="h-full flex items-center justify-center">Loading Workspace...</div>;
   }
 
-  const { project_name, status, num_tasks, num_edges, network_density, tasks, constraint_logic, constraint_resources } = projectData;
-
   return (
     <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-slate-50 p-6 custom-scrollbar">
-      <div className="mb-6 flex justify-between items-end">
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center">
-            <Columns className="mr-2 text-blue-600" size={24} /> 
-            Grafana-style Workspace
+          <h1 className="text-xl font-black text-slate-800 tracking-tight flex items-center">
+            <Columns className="mr-2 text-blue-600 animate-pulse" size={22} />
+            {projectData.project_name || "Digital Twin Workspace"}
           </h1>
-          <p className="text-slate-500 mt-1">{project_name}</p>
+          <p className="text-xs text-slate-500 mt-0.5">Merged UI: Live Backend API + Mocks Presentation</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-bold text-slate-500 uppercase">Dự án:</label>
+          <select
+            value={!isMock ? 'api' : selectedProject}
+            onChange={(e) => {
+              if (e.target.value === 'api') navigate('/projects/1'); // example routing back to api
+              else {
+                navigate('/workspace'); // Clear ID param
+                setSelectedProject(e.target.value);
+                setSelectedParetoOptionIndex(0);
+              }
+            }}
+            className="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-bold py-1.5 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          >
+            {!isMock && <option value="api">LIVE API DATABASE</option>}
+            <option value="C2011-07">Mock: Nursing Home (C2011-07)</option>
+            <option value="C2012-04">Mock: Nursing Home Noordhinder (C2012-04)</option>
+            <option value="C2012-08">Mock: Hospital Project (C2012-08)</option>
+            <option value="C2018-09">Mock: Construction Project (C2018-09)</option>
+            <option value="C2019-16">Mock: Infra Logistics Base (C2019-16)</option>
+          </select>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={() => setIsTimeModalOpen(true)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
-          >
-            Manage Calendar
-          </button>
-          <button 
-            onClick={() => setIsResourceModalOpen(true)}
-            className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
-          >
-            Manage Resources
-          </button>
-          <button 
-            onClick={() => {
-              setEditingTask(null);
-              setIsTaskModalOpen(true);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
-          >
-            + Add Node
-          </button>
+          {!isMock && (
+            <>
+              <button 
+                onClick={() => setIsTimeModalOpen(true)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+              >
+                Manage Calendar
+              </button>
+              <button 
+                onClick={() => setIsResourceModalOpen(true)}
+                className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+              >
+                Manage Resources
+              </button>
+              <button 
+                onClick={() => {
+                  setEditingTask(null);
+                  setIsTaskModalOpen(true);
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+              >
+                + Add Node
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       <div className="flex flex-col gap-6">
-        {/* ROW 1: STATS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard title="Total Tasks" value={num_tasks} icon={Layers} color="bg-blue-500" />
-          <StatCard title="Dependencies" value={num_edges} icon={GitCommit} color="bg-emerald-500" />
-          <StatCard title="Network Density" value={network_density.toFixed(4)} icon={Activity} color="bg-amber-500" />
-          <StatCard title="Status" value={status} icon={Clock} color="bg-purple-500" />
+          <StatCard title="Số lượng công việc" value={`${tasks.length} tasks`} icon={Layers} color="bg-blue-500" />
+          <StatCard title="Số cạnh phụ thuộc" value={`${dependencies.length} edges`} icon={GitCommit} color="bg-emerald-500" />
+          <StatCard title="Makespan CPM gốc" value={`${cpm_static_makespan.toFixed(1)} hrs`} icon={Clock} color="bg-amber-500" />
+          <StatCard title="Hạn chót & Ngân sách" value={`${deadline.toFixed(0)}h / $${(budget/1000).toFixed(0)}k`} icon={Activity} color="bg-purple-500" />
         </div>
 
-        {/* ROW 2: DAG & AI INSIGHTS */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          
-          {/* DAG (Chiếm 3/4) */}
-          <div className="lg:col-span-3 h-[600px] bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
+          <div className="lg:col-span-3 h-[580px] bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
             <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center z-10 shrink-0">
-              <span className="font-bold text-slate-700">Network Logic Diagram</span>
-              <span className="text-xs text-slate-500 bg-slate-200 px-2 py-0.5 rounded flex items-center">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-                Live Interactive
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-700">Project Network Graph</span>
+                <span className="text-[10px] bg-blue-100 text-blue-700 font-extrabold px-2 py-0.5 rounded uppercase">
+                  {optionLabel}
+                </span>
+              </div>
             </div>
             <div className="flex-1 relative min-h-0">
               <div className="absolute inset-0">
                 <AirflowGraph 
-                  tasks={tasks} 
-                  dependencies={constraint_logic} 
-                  onConnectEdge={async (source, target) => {
+                  projectId={projectData.project_name || selectedProject}
+                  tasks={tasks}
+                  dependencies={dependencies}
+                  selectedOptionModes={selectedOptionModes}
+                  criticalityIndices={criticalityIndices}
+                  onConnectEdge={!isMock ? async (source, target) => {
                     try {
                       await api.createLogicConstraint(Number(projectId), {
                         predecessor_id: source,
@@ -317,177 +384,230 @@ const Workspace = () => {
                     } catch (err) {
                       alert("Failed to connect nodes: " + (err as Error).message);
                     }
-                  }}
-                  onDeleteTask={async (taskId) => {
+                  } : undefined}
+                  onDeleteTask={!isMock ? async (taskId) => {
                     try {
                       await api.deleteTask(Number(projectId), taskId);
                       window.location.reload();
                     } catch (err) {
                       alert("Failed to delete task: " + (err as Error).message);
                     }
-                  }}
-                  onEditTask={(task) => {
+                  } : undefined}
+                  onEditTask={!isMock ? (task) => {
                     setEditingTask(task);
                     setIsTaskModalOpen(true);
-                  }}
+                  } : undefined}
                 />
               </div>
             </div>
           </div>
 
-          {/* AI INSIGHTS (Chiếm 1/4) */}
-          <div className="lg:col-span-1 h-[600px] bg-white rounded-xl shadow-sm border border-violet-200 flex flex-col overflow-hidden">
-            <div className="bg-violet-50 border-b border-violet-100 px-4 py-3 flex items-center justify-between shrink-0">
-              <div className="flex items-center">
-                <Sparkles className="text-violet-600 mr-2" size={18} />
-                <span className="font-bold text-violet-900">AI Insights</span>
-              </div>
-              <span className="bg-violet-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">3 New</span>
+          <div className="lg:col-span-1 h-[580px] bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+            <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center shrink-0">
+              <Sliders className="text-blue-600 mr-2" size={18} />
+              <span className="font-bold text-slate-700 text-sm">Pipeline Action Center</span>
             </div>
             
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 custom-scrollbar">
-              <RecommendationCard 
-                type="Fast Tracking" 
-                icon={Zap}
-                colorClass="text-amber-600"
-                title="Song song hóa WBS 1.1.2 & 1.1.3"
-                desc="AI phát hiện 2 công việc này không có ràng buộc kỹ thuật cứng. Có thể thi công song song để rút ngắn tiến độ."
-                impact="Tiết kiệm 12 ngày"
-                confidence="85%"
-              />
-              <RecommendationCard 
-                type="Resource Leveling" 
-                icon={ShieldCheck}
-                colorClass="text-emerald-600"
-                title="Giảm tải tháng 11/2012"
-                desc="Mật độ công việc vượt ngưỡng an toàn (Peak: 15 tasks/ngày). Đề xuất dời WBS 2.4 sang tháng 1 để tránh bottleneck."
-                impact="Giảm 30% rủi ro"
-                confidence="92%"
-              />
-              <RecommendationCard 
-                type="Crashing" 
-                icon={TrendingDown}
-                colorClass="text-blue-600"
-                title="Tăng tốc WBS 4.1 (Critical)"
-                desc="Công việc WBS 4.1 nằm trên đường găng (Critical Path) có rủi ro trễ hạn cao. Đề xuất bổ sung thêm 2 nhân sự."
-                impact="Tránh trễ 5 ngày"
-                confidence="88%"
-              />
+              <div className="bg-slate-200/70 p-1 rounded-lg grid grid-cols-4 text-center text-xs font-bold">
+                <button 
+                  onClick={() => setActiveTab('recommendations')}
+                  className={`py-1.5 rounded-md transition-colors ${activeTab === 'recommendations' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  Live AI
+                </button>
+                <button 
+                  onClick={() => setActiveTab('baseline')}
+                  className={`py-1.5 rounded-md transition-colors ${activeTab === 'baseline' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  Base
+                </button>
+                <button 
+                  onClick={() => setActiveTab('pareto')}
+                  className={`py-1.5 rounded-md transition-colors ${activeTab === 'pareto' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  Pareto
+                </button>
+                <button 
+                  onClick={() => setActiveTab('ppo')}
+                  className={`py-1.5 rounded-md transition-colors ${activeTab === 'ppo' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                >
+                  RL
+                </button>
+              </div>
+
+              {activeTab === 'recommendations' && (
+                <div className="space-y-4">
+                  <RecommendationCard 
+                    type="Fast Tracking" 
+                    icon={Zap} colorClass="text-amber-600" title="Song song hóa WBS 1.1.2 & 1.1.3" 
+                    desc="AI phát hiện 2 công việc này không có ràng buộc kỹ thuật cứng. Có thể thi công song song để rút ngắn tiến độ."
+                    impact="Tiết kiệm 12 ngày" confidence="85%"
+                  />
+                  <RecommendationCard 
+                    type="Resource Leveling" 
+                    icon={ShieldCheck} colorClass="text-emerald-600" title="Giảm tải tháng 11/2012" 
+                    desc="Mật độ công việc vượt ngưỡng an toàn (Peak: 15 tasks/ngày). Đề xuất dời WBS 2.4 sang tháng 1 để tránh bottleneck."
+                    impact="Giảm 30% rủi ro" confidence="92%"
+                  />
+                  <RecommendationCard 
+                    type="Crashing" 
+                    icon={TrendingDown} colorClass="text-blue-600" title="Tăng tốc WBS 4.1 (Critical)" 
+                    desc="Công việc WBS 4.1 nằm trên đường găng (Critical Path) có rủi ro trễ hạn cao. Đề xuất bổ sung thêm 2 nhân sự."
+                    impact="Tránh trễ 5 ngày" confidence="88%"
+                  />
+                </div>
+              )}
+
+              {activeTab !== 'recommendations' && (
+                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-black text-blue-600 uppercase tracking-wider">Cấu hình Đang Chọn</span>
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-slate-800 text-sm">{optionLabel}</h4>
+                  </div>
+                  <div className="border-t pt-3 space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Makespan dự báo:</span>
+                      <span className="font-bold text-slate-800">{optionMakespan.toFixed(1)}h</span>
+                    </div>
+                    <div className="flex justify-between flex-wrap">
+                      <span className="text-slate-400">Chi phí quy đổi (TGC):</span>
+                      <span className="font-bold text-emerald-600">${Number(optionCost).toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'pareto' && paretoOptions.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-500 block uppercase">Danh sách Pareto Options:</span>
+                  <div className="space-y-2">
+                    {paretoOptions.slice(0, 4).map((opt: any, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedParetoOptionIndex(index)}
+                        className={`w-full text-left p-3 rounded-lg border text-xs transition-all flex justify-between items-center ${
+                          selectedParetoOptionIndex === index 
+                            ? 'bg-blue-50 border-blue-500 shadow-sm' 
+                            : 'bg-white hover:bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div>
+                          <span className="font-bold text-slate-800 block">Option {index + 1} {index === 0 && '⭐ (Best)'}</span>
+                          <span className="text-slate-500 text-[10px]">Cost: ${Number(opt.cost).toLocaleString(undefined, {maximumFractionDigits:0})}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-blue-600 block">{opt.makespan.toFixed(1)}h</span>
+                          <span className="text-slate-400 text-[9px]">Risk: {opt.risk.toFixed(2)}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-
         </div>
 
-        {/* ROW 3: CHARTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-80">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-slate-800">Master Analytics</h3>
-              <select className="text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1 outline-none">
-                <option>Cost & Activity</option>
-              </select>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
+            <div className="mb-4 shrink-0 flex justify-between items-center">
+              <div>
+                <h3 className="font-bold text-slate-800">Financial S-Curve & Task Density</h3>
+                <p className="text-xs text-slate-500">Chi tiêu lũy kế và mật độ công việc song song được cập nhật tự động</p>
+              </div>
+              <div className="text-right text-xs bg-emerald-50 px-2 py-1 border border-emerald-100 rounded text-emerald-700 font-bold">
+                TGC: ${Number(optionCost).toLocaleString(undefined, {maximumFractionDigits:0})}
+              </div>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={combinedData}>
+                <ComposedChart data={combinedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorCumulative" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="month" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis yAxisId="left" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value/1000}k`} />
-                  <YAxis yAxisId="right" orientation="right" fontSize={10} tickLine={false} axisLine={false} />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    formatter={(value: any, name: string): [string, string] => {
-                      if (name === 'Cumulative Cost') return [`$${value.toLocaleString()}`, name];
-                      if (name === 'Monthly Cost') return [`$${value.toLocaleString()}`, name];
-                      return [`${value} tasks`, name];
-                    }}
-                  />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
-                  <Bar yAxisId="right" dataKey="activeCount" name="Active Tasks" fill="#94a3b8" radius={[4, 4, 0, 0]} barSize={20} />
-                  <Area yAxisId="left" type="monotone" dataKey="cumulativeCost" name="Cumulative Cost" fill="#cbd5e1" stroke="#94a3b8" fillOpacity={0.3} />
-                  <Line yAxisId="left" type="monotone" dataKey="monthlyCost" name="Monthly Cost" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                  <XAxis dataKey="month" tickFormatter={(tick) => `${tick.split('-')[1]}/${tick.split('-')[0].slice(2)}`} minTickGap={20} stroke="#94a3b8" fontSize={11} />
+                  <YAxis yAxisId="cost" orientation="left" tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} stroke="#94a3b8" fontSize={11} />
+                  <YAxis yAxisId="cumulative" orientation="right" tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} stroke="#3b82f6" fontSize={11} />
+                  <YAxis yAxisId="density" orientation="right" tickFormatter={(val) => `${val} tasks`} stroke="#10b981" fontSize={11} />
+                  <Tooltip formatter={(value: any, name: any) => {
+                    if (name === 'monthlyCost') return [`$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 'Chi phí tháng'];
+                    if (name === 'cumulativeCost') return [`$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 'Lũy kế'];
+                    return [`${value} tasks`, 'Số công việc song song'];
+                  }} labelFormatter={(label) => `Tháng: ${label}`} />
+                  <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px' }}/>
+                  <Bar yAxisId="cost" dataKey="monthlyCost" name="monthlyCost" fill="#cbd5e1" barSize={16} radius={[2, 2, 0, 0]} />
+                  <Area yAxisId="cumulative" type="monotone" dataKey="cumulativeCost" name="cumulativeCost" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorCumulative)" />
+                  <Line yAxisId="density" type="monotone" dataKey="activeCount" name="activeCount" stroke="#10b981" strokeWidth={3} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 6 }} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-80">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-slate-800">Monte Carlo Simulation</h3>
-              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Normal Dist.</span>
+          <div className="lg:col-span-1 bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
+            <div className="mb-4 shrink-0">
+              <h3 className="font-bold text-slate-800">Monte Carlo Risk Analysis</h3>
+              <p className="text-xs text-slate-500">Phân phối xác suất thời gian hoàn thành dự án</p>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={bellCurveData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="days" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val: number) => `${val}%`} />
+                <AreaChart data={bellCurveData} margin={{ top: 30, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorBell" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.5}/>
+                      <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="days" stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}h`} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={() => ''} />
                   <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    formatter={(val: number): [string, string] => [`${val.toFixed(2)}%`, 'Probability']}
+                    formatter={(val: number): [string, string] => [`${val.toFixed(2)}%`, 'Xác suất']}
+                    labelFormatter={(val) => `${val}h`}
                   />
-                  <ReferenceLine x={1070} stroke="#ef4444" strokeDasharray="3 3" label={{ position: 'top', value: 'Mean (1070d)', fill: '#ef4444', fontSize: 10 }} />
-                  <Area type="monotone" dataKey="probability" stroke="#3b82f6" fill="#bfdbfe" fillOpacity={0.5} strokeWidth={2} />
+                  <Area type="monotone" dataKey="probability" stroke="#8b5cf6" strokeWidth={2} fillOpacity={1} fill="url(#colorBell)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
         </div>
-
-        {/* GANTT CHART */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-slate-800">Critical Path Gantt View</h3>
-            <span className="text-xs text-slate-500">First 20 tasks</span>
-          </div>
-          <div className="space-y-3">
-            {ganttData.map((task: any) => (
-              <div key={task.id} className="flex items-center text-xs">
-                <div className="w-48 shrink-0 font-medium text-slate-700 truncate pr-4" title={task.name}>
-                  <span className="text-slate-400 mr-2">{task.wbs}</span>
-                  {task.name}
-                </div>
-                <div className="flex-1 h-6 bg-slate-100 rounded-md relative">
-                  <div 
-                    className={`absolute h-full rounded-md shadow-sm transition-all ${
-                      task.isCritical ? 'bg-red-400' : 'bg-blue-400'
-                    }`}
-                    style={{ left: `${task.leftPercent}%`, width: `${task.widthPercent}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
-            {ganttData.length === 0 && (
-              <div className="text-center text-slate-400 py-6">No scheduled tasks available</div>
-            )}
-          </div>
-        </div>
-
       </div>
       
-      <TaskFormModal 
-        isOpen={isTaskModalOpen}
-        onClose={() => setIsTaskModalOpen(false)}
-        onSubmit={handleSaveTask}
-        initialData={editingTask}
-        availableTasks={tasks}
-        projectResources={constraint_resources || []}
-        constraintLogic={constraint_logic || []}
-      />
+      {isTaskModalOpen && (
+        <TaskFormModal
+          isOpen={isTaskModalOpen}
+          onClose={() => { setIsTaskModalOpen(false); setEditingTask(null); }}
+          onSave={handleSaveTask}
+          initialData={editingTask}
+          tasks={tasks}
+          projectId={Number(projectId)}
+        />
+      )}
       
-      <ResourceManagerModal
-        isOpen={isResourceModalOpen}
-        onClose={() => setIsResourceModalOpen(false)}
-        projectId={Number(projectId)}
-        initialResources={constraint_resources || []}
-      />
+      {isResourceModalOpen && (
+        <ResourceManagerModal
+          isOpen={isResourceModalOpen}
+          onClose={() => setIsResourceModalOpen(false)}
+          projectId={Number(projectId)}
+          resources={projectData.constraint_resources || []}
+        />
+      )}
 
-      <TimeManagerModal
-        isOpen={isTimeModalOpen}
-        onClose={() => setIsTimeModalOpen(false)}
-        projectId={Number(projectId)}
-        initialTimeConstraint={projectData.constraint_time}
-      />
+      {isTimeModalOpen && (
+        <TimeManagerModal
+          isOpen={isTimeModalOpen}
+          onClose={() => setIsTimeModalOpen(false)}
+          projectId={Number(projectId)}
+          timeData={projectData.constraint_agenda || {}}
+        />
+      )}
     </div>
   );
 };

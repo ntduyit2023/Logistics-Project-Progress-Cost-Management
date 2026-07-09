@@ -1,42 +1,1586 @@
 [
   {
     "epoch": 1,
-    "total_loss": 21.08810806274414,
-    "cpm_loss": 1.7137935161590576,
-    "masked_duration_loss": 67.16046142578125,
-    "topological_distance_loss": 0.8481640815734863,
+    "total_loss": 1.549210548400879,
+    "cpm_loss": 3.8730263710021973,
+    "masked_duration_loss": 129.98948669433594,
+    "topological_distance_loss": 0.2851715385913849,
     "learning_rate": 0.005
   },
   {
     "epoch": 2,
-    "total_loss": 29.474470138549805,
-    "cpm_loss": 1.714113712310791,
-    "masked_duration_loss": 95.49617004394531,
-    "topological_distance_loss": 0.46657416224479675,
+    "total_loss": 1.4250303506851196,
+    "cpm_loss": 3.5625758171081543,
+    "masked_duration_loss": 144.87460327148438,
+    "topological_distance_loss": 0.3162042498588562,
     "learning_rate": 0.005
   },
   {
     "epoch": 3,
-    "total_loss": 26.49710464477539,
-    "cpm_loss": 1.6983482837677002,
-    "masked_duration_loss": 85.81785583496094,
-    "topological_distance_loss": 0.24136218428611755,
+    "total_loss": 1.2506731748580933,
+    "cpm_loss": 3.126682758331299,
+    "masked_duration_loss": 195.93153381347656,
+    "topological_distance_loss": 0.335342139005661,
     "learning_rate": 0.005
   },
   {
     "epoch": 4,
-    "total_loss": 20.686660766601562,
-    "cpm_loss": 1.6388202905654907,
-    "masked_duration_loss": 66.61141204833984,
-    "topological_distance_loss": 0.15902473032474518,
+    "total_loss": 1.0534943342208862,
+    "cpm_loss": 2.6337358951568604,
+    "masked_duration_loss": 128.60269165039062,
+    "topological_distance_loss": 0.338863730430603,
     "learning_rate": 0.005
   },
   {
     "epoch": 5,
-    "total_loss": 56.517215728759766,
-    "cpm_loss": 1.558701992034912,
-    "masked_duration_loss": 186.1609344482422,
-    "topological_distance_loss": 0.15150707960128784,
+    "total_loss": 0.9269073605537415,
+    "cpm_loss": 2.3172683715820312,
+    "masked_duration_loss": 206.2239227294922,
+    "topological_distance_loss": 0.35085999965667725,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 6,
+    "total_loss": 0.8283409476280212,
+    "cpm_loss": 2.070852279663086,
+    "masked_duration_loss": 153.00225830078125,
+    "topological_distance_loss": 0.3851490020751953,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 7,
+    "total_loss": 0.772441029548645,
+    "cpm_loss": 1.9311025142669678,
+    "masked_duration_loss": 174.98956298828125,
+    "topological_distance_loss": 0.39069947600364685,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 8,
+    "total_loss": 0.7309857606887817,
+    "cpm_loss": 1.8274643421173096,
+    "masked_duration_loss": 195.1300048828125,
+    "topological_distance_loss": 0.3702501654624939,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 9,
+    "total_loss": 0.6853429079055786,
+    "cpm_loss": 1.7133572101593018,
+    "masked_duration_loss": 124.12500762939453,
+    "topological_distance_loss": 0.3719309866428375,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 10,
+    "total_loss": 0.6422720551490784,
+    "cpm_loss": 1.6056801080703735,
+    "masked_duration_loss": 238.0035858154297,
+    "topological_distance_loss": 0.3686267137527466,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 11,
+    "total_loss": 0.6088618040084839,
+    "cpm_loss": 1.522154450416565,
+    "masked_duration_loss": 141.9399871826172,
+    "topological_distance_loss": 0.35845986008644104,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 12,
+    "total_loss": 0.5649258494377136,
+    "cpm_loss": 1.4123146533966064,
+    "masked_duration_loss": 175.01393127441406,
+    "topological_distance_loss": 0.381632924079895,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 13,
+    "total_loss": 0.527357280254364,
+    "cpm_loss": 1.3183932304382324,
+    "masked_duration_loss": 125.1302490234375,
+    "topological_distance_loss": 0.38321852684020996,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 14,
+    "total_loss": 0.47673502564430237,
+    "cpm_loss": 1.1918375492095947,
+    "masked_duration_loss": 188.7294158935547,
+    "topological_distance_loss": 0.40217411518096924,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 15,
+    "total_loss": 0.4309599995613098,
+    "cpm_loss": 1.0773999691009521,
+    "masked_duration_loss": 206.24737548828125,
+    "topological_distance_loss": 0.3967841863632202,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 16,
+    "total_loss": 0.3967898488044739,
+    "cpm_loss": 0.9919745922088623,
+    "masked_duration_loss": 98.00435638427734,
+    "topological_distance_loss": 0.4090757668018341,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 17,
+    "total_loss": 0.3622376024723053,
+    "cpm_loss": 0.905593991279602,
+    "masked_duration_loss": 152.57225036621094,
+    "topological_distance_loss": 0.4155387878417969,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 18,
+    "total_loss": 0.3462066352367401,
+    "cpm_loss": 0.8655166029930115,
+    "masked_duration_loss": 127.5247573852539,
+    "topological_distance_loss": 0.4301539659500122,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 19,
+    "total_loss": 0.3198379576206207,
+    "cpm_loss": 0.7995948791503906,
+    "masked_duration_loss": 131.9464874267578,
+    "topological_distance_loss": 0.4162895977497101,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 20,
+    "total_loss": 0.3096063435077667,
+    "cpm_loss": 0.7740158438682556,
+    "masked_duration_loss": 215.94598388671875,
+    "topological_distance_loss": 0.39214888215065,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 21,
+    "total_loss": 0.3083088994026184,
+    "cpm_loss": 0.7707722187042236,
+    "masked_duration_loss": 178.4058380126953,
+    "topological_distance_loss": 0.4037686884403229,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 22,
+    "total_loss": 0.30795538425445557,
+    "cpm_loss": 0.7698884606361389,
+    "masked_duration_loss": 206.41455078125,
+    "topological_distance_loss": 0.4024435877799988,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 23,
+    "total_loss": 0.31412068009376526,
+    "cpm_loss": 0.785301685333252,
+    "masked_duration_loss": 176.11026000976562,
+    "topological_distance_loss": 0.40001776814460754,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 24,
+    "total_loss": 0.28331494331359863,
+    "cpm_loss": 0.7082873582839966,
+    "masked_duration_loss": 176.42674255371094,
+    "topological_distance_loss": 0.37223660945892334,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 25,
+    "total_loss": 0.27976736426353455,
+    "cpm_loss": 0.6994184255599976,
+    "masked_duration_loss": 145.3761444091797,
+    "topological_distance_loss": 0.369790256023407,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 26,
+    "total_loss": 0.24957862496376038,
+    "cpm_loss": 0.6239465475082397,
+    "masked_duration_loss": 135.62008666992188,
+    "topological_distance_loss": 0.3760392367839813,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 27,
+    "total_loss": 0.26386961340904236,
+    "cpm_loss": 0.6596739888191223,
+    "masked_duration_loss": 151.24594116210938,
+    "topological_distance_loss": 0.360050767660141,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 28,
+    "total_loss": 0.24061031639575958,
+    "cpm_loss": 0.6015257835388184,
+    "masked_duration_loss": 201.2747344970703,
+    "topological_distance_loss": 0.3528030514717102,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 29,
+    "total_loss": 0.20885787904262543,
+    "cpm_loss": 0.5221446752548218,
+    "masked_duration_loss": 178.72091674804688,
+    "topological_distance_loss": 0.36029866337776184,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 30,
+    "total_loss": 0.22949397563934326,
+    "cpm_loss": 0.5737349390983582,
+    "masked_duration_loss": 185.82090759277344,
+    "topological_distance_loss": 0.3609178960323334,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 31,
+    "total_loss": 0.3101281523704529,
+    "cpm_loss": 0.7753203511238098,
+    "masked_duration_loss": 149.31712341308594,
+    "topological_distance_loss": 0.3207644522190094,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 32,
+    "total_loss": 0.34477564692497253,
+    "cpm_loss": 0.8619390726089478,
+    "masked_duration_loss": 126.32083129882812,
+    "topological_distance_loss": 0.3350132405757904,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 33,
+    "total_loss": 0.25878071784973145,
+    "cpm_loss": 0.6469517946243286,
+    "masked_duration_loss": 222.95619201660156,
+    "topological_distance_loss": 0.35057246685028076,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 34,
+    "total_loss": 0.25863656401634216,
+    "cpm_loss": 0.6465914249420166,
+    "masked_duration_loss": 158.15042114257812,
+    "topological_distance_loss": 0.3530486226081848,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 35,
+    "total_loss": 0.30325382947921753,
+    "cpm_loss": 0.7581345438957214,
+    "masked_duration_loss": 108.86371612548828,
+    "topological_distance_loss": 0.36954525113105774,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 36,
+    "total_loss": 0.2859359383583069,
+    "cpm_loss": 0.7148398160934448,
+    "masked_duration_loss": 145.61927795410156,
+    "topological_distance_loss": 0.36267226934432983,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 37,
+    "total_loss": 0.2332766056060791,
+    "cpm_loss": 0.5831915140151978,
+    "masked_duration_loss": 219.91004943847656,
+    "topological_distance_loss": 0.34386909008026123,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 38,
+    "total_loss": 0.21558992564678192,
+    "cpm_loss": 0.5389748215675354,
+    "masked_duration_loss": 144.10389709472656,
+    "topological_distance_loss": 0.353053480386734,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 39,
+    "total_loss": 0.21985259652137756,
+    "cpm_loss": 0.5496314764022827,
+    "masked_duration_loss": 133.1252899169922,
+    "topological_distance_loss": 0.3292985260486603,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 40,
+    "total_loss": 0.22930817306041718,
+    "cpm_loss": 0.5732704401016235,
+    "masked_duration_loss": 137.2168731689453,
+    "topological_distance_loss": 0.34136906266212463,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 41,
+    "total_loss": 0.22016945481300354,
+    "cpm_loss": 0.5504236221313477,
+    "masked_duration_loss": 167.74668884277344,
+    "topological_distance_loss": 0.3502734899520874,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 42,
+    "total_loss": 0.21843388676643372,
+    "cpm_loss": 0.5460847020149231,
+    "masked_duration_loss": 122.58000183105469,
+    "topological_distance_loss": 0.35584086179733276,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 43,
+    "total_loss": 0.2195010483264923,
+    "cpm_loss": 0.5487526059150696,
+    "masked_duration_loss": 181.56793212890625,
+    "topological_distance_loss": 0.3417729437351227,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 44,
+    "total_loss": 0.19889318943023682,
+    "cpm_loss": 0.49723297357559204,
+    "masked_duration_loss": 193.94203186035156,
+    "topological_distance_loss": 0.3392842411994934,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 45,
+    "total_loss": 0.19722919166088104,
+    "cpm_loss": 0.4930729866027832,
+    "masked_duration_loss": 188.2648468017578,
+    "topological_distance_loss": 0.337673157453537,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 46,
+    "total_loss": 0.22575874626636505,
+    "cpm_loss": 0.564396858215332,
+    "masked_duration_loss": 147.53797912597656,
+    "topological_distance_loss": 0.33557814359664917,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 47,
+    "total_loss": 0.1808702051639557,
+    "cpm_loss": 0.452175498008728,
+    "masked_duration_loss": 177.47557067871094,
+    "topological_distance_loss": 0.34613022208213806,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 48,
+    "total_loss": 0.20495395362377167,
+    "cpm_loss": 0.5123848915100098,
+    "masked_duration_loss": 110.01738739013672,
+    "topological_distance_loss": 0.34399905800819397,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 49,
+    "total_loss": 0.25837671756744385,
+    "cpm_loss": 0.6459417939186096,
+    "masked_duration_loss": 117.09134674072266,
+    "topological_distance_loss": 0.3505634367465973,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 50,
+    "total_loss": 0.22639642655849457,
+    "cpm_loss": 0.5659910440444946,
+    "masked_duration_loss": 154.70803833007812,
+    "topological_distance_loss": 0.3385505974292755,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 51,
+    "total_loss": 0.2125193178653717,
+    "cpm_loss": 0.5312982797622681,
+    "masked_duration_loss": 231.51541137695312,
+    "topological_distance_loss": 0.3422590494155884,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 52,
+    "total_loss": 0.195842906832695,
+    "cpm_loss": 0.4896072447299957,
+    "masked_duration_loss": 133.67311096191406,
+    "topological_distance_loss": 0.34875449538230896,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 53,
+    "total_loss": 0.2068016082048416,
+    "cpm_loss": 0.5170040130615234,
+    "masked_duration_loss": 226.6560821533203,
+    "topological_distance_loss": 0.3389544188976288,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 54,
+    "total_loss": 0.19402864575386047,
+    "cpm_loss": 0.48507159948349,
+    "masked_duration_loss": 231.02847290039062,
+    "topological_distance_loss": 0.3420313596725464,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 55,
+    "total_loss": 0.21068978309631348,
+    "cpm_loss": 0.5267244577407837,
+    "masked_duration_loss": 214.92018127441406,
+    "topological_distance_loss": 0.35208195447921753,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 56,
+    "total_loss": 0.2042221575975418,
+    "cpm_loss": 0.5105553865432739,
+    "masked_duration_loss": 145.27862548828125,
+    "topological_distance_loss": 0.3636077642440796,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 57,
+    "total_loss": 0.19524405896663666,
+    "cpm_loss": 0.48811012506484985,
+    "masked_duration_loss": 176.2471923828125,
+    "topological_distance_loss": 0.3502458333969116,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 58,
+    "total_loss": 0.1939789354801178,
+    "cpm_loss": 0.4849473237991333,
+    "masked_duration_loss": 143.1296844482422,
+    "topological_distance_loss": 0.37120476365089417,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 59,
+    "total_loss": 0.1777077168226242,
+    "cpm_loss": 0.4442692995071411,
+    "masked_duration_loss": 128.01583862304688,
+    "topological_distance_loss": 0.35338348150253296,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 60,
+    "total_loss": 0.17980162799358368,
+    "cpm_loss": 0.4495040774345398,
+    "masked_duration_loss": 166.1802520751953,
+    "topological_distance_loss": 0.33741772174835205,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 61,
+    "total_loss": 0.1666988879442215,
+    "cpm_loss": 0.41674721240997314,
+    "masked_duration_loss": 158.9276580810547,
+    "topological_distance_loss": 0.3362940847873688,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 62,
+    "total_loss": 0.17593635618686676,
+    "cpm_loss": 0.4398408830165863,
+    "masked_duration_loss": 109.19640350341797,
+    "topological_distance_loss": 0.33764153718948364,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 63,
+    "total_loss": 0.16730038821697235,
+    "cpm_loss": 0.4182509779930115,
+    "masked_duration_loss": 151.7145538330078,
+    "topological_distance_loss": 0.33370083570480347,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 64,
+    "total_loss": 0.15694984793663025,
+    "cpm_loss": 0.39237460494041443,
+    "masked_duration_loss": 148.9039764404297,
+    "topological_distance_loss": 0.3466983139514923,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 65,
+    "total_loss": 0.154727041721344,
+    "cpm_loss": 0.38681760430336,
+    "masked_duration_loss": 102.71647644042969,
+    "topological_distance_loss": 0.34013593196868896,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 66,
+    "total_loss": 0.14875341951847076,
+    "cpm_loss": 0.3718835413455963,
+    "masked_duration_loss": 203.05201721191406,
+    "topological_distance_loss": 0.33632388710975647,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 67,
+    "total_loss": 0.14522595703601837,
+    "cpm_loss": 0.36306488513946533,
+    "masked_duration_loss": 155.42135620117188,
+    "topological_distance_loss": 0.34916362166404724,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 68,
+    "total_loss": 0.25517240166664124,
+    "cpm_loss": 0.6379309892654419,
+    "masked_duration_loss": 161.8572540283203,
+    "topological_distance_loss": 0.37405455112457275,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 69,
+    "total_loss": 0.20604300498962402,
+    "cpm_loss": 0.5151075124740601,
+    "masked_duration_loss": 131.14598083496094,
+    "topological_distance_loss": 0.3483215272426605,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 70,
+    "total_loss": 0.18268854916095734,
+    "cpm_loss": 0.45672136545181274,
+    "masked_duration_loss": 118.62650299072266,
+    "topological_distance_loss": 0.31541815400123596,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 71,
+    "total_loss": 0.20986385643482208,
+    "cpm_loss": 0.5246596336364746,
+    "masked_duration_loss": 174.01434326171875,
+    "topological_distance_loss": 0.32579246163368225,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 72,
+    "total_loss": 0.24143075942993164,
+    "cpm_loss": 0.6035768985748291,
+    "masked_duration_loss": 186.53466796875,
+    "topological_distance_loss": 0.32533347606658936,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 73,
+    "total_loss": 0.1825278252363205,
+    "cpm_loss": 0.45631957054138184,
+    "masked_duration_loss": 138.87643432617188,
+    "topological_distance_loss": 0.3251838684082031,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 74,
+    "total_loss": 0.19639652967453003,
+    "cpm_loss": 0.4909913241863251,
+    "masked_duration_loss": 149.904541015625,
+    "topological_distance_loss": 0.3263838589191437,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 75,
+    "total_loss": 0.18091802299022675,
+    "cpm_loss": 0.4522950351238251,
+    "masked_duration_loss": 146.55825805664062,
+    "topological_distance_loss": 0.3272066116333008,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 76,
+    "total_loss": 0.18307483196258545,
+    "cpm_loss": 0.4576870799064636,
+    "masked_duration_loss": 155.38934326171875,
+    "topological_distance_loss": 0.33224809169769287,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 77,
+    "total_loss": 0.1649693250656128,
+    "cpm_loss": 0.412423312664032,
+    "masked_duration_loss": 195.37506103515625,
+    "topological_distance_loss": 0.33515465259552,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 78,
+    "total_loss": 0.16320614516735077,
+    "cpm_loss": 0.40801534056663513,
+    "masked_duration_loss": 167.0365753173828,
+    "topological_distance_loss": 0.3339572250843048,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 79,
+    "total_loss": 0.17080438137054443,
+    "cpm_loss": 0.4270109534263611,
+    "masked_duration_loss": 104.39083099365234,
+    "topological_distance_loss": 0.35334500670433044,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 80,
+    "total_loss": 0.16956622898578644,
+    "cpm_loss": 0.4239155650138855,
+    "masked_duration_loss": 184.9023895263672,
+    "topological_distance_loss": 0.34357985854148865,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 81,
+    "total_loss": 0.16660499572753906,
+    "cpm_loss": 0.41651248931884766,
+    "masked_duration_loss": 223.0659942626953,
+    "topological_distance_loss": 0.33975842595100403,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 82,
+    "total_loss": 0.1569608747959137,
+    "cpm_loss": 0.39240217208862305,
+    "masked_duration_loss": 187.23289489746094,
+    "topological_distance_loss": 0.3406520187854767,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 83,
+    "total_loss": 0.1500885933637619,
+    "cpm_loss": 0.37522149085998535,
+    "masked_duration_loss": 161.25308227539062,
+    "topological_distance_loss": 0.35996338725090027,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 84,
+    "total_loss": 0.15456822514533997,
+    "cpm_loss": 0.3864205479621887,
+    "masked_duration_loss": 160.47984313964844,
+    "topological_distance_loss": 0.3420664072036743,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 85,
+    "total_loss": 0.1484326273202896,
+    "cpm_loss": 0.37108156085014343,
+    "masked_duration_loss": 164.73031616210938,
+    "topological_distance_loss": 0.35907721519470215,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 86,
+    "total_loss": 0.13006851077079773,
+    "cpm_loss": 0.32517126202583313,
+    "masked_duration_loss": 157.0348663330078,
+    "topological_distance_loss": 0.31963130831718445,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 87,
+    "total_loss": 0.12736867368221283,
+    "cpm_loss": 0.31842169165611267,
+    "masked_duration_loss": 175.4126434326172,
+    "topological_distance_loss": 0.3305727243423462,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 88,
+    "total_loss": 0.1066494807600975,
+    "cpm_loss": 0.26662370562553406,
+    "masked_duration_loss": 167.59315490722656,
+    "topological_distance_loss": 0.35670945048332214,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 89,
+    "total_loss": 0.11471521854400635,
+    "cpm_loss": 0.28678804636001587,
+    "masked_duration_loss": 149.65464782714844,
+    "topological_distance_loss": 0.33326491713523865,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 90,
+    "total_loss": 0.26047322154045105,
+    "cpm_loss": 0.651183009147644,
+    "masked_duration_loss": 155.79595947265625,
+    "topological_distance_loss": 0.337186723947525,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 91,
+    "total_loss": 0.11177780479192734,
+    "cpm_loss": 0.27944451570510864,
+    "masked_duration_loss": 176.5509033203125,
+    "topological_distance_loss": 0.3313657343387604,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 92,
+    "total_loss": 0.2361537218093872,
+    "cpm_loss": 0.590384304523468,
+    "masked_duration_loss": 113.14166259765625,
+    "topological_distance_loss": 0.3283495008945465,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 93,
+    "total_loss": 0.22376851737499237,
+    "cpm_loss": 0.5594213008880615,
+    "masked_duration_loss": 133.34683227539062,
+    "topological_distance_loss": 0.32364046573638916,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 94,
+    "total_loss": 0.21984981000423431,
+    "cpm_loss": 0.549624502658844,
+    "masked_duration_loss": 161.22398376464844,
+    "topological_distance_loss": 0.31680506467819214,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 95,
+    "total_loss": 0.18763212859630585,
+    "cpm_loss": 0.4690803289413452,
+    "masked_duration_loss": 161.73536682128906,
+    "topological_distance_loss": 0.34304267168045044,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 96,
+    "total_loss": 0.15854087471961975,
+    "cpm_loss": 0.3963521718978882,
+    "masked_duration_loss": 176.29505920410156,
+    "topological_distance_loss": 0.3119240999221802,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 97,
+    "total_loss": 0.17627115547657013,
+    "cpm_loss": 0.4406778812408447,
+    "masked_duration_loss": 186.24928283691406,
+    "topological_distance_loss": 0.3310069143772125,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 98,
+    "total_loss": 0.17062261700630188,
+    "cpm_loss": 0.4265565276145935,
+    "masked_duration_loss": 152.9907684326172,
+    "topological_distance_loss": 0.3302020728588104,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 99,
+    "total_loss": 0.16695459187030792,
+    "cpm_loss": 0.4173864722251892,
+    "masked_duration_loss": 176.62179565429688,
+    "topological_distance_loss": 0.3219081163406372,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 100,
+    "total_loss": 0.15002262592315674,
+    "cpm_loss": 0.37505656480789185,
+    "masked_duration_loss": 197.90594482421875,
+    "topological_distance_loss": 0.35157498717308044,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 101,
+    "total_loss": 0.16061556339263916,
+    "cpm_loss": 0.4015389084815979,
+    "masked_duration_loss": 171.16305541992188,
+    "topological_distance_loss": 0.34322822093963623,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 102,
+    "total_loss": 0.17781348526477814,
+    "cpm_loss": 0.44453370571136475,
+    "masked_duration_loss": 114.82593536376953,
+    "topological_distance_loss": 0.34975922107696533,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 103,
+    "total_loss": 0.1695045381784439,
+    "cpm_loss": 0.4237613379955292,
+    "masked_duration_loss": 218.80445861816406,
+    "topological_distance_loss": 0.34608280658721924,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 104,
+    "total_loss": 0.16628830134868622,
+    "cpm_loss": 0.41572076082229614,
+    "masked_duration_loss": 163.92068481445312,
+    "topological_distance_loss": 0.3293934166431427,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 105,
+    "total_loss": 0.15365728735923767,
+    "cpm_loss": 0.384143203496933,
+    "masked_duration_loss": 187.99317932128906,
+    "topological_distance_loss": 0.3422123193740845,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 106,
+    "total_loss": 0.16477341949939728,
+    "cpm_loss": 0.4119335412979126,
+    "masked_duration_loss": 171.56752014160156,
+    "topological_distance_loss": 0.3321329951286316,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 107,
+    "total_loss": 0.15853963792324066,
+    "cpm_loss": 0.39634907245635986,
+    "masked_duration_loss": 170.32908630371094,
+    "topological_distance_loss": 0.3353580832481384,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 108,
+    "total_loss": 0.15161149203777313,
+    "cpm_loss": 0.37902870774269104,
+    "masked_duration_loss": 173.72784423828125,
+    "topological_distance_loss": 0.33987027406692505,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 109,
+    "total_loss": 0.15804997086524963,
+    "cpm_loss": 0.3951249122619629,
+    "masked_duration_loss": 114.58601379394531,
+    "topological_distance_loss": 0.324947714805603,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 110,
+    "total_loss": 0.14428840577602386,
+    "cpm_loss": 0.36072099208831787,
+    "masked_duration_loss": 138.6023406982422,
+    "topological_distance_loss": 0.338760107755661,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 111,
+    "total_loss": 0.14047108590602875,
+    "cpm_loss": 0.3511776924133301,
+    "masked_duration_loss": 162.50204467773438,
+    "topological_distance_loss": 0.35145577788352966,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 112,
+    "total_loss": 0.1479858160018921,
+    "cpm_loss": 0.3699645400047302,
+    "masked_duration_loss": 129.91543579101562,
+    "topological_distance_loss": 0.3395015597343445,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 113,
+    "total_loss": 0.13894973695278168,
+    "cpm_loss": 0.3473743200302124,
+    "masked_duration_loss": 177.417236328125,
+    "topological_distance_loss": 0.3375689685344696,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 114,
+    "total_loss": 0.13989365100860596,
+    "cpm_loss": 0.3497341275215149,
+    "masked_duration_loss": 139.24365234375,
+    "topological_distance_loss": 0.3608379364013672,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 115,
+    "total_loss": 0.15201039612293243,
+    "cpm_loss": 0.3800259828567505,
+    "masked_duration_loss": 167.57069396972656,
+    "topological_distance_loss": 0.33610033988952637,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 116,
+    "total_loss": 0.1365092694759369,
+    "cpm_loss": 0.34127315878868103,
+    "masked_duration_loss": 173.54824829101562,
+    "topological_distance_loss": 0.32867810130119324,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 117,
+    "total_loss": 0.137748584151268,
+    "cpm_loss": 0.3443714380264282,
+    "masked_duration_loss": 170.08689880371094,
+    "topological_distance_loss": 0.3415837585926056,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 118,
+    "total_loss": 0.13683931529521942,
+    "cpm_loss": 0.34209826588630676,
+    "masked_duration_loss": 173.84588623046875,
+    "topological_distance_loss": 0.3393867611885071,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 119,
+    "total_loss": 0.13622431457042694,
+    "cpm_loss": 0.34056076407432556,
+    "masked_duration_loss": 212.58274841308594,
+    "topological_distance_loss": 0.3158063292503357,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 120,
+    "total_loss": 0.13601210713386536,
+    "cpm_loss": 0.3400302529335022,
+    "masked_duration_loss": 137.56826782226562,
+    "topological_distance_loss": 0.3393394351005554,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 121,
+    "total_loss": 0.12975768744945526,
+    "cpm_loss": 0.32439422607421875,
+    "masked_duration_loss": 139.7683563232422,
+    "topological_distance_loss": 0.3318617343902588,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 122,
+    "total_loss": 0.13467948138713837,
+    "cpm_loss": 0.3366987109184265,
+    "masked_duration_loss": 153.80499267578125,
+    "topological_distance_loss": 0.3372690975666046,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 123,
+    "total_loss": 0.11930704116821289,
+    "cpm_loss": 0.2982676029205322,
+    "masked_duration_loss": 177.6904296875,
+    "topological_distance_loss": 0.34489041566848755,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 124,
+    "total_loss": 0.12043739855289459,
+    "cpm_loss": 0.3010934889316559,
+    "masked_duration_loss": 118.94377136230469,
+    "topological_distance_loss": 0.3446531593799591,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 125,
+    "total_loss": 0.11539498716592789,
+    "cpm_loss": 0.2884874641895294,
+    "masked_duration_loss": 157.3189697265625,
+    "topological_distance_loss": 0.3217020332813263,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 126,
+    "total_loss": 0.11200094223022461,
+    "cpm_loss": 0.2800023555755615,
+    "masked_duration_loss": 159.9550323486328,
+    "topological_distance_loss": 0.3275318145751953,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 127,
+    "total_loss": 0.10490935295820236,
+    "cpm_loss": 0.262273371219635,
+    "masked_duration_loss": 178.1317138671875,
+    "topological_distance_loss": 0.33789005875587463,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 128,
+    "total_loss": 0.1127387061715126,
+    "cpm_loss": 0.2818467617034912,
+    "masked_duration_loss": 131.77622985839844,
+    "topological_distance_loss": 0.3382234573364258,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 129,
+    "total_loss": 0.09978746622800827,
+    "cpm_loss": 0.24946865439414978,
+    "masked_duration_loss": 132.7044219970703,
+    "topological_distance_loss": 0.33001986145973206,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 130,
+    "total_loss": 0.10202085971832275,
+    "cpm_loss": 0.2550521492958069,
+    "masked_duration_loss": 163.7600860595703,
+    "topological_distance_loss": 0.34340304136276245,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 131,
+    "total_loss": 0.09842448681592941,
+    "cpm_loss": 0.24606120586395264,
+    "masked_duration_loss": 144.08230590820312,
+    "topological_distance_loss": 0.33365845680236816,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 132,
+    "total_loss": 0.0999678298830986,
+    "cpm_loss": 0.2499195635318756,
+    "masked_duration_loss": 137.20358276367188,
+    "topological_distance_loss": 0.3328990936279297,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 133,
+    "total_loss": 0.08931297063827515,
+    "cpm_loss": 0.22328242659568787,
+    "masked_duration_loss": 145.0486602783203,
+    "topological_distance_loss": 0.3323947489261627,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 134,
+    "total_loss": 0.08580818772315979,
+    "cpm_loss": 0.21452046930789948,
+    "masked_duration_loss": 148.09840393066406,
+    "topological_distance_loss": 0.32642459869384766,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 135,
+    "total_loss": 0.08664167672395706,
+    "cpm_loss": 0.21660418808460236,
+    "masked_duration_loss": 239.294677734375,
+    "topological_distance_loss": 0.31675612926483154,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 136,
+    "total_loss": 0.0815587267279625,
+    "cpm_loss": 0.20389682054519653,
+    "masked_duration_loss": 177.52432250976562,
+    "topological_distance_loss": 0.3438486158847809,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 137,
+    "total_loss": 0.08937378972768784,
+    "cpm_loss": 0.2234344631433487,
+    "masked_duration_loss": 166.77993774414062,
+    "topological_distance_loss": 0.3348431885242462,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 138,
+    "total_loss": 0.11998877674341202,
+    "cpm_loss": 0.29997193813323975,
+    "masked_duration_loss": 197.07151794433594,
+    "topological_distance_loss": 0.34069710969924927,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 139,
+    "total_loss": 0.13768677413463593,
+    "cpm_loss": 0.3442169427871704,
+    "masked_duration_loss": 162.8254852294922,
+    "topological_distance_loss": 0.3454698324203491,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 140,
+    "total_loss": 0.13308148086071014,
+    "cpm_loss": 0.33270367980003357,
+    "masked_duration_loss": 187.79559326171875,
+    "topological_distance_loss": 0.3459628224372864,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 141,
+    "total_loss": 0.13842113316059113,
+    "cpm_loss": 0.3460528254508972,
+    "masked_duration_loss": 179.35633850097656,
+    "topological_distance_loss": 0.33089080452919006,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 142,
+    "total_loss": 0.11013250797986984,
+    "cpm_loss": 0.2753312587738037,
+    "masked_duration_loss": 144.1446533203125,
+    "topological_distance_loss": 0.3437543213367462,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 143,
+    "total_loss": 0.11230627447366714,
+    "cpm_loss": 0.28076568245887756,
+    "masked_duration_loss": 164.4536895751953,
+    "topological_distance_loss": 0.3364204466342926,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 144,
+    "total_loss": 0.1254304200410843,
+    "cpm_loss": 0.3135760426521301,
+    "masked_duration_loss": 208.12039184570312,
+    "topological_distance_loss": 0.3431411683559418,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 145,
+    "total_loss": 0.12715697288513184,
+    "cpm_loss": 0.3178924322128296,
+    "masked_duration_loss": 130.99395751953125,
+    "topological_distance_loss": 0.3537055552005768,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 146,
+    "total_loss": 0.11327671259641647,
+    "cpm_loss": 0.2831917703151703,
+    "masked_duration_loss": 196.6387176513672,
+    "topological_distance_loss": 0.35914844274520874,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 147,
+    "total_loss": 0.11099217087030411,
+    "cpm_loss": 0.27748042345046997,
+    "masked_duration_loss": 128.71986389160156,
+    "topological_distance_loss": 0.33929312229156494,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 148,
+    "total_loss": 0.10550352185964584,
+    "cpm_loss": 0.2637588083744049,
+    "masked_duration_loss": 161.04025268554688,
+    "topological_distance_loss": 0.3488106429576874,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 149,
+    "total_loss": 0.10785623639822006,
+    "cpm_loss": 0.26964059472084045,
+    "masked_duration_loss": 145.7391357421875,
+    "topological_distance_loss": 0.3532927632331848,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 150,
+    "total_loss": 0.10676103830337524,
+    "cpm_loss": 0.2669025957584381,
+    "masked_duration_loss": 176.09291076660156,
+    "topological_distance_loss": 0.3485450744628906,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 151,
+    "total_loss": 0.11039817333221436,
+    "cpm_loss": 0.2759954333305359,
+    "masked_duration_loss": 152.1226348876953,
+    "topological_distance_loss": 0.3544420003890991,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 152,
+    "total_loss": 0.09660357236862183,
+    "cpm_loss": 0.24150893092155457,
+    "masked_duration_loss": 150.98489379882812,
+    "topological_distance_loss": 0.3534298837184906,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 153,
+    "total_loss": 0.10849561542272568,
+    "cpm_loss": 0.2712390422821045,
+    "masked_duration_loss": 160.70562744140625,
+    "topological_distance_loss": 0.341613233089447,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 154,
+    "total_loss": 0.0961885079741478,
+    "cpm_loss": 0.2404712736606598,
+    "masked_duration_loss": 120.87858581542969,
+    "topological_distance_loss": 0.3447011709213257,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 155,
+    "total_loss": 0.07498612254858017,
+    "cpm_loss": 0.18746531009674072,
+    "masked_duration_loss": 125.27932739257812,
+    "topological_distance_loss": 0.3332606554031372,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 156,
+    "total_loss": 0.08759316802024841,
+    "cpm_loss": 0.21898292005062103,
+    "masked_duration_loss": 145.18951416015625,
+    "topological_distance_loss": 0.3377932012081146,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 157,
+    "total_loss": 0.07745661586523056,
+    "cpm_loss": 0.1936415433883667,
+    "masked_duration_loss": 165.01889038085938,
+    "topological_distance_loss": 0.3561713397502899,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 158,
+    "total_loss": 0.06376554071903229,
+    "cpm_loss": 0.15941384434700012,
+    "masked_duration_loss": 112.65967559814453,
+    "topological_distance_loss": 0.3499821722507477,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 159,
+    "total_loss": 0.11249060928821564,
+    "cpm_loss": 0.2812265157699585,
+    "masked_duration_loss": 163.05189514160156,
+    "topological_distance_loss": 0.3663373589515686,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 160,
+    "total_loss": 0.07607118785381317,
+    "cpm_loss": 0.19017796218395233,
+    "masked_duration_loss": 182.16290283203125,
+    "topological_distance_loss": 0.32483482360839844,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 161,
+    "total_loss": 0.07347001880407333,
+    "cpm_loss": 0.18367503583431244,
+    "masked_duration_loss": 146.64083862304688,
+    "topological_distance_loss": 0.3508453667163849,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 162,
+    "total_loss": 0.08127514272928238,
+    "cpm_loss": 0.20318785309791565,
+    "masked_duration_loss": 178.0133514404297,
+    "topological_distance_loss": 0.34645217657089233,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 163,
+    "total_loss": 0.07468245178461075,
+    "cpm_loss": 0.18670612573623657,
+    "masked_duration_loss": 108.57682800292969,
+    "topological_distance_loss": 0.3509069085121155,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 164,
+    "total_loss": 0.08251267671585083,
+    "cpm_loss": 0.20628169178962708,
+    "masked_duration_loss": 119.04920959472656,
+    "topological_distance_loss": 0.3412148654460907,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 165,
+    "total_loss": 0.0798887237906456,
+    "cpm_loss": 0.1997218132019043,
+    "masked_duration_loss": 131.51133728027344,
+    "topological_distance_loss": 0.3430083990097046,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 166,
+    "total_loss": 0.06660808622837067,
+    "cpm_loss": 0.16652020812034607,
+    "masked_duration_loss": 188.9383544921875,
+    "topological_distance_loss": 0.3510921895503998,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 167,
+    "total_loss": 40.78424072265625,
+    "cpm_loss": 0.1655169278383255,
+    "masked_duration_loss": 135.72677612304688,
+    "topological_distance_loss": 0.3496647775173187,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 168,
+    "total_loss": 54.00989532470703,
+    "cpm_loss": 0.2363017499446869,
+    "masked_duration_loss": 179.71791076660156,
+    "topological_distance_loss": 0.35446467995643616,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 169,
+    "total_loss": 58.975738525390625,
+    "cpm_loss": 0.7188150882720947,
+    "masked_duration_loss": 195.6273651123047,
+    "topological_distance_loss": 0.3094192445278168,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 170,
+    "total_loss": 47.131500244140625,
+    "cpm_loss": 1.6752383708953857,
+    "masked_duration_loss": 154.87135314941406,
+    "topological_distance_loss": 0.26576128602027893,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 171,
+    "total_loss": 41.80780029296875,
+    "cpm_loss": 1.4716618061065674,
+    "masked_duration_loss": 137.39710998535156,
+    "topological_distance_loss": 0.211786687374115,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 172,
+    "total_loss": 30.166757583618164,
+    "cpm_loss": 1.1754610538482666,
+    "masked_duration_loss": 98.98857116699219,
+    "topological_distance_loss": 0.17875710129737854,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 173,
+    "total_loss": 31.96221351623535,
+    "cpm_loss": 1.126641869544983,
+    "masked_duration_loss": 105.03852081298828,
+    "topological_distance_loss": 0.15972484648227692,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 174,
+    "total_loss": 25.99405288696289,
+    "cpm_loss": 1.1860451698303223,
+    "masked_duration_loss": 85.06544494628906,
+    "topological_distance_loss": 0.15945063531398773,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 175,
+    "total_loss": 21.415010452270508,
+    "cpm_loss": 1.0707151889801025,
+    "masked_duration_loss": 69.95574951171875,
+    "topological_distance_loss": 0.16716863214969635,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 176,
+    "total_loss": 20.262819290161133,
+    "cpm_loss": 0.9685348272323608,
+    "masked_duration_loss": 66.25135040283203,
+    "topological_distance_loss": 0.18642105162143707,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 177,
+    "total_loss": 19.089385986328125,
+    "cpm_loss": 0.9933165311813354,
+    "masked_duration_loss": 62.306861877441406,
+    "topological_distance_loss": 0.18627309799194336,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 178,
+    "total_loss": 16.19354820251465,
+    "cpm_loss": 0.9659310579299927,
+    "masked_duration_loss": 52.690582275390625,
+    "topological_distance_loss": 0.1978173404932022,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 179,
+    "total_loss": 10.507335662841797,
+    "cpm_loss": 1.0023672580718994,
+    "masked_duration_loss": 33.68796157836914,
+    "topological_distance_loss": 0.1998303383588791,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 180,
+    "total_loss": 13.299099922180176,
+    "cpm_loss": 0.9427992701530457,
+    "masked_duration_loss": 43.073265075683594,
+    "topological_distance_loss": 0.20897996425628662,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 181,
+    "total_loss": 15.264201164245605,
+    "cpm_loss": 0.9620389342308044,
+    "masked_duration_loss": 49.59794998168945,
+    "topological_distance_loss": 0.206180140376091,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 182,
+    "total_loss": 15.125161170959473,
+    "cpm_loss": 0.947260856628418,
+    "masked_duration_loss": 49.1541862487793,
+    "topological_distance_loss": 0.21933111548423767,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 183,
+    "total_loss": 13.596660614013672,
+    "cpm_loss": 0.943305253982544,
+    "masked_duration_loss": 44.06446075439453,
+    "topological_distance_loss": 0.23374725878238678,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 184,
+    "total_loss": 17.16648292541504,
+    "cpm_loss": 0.9683016538619995,
+    "masked_duration_loss": 55.930538177490234,
+    "topological_distance_loss": 0.22933101654052734,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 185,
+    "total_loss": 16.351242065429688,
+    "cpm_loss": 0.8873077630996704,
+    "masked_duration_loss": 53.32106018066406,
+    "topological_distance_loss": 0.2518000900745392,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 186,
+    "total_loss": 18.952089309692383,
+    "cpm_loss": 0.9639946222305298,
+    "masked_duration_loss": 61.888301849365234,
+    "topological_distance_loss": 0.2633455693721771,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 187,
+    "total_loss": 16.189912796020508,
+    "cpm_loss": 0.9638494253158569,
+    "masked_duration_loss": 52.68124008178711,
+    "topological_distance_loss": 0.2697978913784027,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 188,
+    "total_loss": 13.492030143737793,
+    "cpm_loss": 1.0715053081512451,
+    "masked_duration_loss": 43.54475784301758,
+    "topological_distance_loss": 0.3110366463661194,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 189,
+    "total_loss": 24.523910522460938,
+    "cpm_loss": 0.972474217414856,
+    "masked_duration_loss": 80.4497299194336,
+    "topological_distance_loss": 0.30493441224098206,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 190,
+    "total_loss": 17.001983642578125,
+    "cpm_loss": 0.8934097290039062,
+    "masked_duration_loss": 55.48206329345703,
+    "topological_distance_loss": 0.3178761303424835,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 191,
+    "total_loss": 21.45816421508789,
+    "cpm_loss": 0.9561111330986023,
+    "masked_duration_loss": 70.25239562988281,
+    "topological_distance_loss": 0.32074782252311707,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 192,
+    "total_loss": 15.927565574645996,
+    "cpm_loss": 1.291682243347168,
+    "masked_duration_loss": 51.3696403503418,
+    "topological_distance_loss": 0.2907925248146057,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 193,
+    "total_loss": 24.766647338867188,
+    "cpm_loss": 1.3736572265625,
+    "masked_duration_loss": 80.72394561767578,
+    "topological_distance_loss": 0.2765178084373474,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 194,
+    "total_loss": 25.03095054626465,
+    "cpm_loss": 1.203449010848999,
+    "masked_duration_loss": 81.83189392089844,
+    "topological_distance_loss": 0.26334038376808167,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 195,
+    "total_loss": 11.89877700805664,
+    "cpm_loss": 1.1753605604171753,
+    "masked_duration_loss": 38.09543991088867,
+    "topological_distance_loss": 0.2729237675666809,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 196,
+    "total_loss": 5.688302993774414,
+    "cpm_loss": 1.1970069408416748,
+    "masked_duration_loss": 17.364999771118164,
+    "topological_distance_loss": 0.299384206533432,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 197,
+    "total_loss": 10.914508819580078,
+    "cpm_loss": 1.2729864120483398,
+    "masked_duration_loss": 34.68437957763672,
+    "topological_distance_loss": 0.3019940257072449,
+    "learning_rate": 0.005
+  },
+  {
+    "epoch": 198,
+    "total_loss": 11.619413375854492,
+    "cpm_loss": 1.1605896949768066,
+    "masked_duration_loss": 37.183921813964844,
+    "topological_distance_loss": 0.28097718954086304,
     "learning_rate": 0.005
   }
 ]

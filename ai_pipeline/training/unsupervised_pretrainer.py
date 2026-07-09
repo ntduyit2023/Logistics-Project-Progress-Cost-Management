@@ -77,6 +77,9 @@ try:
         mask_node_duration,
         compute_shortest_path_distances,
         sample_node_pairs,
+        sample_gat_triplets,
+        compute_longest_path_durations,
+        sample_node_pairs_duration,
     )
     from ai_pipeline.training.pretraining_losses import (
         GAELoss,
@@ -86,6 +89,7 @@ try:
         MaskedDurationLoss,
         TopologicalDistanceLoss,
         DAGNNMultiTaskLoss,
+        CPNTTripletLoss,
     )
 except ImportError:
     # Fallback khi chạy trực tiếp file này làm unit test
@@ -98,6 +102,9 @@ except ImportError:
         mask_node_duration,
         compute_shortest_path_distances,
         sample_node_pairs,
+        sample_gat_triplets,
+        compute_longest_path_durations,
+        sample_node_pairs_duration,
     )
     from pretraining_losses import (
         GAELoss,
@@ -107,6 +114,7 @@ except ImportError:
         MaskedDurationLoss,
         TopologicalDistanceLoss,
         DAGNNMultiTaskLoss,
+        CPNTTripletLoss,
     )
 
 
@@ -123,8 +131,13 @@ class _GATEncoderWrapper(nn.Module):
         self.dropout = model.dropout
 
     def forward(self, x, edge_index):
+        # Chống rò rỉ dữ liệu (Data Leakage)
+        x_clean = x.clone()
+        if x_clean.shape[1] >= 68:
+            x_clean[:, [65, 66, 67]] = 0.0
+
         # Tầng 1 & 2: Encoder
-        S_prime_g, _ = self.encoder(x)
+        S_prime_g, _ = self.encoder(x_clean)
 
         # Tầng 3a: GAT
         h = F.leaky_relu(self.node_proj(S_prime_g))
@@ -139,17 +152,25 @@ class _GATEncoderWrapper(nn.Module):
 class _DAGNNPredictionHead(nn.Module):
     """
     Đầu dự đoán (Prediction Head) gắn trên DAGNN embeddings để dự đoán các thông số CPM tĩnh.
+    Tích hợp Residual Connection và Batch Normalization giúp tối ưu hoá gradient.
     """
     def __init__(self, dagnn_out_dim: int = 32, num_targets: int = 7):
         super(_DAGNNPredictionHead, self).__init__()
-        self.head = nn.Sequential(
-            nn.Linear(dagnn_out_dim, dagnn_out_dim),
-            nn.LeakyReLU(0.2),
-            nn.Linear(dagnn_out_dim, num_targets),
-        )
+        self.fc1 = nn.Linear(dagnn_out_dim, dagnn_out_dim)
+        self.bn1 = nn.BatchNorm1d(dagnn_out_dim)
+        self.act = nn.LeakyReLU(0.2)
+        self.fc2 = nn.Linear(dagnn_out_dim, num_targets)
 
     def forward(self, h_dagnn):
-        return self.head(h_dagnn)
+        identity = h_dagnn
+        out = self.fc1(h_dagnn)
+        # Fallback tránh lỗi BatchNorm khi kích thước lô bằng 1
+        if out.size(0) > 1:
+            out = self.bn1(out)
+        out = self.act(out)
+        # Kết nối residual
+        out = out + identity
+        return self.fc2(out)
 
 
 class _DurationPredictionHead(nn.Module):
@@ -202,8 +223,9 @@ class UnsupervisedPretrainer:
         self,
         model,
         device: str = 'cpu',
-        lambda_gae: float = 0.5,
-        lambda_dgi: float = 0.5,
+        lambda_gae: float = 0.6,
+        lambda_dgi: float = 0.25,
+        lambda_cpnt: float = 0.15,
         lambda_cpm: float = 0.4,
         lambda_mask: float = 0.3,
         lambda_topo: float = 0.3,
@@ -213,6 +235,7 @@ class UnsupervisedPretrainer:
         self.model.to(self.device)
         self.lambda_gae = lambda_gae
         self.lambda_dgi = lambda_dgi
+        self.lambda_cpnt = lambda_cpnt
         self.lambda_cpm = lambda_cpm
         self.lambda_mask = lambda_mask
         self.lambda_topo = lambda_topo
@@ -223,35 +246,45 @@ class UnsupervisedPretrainer:
     def pretrain_gae(
         self,
         data,
-        epochs: int = 100,
+        epochs: int = 300,
         lr: float = 0.01,
         neg_sampling_ratio: float = 1.0,
         verbose: bool = True,
         lambda_gae: Optional[float] = None,
         lambda_dgi: Optional[float] = None,
+        lambda_cpnt: Optional[float] = None,
     ) -> Dict[str, List[float]]:
         """
-        Huấn luyện GAT bằng phối hợp GAE + DGI Multi-task Loss.
+        Huấn luyện GAT bằng phối hợp GAE + DGI Multi-task Loss kết hợp CPNT Triplet Loss.
         """
         from torch_geometric.utils import negative_sampling
+        import copy
 
         l_gae = lambda_gae if lambda_gae is not None else self.lambda_gae
         l_dgi = lambda_dgi if lambda_dgi is not None else self.lambda_dgi
+        l_cpnt = lambda_cpnt if lambda_cpnt is not None else self.lambda_cpnt
 
         if verbose:
             print("=" * 60)
-            print("  GAT MULTI-TASK PRE-TRAINING (GAE + DGI Self-Supervised)")
-            print(f"  Trong so: lambda_gae = {l_gae:.2f} | lambda_dgi = {l_dgi:.2f}")
+            print("  GAT MULTI-TASK PRE-TRAINING (GAE + DGI + CPNT Self-Supervised)")
+            print(f"  Trong so: lambda_gae = {l_gae:.2f} | lambda_dgi = {l_dgi:.2f} | lambda_cpnt = {l_cpnt:.2f}")
             print("=" * 60)
 
         gat_encoder = _GATEncoderWrapper(self.model).to(self.device)
         gat_out_dim = getattr(self.model, 'gat_out_dim', 32)
         discriminator = BilinearDiscriminator(gat_out_dim).to(self.device)
         multitask_loss_fn = MultiTaskLoss(lambda_gae=l_gae, lambda_dgi=l_dgi).to(self.device)
+        cpnt_loss_fn = CPNTTripletLoss(margin=0.5).to(self.device)
 
         data_copy = data.clone().to(self.device)
+        # Khử rò rỉ dữ liệu cấu trúc đầu vào
+        if data_copy.x.shape[1] >= 68:
+            data_copy.x[:, [65, 66, 67]] = 0.0
         pos_edge_index = data_copy.edge_index
         num_nodes = data_copy.x.shape[0]
+
+        # Tính các nhãn mục tiêu CPM một lần để lấy nhãn is_critical cho CPNT Triplet sampling
+        cpm_targets = self._compute_cpm_targets(data_copy)
 
         gat_params = list(gat_encoder.parameters()) + list(discriminator.parameters())
         optimizer = torch.optim.Adam(gat_params, lr=lr)
@@ -263,17 +296,39 @@ class UnsupervisedPretrainer:
             'losses': [], 
             'gae_losses': [], 
             'dgi_losses': [], 
+            'cpnt_losses': [], 
             'auc_scores': [], 
             'ap_scores': [], 
             'time_taken': 0.0
         }
 
         best_loss = float('inf')
+        best_gat_state = copy.deepcopy(gat_encoder.state_dict())
+        best_disc_state = copy.deepcopy(discriminator.state_dict())
+
+        # Cấu hình early stopping và learning rate scheduling
+        patience = 30
+        patience_counter = 0
+        min_improvement = 1e-4
+        warmup_epochs = 10
 
         gat_encoder.train()
         discriminator.train()
+        actual_epochs = 0
         for epoch in range(1, epochs + 1):
+            actual_epochs = epoch
             optimizer.zero_grad()
+
+            # Cosine LR Warmup + Decay
+            if epoch <= warmup_epochs:
+                curr_lr = lr * (epoch / warmup_epochs)
+            else:
+                progress = (epoch - warmup_epochs) / max(1, epochs - warmup_epochs)
+                curr_lr = 0.5 * lr * (1.0 + np.cos(np.pi * progress))
+                curr_lr = max(curr_lr, lr * 0.05)
+                
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = curr_lr
 
             corrupted_x = corrupt_features_shuffling(data_copy.x)
             z = gat_encoder(data_copy.x, pos_edge_index)
@@ -286,6 +341,7 @@ class UnsupervisedPretrainer:
                 num_neg_samples=int(pos_edge_index.shape[1] * neg_sampling_ratio),
             )
 
+            # 1. Tính GAE + DGI loss
             total_loss, gae_loss, dgi_loss = multitask_loss_fn(
                 z=z,
                 z_corrupted=z_corrupted,
@@ -295,17 +351,31 @@ class UnsupervisedPretrainer:
                 neg_edge_index=neg_edge_index
             )
 
+            # 2. Tính CPNT Triplet loss
+            anchors, positives, negatives = sample_gat_triplets(cpm_targets, num_samples=150)
+            cpnt_loss = cpnt_loss_fn(z, anchors, positives, negatives)
+            
+            # Tổng hợp loss
+            total_loss = total_loss + l_cpnt * cpnt_loss
+
             total_loss.backward()
             optimizer.step()
 
             history['losses'].append(total_loss.item())
             history['gae_losses'].append(gae_loss.item())
             history['dgi_losses'].append(dgi_loss.item())
+            history['cpnt_losses'].append(cpnt_loss.item())
 
-            if total_loss.item() < best_loss:
+            # Early Stopping check và lưu snapshot tốt nhất
+            if total_loss.item() < best_loss - min_improvement:
                 best_loss = total_loss.item()
+                best_gat_state = copy.deepcopy(gat_encoder.state_dict())
+                best_disc_state = copy.deepcopy(discriminator.state_dict())
+                patience_counter = 0
+            else:
+                patience_counter += 1
 
-            if epoch % max(1, epochs // 10) == 0 or epoch == epochs:
+            if epoch % max(1, epochs // 10) == 0 or epoch == epochs or patience_counter >= patience:
                 gat_encoder.eval()
                 with torch.no_grad():
                     z_eval = gat_encoder(data_copy.x, pos_edge_index)
@@ -339,8 +409,21 @@ class UnsupervisedPretrainer:
 
                 if verbose:
                     print(f"  Epoch {epoch:4d}/{epochs}: "
-                          f"Loss={total_loss.item():.4f} (GAE={gae_loss.item():.4f}, DGI={dgi_loss.item():.4f}) | "
-                          f"AUC={auc:.4f}, AP={ap:.4f}")
+                          f"Loss={total_loss.item():.4f} (GAE={gae_loss.item():.4f}, DGI={dgi_loss.item():.4f}, CPNT={cpnt_loss.item():.4f}) | "
+                          f"AUC={auc:.4f}, AP={ap:.4f} | LR={curr_lr:.6f}")
+
+            if patience_counter >= patience:
+                if verbose:
+                    print(f"  [EARLY STOPPING] Kich hoat tai epoch {epoch} vi loss khong cai thien sau {patience} epochs.")
+                break
+
+        # Khôi phục trạng thái tốt nhất đã học
+        gat_encoder.load_state_dict(best_gat_state)
+        # Nạp lại trọng số tốt nhất vào mô hình chính
+        self.model.encoder.load_state_dict(gat_encoder.encoder.state_dict())
+        self.model.node_proj.load_state_dict(gat_encoder.node_proj.state_dict())
+        self.model.gat1.load_state_dict(gat_encoder.gat1.state_dict())
+        self.model.gat2.load_state_dict(gat_encoder.gat2.state_dict())
 
         history['time_taken'] = time.time() - t0
         
@@ -355,18 +438,19 @@ class UnsupervisedPretrainer:
         checkpoint = {
             'gat_encoder_state_dict': gat_encoder.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
-            'epoch': epochs,
+            'epoch': actual_epochs,
             'best_validation_loss': best_loss
         }
         torch.save(checkpoint, checkpoint_path)
 
         metrics_data = []
-        for i in range(epochs):
+        for i in range(actual_epochs):
             metrics_data.append({
                 'epoch': i + 1,
                 'total_loss': history['losses'][i],
                 'gae_loss': history['gae_losses'][i],
                 'dgi_loss': history['dgi_losses'][i],
+                'cpnt_loss': history['cpnt_losses'][i],
                 'learning_rate': lr
             })
         
@@ -457,16 +541,22 @@ class UnsupervisedPretrainer:
             for v in adj_forward[u]:
                 path_length[v] = max(path_length[v], path_length[u] + 1)
 
-        # Chuẩn hóa
-        makespan_norm = max(makespan, 1.0)
+        # Chuẩn hóa Z-score cho các biến thời gian liên tục để đồng nhất quy mô phân phối giữa các dự án
+        def to_zscore(vec):
+            mean = np.mean(vec)
+            std = np.std(vec)
+            if std < 1e-6:
+                std = 1.0
+            return (vec - mean) / std
+
         max_path = max(float(np.max(path_length)), 1.0)
         max_float = max(float(np.max(np.abs(total_float))), 1.0)
 
         targets = np.stack([
-            ES / makespan_norm,               # 0: Early Start
-            EF / makespan_norm,               # 1: Early Finish
-            LS / makespan_norm,               # 2: Late Start
-            LF / makespan_norm,               # 3: Late Finish
+            to_zscore(ES),                    # 0: Early Start (Z-score)
+            to_zscore(EF),                    # 1: Early Finish (Z-score)
+            to_zscore(LS),                    # 2: Late Start (Z-score)
+            to_zscore(LF),                    # 3: Late Finish (Z-score)
             total_float / max_float,          # 4: Total Float
             is_critical,                      # 5: Is Critical (flag nhị phân)
             path_length / max_path,           # 6: Path Length
@@ -477,7 +567,7 @@ class UnsupervisedPretrainer:
     def pretrain_cpm_self_supervised(
         self,
         data,
-        epochs: int = 100,
+        epochs: int = 500,
         lr: float = 0.005,
         verbose: bool = True,
         lambda_cpm: Optional[float] = None,
@@ -488,6 +578,7 @@ class UnsupervisedPretrainer:
         Huấn luyện DAGNN theo phương thức Đa nhiệm Tự giám sát mới:
         L_DAGNN = lambda_cpm * L_CPM + lambda_mask * L_MASK + lambda_topo * L_TOPO
         """
+        import copy
         l_cpm = lambda_cpm if lambda_cpm is not None else self.lambda_cpm
         l_mask = lambda_mask if lambda_mask is not None else self.lambda_mask
         l_topo = lambda_topo if lambda_topo is not None else self.lambda_topo
@@ -499,14 +590,19 @@ class UnsupervisedPretrainer:
             print("=" * 60)
 
         data_dev = data.clone().to(self.device)
+        # Khử rò rỉ dữ liệu cấu trúc đầu vào
+        if data_dev.x.shape[1] >= 68:
+            data_dev.x[:, [65, 66, 67]] = 0.0
         num_nodes = data_dev.x.shape[0]
 
         # 1. Tính các nhãn mục tiêu CPM (7 chiều)
         cpm_targets = self._compute_cpm_targets(data_dev)
         target_names = ['Early Start', 'Early Finish', 'Late Start', 'Late Finish', 'Total Float', 'Is Critical', 'Path Length']
 
-        # 2. Tính ma trận khoảng cách topo toàn bộ
-        dist_matrix = compute_shortest_path_distances(data_dev.edge_index, num_nodes)
+        # 2. Tính ma trận đường đi dài nhất theo thời lượng (PCR)
+        features = data_dev.x.cpu().numpy()
+        durations = features[:, 3] * 8.0 + features[:, 4]
+        dist_matrix = compute_longest_path_durations(data_dev.edge_index, durations, num_nodes)
 
         # 3. Khởi tạo các Prediction Heads tạm thời
         cpm_head = _DAGNNPredictionHead(dagnn_out_dim=self.model.dagnn_out_dim, num_targets=7).to(self.device)
@@ -543,14 +639,60 @@ class UnsupervisedPretrainer:
         }
 
         best_loss = float('inf')
+        best_model_state = copy.deepcopy(self.model.state_dict())
+        best_cpm_head_state = copy.deepcopy(cpm_head.state_dict())
+        best_duration_head_state = copy.deepcopy(duration_head.state_dict())
+        best_topo_head_state = copy.deepcopy(topo_head.state_dict())
+
+        # Cấu hình early stopping và learning rate scheduling
+        patience = 40
+        patience_counter = 0
+        min_improvement = 1e-4
+        warmup_epochs = 15
 
         self.model.train()
         cpm_head.train()
         duration_head.train()
         topo_head.train()
 
+        actual_epochs = 0
         for epoch in range(1, epochs + 1):
+            actual_epochs = epoch
             optimizer.zero_grad()
+
+            # Cosine LR Warmup + Decay
+            if epoch <= warmup_epochs:
+                curr_lr = lr * (epoch / warmup_epochs)
+            else:
+                progress = (epoch - warmup_epochs) / max(1, epochs - warmup_epochs)
+                curr_lr = 0.5 * lr * (1.0 + np.cos(np.pi * progress))
+                curr_lr = max(curr_lr, lr * 0.05)
+                
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = curr_lr
+
+            # Progressive Curriculum: 3 chặng học
+            phase1_end = epochs // 3
+            phase2_end = (2 * epochs) // 3
+            if epoch <= phase1_end:
+                # Chặng 1: Chỉ học CPM
+                curr_l_cpm = l_cpm
+                curr_l_mask = 0.0
+                curr_l_topo = 0.0
+            elif epoch <= phase2_end:
+                # Chặng 2: Học CPM + Mask
+                curr_l_cpm = l_cpm
+                curr_l_mask = l_mask
+                curr_l_topo = 0.0
+            else:
+                # Chặng 3: Học đầy đủ cả 3 nhiệm vụ (CPM + Mask + PCR)
+                curr_l_cpm = l_cpm
+                curr_l_mask = l_mask
+                curr_l_topo = l_topo
+
+            multitask_loss_fn.lambda_cpm = curr_l_cpm
+            multitask_loss_fn.lambda_mask = curr_l_mask
+            multitask_loss_fn.lambda_topo = curr_l_topo
 
             # --- NHIỆM VỤ 1: CPM Prediction (đồ thị gốc) ---
             # Forward pass đồ thị gốc
@@ -565,8 +707,8 @@ class UnsupervisedPretrainer:
             cpm_preds = cpm_head(h_dagnn)
 
             # --- NHIỆM VỤ 2: Masked Duration Prediction ---
-            # Tạo đặc trưng bị mask duration
-            masked_x, duration_mask, true_durations = mask_node_duration(data_dev.x, mask_ratio=0.15)
+            # Tạo đặc trưng bị mask duration (mask_ratio=None kích hoạt adaptive)
+            masked_x, duration_mask, true_durations = mask_node_duration(data_dev.x, mask_ratio=None)
             
             # Forward pass đồ thị bị mask
             S_prime_g_masked, _ = self.model.encoder(masked_x)
@@ -579,9 +721,9 @@ class UnsupervisedPretrainer:
             
             duration_preds = duration_head(h_dagnn_masked)
 
-            # --- NHIỆM VỤ 3: Topological Distance Prediction ---
-            # Lấy mẫu các cặp node
-            u_indices, v_indices, true_distances = sample_node_pairs(dist_matrix, num_samples=200)
+            # --- NHIỆM VỤ 3: Predecessor Chain Reconstruction (PCR) ---
+            # Lấy mẫu các cặp node và tính thời lượng đường đi dài nhất
+            u_indices, v_indices, true_distances = sample_node_pairs_duration(dist_matrix, num_samples=200)
             u_tensor = torch.tensor(u_indices, dtype=torch.long, device=self.device)
             v_tensor = torch.tensor(v_indices, dtype=torch.long, device=self.device)
             true_distances_tensor = torch.tensor(true_distances, dtype=torch.float32, device=self.device)
@@ -608,17 +750,36 @@ class UnsupervisedPretrainer:
             history['mask_losses'].append(mask_loss.item())
             history['topo_losses'].append(topo_loss.item())
 
-            if total_loss.item() < best_loss:
+            # Early Stopping check và lưu snapshot tốt nhất
+            if total_loss.item() < best_loss - min_improvement:
                 best_loss = total_loss.item()
+                best_model_state = copy.deepcopy(self.model.state_dict())
+                best_cpm_head_state = copy.deepcopy(cpm_head.state_dict())
+                best_duration_head_state = copy.deepcopy(duration_head.state_dict())
+                best_topo_head_state = copy.deepcopy(topo_head.state_dict())
+                patience_counter = 0
+            else:
+                patience_counter += 1
 
-            if epoch % max(1, epochs // 10) == 0 or epoch == epochs:
+            if epoch % max(1, epochs // 10) == 0 or epoch == epochs or patience_counter >= patience:
                 with torch.no_grad():
                     # Đánh giá MAE trên CPM
                     mae = torch.abs(cpm_preds - cpm_targets).mean(dim=0)
                 if verbose:
                     print(f"  Epoch {epoch:4d}/{epochs}: Loss={total_loss.item():.4f} "
                           f"(CPM={cpm_loss.item():.4f}, Mask={mask_loss.item():.4f}, Topo={topo_loss.item():.4f}) | "
-                          f"MAE ES={mae[0]:.4f}, TF={mae[4]:.4f}")
+                          f"MAE ES={mae[0]:.4f}, TF={mae[4]:.4f} | LR={curr_lr:.6f}")
+
+            if patience_counter >= patience:
+                if verbose:
+                    print(f"  [EARLY STOPPING] Kich hoat tai epoch {epoch} vi loss khong cai thien sau {patience} epochs.")
+                break
+
+        # Khôi phục trạng thái tốt nhất đã học
+        self.model.load_state_dict(best_model_state)
+        cpm_head.load_state_dict(best_cpm_head_state)
+        duration_head.load_state_dict(best_duration_head_state)
+        topo_head.load_state_dict(best_topo_head_state)
 
         # Tính toán F1 Score & MAE cuối cùng ở chế độ Eval
         with torch.no_grad():
@@ -651,11 +812,19 @@ class UnsupervisedPretrainer:
             recall = tp / max(tp + fn, 1.0)
             f1 = 2 * precision * recall / max(precision + recall, 1e-6)
 
+            # Tính R2 cho Early Start (index 0) để đánh giá độ chính xác tổng quát
+            es_pred = final_preds[:, 0].cpu().numpy()
+            es_true = cpm_targets[:, 0].cpu().numpy()
+            ss_res = np.sum((es_true - es_pred) ** 2)
+            ss_tot = np.sum((es_true - np.mean(es_true)) ** 2)
+            r2_es = 1.0 - (ss_res / max(ss_tot, 1e-6))
+
             history['is_critical_metrics'] = {
                 'accuracy': accuracy,
                 'precision': precision,
                 'recall': recall,
-                'f1_score': f1
+                'f1_score': f1,
+                'r2_score': float(r2_es)
             }
 
         # Ánh xạ kết quả MAE về đúng các nhãn cũ/mới để giữ tương thích ngược
@@ -685,14 +854,14 @@ class UnsupervisedPretrainer:
         checkpoint = {
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
-            'epoch': epochs,
+            'epoch': actual_epochs,
             'best_loss': best_loss
         }
         torch.save(checkpoint, checkpoint_path)
 
         # 2. Lưu metrics (.json)
         metrics_data = []
-        for i in range(epochs):
+        for i in range(actual_epochs):
             metrics_data.append({
                 'epoch': i + 1,
                 'total_loss': history['losses'][i],
@@ -726,20 +895,21 @@ class UnsupervisedPretrainer:
     def pretrain_all(
         self,
         data,
-        gae_epochs: int = 100,
-        cpm_epochs: int = 100,
+        gae_epochs: int = 300,
+        cpm_epochs: int = 500,
         gae_lr: float = 0.01,
         cpm_lr: float = 0.005,
         verbose: bool = True,
         lambda_gae: Optional[float] = None,
         lambda_dgi: Optional[float] = None,
+        lambda_cpnt: Optional[float] = None,
         lambda_cpm: Optional[float] = None,
         lambda_mask: Optional[float] = None,
         lambda_topo: Optional[float] = None,
     ) -> Dict[str, Dict]:
         """
         Chạy tuần tự cả hai phương pháp tiền huấn luyện:
-        1. GAT (Multi-task GAE + DGI) -> 2. DAGNN (Multi-task CPM + MASK + TOPO).
+        1. GAT (Multi-task GAE + DGI + CPNT) -> 2. DAGNN (Multi-task CPM + MASK + PCR).
         """
         if verbose:
             print("[START] BAT DAU TIEN HUAN LUYEN KHONG GIAM SAT NANG CAP")
@@ -748,17 +918,47 @@ class UnsupervisedPretrainer:
                   f"{data.edge_index.shape[1]} lien ket")
             print()
 
-        # Bước 1: Multi-task GAE + DGI → Warm-start GAT
+        # Bước 1: Multi-task GAE + DGI + CPNT → Warm-start GAT
         gae_history = self.pretrain_gae(
             data, 
             epochs=gae_epochs, 
             lr=gae_lr, 
             verbose=verbose,
             lambda_gae=lambda_gae,
-            lambda_dgi=lambda_dgi
+            lambda_dgi=lambda_dgi,
+            lambda_cpnt=lambda_cpnt
         )
 
-        # Bước 2: CPM + MASK + TOPO → Warm-start DAGNN
+        # Warm Connectivity Check: Đảm bảo GAT đạt AUC >= 0.70 trước khi chuyển sang DAGNN
+        auc_threshold = 0.70
+        extra_attempts = 3
+        attempt = 0
+        while gae_history['auc_scores'] and gae_history['auc_scores'][-1] < auc_threshold and attempt < extra_attempts:
+            attempt += 1
+            if verbose:
+                print(f"\n[WARMUP WARNING] GAT AUC ({gae_history['auc_scores'][-1]:.4f}) chưa đạt ngưỡng {auc_threshold:.2f}.")
+                print(f"   Đang chạy thêm 50 epochs cứu trợ (Lần {attempt}/{extra_attempts})...")
+            extra_history = self.pretrain_gae(
+                data,
+                epochs=50,
+                lr=gae_lr * 0.5,  # Giảm LR để tinh chỉnh mịn
+                verbose=verbose,
+                lambda_gae=lambda_gae,
+                lambda_dgi=lambda_dgi,
+                lambda_cpnt=lambda_cpnt
+            )
+            # Gộp kết quả
+            gae_history['losses'].extend(extra_history['losses'])
+            gae_history['gae_losses'].extend(extra_history['gae_losses'])
+            gae_history['dgi_losses'].extend(extra_history['dgi_losses'])
+            gae_history['cpnt_losses'].extend(extra_history['cpnt_losses'])
+            if extra_history['auc_scores']:
+                gae_history['auc_scores'].extend(extra_history['auc_scores'])
+            if extra_history['ap_scores']:
+                gae_history['ap_scores'].extend(extra_history['ap_scores'])
+            gae_history['time_taken'] += extra_history['time_taken']
+
+        # Bước 2: CPM + MASK + PCR → Warm-start DAGNN
         cpm_history = self.pretrain_cpm_self_supervised(
             data, 
             epochs=cpm_epochs, 
@@ -823,7 +1023,7 @@ def load_pretrained(model, filepath: Optional[str] = None, device: str = 'cpu') 
 
     try:
         device_obj = torch.device(device)
-        checkpoint = torch.load(filepath, map_location=device_obj)
+        checkpoint = torch.load(filepath, map_location=device_obj, weights_only=False)
         wrapper = _GATEncoderWrapper(model).to(device_obj)
         
         if 'gat_encoder_state_dict' in checkpoint:
@@ -871,7 +1071,7 @@ def load_pretrained_dagnn(model, filepath: Optional[str] = None, device: str = '
 
     try:
         device_obj = torch.device(device)
-        checkpoint = torch.load(filepath, map_location=device_obj)
+        checkpoint = torch.load(filepath, map_location=device_obj, weights_only=False)
         
         # Ở đây ta lưu toàn bộ mô hình (SequentialGLPOModel) hoặc model_state_dict
         if 'model_state_dict' in checkpoint:

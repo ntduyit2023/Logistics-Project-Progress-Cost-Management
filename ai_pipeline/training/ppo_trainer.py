@@ -1190,7 +1190,7 @@ if __name__ == "__main__":
         'reward_scale': 1000.0,     # Trị số 1000.0 kích hoạt dynamic scale
 
         # ── Huấn luyện ──
-        'total_timesteps': 50_000,
+        'total_timesteps': 30000,
         'n_steps': 512,             # Rollout dài hơn cho dự án lớn
         'n_epochs': 4,
         'batch_size': 64,
