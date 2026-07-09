@@ -704,74 +704,72 @@
     [0, "Chi phí nhân công nội bộ", 0, "Tiếng Anh: Internal Labor Cost. Tổng (số lượng nhân công × giờ làm × đơn giá). Đơn vị: $. Nguồn: Tính toán"],
     [1, "Chi phí làm thêm giờ", 0, "Tiếng Anh: Overtime Cost. Tổng (số lượng nhân công × giờ làm thêm × đơn giá OT). Đơn vị: $. Nguồn: Tính toán"],
     [2, "Chi phí nhiên liệu", 0, "Tiếng Anh: Fuel Cost. Tiêu hao của thiết bị/máy móc. Đơn vị: $. Nguồn: Tính toán"],
-    [3, "Chi phí QA/QC", 0, "Tiếng Anh: QA/QC Cost. Chi phí kiểm định, đảm bảo chất lượng. Đơn vị: $. Nguồn: Khảo sát"],
-    [4, "Chi phí vật liệu", 0, "Tiếng Anh: Material Cost. Chi phí mua nguyên vật liệu. Đơn vị: $. Nguồn: Hóa đơn"],
-    [5, "Chi phí thuê ngoài", 0, "Tiếng Anh: Subcontracting. Chi phí thầu phụ. Đơn vị: $. Nguồn: Hợp đồng"],
+    [3, "Chi phí QA/QC", 0, "Tiếng Anh: QA/QC Cost. Cố định theo khối lượng/lần. Đơn vị: $. Nguồn: Khảo sát"],
+    [4, "Chi phí vật liệu", 0, "Tiếng Anh: Material Cost. Cố định theo khối lượng. Đơn vị: $. Nguồn: Hóa đơn"],
+    [5, "Chi phí thuê ngoài", 0, "Tiếng Anh: Subcontracting. Cố định theo gói thầu. Đơn vị: $. Nguồn: Hợp đồng"],
 
     // 1. Chi phí gián tiếp
-    [6, "Đào tạo nhân công", 1, "Tiếng Anh: Training. Huấn luyện an toàn, công nghệ. Đơn vị: $. Nguồn: HR"],
-    [7, "Chi phí mặt bằng văn phòng", 1, "Tiếng Anh: Facility Rent. Thuê văn phòng, lán trại. Đơn vị: $. Nguồn: Kế toán"],
-    [8, "Chi phí truyền thông", 1, "Tiếng Anh: Communication. Họp hành, phần mềm quản lý. Đơn vị: $. Nguồn: Kế toán"],
-    [9, "Chi phí tiện ích", 1, "Tiếng Anh: Utilities. Điện, nước, internet văn phòng. Đơn vị: $. Nguồn: Kế toán"],
+    [6, "Đào tạo nhân công", 1, "Tiếng Anh: Training. Cố định. Đơn vị: $. Nguồn: HR"],
+    [7, "Chi phí mặt bằng văn phòng", 1, "Tiếng Anh: Facility Rent. Đơn giá mặt bằng × Thời gian thực hiện. Đơn vị: $. Nguồn: Kế toán"],
+    [8, "Chi phí truyền thông", 1, "Tiếng Anh: Communication. Đơn giá truyền thông × Thời gian thực hiện. Đơn vị: $. Nguồn: Kế toán"],
+    [9, "Chi phí tiện ích", 1, "Tiếng Anh: Utilities. Đơn giá tiện ích × Thời gian thực hiện. Đơn vị: $. Nguồn: Kế toán"],
 
     // 2. Nhân công
-    [10, "Chi phí thay thế", 2, "Tiếng Anh: Replacement Cost. Chi phí phát sinh khi thay người. Đơn vị: $. Nguồn: HR"],
-    [11, "Chi phí làm thêm giờ / người", 2, "Tiếng Anh: OT Rate. Đơn giá làm thêm (OT Rate). Đơn vị: $/giờ. Nguồn: HR"],
-    [12, "Số lượng nhân công", 2, "Tiếng Anh: Worker Count. Tổng số người tham gia. Đơn vị: người. Nguồn: Resource Mgmt"],
-    [13, "Đơn giá giờ làm / người", 2, "Tiếng Anh: Hourly Rate. Đơn giá tiêu chuẩn. Đơn vị: $/giờ. Nguồn: HR"],
+    [10, "Chi phí thay thế", 2, "Tiếng Anh: Replacement Cost. Biến đầu vào. Đơn vị: $. Nguồn: HR"],
+    [11, "Chi phí làm thêm giờ / người", 2, "Tiếng Anh: OT Rate. Biến đầu vào. Đơn vị: $/giờ. Nguồn: HR"],
+    [12, "Số lượng nhân công", 2, "Tiếng Anh: Worker Count. Biến đầu vào. Đơn vị: người. Nguồn: Resource Mgmt"],
+    [13, "Đơn giá giờ làm / người", 2, "Tiếng Anh: Hourly Rate. Biến đầu vào. Đơn vị: $/giờ. Nguồn: HR"],
 
     // 3. Chi phí hợp đồng
-    [14, "Chi phí Bảo hiểm", 3, "Tiếng Anh: Insurance. Bảo hiểm công trình, lao động. Đơn vị: $. Nguồn: Pháp lý"],
-    [15, "Chi phí Giấy phép", 3, "Tiếng Anh: Licensing. Xin phép xây dựng, phê duyệt. Đơn vị: $. Nguồn: Pháp lý"],
-    [16, "Chi phí Bảo hành", 3, "Tiếng Anh: Warranty. Quỹ bảo hành sau bàn giao. Đơn vị: $. Nguồn: Pháp lý"],
+    [14, "Chi phí Bảo hiểm", 3, "Tiếng Anh: Insurance. Đơn giá bảo hiểm × Thời gian thực hiện. Đơn vị: $. Nguồn: Pháp lý"],
+    [15, "Chi phí Giấy phép", 3, "Tiếng Anh: Licensing. Cố định. Đơn vị: $. Nguồn: Pháp lý"],
+    [16, "Chi phí Bảo hành", 3, "Tiếng Anh: Warranty. Cố định theo % Hợp đồng. Đơn vị: $. Nguồn: Pháp lý"],
 
     // 4. Rủi ro
-    [17, "Độ phức tạp của task", 4, "Tiếng Anh: Complexity. Mức độ khó kỹ thuật. Đơn vị: thang đo. Nguồn: Kỹ thuật"],
-    [18, "Chi phí dự trù thời tiết", 4, "Tiếng Anh: Weather Contingency. Dự phòng mưa bão, mùa vụ. Đơn vị: $. Nguồn: Risk Mgmt"],
-    [19, "Chi phí dự phòng bất ngờ", 4, "Tiếng Anh: Unexpected Risk. Quỹ dự phòng chung. Đơn vị: $. Nguồn: Risk Mgmt"],
-    [20, "Chi phí làm lại", 4, "Tiếng Anh: Rework Cost. Phạt hoặc khắc phục lỗi. Đơn vị: $. Nguồn: Risk Mgmt"],
+    [17, "Độ phức tạp của task (%)", 4, "Tiếng Anh: Complexity. Biến hệ số. Đơn vị: %. Nguồn: Kỹ thuật"],
+    [18, "Dự trù đối với thời tiết (%)", 4, "Tiếng Anh: Weather Contingency. Biến hệ số. Đơn vị: %. Nguồn: Risk Mgmt"],
+    [19, "Dự phòng rủi ro bất ngờ (%)", 4, "Tiếng Anh: Unexpected Risk. Biến hệ số. Đơn vị: %. Nguồn: Risk Mgmt"],
+    [20, "Rủi ro làm lại (%)", 4, "Tiếng Anh: Rework Risk. Biến hệ số. Đơn vị: %. Nguồn: Risk Mgmt"],
 
     // 5. Chi phí logistic
-    [21, "Chi phí lưu kho", 5, "Tiếng Anh: Holding Cost. Lưu bãi, bảo quản vật tư. Đơn vị: $. Nguồn: Logistics"],
-    [22, "Chi phí vận tải quốc tế", 5, "Tiếng Anh: Int. Freight. Nhập khẩu thiết bị/vật tư. Đơn vị: $. Nguồn: Logistics"],
-    [23, "Chi phí bốc xếp", 5, "Tiếng Anh: Handling. Cẩu, nâng hạ hàng hóa. Đơn vị: $. Nguồn: Logistics"],
-    [24, "Chi phí thu hồi", 5, "Tiếng Anh: Reverse Logistics. Logistics ngược, dọn dẹp phế thải. Đơn vị: $. Nguồn: Logistics"],
-    [25, "Chi phí lỗi", 5, "Tiếng Anh: Obsolescence. Hàng lỗi thời, hư hỏng. Đơn vị: $. Nguồn: Logistics"],
+    [21, "Chi phí lưu kho", 5, "Tiếng Anh: Holding Cost. Đơn giá lưu bãi × Thời gian lag. Đơn vị: $. Nguồn: Logistics"],
+    [22, "Chi phí vận tải quốc tế", 5, "Tiếng Anh: Int. Freight. Cố định theo chuyến. Đơn vị: $. Nguồn: Logistics"],
+    [23, "Chi phí bốc xếp", 5, "Tiếng Anh: Handling. Cố định theo khối lượng. Đơn vị: $. Nguồn: Logistics"],
+    [24, "Chi phí thu hồi", 5, "Tiếng Anh: Reverse Logistics. Cố định theo khối lượng. Đơn vị: $. Nguồn: Logistics"],
+    [25, "Chi phí lỗi", 5, "Tiếng Anh: Obsolescence. Cố định. Đơn vị: $. Nguồn: Logistics"],
 
     // 6. Thời gian
-    [26, "Thời gian thực hiện", 6, "Tiếng Anh: Duration. Thời gian kế hoạch để hoàn thành task. Đơn vị: ngày/giờ. Nguồn: PMBOK"],
-    [27, "Thời gian lag", 6, "Tiếng Anh: Lag time. Thời gian chờ giữa các task. Đơn vị: ngày/giờ. Nguồn: PMBOK"]
+    [26, "Thời gian thực hiện", 6, "Tiếng Anh: Duration. Đây chính là 'Giờ làm' gốc. Đơn vị: Giờ/Ngày. Nguồn: PMBOK"],
+    [27, "Thời gian làm thêm", 6, "Tiếng Anh: Overtime Duration. Biến mới bổ sung để tính OT. Đơn vị: Giờ. Nguồn: PMBOK"],
+    [28, "Thời gian lag", 6, "Tiếng Anh: Lag time. Thời gian trễ/chờ. Đơn vị: Giờ/Ngày. Nguồn: PMBOK"]
   ];
 
   // Edges: [sourceId, targetId, relationship_type]
   const EDGES_RAW = [
-    // Nhân công -> Trực tiếp
+    // --- Tính toán G1: Trực tiếp ---
     [12, 0, "structural"], // Số lượng nhân công -> Chi phí nhân công nội bộ
-    [13, 0, "structural"], // Đơn giá giờ làm -> Chi phí nhân công nội bộ
-    [26, 0, "structural"], // Thời gian thực hiện -> Chi phí nhân công nội bộ
+    [26, 0, "time"],       // Thời gian thực hiện -> Chi phí nhân công nội bộ
+    [13, 0, "cost"],       // Chi phí giờ làm / người -> Chi phí nhân công nội bộ
+    
     [12, 1, "structural"], // Số lượng nhân công -> Chi phí làm thêm giờ
-    [11, 1, "structural"], // Đơn giá làm thêm -> Chi phí làm thêm giờ
-
-    // Gián tiếp
-    [26, 7, "structural"], // Thời gian thực hiện -> Chi phí mặt bằng (thuê theo tgian)
-    [26, 9, "structural"], // Thời gian thực hiện -> Chi phí tiện ích
+    [27, 1, "time"],       // Thời gian làm thêm -> Chi phí làm thêm giờ
+    [11, 1, "cost"],       // Chi phí làm thêm giờ / người -> Chi phí làm thêm giờ
     
-    // Hợp đồng
-    [14, 16, "structural"], // Bảo hiểm -> Bảo hành
-
-    // Rủi ro -> Trực tiếp / Phạt
-    [17, 20, "risk"], // Độ phức tạp -> Chi phí làm lại
-    [20, 0, "structural"], // Chi phí làm lại -> Đội chi phí nhân công
-    [20, 4, "structural"], // Chi phí làm lại -> Đội chi phí vật liệu
-    [20, 19, "structural"], // Làm lại -> Bào mòn quỹ dự phòng bất ngờ
+    [26, 2, "time"],       // Thời gian thực hiện -> Chi phí nhiên liệu
     
-    // Logistic -> Trực tiếp
-    [21, 25, "risk"], // Lưu kho lâu -> Chi phí lỗi (hư hỏng)
-    [22, 21, "structural"], // Vận tải quốc tế -> Cần lưu kho
-    [22, 23, "structural"], // Vận tải quốc tế -> Bốc xếp
+    // --- Tính toán G2: Gián tiếp ---
+    [26, 7, "time"],       // Thời gian thực hiện -> Chi phí mặt bằng
+    [26, 8, "time"],       // Thời gian thực hiện -> Chi phí truyền thông
+    [26, 9, "time"],       // Thời gian thực hiện -> Chi phí tiện ích
     
-    // Thời gian
-    [27, 26, "structural"] // Thời gian lag ảnh hưởng đến thời gian thực hiện
+    // --- Tính toán G4: Hợp đồng ---
+    [26, 14, "time"],      // Thời gian thực hiện -> Chi phí bảo hiểm
+    
+    // --- Tính toán G6: Logistic ---
+    [28, 21, "time"],      // Thời gian lag -> Chi phí lưu kho
+    
+    // --- Rủi ro tổng quát ---
+    [17, 20, "risk"],      // Độ phức tạp -> Rủi ro làm lại
   ];
 
   // ============================================================
