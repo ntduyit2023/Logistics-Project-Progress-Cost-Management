@@ -341,8 +341,8 @@ def main():
         # Schedule Info
         schedules.append({
             "task_id": t["task_id"],
-            "baseline_start": "",
-            "baseline_end": "",
+            "baseline_start": str(row['Baseline Start']) if 'Baseline Start' in row and pd.notna(row['Baseline Start']) else "",
+            "baseline_end": str(row['Baseline End']) if 'Baseline End' in row and pd.notna(row['Baseline End']) else "",
             "predecessors": [p["target_id"] for p in t["g7_temporal"]["predecessors"]],
             "successors": [s["target_id"] for s in t["g7_temporal"]["successors"]]
         })

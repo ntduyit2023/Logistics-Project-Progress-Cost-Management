@@ -345,7 +345,10 @@ def main():
             
         schedules_rows.append({
             "task_id": t["task_id"],
-            "baseline_start": t["g7_temporal"]["baseline_start"]
+            "baseline_start": t["g7_temporal"]["baseline_start"],
+            "baseline_end": str(row['Baseline End']) if 'Baseline End' in row and pd.notna(row['Baseline End']) else "",
+            "predecessors": [p["target_id"] for p in t["g7_temporal"]["predecessors"]],
+            "successors": []
         })
             
     pd.DataFrame(tasks_rows).to_csv(os.path.join(out_dir, 'tasks.csv'), index=False, encoding='utf-8')
