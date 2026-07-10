@@ -7,13 +7,15 @@ const TaskTable = () => <div className="glass-panel p-6 rounded-xl h-full flex i
 
 import Workspace from './pages/Workspace';
 import ProjectList from './pages/ProjectList';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route index element={<Navigate to="/projects" replace />} />
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="projects" element={<ProjectList />} />
           <Route path="projects/:projectId/workspace" element={<Workspace />} />
           <Route path="tasks" element={<TaskTable />} />

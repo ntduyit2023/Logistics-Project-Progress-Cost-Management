@@ -17,7 +17,11 @@ from app.models import (
     ProjectConstraintResource, TaskResource, ProjectConstraintTime
 )
 
-DATA_DIR = Path("/ai_pipeline/data/processed")
+# Detect if running in Docker or natively
+if Path("/ai_pipeline/data/processed").exists():
+    DATA_DIR = Path("/ai_pipeline/data/processed")
+else:
+    DATA_DIR = backend_dir.parent / "ai_pipeline" / "data" / "processed"
 
 async def clear_existing_data(db: AsyncSession):
     print("Xóa dữ liệu cũ...")
@@ -32,8 +36,28 @@ async def process_project(db: AsyncSession, project_folder: Path):
         
     print(f"\n=> Đang import dự án: {project_name}")
     
-    # 1. Tạo Project
-    project = AppProject(project_name=project_name, status="Planning")
+    # 1. Tạo Project từ project_info.csv
+    info_file = project_folder / "project_info.csv"
+    project_type = "CON"
+    base_cost = 0.0
+    total_cost = 0.0
+    
+    if info_file.exists():
+        df_info = pd.read_csv(info_file)
+        if not df_info.empty:
+            info = df_info.iloc[0]
+            project_name = info.get("project_name", project_name)
+            project_type = info.get("project_type", "CON")
+            base_cost = info.get("total_baseline_cost", 0.0)
+            total_cost = info.get("total_final_cost", 0.0)
+            
+    project = AppProject(
+        project_name=project_name, 
+        type=project_type,
+        base_cost=base_cost,
+        total_cost=total_cost,
+        status="Planning"
+    )
     db.add(project)
     await db.commit()
     await db.refresh(project)
@@ -41,8 +65,11 @@ async def process_project(db: AsyncSession, project_folder: Path):
     
     # 2. Tạo Tasks (Wide Table)
     tasks_file = project_folder / "tasks.csv"
+    res_file = project_folder / "task_resources.csv"
+    
     if tasks_file.exists():
         df_tasks = pd.read_csv(tasks_file)
+        
         # Handle NaN -> None
         df_tasks = df_tasks.where(pd.notnull(df_tasks), None)
         
@@ -52,6 +79,9 @@ async def process_project(db: AsyncSession, project_folder: Path):
         for _, row in df_tasks.iterrows():
             task_dict = row.to_dict()
             task_dict["project_id"] = project_id
+            
+            if "task_id" in task_dict:
+                task_dict["id"] = f"{project_id}_{task_dict['task_id']}"
             
             # Baseline start handling
             if "baseline_start" in task_dict:
@@ -63,8 +93,61 @@ async def process_project(db: AsyncSession, project_folder: Path):
                         task_dict["baseline_start"] = pd.to_datetime(val).to_pydatetime()
                     except Exception:
                         task_dict["baseline_start"] = None
-                
+            csv_to_task_map = {
+                "g1_labor": "internal_labor_cost",
+                "g1_ot": "overtime_cost",
+                "g1_fuel": "equipment_fuel_cost",
+                "g1_qa_qc": "qa_qc_cost",
+                "g1_material": "material_cost",
+                "g1_subcontract": "outsourcing_cost",
+                "g2_training": "training_cost",
+                "g2_space": "facility_rent",
+                "g2_comm": "communication_cost",
+                "g2_utility": "utilities_cost",
+                "g4_insurance": "insurance_cost",
+                "g4_license": "licensing_cost",
+                "g4_warranty": "warranty_cost",
+                "g5_complexity": "complexity",
+                "g5_weather": "weather_contingency",
+                "g5_contingency": "general_contingency",
+                "g5_rework": "rework_risk",
+                "g6_storage": "holding_cost",
+                "g6_int_transport": "international_freight",
+                "g6_handling": "handling_cost",
+                "g6_recovery": "reverse_logistics",
+                "g6_error": "defect_cost",
+                "g7_dur_months": "duration_months",
+                "g7_dur_weeks": "duration_weeks",
+                "g7_dur_days": "duration_days",
+                "g7_dur_hours": "duration_hours",
+                "g7_ot_hours": "overtime_hours"
+            }
+            
+            for csv_col, task_col in csv_to_task_map.items():
+                if csv_col in task_dict and pd.notna(task_dict[csv_col]):
+                    task_dict[task_col] = float(task_dict[csv_col]) if "cost" in task_col or "hours" in task_col or "days" in task_col else task_dict[csv_col]
+                    
             filtered_task_dict = {k: v for k, v in task_dict.items() if k in valid_task_columns}
+            
+            # Map cost targets
+            filtered_task_dict["base_cost"] = task_dict.get("base_cost", 0.0)
+            
+            # Auto sum total cost if missing
+            if not task_dict.get("total_cost"):
+                total = sum([
+                    float(task_dict.get(c) or 0.0) for c in [
+                        "internal_labor_cost", "overtime_cost", "equipment_fuel_cost", "qa_qc_cost", "material_cost", "outsourcing_cost",
+                        "training_cost", "facility_rent", "communication_cost", "utilities_cost",
+                        "insurance_cost", "licensing_cost", "warranty_cost",
+                        "holding_cost", "international_freight", "handling_cost", "reverse_logistics", "defect_cost"
+                    ]
+                ])
+                filtered_task_dict["total_cost"] = total
+            else:
+                filtered_task_dict["total_cost"] = task_dict.get("total_cost", 0.0)
+                
+            filtered_task_dict["risk_factor"] = task_dict.get("risk_factor", 1.0)
+            
             tasks_to_insert.append(Task(**filtered_task_dict))
             
         db.add_all(tasks_to_insert)
@@ -103,13 +186,13 @@ async def process_project(db: AsyncSession, project_folder: Path):
         
         tr_to_insert = []
         for _, row in df_tr.iterrows():
-            res_name = str(row["resource_id"])
+            res_name = str(row.get("resource_name", row.get("resource_id", "")))
             if res_name in res_mapping:
                 actual_res_id = res_mapping[res_name]
                 tr = TaskResource(
-                    task_id=row["task_id"],
+                    task_id=f"{project_id}_{row['task_id']}",
                     resource_id=actual_res_id,
-                    request_quantity=row.get("request_quantity", 1.0)
+                    request_quantity=row.get("quantity", row.get("request_quantity", 1.0))
                 )
                 tr_to_insert.append(tr)
                 
@@ -124,15 +207,29 @@ async def process_project(db: AsyncSession, project_folder: Path):
         df_pred = pd.read_csv(pred_file)
         df_pred = df_pred.where(pd.notnull(df_pred), None)
         
+        from sqlalchemy import select
+        result = await db.execute(select(Task.id).where(Task.project_id == project_id))
+        valid_task_ids = {row[0] for row in result.all()}
+        
         edges_to_insert = []
         for _, row in df_pred.iterrows():
-            if pd.isna(row["predecessor_task_id"]) or pd.isna(row["successor_task_id"]):
+            predecessor_id = str(row.get("predecessor_task_id", row.get("source_id")))
+            successor_id = str(row.get("successor_task_id", row.get("target_id")))
+            
+            if predecessor_id in ("None", "nan") or successor_id in ("None", "nan"):
+                continue
+                
+            pred_full_id = f"{project_id}_{predecessor_id}"
+            succ_full_id = f"{project_id}_{successor_id}"
+            
+            if pred_full_id not in valid_task_ids or succ_full_id not in valid_task_ids:
+                print(f"    [!] Warning: Skipping edge {pred_full_id} -> {succ_full_id} (Node not found)")
                 continue
                 
             edge = ProjectConstraintLogic(
                 project_id=project_id,
-                predecessor_id=row["predecessor_task_id"],
-                successor_id=row["successor_task_id"],
+                predecessor_id=pred_full_id,
+                successor_id=succ_full_id,
                 dependency_type=row.get("dependency_type", "FS"),
                 lag_months=row.get("lag_months", 0),
                 lag_weeks=row.get("lag_weeks", 0),

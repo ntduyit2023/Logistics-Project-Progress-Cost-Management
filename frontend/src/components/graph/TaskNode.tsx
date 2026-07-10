@@ -35,7 +35,9 @@ const TaskNode = ({ data }: any) => {
           {data.task_name || 'Unnamed Task'}
         </span>
         <div className="flex justify-between items-center mt-1 text-[9px] text-slate-400 font-medium">
-          <span>{data.duration}h | ${Number(data.total_cost).toLocaleString()}</span>
+          <span title="Start Date | Duration | Cost">
+            📅 {data.baseline_start ? new Date(data.baseline_start).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' }) : 'TBD'} | ⏱️ {data.duration}h | 💰 ${(Number(data.total_cost)/1000).toFixed(1)}k
+          </span>
           {data.resources && data.resources.length > 0 && (
             <span className="font-bold text-blue-600 bg-blue-50/50 px-1 rounded border border-blue-100/60" title={data.mode === 2 ? "Công việc thuê ngoài - Giải phóng nhân sự nội bộ" : data.resources.map((r: any) => `${r.resource_id}: ${r.quantity}`).join(', ')}>
               👥 {data.mode === 2 ? 0 : data.resources[0].quantity}

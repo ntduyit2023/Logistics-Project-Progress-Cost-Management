@@ -11,8 +11,23 @@ from app.db.database import Base
 class AppProject(Base):
     """
     Lưu trữ thông tin gốc của một Dự án (Project).
+
+    Attributes:
+        id (int): Khóa chính của dự án.
+        user_id (Optional[int]): Khóa ngoại liên kết tới bảng users.
+        project_name (str): Tên hiển thị của dự án.
+        search_vector (TSVECTOR): Vector tìm kiếm full-text.
+        metadata_json (Optional[Dict[str, Any]]): Lưu trữ JSON linh hoạt cho NoSQL.
+        num_tasks (int): Số lượng công việc trong dự án.
+        num_edges (int): Số lượng phụ thuộc (edges).
+        status (str): Trạng thái của dự án (Planning, Executing, Closed).
+        type (Optional[str]): Phân loại dự án (PRO, CON, ITLG).
+        base_cost (Optional[float]): Tổng chi phí cơ bản.
+        total_cost (Optional[float]): Tổng chi phí dự báo.
+        created_at (datetime): Thời gian tạo.
+        updated_at (datetime): Thời gian cập nhật gần nhất.
     """
-    __tablename__ = "app_projects"
+    __tablename__ = "projects"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
@@ -25,7 +40,10 @@ class AppProject(Base):
     num_tasks: Mapped[int] = mapped_column(default=0)
     num_edges: Mapped[int] = mapped_column(default=0)
     network_density: Mapped[float] = mapped_column(Numeric(5, 4), default=0)
+    type: Mapped[Optional[str]] = mapped_column(String(50))
     status: Mapped[str] = mapped_column(String(50), default="Planning")
+    base_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    total_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -47,7 +65,7 @@ class ProjectBaseline(Base):
     __tablename__ = "project_baselines"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(ForeignKey("app_projects.id", ondelete="CASCADE"))
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
     simulation_run_id: Mapped[Optional[int]] = mapped_column(ForeignKey("ai_simulation_runs.id", ondelete="SET NULL"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

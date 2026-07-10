@@ -54,6 +54,19 @@ export const api = {
     return res.json();
   },
 
+  // --- AI SIMULATION ---
+  async runAISimulation(projectId: number) {
+    const res = await fetch(`${API_BASE_URL}/projects/${projectId}/simulate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Failed to run AI simulation: ${text}`);
+    }
+    return res.json();
+  },
+
   // --- TASKS ---
   async createTask(projectId: number, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {

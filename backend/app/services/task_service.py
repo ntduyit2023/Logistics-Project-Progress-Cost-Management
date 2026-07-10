@@ -10,7 +10,93 @@ from sqlalchemy import select
 from app.repositories.task import task_repo
 from app.repositories.project import project_repo
 from app.schemas import TaskCreate, TaskUpdate
-from app.models import Task
+from app.models import Task, TaskResource, ProjectConstraintResource
+
+async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
+    task = await task_repo.get_by_id(db, task_id)
+    if not task: return
+
+    stmt = select(TaskResource, ProjectConstraintResource).join(
+        ProjectConstraintResource, TaskResource.resource_id == ProjectConstraintResource.id
+    ).where(TaskResource.task_id == task_id)
+    result = await db.execute(stmt)
+    resources = result.all()
+
+    g1_labor = 0.0
+    g1_ot = 0.0
+    for tr, pcr in resources:
+        qty = tr.request_quantity or 0.0
+        h_rate = float(pcr.cost_per_unit or 0.0)
+        ot_rate = h_rate * 1.5
+        g1_labor += float(qty) * float(task.duration_hours or 0.0) * h_rate
+        g1_ot += float(qty) * float(getattr(task, "overtime_hours", 0.0) or 0.0) * ot_rate
+
+    project_type = project.type
+
+    g1_fuel = float(task.equipment_fuel_cost or 0.0)
+    g1_qa_qc = float(task.qa_qc_cost or 0.0)
+    g1_material = float(task.material_cost or 0.0)
+    g1_subcontract = float(task.outsourcing_cost or 0.0)
+
+    g2_training = float(task.training_cost or 0.0)
+    g2_space = float(task.facility_rent or 0.0)
+    g2_comm = float(task.communication_cost or 0.0)
+    g2_utility = float(task.utilities_cost or 0.0)
+
+    g4_insurance = float(task.insurance_cost or 0.0)
+    g4_license = float(task.licensing_cost or 0.0)
+    g4_warranty = float(task.warranty_cost or 0.0)
+
+    g6_storage = float(task.holding_cost or 0.0)
+    g6_int_transport = float(task.international_freight or 0.0)
+    g6_handling = float(task.handling_cost or 0.0)
+    g6_recovery = float(task.reverse_logistics or 0.0)
+    g6_error = float(task.defect_cost or 0.0)
+
+    if project_type == "ITLG":
+        g1 = g1_labor + g1_ot + g1_subcontract + g1_qa_qc + g1_material
+        g2 = g2_training + g2_space + g2_utility + g2_comm
+        g4 = g4_insurance + g4_license + g4_warranty
+        g6 = g6_int_transport + g6_storage + g6_recovery + g6_error
+        base_cost = g1 + g2 + g4 + g6
+    elif project_type == "PRO":
+        g1 = g1_subcontract + g1_labor
+        g2 = g2_training + g2_space + g2_comm
+        base_cost = g1 + g2
+    else:
+        g1 = g1_material + g1_qa_qc + g1_subcontract + g1_labor + g1_fuel
+        g2 = g2_space + g2_utility
+        g4 = g4_license + g4_warranty + g4_insurance
+        g6 = g6_storage + g6_handling + g6_recovery + g6_error + g6_int_transport
+        base_cost = g1 + g2 + g4 + g6
+
+    g5_complexity = getattr(task, "complexity", 0.0) or 0.0
+    g5_weather = getattr(task, "weather_contingency", 0.0) or 0.0
+    g5_rework = getattr(task, "rework_risk", 0.0) or 0.0
+    g5_contingency = getattr(task, "general_contingency", 0.0) or 0.0
+
+    risk_factor = 1.0 + float(g5_complexity) + float(g5_weather) + float(g5_rework) + float(g5_contingency)
+    total_cost = float(base_cost) * risk_factor
+
+    await task_repo.update(db, db_obj=task, obj_in={
+        "internal_labor_cost": g1_labor,
+        "overtime_cost": g1_ot,
+        "base_cost": base_cost,
+        "risk_factor": risk_factor,
+        "total_cost": total_cost
+    })
+
+async def _recalculate_project_costs(db: AsyncSession, project_id: int):
+    stmt = select(Task.base_cost, Task.total_cost).where(Task.project_id == project_id)
+    result = await db.execute(stmt)
+    tasks_costs = result.all()
+    project_base_cost = sum([float(tc[0] or 0.0) for tc in tasks_costs])
+    project_total_cost = sum([float(tc[1] or 0.0) for tc in tasks_costs])
+    
+    project = await project_repo.get_by_id(db, project_id)
+    if project:
+        await project_repo.update(db, db_obj=project, obj_in={"base_cost": project_base_cost, "total_cost": project_total_cost})
+
 
 
 async def create_task(db: AsyncSession, project_id: int, task_in: TaskCreate) -> Task:
@@ -39,6 +125,11 @@ async def create_task(db: AsyncSession, project_id: int, task_in: TaskCreate) ->
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
+
+    # Recalculate
+    await _recalculate_task_costs(db, project, new_task.id)
+    await _recalculate_project_costs(db, project_id)
+    
     return new_task
 
 
@@ -61,7 +152,14 @@ async def update_task(db: AsyncSession, project_id: int, task_id: str, task_in: 
     task = await task_repo.get_by_id(db, task_id)
     if not task or task.project_id != project_id:
         raise HTTPException(status_code=404, detail="Công việc không tồn tại trong dự án này.")
-    return await task_repo.update(db, db_obj=task, obj_in=task_in)
+    updated_task = await task_repo.update(db, db_obj=task, obj_in=task_in)
+    
+    project = await project_repo.get_by_id(db, project_id)
+    if project:
+        await _recalculate_task_costs(db, project, task_id)
+        await _recalculate_project_costs(db, project_id)
+        
+    return updated_task
 
 
 async def delete_task(db: AsyncSession, project_id: int, task_id: str):
@@ -87,8 +185,6 @@ async def delete_task(db: AsyncSession, project_id: int, task_id: str):
 
 
 # --- TASK RESOURCE MANAGEMENT ---
-
-from app.models import TaskResource, ProjectConstraintResource
 
 async def assign_resource(db: AsyncSession, project_id: int, task_id: str, resource_in: Any) -> TaskResource:
     # Verify task exists and belongs to project
@@ -116,7 +212,7 @@ async def assign_resource(db: AsyncSession, project_id: int, task_id: str, resou
             setattr(existing, k, v)
         await db.commit()
         await db.refresh(existing)
-        return existing
+        obj = existing
     else:
         new_assignment = TaskResource(
             task_id=task_id,
@@ -125,7 +221,14 @@ async def assign_resource(db: AsyncSession, project_id: int, task_id: str, resou
         db.add(new_assignment)
         await db.commit()
         await db.refresh(new_assignment)
-        return new_assignment
+        obj = new_assignment
+
+    project = await project_repo.get_by_id(db, project_id)
+    if project:
+        await _recalculate_task_costs(db, project, task_id)
+        await _recalculate_project_costs(db, project_id)
+
+    return obj
 
 async def get_task_resources(db: AsyncSession, project_id: int, task_id: str) -> list[Any]:
     stmt = select(
@@ -165,4 +268,9 @@ async def remove_task_resource(db: AsyncSession, project_id: int, task_id: str, 
         raise HTTPException(status_code=404, detail="Assignment không tồn tại.")
     await db.delete(tr)
     await db.commit()
+
+    project = await project_repo.get_by_id(db, project_id)
+    if project:
+        await _recalculate_task_costs(db, project, task_id)
+        await _recalculate_project_costs(db, project_id)
 

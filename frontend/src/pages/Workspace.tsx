@@ -11,21 +11,6 @@ import TaskFormModal from '../components/TaskFormModal';
 import ResourceManagerModal from '../components/ResourceManagerModal';
 import TimeManagerModal from '../components/TimeManagerModal';
 
-// Import các file kết quả chạy của 5 dự án từ mocks
-import projectC2011 from '../mocks/output_C2011-07_main.json';
-import projectC2012_04 from '../mocks/output_C2012-04_main.json';
-import projectC2012_08 from '../mocks/output_C2012-08_main.json';
-import projectC2018 from '../mocks/output_C2018-09_main.json';
-import projectC2019 from '../mocks/output_C2019-16_main.json';
-
-const projectsData: Record<string, any> = {
-  'C2011-07': projectC2011,
-  'C2012-04': projectC2012_04,
-  'C2012-08': projectC2012_08,
-  'C2018-09': projectC2018,
-  'C2019-16': projectC2019,
-};
-
 const StatCard = ({ title, value, icon: Icon, color }: any) => (
   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center transition-all hover:shadow-md">
     <div className={`p-3 rounded-lg mr-4 ${color}`}>
@@ -70,8 +55,7 @@ const Workspace = () => {
   const [projectData, setProjectData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const [selectedProject, setSelectedProject] = useState<string>('C2011-07');
-  const [activeTab, setActiveTab] = useState<'recommendations' | 'baseline' | 'pareto' | 'ppo'>('pareto');
+  const [activeTab, setActiveTab] = useState<'recommendations' | 'baseline' | 'pareto' | 'ppo'>('recommendations');
   const [selectedParetoOptionIndex, setSelectedParetoOptionIndex] = useState<number>(0);
 
   // Modal State
@@ -89,24 +73,23 @@ const Workspace = () => {
           setProjectData(res.data);
           setActiveTab('recommendations');
         } else {
-          setProjectData(projectsData[selectedProject]);
-          setActiveTab('pareto');
+          // If no valid projectId, redirect to dashboard
+          navigate('/dashboard');
         }
       } catch (err) {
         console.error(err);
-        setProjectData(projectsData[selectedProject]);
-        setActiveTab('pareto');
+        navigate('/dashboard');
       } finally {
         setLoading(false);
       }
     };
     fetchProject();
-  }, [projectId, selectedProject]);
+  }, [projectId, navigate]);
 
   const handleSaveTask = async (data: any) => {
     try {
       if (!projectId || isNaN(Number(projectId))) {
-         alert("Editing is only supported for API projects, not mocks.");
+         alert("Editing is only supported for valid projects.");
          return;
       }
       const { predecessor_id, dependency_type, lag_days, stagedResources, ...taskData } = data;
@@ -152,13 +135,11 @@ const Workspace = () => {
     }
   };
 
-  const isMock = !projectData?.project_name;
-  
-  const tasks = useMemo(() => isMock ? projectData?.tasks_metadata || [] : projectData?.tasks || [], [isMock, projectData]);
-  const dependencies = useMemo(() => isMock ? projectData?.dependencies || [] : projectData?.constraint_logic || [], [isMock, projectData]);
-  const cpm_static_makespan = isMock ? projectData?.cpm_static_makespan || 0 : projectData?.tasks?.length * 5 || 0;
-  const budget = isMock ? projectData?.budget || 0 : projectData?.tasks?.reduce((sum: number, t: any) => sum + (t.internal_labor_cost || 0), 0) || 0;
-  const deadline = isMock ? projectData?.deadline || 0 : 0;
+  const tasks = useMemo(() => projectData?.tasks || [], [projectData]);
+  const dependencies = useMemo(() => projectData?.constraint_logic || [], [projectData]);
+  const cpm_static_makespan = projectData?.tasks?.length * 5 || 0;
+  const budget = projectData?.tasks?.reduce((sum: number, t: any) => sum + (t.total_cost || t.internal_labor_cost || 0), 0) || 0;
+  const deadline = projectData?.constraint_time?.global_deadline_hours || (cpm_static_makespan * 1.2);
 
   const paretoOptions = useMemo(() => projectData?.pareto_nsga2?.options || [], [projectData]);
   const monte_carlo = useMemo(() => projectData?.monte_carlo || null, [projectData]);
@@ -199,8 +180,8 @@ const Workspace = () => {
   const criticalityIndices = useMemo(() => monte_carlo?.criticality_indices || {}, [monte_carlo]);
 
   const { combinedData, bellCurveData, ganttData, maxEndHour } = useMemo(() => {
-    const monthlyCost: Record<string, number> = {};
-    const monthlyTasks: Record<string, Set<string>> = {};
+    const dailyCostMap: Record<string, number> = {};
+    const dailyTasksMap: Record<string, Set<string>> = {};
     const startTime = new Date('2026-07-08').getTime();
 
     tasks.forEach((task: any, idx: number) => {
@@ -225,28 +206,28 @@ const Workspace = () => {
         startMs = startTime + (startHour / 8) * 24 * 60 * 60 * 1000;
       }
 
-      const durationDays = Math.max(1, Math.ceil(duration / 8) || 1);
-      const dailyCost = cost / durationDays;
+      const durationDays = Math.max(1, Math.round(duration) || 1);
+      const dailyCostVal = cost / durationDays;
 
       for (let i = 0; i < durationDays; i++) {
         const d = new Date(startMs + i * 24 * 60 * 60 * 1000);
-        const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        monthlyCost[monthStr] = (monthlyCost[monthStr] || 0) + dailyCost;
+        const dayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        dailyCostMap[dayStr] = (dailyCostMap[dayStr] || 0) + dailyCostVal;
 
-        if (!monthlyTasks[monthStr]) monthlyTasks[monthStr] = new Set();
-        monthlyTasks[monthStr].add(task.id);
+        if (!dailyTasksMap[dayStr]) dailyTasksMap[dayStr] = new Set();
+        dailyTasksMap[dayStr].add(task.id);
       }
     });
 
-    const sortedMonths = Object.keys(monthlyCost).sort();
+    const sortedDays = Object.keys(dailyCostMap).sort();
     let cumulative = 0;
-    const combined = sortedMonths.map(month => {
-      cumulative += monthlyCost[month];
+    const combined = sortedDays.map(date => {
+      cumulative += dailyCostMap[date];
       return {
-        month,
-        monthlyCost: monthlyCost[month],
+        date,
+        dailyCost: dailyCostMap[date],
         cumulativeCost: cumulative,
-        activeCount: monthlyTasks[month]?.size || 0
+        activeCount: dailyTasksMap[date]?.size || 0
       };
     });
 
@@ -296,54 +277,28 @@ const Workspace = () => {
           <p className="text-xs text-slate-500 mt-0.5">Merged UI: Live Backend API + Mocks Presentation</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-bold text-slate-500 uppercase">Dự án:</label>
-          <select
-            value={!isMock ? 'api' : selectedProject}
-            onChange={(e) => {
-              if (e.target.value === 'api') navigate('/projects/1'); // example routing back to api
-              else {
-                navigate('/workspace'); // Clear ID param
-                setSelectedProject(e.target.value);
-                setSelectedParetoOptionIndex(0);
-              }
-            }}
-            className="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 font-bold py-1.5 px-3 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-          >
-            {!isMock && <option value="api">LIVE API DATABASE</option>}
-            <option value="C2011-07">Mock: Nursing Home (C2011-07)</option>
-            <option value="C2012-04">Mock: Nursing Home Noordhinder (C2012-04)</option>
-            <option value="C2012-08">Mock: Hospital Project (C2012-08)</option>
-            <option value="C2018-09">Mock: Construction Project (C2018-09)</option>
-            <option value="C2019-16">Mock: Infra Logistics Base (C2019-16)</option>
-          </select>
-        </div>
         <div className="flex gap-3">
-          {!isMock && (
-            <>
-              <button 
-                onClick={() => setIsTimeModalOpen(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
-              >
-                Manage Calendar
-              </button>
-              <button 
-                onClick={() => setIsResourceModalOpen(true)}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
-              >
-                Manage Resources
-              </button>
-              <button 
-                onClick={() => {
-                  setEditingTask(null);
-                  setIsTaskModalOpen(true);
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
-              >
-                + Add Node
-              </button>
-            </>
-          )}
+          <button 
+            onClick={() => setIsTimeModalOpen(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+          >
+            Manage Calendar
+          </button>
+          <button 
+            onClick={() => setIsResourceModalOpen(true)}
+            className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+          >
+            Manage Resources
+          </button>
+          <button 
+            onClick={() => {
+              setEditingTask(null);
+              setIsTaskModalOpen(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all"
+          >
+            + Add Node
+          </button>
         </div>
       </div>
 
@@ -368,12 +323,12 @@ const Workspace = () => {
             <div className="flex-1 relative min-h-0">
               <div className="absolute inset-0">
                 <AirflowGraph 
-                  projectId={projectData.project_name || selectedProject}
+                  projectId={projectData.project_name}
                   tasks={tasks}
                   dependencies={dependencies}
                   selectedOptionModes={selectedOptionModes}
                   criticalityIndices={criticalityIndices}
-                  onConnectEdge={!isMock ? async (source, target) => {
+                  onConnectEdge={async (source, target) => {
                     try {
                       await api.createLogicConstraint(Number(projectId), {
                         predecessor_id: source,
@@ -384,19 +339,19 @@ const Workspace = () => {
                     } catch (err) {
                       alert("Failed to connect nodes: " + (err as Error).message);
                     }
-                  } : undefined}
-                  onDeleteTask={!isMock ? async (taskId) => {
+                  }}
+                  onDeleteTask={async (taskId) => {
                     try {
                       await api.deleteTask(Number(projectId), taskId);
                       window.location.reload();
                     } catch (err) {
                       alert("Failed to delete task: " + (err as Error).message);
                     }
-                  } : undefined}
-                  onEditTask={!isMock ? (task) => {
+                  }}
+                  onEditTask={(task) => {
                     setEditingTask(task);
                     setIsTaskModalOpen(true);
-                  } : undefined}
+                  }}
                 />
               </div>
             </div>
@@ -532,17 +487,17 @@ const Workspace = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="month" tickFormatter={(tick) => `${tick.split('-')[1]}/${tick.split('-')[0].slice(2)}`} minTickGap={20} stroke="#94a3b8" fontSize={11} />
+                  <XAxis dataKey="date" tickFormatter={(tick) => `${tick.split('-')[2]}/${tick.split('-')[1]}`} minTickGap={20} stroke="#94a3b8" fontSize={11} />
                   <YAxis yAxisId="cost" orientation="left" tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} stroke="#94a3b8" fontSize={11} />
                   <YAxis yAxisId="cumulative" orientation="right" tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} stroke="#3b82f6" fontSize={11} />
                   <YAxis yAxisId="density" orientation="right" tickFormatter={(val) => `${val} tasks`} stroke="#10b981" fontSize={11} />
                   <Tooltip formatter={(value: any, name: any) => {
-                    if (name === 'monthlyCost') return [`$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 'Chi phí tháng'];
+                    if (name === 'dailyCost') return [`$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 'Chi phí ngày'];
                     if (name === 'cumulativeCost') return [`$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 'Lũy kế'];
                     return [`${value} tasks`, 'Số công việc song song'];
-                  }} labelFormatter={(label) => `Tháng: ${label}`} />
+                  }} labelFormatter={(label) => `Ngày: ${label}`} />
                   <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px' }}/>
-                  <Bar yAxisId="cost" dataKey="monthlyCost" name="monthlyCost" fill="#cbd5e1" barSize={16} radius={[2, 2, 0, 0]} />
+                  <Bar yAxisId="cost" dataKey="dailyCost" name="dailyCost" fill="#cbd5e1" barSize={16} radius={[2, 2, 0, 0]} />
                   <Area yAxisId="cumulative" type="monotone" dataKey="cumulativeCost" name="cumulativeCost" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorCumulative)" />
                   <Line yAxisId="density" type="monotone" dataKey="activeCount" name="activeCount" stroke="#10b981" strokeWidth={3} dot={{ r: 3, fill: '#10b981' }} activeDot={{ r: 6 }} />
                 </ComposedChart>
@@ -587,7 +542,10 @@ const Workspace = () => {
           onSave={handleSaveTask}
           initialData={editingTask}
           tasks={tasks}
+          constraintLogic={dependencies}
+          projectResources={projectData?.constraint_resources || []}
           projectId={Number(projectId)}
+          projectType={projectData?.type}
         />
       )}
       
@@ -596,7 +554,7 @@ const Workspace = () => {
           isOpen={isResourceModalOpen}
           onClose={() => setIsResourceModalOpen(false)}
           projectId={Number(projectId)}
-          resources={projectData.constraint_resources || []}
+          initialResources={projectData.constraint_resources || []}
         />
       )}
 
@@ -605,7 +563,7 @@ const Workspace = () => {
           isOpen={isTimeModalOpen}
           onClose={() => setIsTimeModalOpen(false)}
           projectId={Number(projectId)}
-          timeData={projectData.constraint_agenda || {}}
+          initialTimeConstraint={projectData.constraint_time || {}}
         />
       )}
     </div>

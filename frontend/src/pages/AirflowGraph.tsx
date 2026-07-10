@@ -22,12 +22,78 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   if (nodes.length === 0) return { nodes, edges };
 
+  // Check if we have enough baseline_start data to do a time-based layout
+  const nodesWithTime = nodes.filter(n => n.data && n.data.baseline_start);
+  if (nodesWithTime.length > nodes.length * 0.2) {
+    // TIME-BASED GANTT LAYOUT
+    const PIXELS_PER_DAY = 120; // Increased spacing to prevent edge/node overlap
+    const NODE_WIDTH = 250;
+    const NODE_HEIGHT = 80;
+    const LANE_SPACING = 30;
+    
+    // Sort nodes topologically or by time to assign lanes properly
+    const sortedNodes = [...nodes].sort((a, b) => {
+      const timeA = a.data?.baseline_start ? new Date(a.data.baseline_start).getTime() : 0;
+      const timeB = b.data?.baseline_start ? new Date(b.data.baseline_start).getTime() : 0;
+      return timeA - timeB;
+    });
+
+    let minTime = Number.MAX_SAFE_INTEGER;
+    sortedNodes.forEach(n => {
+      if (n.data?.baseline_start) {
+        const t = new Date(n.data.baseline_start).getTime();
+        if (t < minTime) minTime = t;
+      }
+    });
+    if (minTime === Number.MAX_SAFE_INTEGER) minTime = 0;
+
+    const laneEnds: number[] = []; // Tracks the end X coordinate of each lane
+
+    sortedNodes.forEach(node => {
+      let x = 0;
+      if (node.data?.baseline_start) {
+        const t = new Date(node.data.baseline_start).getTime();
+        const days = (t - minTime) / (1000 * 60 * 60 * 24);
+        x = days * PIXELS_PER_DAY;
+      }
+      
+      const durationDays = node.data?.duration || 1;
+      const estimatedEndX = x + NODE_WIDTH + (durationDays * 2); // Approximate space taken by this node horizontally
+
+      // Find an available lane
+      let assignedLane = -1;
+      for (let i = 0; i < laneEnds.length; i++) {
+        if (laneEnds[i] < x - 20) { // 20px padding between nodes in the same lane
+          assignedLane = i;
+          break;
+        }
+      }
+
+      if (assignedLane === -1) {
+        assignedLane = laneEnds.length;
+        laneEnds.push(estimatedEndX);
+      } else {
+        laneEnds[assignedLane] = estimatedEndX;
+      }
+
+      node.targetPosition = 'left';
+      node.sourcePosition = 'right';
+      node.position = {
+        x: x,
+        y: assignedLane * (NODE_HEIGHT + LANE_SPACING)
+      };
+    });
+
+    return { nodes, edges };
+  }
+
+  // FALLBACK TO DAGRE
   const isHorizontal = direction === 'LR';
   dagreGraph.setGraph({ 
     rankdir: direction, 
-    nodesep: 60,
-    ranksep: 200,
-    edgesep: 20,
+    nodesep: 150,
+    ranksep: 450,
+    edgesep: 80,
     ranker: 'network-simplex'
   });
 
@@ -85,114 +151,51 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
     return `Công tác logistics chi tiết`;
   };
 
-  // Generate 72 features for display in drawer
-  const get72Features = (task: any, mode: number, isCritical: boolean) => {
-    const duration = mode === 1 
-      ? Math.round((task.most_probable_duration || task.duration_days || 10) / 1.5) 
-      : mode === 2 
-        ? Math.round((task.most_probable_duration || task.duration_days || 10) / 2.0) 
-        : (task.most_probable_duration || task.duration_days || 10);
-
-    const cost = mode === 1 
-      ? (task.crash_cost || 1500)
-      : mode === 2 
-        ? (task.outsource_cost || 2000)
-        : (task.normal_cost || task.total_cost || 1000);
-
-    const riskVal = (criticalityIndices && criticalityIndices[task.id]) || (isCritical ? 0.90 : 0.15);
-
+  // Extract real features from task schema
+  const getTaskGroups = (task: any) => {
     return {
       "Hub (Thông tin chung)": {
-        "baseline_start_relative": "0.00",
-        "duration_months": (duration / 160).toFixed(2),
-        "duration_weeks": (duration / 40).toFixed(2),
-        "duration_days": (duration / 8).toFixed(2),
-        "duration_hours": duration.toFixed(1),
-        "calendar_type_agenda": mode === 2 ? "0.00" : "1.00",
-        "calendar_type_24_7": mode === 2 ? "1.00" : "0.00"
+        "duration_months": task.duration_months,
+        "duration_weeks": task.duration_weeks,
+        "duration_days": task.duration_days,
+        "duration_hours": task.duration_hours,
+        "calendar_type": task.calendar_type
       },
       "G1: Chi phí trực tiếp": {
-        "internal_labor_cost": mode === 0 ? (cost * 0.4).toFixed(2) : mode === 1 ? (cost * 0.5).toFixed(2) : "0.00",
-        "subcontracting_cost": mode === 2 ? (cost * 0.85).toFixed(2) : "0.00",
-        "overtime_crashing_cost": mode === 1 ? (cost * 0.35).toFixed(2) : "0.00",
-        "material_cost": (cost * 0.2).toFixed(2),
-        "equipment_cost": mode === 2 ? "0.00" : (cost * 0.15).toFixed(2),
-        "direct_transportation": (cost * 0.05).toFixed(2),
-        "energy_fuel_cost": (cost * 0.03).toFixed(2),
-        "testing_and_inspection": (cost * 0.02).toFixed(2)
+        "internal_labor_cost": task.internal_labor_cost,
+        "overtime_cost": task.overtime_cost,
+        "equipment_fuel_cost": task.equipment_fuel_cost,
+        "qa_qc_cost": task.qa_qc_cost,
+        "material_cost": task.material_cost,
+        "outsourcing_cost": task.outsourcing_cost
       },
       "G2: Chi phí gián tiếp": {
-        "pm_overhead": (cost * 0.08).toFixed(2),
-        "facility_rent": (cost * 0.02).toFixed(2),
-        "utilities": (cost * 0.01).toFixed(2),
-        "communication_cost": (cost * 0.005).toFixed(2),
-        "internal_training": (cost * 0.005).toFixed(2),
-        "quality_mgmt_overhead": (cost * 0.015).toFixed(2)
+        "training_cost": task.training_cost,
+        "facility_rent": task.facility_rent,
+        "communication_cost": task.communication_cost,
+        "utilities_cost": task.utilities_cost
       },
       "G4: Ràng buộc hợp đồng": {
-        "permits_and_licensing": (cost * 0.01).toFixed(2),
-        "project_insurance": (cost * 0.015).toFixed(2),
-        "warranty_and_after_sales": (cost * 0.02).toFixed(2),
-        "regulatory_compliance": (cost * 0.01).toFixed(2)
+        "insurance_cost": task.insurance_cost,
+        "licensing_cost": task.licensing_cost,
+        "warranty_cost": task.warranty_cost
       },
-      "G5: Chi phí Logistics": {
-        "inventory_holding_cost": (cost * 0.04).toFixed(2),
-        "ordering_cost": (cost * 0.01).toFixed(2),
-        "shortage_stockout_risk": (cost * 0.02).toFixed(2),
-        "obsolescence_cost": (cost * 0.005).toFixed(2),
-        "international_freight": mode === 2 ? (cost * 0.1).toFixed(2) : "0.00",
-        "packaging_and_handling": (cost * 0.015).toFixed(2),
-        "reverse_logistics": (cost * 0.01).toFixed(2)
+      "G5: Hệ số rủi ro": {
+        "complexity": task.complexity,
+        "weather_contingency": task.weather_contingency,
+        "general_contingency": task.general_contingency,
+        "rework_risk": task.rework_risk
       },
-      "G6: Đặc trưng thời gian": {
-        "wait_queue_time": (duration * 0.1).toFixed(1),
-        "setup_transition_time": (duration * 0.05).toFixed(1),
-        "induction_time": (duration * 0.02).toFixed(1),
-        "lead_time": mode === 1 ? "2.0" : "0.0",
-        "pert_3_point_estimate": duration.toFixed(1)
+      "G6: Logistics": {
+        "holding_cost": task.holding_cost,
+        "international_freight": task.international_freight,
+        "handling_cost": task.handling_cost,
+        "reverse_logistics": task.reverse_logistics,
+        "defect_cost": task.defect_cost
       },
-      "G7: Tài nguyên": {
-        "total_demand": (duration * 1.5).toFixed(1),
-        "allocated_quantity": (duration * 1.2).toFixed(1),
-        "labor_productivity": mode === 1 ? "1.20" : "1.00",
-        "equipment_utilization": "0.85",
-        "resource_substitutability": "0.60"
-      },
-      "G9: Rủi ro": {
-        "technical_complexity": isCritical ? "0.80" : "0.35",
-        "rework_probability": mode === 1 ? "0.25" : "0.10",
-        "external_dependency_level": mode === 2 ? "0.75" : "0.20",
-        "contingency_reserve": (cost * 0.1).toFixed(2),
-        "management_reserve": (cost * 0.05).toFixed(2),
-        "weather_seasonal_risk": "0.15",
-        "technology_risk": "0.20"
-      },
-      "G11: Tổ chức hành chính": {
-        "required_skill_level": isCritical ? "4.00" : "2.00",
-        "staff_experience": "3.50",
-        "learning_curve_effect": "0.90",
-        "hr_stability_risk": "0.15",
-        "cross_functional_coordination": "3.00"
-      },
-      "G12: ESG & Bền vững": {
-        "occupational_safety_risk": mode === 1 ? "0.30" : "0.10",
-        "environmental_impact": mode === 2 ? "0.15" : "0.25",
-        "waste_disposal_cost": (cost * 0.01).toFixed(2),
-        "carbon_footprint_index": "0.45",
-        "social_sustainability_score": "0.80",
-        "legal_governance_risk": "0.05"
-      },
-      "G8: Đặc trưng Tô-pô & AI": {
-        "in_degree": isCritical ? "2.00" : "1.00",
-        "out_degree": isCritical ? "2.00" : "1.00",
-        "is_source": "0.00",
-        "is_sink": "0.00",
-        "total_float": isCritical ? "0.00" : (duration * 0.3).toFixed(1),
-        "is_critical": isCritical ? "1.00" : "0.00",
-        "path_length": isCritical ? "8.00" : "4.00",
-        "GAT_attention_score": riskVal.toFixed(4),
-        "DAGNN_delay_pred": (riskVal * 35.0).toFixed(2),
-        "DAGNN_sigma_pred": (riskVal * 12.0).toFixed(2)
+      "G7: Thời gian (Time)": {
+        "overtime_hours": task.overtime_hours,
+        "lag_time": task.lag_time
       }
     };
   };
@@ -200,8 +203,8 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
   const { initialNodesLayout, initialEdgesLayout } = useMemo(() => {
     if (!tasks || tasks.length === 0) return { initialNodesLayout: [], initialEdgesLayout: [] };
 
-    const displayTasks = tasks.slice(0, 35);
-    const displayTaskIds = new Set(displayTasks.map(t => String(t.id)));
+    const displayTasks = tasks;
+    const displayTaskIds = new Set(displayTasks.map((t: any) => String(t.id)));
 
     const rawNodes = displayTasks.map((task: any, idx: number) => {
       const mode = selectedOptionModes && selectedOptionModes[idx] !== undefined ? selectedOptionModes[idx] : 0;
@@ -218,7 +221,12 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
         ? (task.crash_cost || 1500)
         : mode === 2 
           ? (task.outsource_cost || 2000)
-          : (task.normal_cost || task.total_cost || (task.internal_labor_cost || 0) + (task.equipment_cost || 0) || 1000);
+          : (task.total_cost || (
+              (task.internal_labor_cost || 0) + 
+              (task.equipment_fuel_cost || 0) + 
+              (task.material_cost || 0) + 
+              (task.outsourcing_cost || 0)
+            ) || 1000);
 
       return {
         id: String(task.id),
@@ -234,7 +242,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           is_critical: isCritical,
           mode,
           resources: task.resources || [],
-          features: get72Features(task, mode, isCritical),
+          features: getTaskGroups(task),
           baseline_start: task.baseline_start,
           optimistic_time: duration ? duration * 0.8 : 0,
           pessimistic_time: duration ? duration * 1.5 : 0,
@@ -256,7 +264,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
         target: dep.targetId,
         type: 'smoothstep',
         animated: true,
-        style: { stroke: '#94a3b8', strokeWidth: 2 },
+        style: { stroke: '#94a3b8', strokeWidth: 1.5, opacity: 0.6 },
         markerEnd: {
           type: MarkerType.ArrowClosed,
           width: 15,
@@ -329,7 +337,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
               </div>
             </div>
             <p className="text-[10px] text-slate-400 mt-3 italic border-t pt-1.5">
-              * Hiển thị phân đoạn 35 công việc để đảm bảo hiệu năng
+              * Hiển thị toàn bộ mạng lưới công việc của dự án
             </p>
           </Panel>
         </ReactFlow>
@@ -441,31 +449,34 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                 </div>
               )}
 
-              {/* 72 Dimensions Graph Feature Vector (Tensors) */}
+              {/* Real Task Schema Fields */}
               <div>
-                <h3 className="text-xs font-bold text-slate-800 mb-2.5 flex items-center border-b pb-1">
-                  <Activity size={14} className="mr-1.5 text-blue-600" />
-                  Graph Node Tensor (72 Features)
+                <h3 className="text-sm font-bold text-slate-800 mb-2.5 flex items-center border-b pb-1">
+                  <Activity size={16} className="mr-1.5 text-blue-600" />
+                  Thông tin chi tiết (Task Details)
                 </h3>
-                <p className="text-[10px] text-slate-400 mb-3 italic">
-                  Các nhóm đặc trưng nén 72 chiều cấp nút truyền vào Graph GNN để tính toán rủi ro và xác định ranh giới Pareto.
+                <p className="text-xs text-slate-500 mb-3 italic">
+                  Các chỉ số được lấy trực tiếp từ Pydantic Schema của Backend API. Click "Edit Node" để sửa.
                 </p>
                 <div className="space-y-3">
                   {Object.entries(selectedTask.features || {}).map(([groupName, groupFeats]: any) => (
-                    <div key={groupName} className="border border-slate-100 rounded-lg overflow-hidden">
-                      <div className="bg-slate-50 px-2.5 py-1.5 text-[10px] font-bold text-slate-600 border-b border-slate-100 flex justify-between">
+                    <div key={groupName} className="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                      <div className="bg-slate-100 px-3 py-2 text-xs font-bold text-slate-700 border-b border-slate-200 flex justify-between items-center">
                         <span>{groupName}</span>
-                        <span className="text-[9px] text-slate-400 font-normal">{Object.keys(groupFeats).length} features</span>
+                        <span className="text-[10px] text-slate-500 font-normal bg-white px-1.5 py-0.5 rounded border">{Object.keys(groupFeats).length} items</span>
                       </div>
-                      <div className="p-2 bg-white space-y-1 text-[11px]">
-                        {Object.entries(groupFeats).map(([featKey, featVal]: any) => (
-                          <div key={featKey} className="flex justify-between items-center py-0.5 hover:bg-slate-50 px-1 rounded">
-                            <span className="text-slate-500 font-mono text-[9px]">{featKey}</span>
-                            <span className="font-bold text-slate-800 font-mono bg-slate-100 px-1.5 py-0.2 rounded text-[10px]">
-                              {String(featVal)}
-                            </span>
-                          </div>
-                        ))}
+                      <div className="p-2.5 bg-white space-y-1.5 text-xs">
+                        {Object.entries(groupFeats).map(([featKey, featVal]: any) => {
+                          const formattedKey = featKey.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                          return (
+                            <div key={featKey} className="flex justify-between items-center py-1 border-b border-slate-50 last:border-0 hover:bg-slate-50 px-1.5 rounded transition-colors">
+                              <span className="text-slate-600 font-medium">{formattedKey}</span>
+                              <span className="font-bold text-slate-900 font-mono bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                                {featVal == null ? "0.00" : Number.isFinite(featVal) && !Number.isInteger(featVal) ? Number(featVal).toFixed(2) : String(featVal)}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}

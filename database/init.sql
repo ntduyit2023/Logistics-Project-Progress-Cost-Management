@@ -16,16 +16,26 @@ CREATE TABLE users (
 );
 
 CREATE TABLE projects (
-    id VARCHAR(255) PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     project_name VARCHAR(255) NOT NULL,
+    type VARCHAR(50),
     status VARCHAR(50) DEFAULT 'Planning',
+    base_cost NUMERIC(15,2) DEFAULT 0.00,
+    total_cost NUMERIC(15,2) DEFAULT 0.00,
     
     -- Contractual Project Constraints
     target_deadline TIMESTAMP,
     penalty_per_day NUMERIC(15,2),
     bonus_per_day NUMERIC(15,2),
     
+    -- Additional Model Fields
+    search_vector TSVECTOR,
+    metadata_json JSONB DEFAULT '{}'::jsonb,
+    num_tasks INTEGER DEFAULT 0,
+    num_edges INTEGER DEFAULT 0,
+    network_density NUMERIC(5,4),
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -34,20 +44,22 @@ CREATE TABLE projects (
 -- 2. CONSTRAINT & RESOURCES LAYER
 -- ------------------------------------------------------------------------------
 
-CREATE TABLE project_constraint_agenda (
+CREATE TABLE project_constraint_time (
     id SERIAL PRIMARY KEY,
-    project_id VARCHAR(255) NOT NULL REFERENCES projects(id) ON DELETE CASCADE UNIQUE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE UNIQUE,
     weekly_schedule JSONB NOT NULL,
-    holidays_list JSONB DEFAULT '[]'::jsonb
+    holidays_list JSONB DEFAULT '[]'::jsonb,
+    overtime_multiplier NUMERIC(5,2) DEFAULT 1.50
 );
 
-CREATE TABLE project_constraint_resources (
+CREATE TABLE project_constraint_resource (
     id SERIAL PRIMARY KEY,
-    project_id VARCHAR(255) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     resource_name VARCHAR(100) NOT NULL,
-    capacity INTEGER NOT NULL,
-    internal_cost NUMERIC(15,2) DEFAULT 0,
-    external_cost NUMERIC(15,2) DEFAULT 0
+    resource_type VARCHAR(50) NOT NULL,
+    max_availability NUMERIC(10,2) NOT NULL,
+    cost_per_use NUMERIC(15,2) DEFAULT 0,
+    cost_per_unit NUMERIC(15,2) DEFAULT 0
 );
 
 -- ------------------------------------------------------------------------------
@@ -56,7 +68,7 @@ CREATE TABLE project_constraint_resources (
 
 CREATE TABLE ai_simulation_runs (
     id SERIAL PRIMARY KEY,
-    project_id VARCHAR(255) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     ai_weights JSONB DEFAULT '{"time": 50, "cost": 50}'::jsonb,
     status VARCHAR(50) DEFAULT 'Running',
     results_summary JSONB,
@@ -79,7 +91,7 @@ CREATE TABLE ai_recommendations (
 
 CREATE TABLE project_baselines (
     id SERIAL PRIMARY KEY,
-    project_id VARCHAR(255) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     simulation_run_id INTEGER REFERENCES ai_simulation_runs(id) ON DELETE SET NULL,
     is_active BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -91,12 +103,16 @@ CREATE TABLE project_baselines (
 
 CREATE TABLE tasks (
     id VARCHAR(255) PRIMARY KEY,
-    project_id VARCHAR(255) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     task_name VARCHAR(255) NOT NULL,
     task_type VARCHAR(100),
     status VARCHAR(50) DEFAULT 'Pending',
     baseline_start TIMESTAMP,
     type VARCHAR(255),
+    
+    base_cost NUMERIC(15,2) DEFAULT 0.00,
+    total_cost NUMERIC(15,2) DEFAULT 0.00,
+    risk_factor NUMERIC(10,4) DEFAULT 1.0000,
     
     -- Extracted Time Components (Hub)
     duration_months NUMERIC(15,2),
@@ -107,74 +123,48 @@ CREATE TABLE tasks (
     
     -- G1: Direct Costs
     internal_labor_cost NUMERIC(15,2),
-    subcontracting_cost NUMERIC(15,2),
-    overtime_crashing_cost NUMERIC(15,2),
+    overtime_cost NUMERIC(15,2),
+    equipment_fuel_cost NUMERIC(15,2),
+    qa_qc_cost NUMERIC(15,2),
     material_cost NUMERIC(15,2),
-    equipment_cost NUMERIC(15,2), 
-    direct_transportation NUMERIC(15,2),
-    energy_fuel_cost NUMERIC(15,2),
-    testing_and_inspection NUMERIC(15,2),
+    outsourcing_cost NUMERIC(15,2),
     
     -- G2: Indirect Costs
-    pm_overhead NUMERIC(15,2),
+    training_cost NUMERIC(15,2),
     facility_rent NUMERIC(15,2),
-    utilities NUMERIC(15,2),
     communication_cost NUMERIC(15,2),
-    internal_training NUMERIC(15,2),
-    quality_mgmt_overhead NUMERIC(15,2),
+    utilities_cost NUMERIC(15,2),
     
     -- G4: Contractual
-    permits_and_licensing NUMERIC(15,2),
-    project_insurance NUMERIC(15,2),
-    warranty_and_after_sales NUMERIC(15,2),
-    regulatory_compliance NUMERIC(15,2),
+    insurance_cost NUMERIC(15,2),
+    licensing_cost NUMERIC(15,2),
+    warranty_cost NUMERIC(15,2),
     
-    -- G5: Logistics
-    inventory_holding_cost NUMERIC(15,2),
-    ordering_cost NUMERIC(15,2),
-    shortage_stockout NUMERIC(15,2),
-    obsolescence_cost NUMERIC(15,2),
+    -- G5: Risk Coefficients
+    complexity NUMERIC(10,4),
+    weather_contingency NUMERIC(10,4),
+    general_contingency NUMERIC(10,4),
+    rework_risk NUMERIC(10,4),
+    
+    -- G6: Logistics
+    holding_cost NUMERIC(15,2),
     international_freight NUMERIC(15,2),
-    packaging_and_handling NUMERIC(15,2),
+    handling_cost NUMERIC(15,2),
     reverse_logistics NUMERIC(15,2),
+    defect_cost NUMERIC(15,2),
     
-    -- G6: Temporal
-    wait_queue_time NUMERIC(15,2),
-    setup_transition_time NUMERIC(15,2),
-    induction_time NUMERIC(15,2),
-    lead_time NUMERIC(15,2),
-    pert_3_point_estimate NUMERIC(15,2),
+    -- G7: Time Components
+    overtime_hours NUMERIC(15,2),
+    lag_time NUMERIC(15,2),
     
-    -- G9: Risks
-    technical_complexity NUMERIC(15,2),
-    rework_probability NUMERIC(15,2),
-    external_dependency_level NUMERIC(15,2),
-    contingency_reserve NUMERIC(15,2),
-    management_reserve NUMERIC(15,2),
-    weather_seasonal_risk NUMERIC(15,2),
-    technology_risk NUMERIC(15,2),
-    
-    -- G11: Human & Org
-    required_skill_level INTEGER,
-    staff_experience NUMERIC(15,2),
-    learning_curve_effect NUMERIC(15,2),
-    hr_stability_risk NUMERIC(15,2), 
-    cross_functional_coordination INTEGER,
-    occupational_safety_risk INTEGER,
-    
-    -- G12: ESG
-    environmental_impact INTEGER,
-    waste_disposal_cost NUMERIC(15,2),
-    community_social_impact INTEGER,
-    carbon_tax_credit NUMERIC(15,2),
-    esg_compliance INTEGER
+    -- Metadata JSON cho AI Computed Data
+    metadata_json JSONB
 );
 
--- Logic Table (Edges between tasks)
 CREATE TABLE project_constraint_logic (
-    predecessor_task_id VARCHAR(255) NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
-    successor_task_id VARCHAR(255) NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
-    project_id VARCHAR(255) NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    predecessor_id VARCHAR(255) NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    successor_id VARCHAR(255) NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     dependency_type VARCHAR(50) NOT NULL DEFAULT 'FS',
     
     lag_months NUMERIC(15,2) DEFAULT 0,
@@ -182,7 +172,7 @@ CREATE TABLE project_constraint_logic (
     lag_days NUMERIC(15,2) DEFAULT 0,
     lag_hours NUMERIC(15,2) DEFAULT 0,
     
-    PRIMARY KEY (predecessor_task_id, successor_task_id, project_id)
+    PRIMARY KEY (predecessor_id, successor_id, project_id)
 );
 
 -- ------------------------------------------------------------------------------
@@ -191,7 +181,7 @@ CREATE TABLE project_constraint_logic (
 
 CREATE TABLE task_resources (
     task_id VARCHAR(255) NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
-    resource_id INTEGER NOT NULL REFERENCES project_constraint_resources(id) ON DELETE CASCADE,
+    resource_id INTEGER NOT NULL REFERENCES project_constraint_resource(id) ON DELETE CASCADE,
     request_quantity NUMERIC(15,2) NOT NULL,
     allocated_quantity NUMERIC(15,2),
     labor_productivity NUMERIC(15,2),

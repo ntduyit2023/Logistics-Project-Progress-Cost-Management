@@ -10,6 +10,15 @@ from app.db.database import Base
 class TaskResource(Base):
     """
     Phân bổ Tài nguyên cho một Công việc (G7 Resource Mapping).
+
+    Attributes:
+        task_id (str): Khóa chính tham chiếu đến tasks.id.
+        resource_id (int): Khóa chính tham chiếu đến project_constraint_resource.id.
+        request_quantity (float): Số lượng tài nguyên yêu cầu.
+        allocated_quantity (Optional[float]): Số lượng thực tế cấp.
+        labor_productivity (Optional[float]): Năng suất lao động.
+        equipment_utilization (Optional[float]): Tỷ lệ sử dụng thiết bị.
+        resource_substitutability (Optional[int]): Khả năng thay thế.
     """
     __tablename__ = "task_resources"
 
@@ -29,15 +38,75 @@ class TaskResource(Base):
 class Task(Base):
     """
     Siêu bảng (Wide Table) đại diện cho Công việc (Node) trong dự án.
-    Bao gồm toàn bộ 60+ tính năng (Features) trải dài qua 12 nhóm (Cost, Risk, HR...).
+    Bao gồm toàn bộ 60+ tính năng (Features) trải dài qua 7 nhóm (Cost, Risk, HR...).
+
+    Attributes:
+        id (str): Khóa chính của Task.
+        project_id (int): ID dự án.
+        task_name (str): Tên task.
+        task_type (Optional[str]): Loại task.
+        status (str): Trạng thái.
+        base_cost (Optional[float]): Chi phí cơ sở.
+        total_cost (Optional[float]): Tổng chi phí.
+        risk_factor (Optional[float]): Yếu tố rủi ro.
+        baseline_start (Optional[datetime]): Ngày bắt đầu.
+        type (Optional[str]): Phân loại.
+        
+        # Hub Time Components
+        duration_months (Optional[float]): Thời lượng (tháng).
+        duration_weeks (Optional[float]): Thời lượng (tuần).
+        duration_days (Optional[float]): Thời lượng (ngày).
+        duration_hours (Optional[float]): Thời lượng (giờ).
+        calendar_type (Optional[str]): Loại lịch.
+        
+        # G1: Direct Costs
+        internal_labor_cost (Optional[float]): Chi phí nhân công nội bộ.
+        overtime_cost (Optional[float]): Chi phí làm thêm.
+        equipment_fuel_cost (Optional[float]): Chi phí nhiên liệu/thiết bị.
+        qa_qc_cost (Optional[float]): Chi phí QA/QC.
+        material_cost (Optional[float]): Chi phí vật tư.
+        outsourcing_cost (Optional[float]): Chi phí thầu phụ.
+        
+        # G2: Indirect Costs
+        training_cost (Optional[float]): Chi phí đào tạo.
+        facility_rent (Optional[float]): Chi phí thuê bãi.
+        communication_cost (Optional[float]): Chi phí viễn thông.
+        utilities_cost (Optional[float]): Chi phí điện nước.
+        
+        # G4: Contractual Costs
+        insurance_cost (Optional[float]): Chi phí bảo hiểm.
+        licensing_cost (Optional[float]): Phí giấy phép.
+        warranty_cost (Optional[float]): Chi phí bảo hành.
+        
+        # G5: Risk Costs
+        complexity (Optional[float]): Độ phức tạp.
+        weather_contingency (Optional[float]): Dự phòng thời tiết.
+        general_contingency (Optional[float]): Dự phòng chung.
+        rework_risk (Optional[float]): Rủi ro làm lại.
+        
+        # G6: Logistics Costs
+        holding_cost (Optional[float]): Chi phí tồn kho.
+        international_freight (Optional[float]): Cước phí quốc tế.
+        handling_cost (Optional[float]): Chi phí bốc dỡ.
+        reverse_logistics (Optional[float]): Chi phí thu hồi.
+        defect_cost (Optional[float]): Chi phí lỗi hỏng.
+        
+        # G7: Time & Schedule
+        overtime_hours (Optional[float]): Giờ làm thêm.
+        lag_time (Optional[float]): Thời gian trễ.
     """
     __tablename__ = "tasks"
 
     id: Mapped[str] = mapped_column(String(255), primary_key=True)
-    project_id: Mapped[int] = mapped_column(ForeignKey("app_projects.id", ondelete="CASCADE"))
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
     task_name: Mapped[str] = mapped_column(String(255))
     task_type: Mapped[Optional[str]] = mapped_column(String(100))
     status: Mapped[str] = mapped_column(String(50), default="Pending")
+    
+    base_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    total_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    risk_factor: Mapped[Optional[float]] = mapped_column(Numeric(10, 4), default=1.0)
+    
     baseline_start: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     type: Mapped[Optional[str]] = mapped_column(String(255))
     
@@ -50,69 +119,41 @@ class Task(Base):
     
     # G1: Direct Costs
     internal_labor_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    subcontracting_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    overtime_crashing_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    overtime_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    equipment_fuel_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    qa_qc_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
     material_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    equipment_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    direct_transportation: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    energy_fuel_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    testing_and_inspection: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-
-    # G2: Indirect Costs
-    pm_overhead: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    facility_rent: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    utilities: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    communication_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    internal_training: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    quality_mgmt_overhead: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-
-    # G4: Contractual
-    permits_and_licensing: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    project_insurance: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    warranty_and_after_sales: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    regulatory_compliance: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-
-    # G5: Logistics
-    inventory_holding_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    ordering_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    shortage_stockout: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    obsolescence_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    international_freight: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    packaging_and_handling: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    reverse_logistics: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-
-    # G6: Temporal
-    wait_queue_time: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    setup_transition_time: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    induction_time: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    lead_time: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    pert_3_point_estimate: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-
-    # G9: Risks
-    technical_complexity: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    rework_probability: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    external_dependency_level: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    contingency_reserve: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    management_reserve: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    weather_seasonal_risk: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    technology_risk: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-
-    # G11: Human & Org
-    required_skill_level: Mapped[Optional[int]] = mapped_column(Integer)
-    staff_experience: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    learning_curve_effect: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    hr_stability_risk: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    cross_functional_coordination: Mapped[Optional[int]] = mapped_column(Integer)
-    occupational_safety_risk: Mapped[Optional[int]] = mapped_column(Integer)
-
-    # G12: ESG
-    environmental_impact: Mapped[Optional[int]] = mapped_column(Integer)
-    waste_disposal_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    community_social_impact: Mapped[Optional[int]] = mapped_column(Integer)
-    carbon_tax_credit: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    esg_compliance: Mapped[Optional[int]] = mapped_column(Integer)
+    outsourcing_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
     
-    # Metadata JSON cho AI Computed Data (G3, G8, G10)
+    # G2: Indirect Costs
+    training_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    facility_rent: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    communication_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    utilities_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    
+    # G4: Contractual
+    insurance_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    licensing_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    warranty_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    
+    # G5: Risk Coefficients
+    complexity: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
+    weather_contingency: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
+    general_contingency: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
+    rework_risk: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
+    
+    # G6: Logistics
+    holding_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    international_freight: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    handling_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    reverse_logistics: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    defect_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    
+    # G7: Time Components
+    overtime_hours: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    lag_time: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    
+    # Metadata JSON cho AI Computed Data
     metadata_json: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, default=dict)
 
     # Quan hệ

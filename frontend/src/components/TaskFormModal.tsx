@@ -1,91 +1,77 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Layers, DollarSign, Briefcase, ShieldAlert, Users, Leaf, ArrowRight, HardHat, Plus, Trash2 } from 'lucide-react';
+import { X, Save, Layers, DollarSign, Briefcase, ShieldAlert, Users, Leaf, ArrowRight, HardHat, Plus, Trash2, AlertTriangle, Clock } from 'lucide-react';
 import { api } from '../services/api';
 import { useParams } from 'react-router-dom';
 
 interface TaskFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: any) => void;
+  onSubmit?: (data: any) => void;
   initialData?: any | null;
   availableTasks?: any[];
   projectResources?: any[];
   constraintLogic?: any[];
+  projectType?: string;
+  onSave?: (data: any) => void;
+  tasks?: any[];
+  projectId?: number;
 }
 
 const TABS = [
   { id: 'basic', label: 'Basic & Schedule', icon: Layers },
   { id: 'resources', label: 'Resources', icon: HardHat },
-  { id: 'direct', label: 'G1: Direct Cost', icon: DollarSign },
-  { id: 'indirect', label: 'G2 & G4: Indirect/Contract', icon: Briefcase },
-  { id: 'logistics', label: 'G5 & G6: Logistics/Time', icon: ArrowRight },
-  { id: 'risk_hr', label: 'G9 & G11: Risk/HR', icon: Users },
-  { id: 'esg', label: 'G12: ESG', icon: Leaf },
+  { id: 'g1_direct', label: 'G1: Direct Costs', icon: DollarSign },
+  { id: 'g2_indirect', label: 'G2: Indirect Costs', icon: Briefcase },
+  { id: 'g4_contractual', label: 'G4: Contractual', icon: ShieldAlert },
+  { id: 'g5_risk', label: 'G5: Risk', icon: AlertTriangle },
+  { id: 'g6_logistics', label: 'G6: Logistics', icon: ArrowRight },
+  { id: 'g7_time', label: 'G7: Time', icon: Clock },
 ];
 
 const FIELD_GROUPS = {
-  direct: [
+  g1_direct: [
     { key: 'internal_labor_cost', label: 'Internal Labor Cost' },
-    { key: 'subcontracting_cost', label: 'Subcontracting Cost' },
-    { key: 'overtime_crashing_cost', label: 'Overtime Crashing Cost' },
+    { key: 'overtime_cost', label: 'Overtime Cost' },
+    { key: 'equipment_fuel_cost', label: 'Equipment & Fuel Cost' },
+    { key: 'qa_qc_cost', label: 'QA/QC Cost' },
     { key: 'material_cost', label: 'Material Cost' },
-    { key: 'equipment_cost', label: 'Equipment Cost' },
-    { key: 'direct_transportation', label: 'Direct Transportation' },
-    { key: 'energy_fuel_cost', label: 'Energy Fuel Cost' },
-    { key: 'testing_and_inspection', label: 'Testing & Inspection' },
+    { key: 'outsourcing_cost', label: 'Outsourcing Cost' },
   ],
-  indirect: [
-    { key: 'pm_overhead', label: 'PM Overhead' },
+  g2_indirect: [
+    { key: 'training_cost', label: 'Training Cost' },
     { key: 'facility_rent', label: 'Facility Rent' },
-    { key: 'utilities', label: 'Utilities' },
     { key: 'communication_cost', label: 'Communication Cost' },
-    { key: 'internal_training', label: 'Internal Training' },
-    { key: 'quality_mgmt_overhead', label: 'Quality Mgmt Overhead' },
-    { key: 'permits_and_licensing', label: 'Permits & Licensing (G4)' },
-    { key: 'project_insurance', label: 'Project Insurance (G4)' },
-    { key: 'warranty_and_after_sales', label: 'Warranty & After Sales (G4)' },
-    { key: 'regulatory_compliance', label: 'Regulatory Compliance (G4)' },
+    { key: 'utilities_cost', label: 'Utilities Cost' },
   ],
-  logistics: [
-    { key: 'inventory_holding_cost', label: 'Inventory Holding Cost' },
-    { key: 'ordering_cost', label: 'Ordering Cost' },
-    { key: 'shortage_stockout', label: 'Shortage Stockout' },
-    { key: 'obsolescence_cost', label: 'Obsolescence Cost' },
+  g4_contractual: [
+    { key: 'insurance_cost', label: 'Insurance Cost' },
+    { key: 'licensing_cost', label: 'Licensing Cost' },
+    { key: 'warranty_cost', label: 'Warranty Cost' },
+  ],
+  g5_risk: [
+    { key: 'complexity', label: 'Complexity' },
+    { key: 'weather_contingency', label: 'Weather Contingency' },
+    { key: 'general_contingency', label: 'General Contingency' },
+    { key: 'rework_risk', label: 'Rework Risk' },
+  ],
+  g6_logistics: [
+    { key: 'holding_cost', label: 'Holding Cost' },
     { key: 'international_freight', label: 'International Freight' },
-    { key: 'packaging_and_handling', label: 'Packaging & Handling' },
+    { key: 'handling_cost', label: 'Handling Cost' },
     { key: 'reverse_logistics', label: 'Reverse Logistics' },
-    { key: 'wait_queue_time', label: 'Wait/Queue Time (G6)' },
-    { key: 'setup_transition_time', label: 'Setup/Transition Time (G6)' },
-    { key: 'induction_time', label: 'Induction Time (G6)' },
-    { key: 'lead_time', label: 'Lead Time (G6)' },
-    { key: 'pert_3_point_estimate', label: 'PERT Estimate (G6)' },
+    { key: 'defect_cost', label: 'Defect Cost' },
   ],
-  risk_hr: [
-    { key: 'technical_complexity', label: 'Technical Complexity (G9)' },
-    { key: 'rework_probability', label: 'Rework Probability (G9)' },
-    { key: 'external_dependency_level', label: 'External Dependency Level (G9)' },
-    { key: 'contingency_reserve', label: 'Contingency Reserve (G9)' },
-    { key: 'management_reserve', label: 'Management Reserve (G9)' },
-    { key: 'weather_seasonal_risk', label: 'Weather Seasonal Risk (G9)' },
-    { key: 'technology_risk', label: 'Technology Risk (G9)' },
-    { key: 'required_skill_level', label: 'Required Skill Level (G11)' },
-    { key: 'staff_experience', label: 'Staff Experience (G11)' },
-    { key: 'learning_curve_effect', label: 'Learning Curve Effect (G11)' },
-    { key: 'hr_stability_risk', label: 'HR Stability Risk (G11)' },
-    { key: 'cross_functional_coordination', label: 'Cross-functional Coord (G11)' },
-    { key: 'occupational_safety_risk', label: 'Safety Risk (G11)' },
-  ],
-  esg: [
-    { key: 'environmental_impact', label: 'Environmental Impact' },
-    { key: 'waste_disposal_cost', label: 'Waste Disposal Cost' },
-    { key: 'community_social_impact', label: 'Community Social Impact' },
-    { key: 'carbon_tax_credit', label: 'Carbon Tax Credit' },
-    { key: 'esg_compliance', label: 'ESG Compliance' },
-  ],
+  g7_time: [
+    { key: 'overtime_hours', label: 'Overtime Hours' },
+    { key: 'lag_time', label: 'Lag Time' },
+  ]
 };
 
-export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, availableTasks = [], projectResources = [], constraintLogic = [] }: TaskFormModalProps) {
-  const { projectId } = useParams();
+export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initialData, availableTasks = [], tasks = [], projectResources = [], constraintLogic = [], projectType, projectId }: TaskFormModalProps) {
+  const finalOnSubmit = onSubmit || onSave || (() => {});
+  const finalAvailableTasks = availableTasks.length > 0 ? availableTasks : tasks;
+  const { projectId: routeProjectId } = useParams();
+  const effectiveProjectId = projectId || routeProjectId;
   const [activeTab, setActiveTab] = useState('basic');
   const [formData, setFormData] = useState<any>({});
   const [predecessor, setPredecessor] = useState({ id: '', type: 'FS', lag: 0 });
@@ -125,7 +111,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
         const fetchResources = async () => {
           setLoadingRes(true);
           try {
-            const res = await api.getTaskResources(Number(projectId), initialData.id);
+            const res = await api.getTaskResources(Number(effectiveProjectId), initialData.id);
             setAssignedResources(res.data || []);
           } catch (err) {
             console.error("Failed to fetch task resources", err);
@@ -150,7 +136,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
       setPredecessor({ id: '', type: 'FS', lag: 0 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, initialData, projectId]);
+  }, [isOpen, initialData, effectiveProjectId]);
 
   if (!isOpen) return null;
 
@@ -188,6 +174,8 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
     setAssignedResources(prev => prev.filter(r => r.resource_id !== resId));
   };
 
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.task_name?.trim()) {
@@ -218,25 +206,59 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
 
     payload.stagedResources = assignedResources;
 
-    onSubmit(payload);
+    finalOnSubmit(payload);
   };
+
+  const visibleTabIds = React.useMemo(() => {
+    const baseTabs = ['basic', 'resources'];
+    if (projectType === 'ITLG') return [...baseTabs, 'g1_direct', 'g2_indirect', 'g5_risk', 'g7_time'];
+    if (projectType === 'PRO') return [...baseTabs, 'g1_direct', 'g2_indirect', 'g6_logistics', 'g7_time'];
+    return [...baseTabs, 'g1_direct', 'g2_indirect', 'g4_contractual', 'g5_risk', 'g6_logistics', 'g7_time'];
+  }, [projectType]);
+
+  const visibleTabs = TABS.filter(t => visibleTabIds.includes(t.id));
 
   const renderNumberFields = (groupId: string) => (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3">
-      {FIELD_GROUPS[groupId as keyof typeof FIELD_GROUPS].map(field => (
+      {FIELD_GROUPS[groupId as keyof typeof FIELD_GROUPS].map(field => {
+        const isPercent = ['complexity', 'weather_contingency', 'general_contingency', 'rework_risk'].includes(field.key);
+        return (
         <div key={field.key}>
           <label className="block text-xs font-semibold text-slate-600 mb-1 line-clamp-1" title={field.label}>
-            {field.label}
+            {field.label} {isPercent && '(%)'}
           </label>
+          {isPercent ? (
+            <div className="flex items-center gap-2">
+              <input 
+                type="range" min="0" max="100" step="1"
+                value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
+                onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
+                className="flex-1 cursor-pointer accent-blue-600"
+              />
+              <input 
+                type="number" step="1" min="0" max="100"
+                value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
+                onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
+                className="w-16 border border-slate-300 rounded-md px-1 py-1.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          ) : (
           <input 
             type="number"
             step="0.01"
-            value={formData[field.key] || ''}
+            value={formData[field.key] ?? 0}
             onChange={(e) => handleChange(field.key, e.target.value)}
-            className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors bg-white"
+            disabled={['internal_labor_cost', 'overtime_cost'].includes(field.key)}
+            className={`w-full border rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors ${
+              ['internal_labor_cost', 'overtime_cost'].includes(field.key) 
+                ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed' 
+                : 'bg-white border-slate-300'
+            }`}
+            title={['internal_labor_cost', 'overtime_cost'].includes(field.key) ? 'Calculated from assigned resources' : ''}
           />
+          )}
         </div>
-      ))}
+      )})}
     </div>
   );
 
@@ -260,7 +282,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar Tabs */}
           <div className="w-56 bg-slate-50 border-r border-slate-200 shrink-0 p-2 overflow-y-auto">
-            {TABS.map(tab => (
+            {visibleTabs.map(tab => (
               <button
                 key={tab.id}
                 type="button"
@@ -326,11 +348,43 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                         </select>
                       </div>
                     </div>
+                    <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-200">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Base Cost ($)</label>
+                        <input 
+                          type="number" step="0.01"
+                          value={formData.base_cost ?? 0}
+                          readOnly
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
+                          title="Auto-calculated from Direct, Indirect, Logistics and Contractual costs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Total Cost ($)</label>
+                        <input 
+                          type="number" step="0.01"
+                          value={formData.total_cost ?? 0}
+                          readOnly
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
+                          title="Auto-calculated (Base Cost * Risk Factor)"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Risk Factor (Multiplier)</label>
+                        <input 
+                          type="number" step="0.01"
+                          value={formData.risk_factor ?? 1.0}
+                          readOnly
+                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
+                          title="Auto-calculated (1.0 + Risk Percentages)"
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">Scheduling (Duration)</h3>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Baseline Start</label>
                         <input 
@@ -341,7 +395,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Days (Required)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Days (Req)</label>
                         <input 
                           type="number"
                           value={formData.duration_days || 1}
@@ -359,6 +413,15 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                         />
                       </div>
                       <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Weeks (Opt)</label>
+                        <input 
+                          type="number" step="0.1"
+                          value={formData.duration_weeks || ''}
+                          onChange={(e) => handleChange('duration_weeks', e.target.value)}
+                          className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                        />
+                      </div>
+                      <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Hours (Opt)</label>
                         <input 
                           type="number" step="0.5"
@@ -367,6 +430,18 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                         />
                       </div>
+                    </div>
+                    <div className="mt-4">
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Calendar Type</label>
+                      <select 
+                        value={formData.calendar_type || 'Standard'}
+                        onChange={(e) => handleChange('calendar_type', e.target.value)}
+                        className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                      >
+                        <option value="Standard">Standard (5 Days/Week)</option>
+                        <option value="24/7">Continuous (24/7)</option>
+                        <option value="Night Shift">Night Shift</option>
+                      </select>
                     </div>
                   </div>
 
@@ -390,7 +465,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                             {existingPredecessors.map(p => (
                               <tr key={`p-${p.predecessor_id}`} className="border-b border-slate-100">
                                 <td className="px-3 py-1.5 text-amber-600 font-bold">← Predecessor</td>
-                                <td className="px-3 py-1.5 font-medium">{p.name} ({p.predecessor_id})</td>
+                                <td className="px-3 py-1.5 font-medium">{p.name === p.predecessor_id ? p.name : `${p.name} (${p.predecessor_id})`}</td>
                                 <td className="px-3 py-1.5">{p.dependency_type}</td>
                                 <td className="px-3 py-1.5">{p.lag_days}</td>
                               </tr>
@@ -398,7 +473,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                             {existingSuccessors.map(s => (
                               <tr key={`s-${s.successor_id}`} className="border-b border-slate-100">
                                 <td className="px-3 py-1.5 text-blue-600 font-bold">→ Successor</td>
-                                <td className="px-3 py-1.5 font-medium">{s.name} ({s.successor_id})</td>
+                                <td className="px-3 py-1.5 font-medium">{s.name === s.successor_id ? s.name : `${s.name} (${s.successor_id})`}</td>
                                 <td className="px-3 py-1.5">{s.dependency_type}</td>
                                 <td className="px-3 py-1.5">{s.lag_days}</td>
                               </tr>
@@ -417,8 +492,8 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
                         >
                           <option value="">None</option>
-                          {availableTasks.filter(t => t.id !== initialData?.id && !existingPredecessors.some(p => p.predecessor_id === t.id)).map(t => (
-                            <option key={t.id} value={t.id}>{t.task_name} ({t.id})</option>
+                          {finalAvailableTasks.filter((t: any) => t.id !== initialData?.id && !existingPredecessors.some(p => p.predecessor_id === t.id)).map((t: any) => (
+                            <option key={t.id} value={t.id}>{t.task_name === t.id ? t.task_name : `${t.task_name} (${t.id})`}</option>
                           ))}
                         </select>
                       </div>
@@ -543,11 +618,11 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, initialData, 
               )}
 
               {/* DYNAMIC TABS FOR EXTENDED FEATURES */}
-              {activeTab === 'direct' && <div className="animate-in fade-in slide-in-from-right-4 duration-300">{renderNumberFields('direct')}</div>}
-              {activeTab === 'indirect' && <div className="animate-in fade-in slide-in-from-right-4 duration-300">{renderNumberFields('indirect')}</div>}
-              {activeTab === 'logistics' && <div className="animate-in fade-in slide-in-from-right-4 duration-300">{renderNumberFields('logistics')}</div>}
-              {activeTab === 'risk_hr' && <div className="animate-in fade-in slide-in-from-right-4 duration-300">{renderNumberFields('risk_hr')}</div>}
-              {activeTab === 'esg' && <div className="animate-in fade-in slide-in-from-right-4 duration-300">{renderNumberFields('esg')}</div>}
+              {['g1_direct', 'g2_indirect', 'g4_contractual', 'g5_risk', 'g6_logistics', 'g7_time'].includes(activeTab) && (
+                <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+                  {renderNumberFields(activeTab)}
+                </div>
+              )}
 
             </form>
           </div>

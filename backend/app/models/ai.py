@@ -14,7 +14,7 @@ class AISimulationRun(Base):
     __tablename__ = "ai_simulation_runs"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(ForeignKey("app_projects.id", ondelete="CASCADE"))
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
     ai_weights: Mapped[Dict[str, Any]] = mapped_column(JSON, default={"time": 50, "cost": 50})
     status: Mapped[str] = mapped_column(String(50), default="Running")
     results_summary: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON)

@@ -13,7 +13,7 @@ class ProjectConstraintTime(Base):
     __tablename__ = "project_constraint_time"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(ForeignKey("app_projects.id", ondelete="CASCADE"), unique=True)
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"), unique=True)
     
     weekly_schedule: Mapped[Dict[str, Any]] = mapped_column(JSON) # Ca làm việc chi tiết từng ngày
     holidays_list: Mapped[Optional[List[Any]]] = mapped_column(JSON, default=list)
@@ -29,7 +29,7 @@ class ProjectConstraintResource(Base):
     __tablename__ = "project_constraint_resource"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(ForeignKey("app_projects.id", ondelete="CASCADE"))
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
     
     resource_name: Mapped[str] = mapped_column(String(100))
     resource_type: Mapped[str] = mapped_column(String(50)) # Renewable / Consumable
@@ -46,7 +46,7 @@ class ProjectConstraintLogic(Base):
     """
     __tablename__ = "project_constraint_logic"
 
-    project_id: Mapped[int] = mapped_column(ForeignKey("app_projects.id", ondelete="CASCADE"))
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
     predecessor_id: Mapped[str] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True)
     successor_id: Mapped[str] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"), primary_key=True)
     

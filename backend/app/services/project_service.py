@@ -40,14 +40,22 @@ async def search_projects(db: AsyncSession, q: Optional[str], page: int, page_si
         # Quick counts
         tasks = await task_repo.get_by_project(db, p.id)
         edges = await dependency_repo.get_by_project(db, p.id)
+        # Calculate network density
+        num_tasks = len(tasks)
+        num_edges = len(edges)
+        network_density = (num_edges / (num_tasks * (num_tasks - 1))) if num_tasks > 1 else 0.0
+        
         summaries.append(ProjectSummary(
             id=p.id,
             project_name=p.project_name,
             metadata_json=p.metadata_json,
-            num_tasks=len(tasks),
-            num_edges=len(edges),
-            network_density=0.0,
+            num_tasks=num_tasks,
+            num_edges=num_edges,
+            network_density=network_density,
             status=p.status,
+            type=p.type,
+            base_cost=p.base_cost,
+            total_cost=p.total_cost,
             created_at=p.created_at,
             updated_at=p.updated_at
         ))
@@ -130,6 +138,9 @@ async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail
         num_edges=len(dependencies),
         network_density=0.0,
         status=project.status,
+        type=project.type,
+        base_cost=project.base_cost,
+        total_cost=project.total_cost,
         created_at=project.created_at,
         updated_at=project.updated_at,
         tasks=tasks,
