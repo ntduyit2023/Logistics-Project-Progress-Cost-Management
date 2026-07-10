@@ -98,7 +98,7 @@ if __name__ == "__main__":
         {
             "id": "C2011-07",
             "name": "Patient Transport System",
-            "type": "IT",
+            "type": "PRO",
             "file": r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2011-07 Patient Transport System.xlsx"
         },
         {

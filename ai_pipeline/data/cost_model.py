@@ -44,25 +44,18 @@ def calculate_task_base_cost(row, project_type, df_resources):
     g6_recovery = row.get("g6_recovery", 0.0)
     g6_error = row.get("g6_error", 0.0)
 
-    if project_type == "ITLG":
+    if project_type == "CON":
+        g1 = g1_material + g1_qa_qc + g1_subcontract + g1_labor + g1_fuel
+        g2 = g2_space + g2_utility
+        g4 = g4_license + g4_warranty + g4_insurance
+        g6 = g6_storage + g6_handling + g6_recovery + g6_error + g6_int_transport
+        base_cost = g1 + g2 + g4 + g6
+        
+    elif project_type == "ITLG":
         g1 = g1_labor + g1_ot + g1_subcontract + g1_qa_qc + g1_material
         g2 = g2_training + g2_space + g2_utility + g2_comm
         g4 = g4_insurance + g4_license + g4_warranty
         g6 = g6_int_transport + g6_storage + g6_recovery + g6_error
-        base_cost = g1 + g2 + g4 + g6
-        
-    elif project_type == "CON":
-        g1 = g1_material + g1_qa_qc + g1_subcontract + g1_labor + g1_fuel
-        g2 = g2_space + g2_utility
-        g4 = g4_license + g4_warranty + g4_insurance
-        g6 = g6_storage + g6_handling + g6_recovery + g6_error
-        base_cost = g1 + g2 + g4 + g6
-        
-    elif project_type == "IND":
-        g1 = g1_material + g1_subcontract + g1_labor + g1_fuel
-        g2 = g2_space + g2_utility
-        g4 = g4_license + g4_warranty
-        g6 = g6_int_transport + g6_handling + g6_storage
         base_cost = g1 + g2 + g4 + g6
         
     elif project_type == "PRO":
@@ -70,18 +63,12 @@ def calculate_task_base_cost(row, project_type, df_resources):
         g2 = g2_training + g2_space + g2_comm
         base_cost = g1 + g2
         
-    elif project_type == "TRL":
-        g1 = g1_subcontract + g1_fuel + g1_labor
-        g4 = g4_license + g4_insurance
-        g6 = g6_int_transport + g6_handling + g6_storage
-        base_cost = g1 + g4 + g6
-        
-    elif project_type == "IT":
-        # Fallback for IT if similar to PRO or ITLG
-        g1 = g1_labor + g1_ot + g1_subcontract + g1_qa_qc + g1_material
-        g2 = g2_training + g2_space + g2_utility + g2_comm
-        g4 = g4_insurance + g4_license + g4_warranty
-        g6 = g6_int_transport + g6_storage + g6_recovery + g6_error
+    else:
+        # Fallback to CON if unknown
+        g1 = g1_material + g1_qa_qc + g1_subcontract + g1_labor + g1_fuel
+        g2 = g2_space + g2_utility
+        g4 = g4_license + g4_warranty + g4_insurance
+        g6 = g6_storage + g6_handling + g6_recovery + g6_error
         base_cost = g1 + g2 + g4 + g6
         
     return base_cost
@@ -142,10 +129,10 @@ if __name__ == "__main__":
     base, final = calculate_project_totals(df, df_res, "CON")
     print(f"C2012-08 (CON) - Base Cost: {base}, Final Cost (with Risk): {final}")
     
-    # Test with C2018-09 (ITLG)
+    # Test with C2018-09 (PRO)
     base_dir2 = r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\processed\C2018-09"
     df2 = pd.read_csv(os.path.join(base_dir2, "tasks.csv"))
     df_res2 = pd.read_csv(os.path.join(base_dir2, "task_resources.csv"))
     
-    base2, final2 = calculate_project_totals(df2, df_res2, "ITLG")
-    print(f"C2018-09 (ITLG) - Base Cost: {base2}, Final Cost (with Risk): {final2}")
+    base2, final2 = calculate_project_totals(df2, df_res2, "PRO")
+    print(f"C2018-09 (PRO) - Base Cost: {base2}, Final Cost (with Risk): {final2}")
