@@ -109,6 +109,28 @@ def calculate_project_totals(df_tasks, df_resources, project_type):
         
     return total_base, total_final
 
+def calculate_costs_for_dataframe(df_tasks, df_resources, project_type):
+    """
+    Calculates costs for all tasks and returns a DataFrame with the results.
+    This is designed to be used by the ML Pipeline to generate target variables for each task.
+    """
+    results = []
+    for idx, row in df_tasks.iterrows():
+        b_cost = calculate_task_base_cost(row, project_type, df_resources)
+        f_cost = calculate_task_total_cost(row, project_type, df_resources)
+        
+        # Calculate risk factor explicitly for analysis
+        risk_factor = f_cost / b_cost if b_cost > 0 else 1.0
+        
+        results.append({
+            'task_id': row['task_id'],
+            'base_cost': b_cost,
+            'total_cost': f_cost,
+            'risk_factor': risk_factor
+        })
+        
+    return pd.DataFrame(results)
+
 if __name__ == "__main__":
     import os
     

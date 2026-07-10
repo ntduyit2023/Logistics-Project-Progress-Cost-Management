@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import glob
+import cost_model
 
 def extract_project_info(excel_path, processed_dir, project_id, project_name, project_type):
     print(f"Processing project info for {project_id}...")
@@ -17,6 +18,13 @@ def extract_project_info(excel_path, processed_dir, project_id, project_name, pr
     schedules_csv_path = os.path.join(processed_dir, 'task_schedules.csv')
     
     df_tasks = pd.read_csv(tasks_csv_path)
+    
+    # Extract Resources data for Cost Model
+    resources_csv_path = os.path.join(processed_dir, 'task_resources.csv')
+    if os.path.exists(resources_csv_path):
+        df_resources = pd.read_csv(resources_csv_path)
+    else:
+        df_resources = pd.DataFrame()
     
     # Calculate Total Effort Hours (Sum of g7_dur_hours)
     total_effort_hours = df_tasks['g7_dur_hours'].sum()
@@ -59,17 +67,8 @@ def extract_project_info(excel_path, processed_dir, project_id, project_name, pr
             # For a rough exact working hours estimation:
             project_working_hours = float(working_days) * hours_per_day
     
-    # Calculate Total Baseline Cost (Sum of all G1, G2, G4, G6 cost columns)
-    target_cost_cols = [
-        c for c in df_tasks.columns 
-        if c.startswith(('g1_', 'g2_', 'g4_', 'g6_')) 
-        and 'dur' not in c and 'ot' not in c and 'complexity' not in c 
-        and 'weather' not in c and 'contingency' not in c and 'rework' not in c
-    ]
-    
-    total_baseline_cost = 0.0
-    for col in target_cost_cols:
-        total_baseline_cost += df_tasks[col].sum()
+    # Calculate Total Costs dynamically using the Cost Model
+    total_baseline_cost, total_final_cost = cost_model.calculate_project_totals(df_tasks, df_resources, project_type)
             
     # Build dictionary
     project_info = {
@@ -82,7 +81,8 @@ def extract_project_info(excel_path, processed_dir, project_id, project_name, pr
         "total_effort_hours": total_effort_hours,
         "project_calendar_days": project_calendar_days,
         "project_working_hours": project_working_hours,
-        "total_baseline_cost": total_baseline_cost
+        "total_baseline_cost": total_baseline_cost,
+        "total_final_cost": total_final_cost
     }
     
     # Save to CSV
