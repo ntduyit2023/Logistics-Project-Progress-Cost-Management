@@ -1,251 +1,251 @@
-task_id,role,quantity,hourly_rate,type
-1,Labourers,2.0,60.0,Renewable
-1,Truck IVECO Trakker,1.0,70.0,Renewable
-1,Materials,10000.0,1.0,Consumable
-2,Labourers,4.0,60.0,Renewable
-2,Truck IVECO Trakker,3.0,70.0,Renewable
-2,Wheel Loader,1.0,60.0,Renewable
-3,Labourers,3.0,60.0,Renewable
-3,Bulldozer D8T,1.0,75.0,Renewable
-3,Wheel Loader,1.0,60.0,Renewable
-3,Truck IVECO Trakker,1.0,70.0,Renewable
-4,Labourers,2.0,60.0,Renewable
-4,Truck IVECO Trakker,1.0,70.0,Renewable
-4,Crane,1.0,105.0,Renewable
-5,Labourers,3.0,60.0,Renewable
-5,Truck IVECO Trakker,1.0,70.0,Renewable
-6,Labourers,2.0,60.0,Renewable
-6,Truck IVECO Trakker,1.0,70.0,Renewable
-6,Materials,30000.0,1.0,Consumable
-7,Labourers,7.0,60.0,Renewable
-7,Truck IVECO Trakker,5.0,70.0,Renewable
-7,Wheel Loader,2.0,60.0,Renewable
-7,Sheepfoot rolles,1.0,70.0,Renewable
-7,Concrete Mixer Truck,1.0,95.0,Renewable
-7,Materials,50000.0,1.0,Consumable
-8,Labourers,4.0,60.0,Renewable
-8,Truck IVECO Trakker,2.0,70.0,Renewable
-8,Crawler Excavator,1.0,98.0,Renewable
-8,Paler,1.0,65.0,Renewable
-9,Labourers,3.0,60.0,Renewable
-9,Truck IVECO Trakker,1.0,70.0,Renewable
-9,Bulldozer D8T,1.0,75.0,Renewable
-9,Wheel Loader,1.0,60.0,Renewable
-14,Labourers,3.0,60.0,Renewable
-14,Truck IVECO Trakker,1.0,70.0,Renewable
-14,Crane,1.0,105.0,Renewable
-14,Materials,3000.0,1.0,Consumable
-11,Labourers,4.0,60.0,Renewable
-11,Truck IVECO Trakker,1.0,70.0,Renewable
-11,Concrete Mixer Truck,1.0,95.0,Renewable
-11,Crane,1.0,105.0,Renewable
-11,Materials,3000.0,1.0,Consumable
-19,Labourers,10.0,60.0,Renewable
-19,Truck IVECO Trakker,6.0,70.0,Renewable
-19,Wheel Loader,2.0,60.0,Renewable
-19,Sheepfoot rolles,1.0,70.0,Renewable
-19,Concrete Mixer Truck,1.0,95.0,Renewable
-19,Materials,55000.0,1.0,Consumable
-20,Labourers,4.0,60.0,Renewable
-20,Truck IVECO Trakker,1.0,70.0,Renewable
-20,Crane,1.0,105.0,Renewable
-20,Materials,23000.0,1.0,Consumable
-17,Labourers,9.0,60.0,Renewable
-17,Crawler Excavator,2.0,98.0,Renewable
-17,Truck IVECO Trakker,6.0,70.0,Renewable
-17,Sheepfoot rolles,1.0,70.0,Renewable
-22,Labourers,4.0,60.0,Renewable
-22,Truck IVECO Trakker,1.0,70.0,Renewable
-22,Crane,1.0,105.0,Renewable
-22,Crawler Excavator,1.0,98.0,Renewable
-22,Materials,1500.0,1.0,Consumable
-24,Labourers,4.0,60.0,Renewable
-24,Truck IVECO Trakker,3.0,70.0,Renewable
-24,Crawler Excavator,1.0,98.0,Renewable
-24,Materials,0.0,1.0,Consumable
-25,Labourers,6.0,60.0,Renewable
-25,Truck IVECO Trakker,1.0,70.0,Renewable
-25,Drilling Rid,1.0,75.0,Renewable
-25,Crane,1.0,105.0,Renewable
-25,Wheel Loader,1.0,60.0,Renewable
-25,Concrete Mixer Truck,1.0,95.0,Renewable
-25,Materials,190000.0,1.0,Consumable
-27,Labourers,4.0,60.0,Renewable
-27,Truck IVECO Trakker,1.0,70.0,Renewable
-27,Concrete Mixer Truck,1.0,95.0,Renewable
-27,Crane,1.0,105.0,Renewable
-27,Materials,100000.0,1.0,Consumable
-29,Labourers,4.0,60.0,Renewable
-29,Truck IVECO Trakker,1.0,70.0,Renewable
-29,Concrete Mixer Truck,1.0,95.0,Renewable
-29,Crane,1.0,105.0,Renewable
-29,Materials,11000.0,1.0,Consumable
-31,Labourers,4.0,60.0,Renewable
-31,Truck IVECO Trakker,1.0,70.0,Renewable
-31,Concrete Mixer Truck,1.0,95.0,Renewable
-31,Crane,1.0,105.0,Renewable
-31,Materials,81000.0,1.0,Consumable
-33,Labourers,4.0,60.0,Renewable
-33,Truck IVECO Trakker,1.0,70.0,Renewable
-33,Crane,1.0,105.0,Renewable
-33,Materials,52000.0,1.0,Consumable
-34,Labourers,5.0,60.0,Renewable
-34,Truck IVECO Trakker,1.0,70.0,Renewable
-34,Concrete Mixer Truck,1.0,95.0,Renewable
-34,Crane,1.0,105.0,Renewable
-34,Materials,23500.0,1.0,Consumable
-36,Labourers,5.0,60.0,Renewable
-36,Truck IVECO Trakker,3.0,70.0,Renewable
-36,Wheel Loader,1.0,60.0,Renewable
-36,Sheepfoot rolles,1.0,70.0,Renewable
-36,Materials,18000.0,1.0,Consumable
-41,Labourers,3.0,60.0,Renewable
-41,Truck IVECO Trakker,2.0,70.0,Renewable
-41,Cold Milling Machine,1.0,230.0,Renewable
-42,Labourers,3.0,60.0,Renewable
-42,Truck IVECO Trakker,1.0,70.0,Renewable
-42,Wheel Loader,1.0,60.0,Renewable
-42,Bulldozer D8T,1.0,75.0,Renewable
-38,Labourers,10.0,60.0,Renewable
-38,Truck IVECO Trakker,6.0,70.0,Renewable
-38,Wheel Loader,2.0,60.0,Renewable
-38,Sheepfoot rolles,1.0,70.0,Renewable
-38,Concrete Mixer Truck,1.0,95.0,Renewable
-38,Materials,68600.0,1.0,Consumable
-39,Labourers,4.0,60.0,Renewable
-39,Truck IVECO Trakker,1.0,70.0,Renewable
-39,Crane,1.0,105.0,Renewable
-39,Materials,12600.0,1.0,Consumable
-63,Labourers,2.0,60.0,Renewable
-63,Truck IVECO Trakker,1.0,70.0,Renewable
-63,Crane,1.0,105.0,Renewable
-63,Materials,6000.0,1.0,Consumable
-62,Labourers,4.0,60.0,Renewable
-62,Truck IVECO Trakker,2.0,70.0,Renewable
-62,Crawler Excavator,1.0,98.0,Renewable
-62,Crane,1.0,105.0,Renewable
-62,Materials,15000.0,1.0,Consumable
-66,Labourers,5.0,60.0,Renewable
-66,Crane,1.0,105.0,Renewable
-66,Truck IVECO Trakker,1.0,70.0,Renewable
-66,Concrete Mixer Truck,1.0,95.0,Renewable
-66,Materials,88000.0,1.0,Consumable
-68,Labourers,4.0,60.0,Renewable
-68,Truck IVECO Trakker,1.0,70.0,Renewable
-68,Crane,1.0,105.0,Renewable
-68,Materials,50000.0,1.0,Consumable
-69,Labourers,5.0,60.0,Renewable
-69,Truck IVECO Trakker,1.0,70.0,Renewable
-69,Crane,1.0,105.0,Renewable
-69,Materials,8000.0,1.0,Consumable
-82,Labourers,3.0,60.0,Renewable
-82,Truck IVECO Trakker,2.0,70.0,Renewable
-82,Cold Milling Machine,1.0,230.0,Renewable
-83,Labourers,4.0,60.0,Renewable
-83,Truck IVECO Trakker,2.0,70.0,Renewable
-83,Bulldozer D8T,1.0,75.0,Renewable
-83,Wheel Loader,1.0,60.0,Renewable
-75,Labourers,10.0,60.0,Renewable
-75,Truck IVECO Trakker,6.0,70.0,Renewable
-75,Wheel Loader,2.0,60.0,Renewable
-75,Sheepfoot rolles,1.0,70.0,Renewable
-75,Tank Truck,1.0,78.0,Renewable
-75,Materials,140000.0,1.0,Consumable
-73,Labourers,3.0,60.0,Renewable
-73,Crawler Excavator,1.0,98.0,Renewable
-73,Sheepfoot rolles,1.0,70.0,Renewable
-73,Tank Truck,1.0,78.0,Renewable
-73,Materials,1800.0,1.0,Consumable
-72,Labourers,10.0,60.0,Renewable
-72,Truck IVECO Trakker,6.0,70.0,Renewable
-72,Wheel Loader,2.0,60.0,Renewable
-72,Sheepfoot rolles,1.0,70.0,Renewable
-72,Tank Truck,1.0,78.0,Renewable
-80,Labourers,3.0,60.0,Renewable
-80,Crane,1.0,105.0,Renewable
-80,Truck IVECO Trakker,1.0,70.0,Renewable
-80,Materials,7000.0,1.0,Consumable
-78,Labourers,4.0,60.0,Renewable
-78,Truck IVECO Trakker,2.0,70.0,Renewable
-78,Crawler Excavator,1.0,98.0,Renewable
-78,Crane,1.0,105.0,Renewable
-78,Materials,20000.0,1.0,Consumable
-77,Labourers,3.0,60.0,Renewable
-77,Truck IVECO Trakker,1.0,70.0,Renewable
-77,Crawler Excavator,1.0,98.0,Renewable
-77,Crane,1.0,105.0,Renewable
-77,Materials,3600.0,1.0,Consumable
-48,Labourers,3.0,60.0,Renewable
-48,Truck IVECO Trakker,2.0,70.0,Renewable
-48,Cold Milling Machine,1.0,230.0,Renewable
-49,Labourers,3.0,60.0,Renewable
-49,Truck IVECO Trakker,1.0,70.0,Renewable
-49,Wheel Loader,1.0,60.0,Renewable
-49,Bulldozer D8T,1.0,75.0,Renewable
-46,Labourers,10.0,60.0,Renewable
-46,Truck IVECO Trakker,6.0,70.0,Renewable
-46,Wheel Loader,2.0,60.0,Renewable
-46,Sheepfoot rolles,1.0,70.0,Renewable
-46,Tank Truck,1.0,78.0,Renewable
-46,Materials,32000.0,1.0,Consumable
-44,Labourers,4.0,60.0,Renewable
-44,Truck IVECO Trakker,2.0,70.0,Renewable
-44,Crawler Excavator,1.0,98.0,Renewable
-44,Crane,1.0,105.0,Renewable
-44,Materials,10000.0,1.0,Consumable
-58,Labourers,3.0,60.0,Renewable
-58,Truck IVECO Trakker,2.0,70.0,Renewable
-58,Cold Milling Machine,1.0,230.0,Renewable
-59,Labourers,4.0,60.0,Renewable
-59,Bulldozer D8T,1.0,75.0,Renewable
-59,Truck IVECO Trakker,2.0,70.0,Renewable
-59,Wheel Loader,1.0,60.0,Renewable
-52,Labourers,3.0,60.0,Renewable
-52,Crawler Excavator,1.0,98.0,Renewable
-52,Sheepfoot rolles,1.0,70.0,Renewable
-52,Tank Truck,1.0,78.0,Renewable
-52,Materials,15000.0,1.0,Consumable
-51,Labourers,8.0,60.0,Renewable
-51,Truck IVECO Trakker,6.0,70.0,Renewable
-51,Crawler Excavator,2.0,98.0,Renewable
-55,Labourers,3.0,60.0,Renewable
-55,Crawler Excavator,1.0,98.0,Renewable
-55,Truck IVECO Trakker,1.0,70.0,Renewable
-55,Crane,1.0,105.0,Renewable
-55,Materials,26000.0,1.0,Consumable
-56,Labourers,4.0,60.0,Renewable
-56,Truck IVECO Trakker,2.0,70.0,Renewable
-56,Crawler Excavator,1.0,98.0,Renewable
-56,Crane,1.0,105.0,Renewable
-56,Materials,10000.0,1.0,Consumable
-85,Labourers,7.0,60.0,Renewable
-85,Truck IVECO Trakker,5.0,70.0,Renewable
-85,Paler,1.0,65.0,Renewable
-85,Smooth Roller,1.0,60.0,Renewable
-85,Paving Material,2500000.0,1.0,Consumable
-86,Labourers,4.0,60.0,Renewable
-86,Truck IVECO Trakker,1.0,70.0,Renewable
-86,Pile Driver,1.0,48.0,Renewable
-86,Materials,300000.0,1.0,Consumable
-87,Labourers,5.0,60.0,Renewable
-87,Truck IVECO Trakker,2.0,70.0,Renewable
-87,Wheel Loader,2.0,60.0,Renewable
-87,Pruning Machine,1.0,40.0,Renewable
-87,Materials,15000.0,1.0,Consumable
-88,Labourers,3.0,60.0,Renewable
-88,Truck IVECO Trakker,1.0,70.0,Renewable
-88,Materials,16500.0,1.0,Consumable
-89,Labourers,2.0,60.0,Renewable
-89,Truck IVECO Trakker,1.0,70.0,Renewable
-89,Line Striper Machine,1.0,30.0,Renewable
-89,Materials,80000.0,1.0,Consumable
-91,Labourers,2.0,60.0,Renewable
-91,Truck IVECO Trakker,1.0,70.0,Renewable
-92,Labourers,2.0,60.0,Renewable
-92,Truck IVECO Trakker,1.0,70.0,Renewable
-92,Crane,1.0,105.0,Renewable
-93,Labourers,2.0,60.0,Renewable
-93,Truck IVECO Trakker,1.0,70.0,Renewable
-93,Wheel Loader,1.0,60.0,Renewable
-94,Labourers,2.0,60.0,Renewable
-94,Truck IVECO Trakker,1.0,70.0,Renewable
+task_id,resource_name,quantity,hourly_rate,ot_rate
+1,Labourers,2.0,60.0,90.0
+1,Truck IVECO Trakker,1.0,70.0,105.0
+1,Materials,10000.0,1.0,1.5
+2,Labourers,4.0,60.0,90.0
+2,Truck IVECO Trakker,3.0,70.0,105.0
+2,Wheel Loader,1.0,60.0,90.0
+3,Labourers,3.0,60.0,90.0
+3,Bulldozer D8T,1.0,75.0,112.5
+3,Wheel Loader,1.0,60.0,90.0
+3,Truck IVECO Trakker,1.0,70.0,105.0
+4,Labourers,2.0,60.0,90.0
+4,Truck IVECO Trakker,1.0,70.0,105.0
+4,Crane,1.0,105.0,157.5
+5,Labourers,3.0,60.0,90.0
+5,Truck IVECO Trakker,1.0,70.0,105.0
+6,Labourers,2.0,60.0,90.0
+6,Truck IVECO Trakker,1.0,70.0,105.0
+6,Materials,30000.0,1.0,1.5
+7,Labourers,7.0,60.0,90.0
+7,Truck IVECO Trakker,5.0,70.0,105.0
+7,Wheel Loader,2.0,60.0,90.0
+7,Sheepfoot rolles,1.0,70.0,105.0
+7,Concrete Mixer Truck,1.0,95.0,142.5
+7,Materials,50000.0,1.0,1.5
+8,Labourers,4.0,60.0,90.0
+8,Truck IVECO Trakker,2.0,70.0,105.0
+8,Crawler Excavator,1.0,98.0,147.0
+8,Paler,1.0,65.0,97.5
+9,Labourers,3.0,60.0,90.0
+9,Truck IVECO Trakker,1.0,70.0,105.0
+9,Bulldozer D8T,1.0,75.0,112.5
+9,Wheel Loader,1.0,60.0,90.0
+14,Labourers,3.0,60.0,90.0
+14,Truck IVECO Trakker,1.0,70.0,105.0
+14,Crane,1.0,105.0,157.5
+14,Materials,3000.0,1.0,1.5
+11,Labourers,4.0,60.0,90.0
+11,Truck IVECO Trakker,1.0,70.0,105.0
+11,Concrete Mixer Truck,1.0,95.0,142.5
+11,Crane,1.0,105.0,157.5
+11,Materials,3000.0,1.0,1.5
+19,Labourers,10.0,60.0,90.0
+19,Truck IVECO Trakker,6.0,70.0,105.0
+19,Wheel Loader,2.0,60.0,90.0
+19,Sheepfoot rolles,1.0,70.0,105.0
+19,Concrete Mixer Truck,1.0,95.0,142.5
+19,Materials,55000.0,1.0,1.5
+20,Labourers,4.0,60.0,90.0
+20,Truck IVECO Trakker,1.0,70.0,105.0
+20,Crane,1.0,105.0,157.5
+20,Materials,23000.0,1.0,1.5
+17,Labourers,9.0,60.0,90.0
+17,Crawler Excavator,2.0,98.0,147.0
+17,Truck IVECO Trakker,6.0,70.0,105.0
+17,Sheepfoot rolles,1.0,70.0,105.0
+22,Labourers,4.0,60.0,90.0
+22,Truck IVECO Trakker,1.0,70.0,105.0
+22,Crane,1.0,105.0,157.5
+22,Crawler Excavator,1.0,98.0,147.0
+22,Materials,1500.0,1.0,1.5
+24,Labourers,4.0,60.0,90.0
+24,Truck IVECO Trakker,3.0,70.0,105.0
+24,Crawler Excavator,1.0,98.0,147.0
+24,Materials,0.0,1.0,1.5
+25,Labourers,6.0,60.0,90.0
+25,Truck IVECO Trakker,1.0,70.0,105.0
+25,Drilling Rid,1.0,75.0,112.5
+25,Crane,1.0,105.0,157.5
+25,Wheel Loader,1.0,60.0,90.0
+25,Concrete Mixer Truck,1.0,95.0,142.5
+25,Materials,190000.0,1.0,1.5
+27,Labourers,4.0,60.0,90.0
+27,Truck IVECO Trakker,1.0,70.0,105.0
+27,Concrete Mixer Truck,1.0,95.0,142.5
+27,Crane,1.0,105.0,157.5
+27,Materials,100000.0,1.0,1.5
+29,Labourers,4.0,60.0,90.0
+29,Truck IVECO Trakker,1.0,70.0,105.0
+29,Concrete Mixer Truck,1.0,95.0,142.5
+29,Crane,1.0,105.0,157.5
+29,Materials,11000.0,1.0,1.5
+31,Labourers,4.0,60.0,90.0
+31,Truck IVECO Trakker,1.0,70.0,105.0
+31,Concrete Mixer Truck,1.0,95.0,142.5
+31,Crane,1.0,105.0,157.5
+31,Materials,81000.0,1.0,1.5
+33,Labourers,4.0,60.0,90.0
+33,Truck IVECO Trakker,1.0,70.0,105.0
+33,Crane,1.0,105.0,157.5
+33,Materials,52000.0,1.0,1.5
+34,Labourers,5.0,60.0,90.0
+34,Truck IVECO Trakker,1.0,70.0,105.0
+34,Concrete Mixer Truck,1.0,95.0,142.5
+34,Crane,1.0,105.0,157.5
+34,Materials,23500.0,1.0,1.5
+36,Labourers,5.0,60.0,90.0
+36,Truck IVECO Trakker,3.0,70.0,105.0
+36,Wheel Loader,1.0,60.0,90.0
+36,Sheepfoot rolles,1.0,70.0,105.0
+36,Materials,18000.0,1.0,1.5
+41,Labourers,3.0,60.0,90.0
+41,Truck IVECO Trakker,2.0,70.0,105.0
+41,Cold Milling Machine,1.0,230.0,345.0
+42,Labourers,3.0,60.0,90.0
+42,Truck IVECO Trakker,1.0,70.0,105.0
+42,Wheel Loader,1.0,60.0,90.0
+42,Bulldozer D8T,1.0,75.0,112.5
+38,Labourers,10.0,60.0,90.0
+38,Truck IVECO Trakker,6.0,70.0,105.0
+38,Wheel Loader,2.0,60.0,90.0
+38,Sheepfoot rolles,1.0,70.0,105.0
+38,Concrete Mixer Truck,1.0,95.0,142.5
+38,Materials,68600.0,1.0,1.5
+39,Labourers,4.0,60.0,90.0
+39,Truck IVECO Trakker,1.0,70.0,105.0
+39,Crane,1.0,105.0,157.5
+39,Materials,12600.0,1.0,1.5
+63,Labourers,2.0,60.0,90.0
+63,Truck IVECO Trakker,1.0,70.0,105.0
+63,Crane,1.0,105.0,157.5
+63,Materials,6000.0,1.0,1.5
+62,Labourers,4.0,60.0,90.0
+62,Truck IVECO Trakker,2.0,70.0,105.0
+62,Crawler Excavator,1.0,98.0,147.0
+62,Crane,1.0,105.0,157.5
+62,Materials,15000.0,1.0,1.5
+66,Labourers,5.0,60.0,90.0
+66,Crane,1.0,105.0,157.5
+66,Truck IVECO Trakker,1.0,70.0,105.0
+66,Concrete Mixer Truck,1.0,95.0,142.5
+66,Materials,88000.0,1.0,1.5
+68,Labourers,4.0,60.0,90.0
+68,Truck IVECO Trakker,1.0,70.0,105.0
+68,Crane,1.0,105.0,157.5
+68,Materials,50000.0,1.0,1.5
+69,Labourers,5.0,60.0,90.0
+69,Truck IVECO Trakker,1.0,70.0,105.0
+69,Crane,1.0,105.0,157.5
+69,Materials,8000.0,1.0,1.5
+82,Labourers,3.0,60.0,90.0
+82,Truck IVECO Trakker,2.0,70.0,105.0
+82,Cold Milling Machine,1.0,230.0,345.0
+83,Labourers,4.0,60.0,90.0
+83,Truck IVECO Trakker,2.0,70.0,105.0
+83,Bulldozer D8T,1.0,75.0,112.5
+83,Wheel Loader,1.0,60.0,90.0
+75,Labourers,10.0,60.0,90.0
+75,Truck IVECO Trakker,6.0,70.0,105.0
+75,Wheel Loader,2.0,60.0,90.0
+75,Sheepfoot rolles,1.0,70.0,105.0
+75,Tank Truck,1.0,78.0,117.0
+75,Materials,140000.0,1.0,1.5
+73,Labourers,3.0,60.0,90.0
+73,Crawler Excavator,1.0,98.0,147.0
+73,Sheepfoot rolles,1.0,70.0,105.0
+73,Tank Truck,1.0,78.0,117.0
+73,Materials,1800.0,1.0,1.5
+72,Labourers,10.0,60.0,90.0
+72,Truck IVECO Trakker,6.0,70.0,105.0
+72,Wheel Loader,2.0,60.0,90.0
+72,Sheepfoot rolles,1.0,70.0,105.0
+72,Tank Truck,1.0,78.0,117.0
+80,Labourers,3.0,60.0,90.0
+80,Crane,1.0,105.0,157.5
+80,Truck IVECO Trakker,1.0,70.0,105.0
+80,Materials,7000.0,1.0,1.5
+78,Labourers,4.0,60.0,90.0
+78,Truck IVECO Trakker,2.0,70.0,105.0
+78,Crawler Excavator,1.0,98.0,147.0
+78,Crane,1.0,105.0,157.5
+78,Materials,20000.0,1.0,1.5
+77,Labourers,3.0,60.0,90.0
+77,Truck IVECO Trakker,1.0,70.0,105.0
+77,Crawler Excavator,1.0,98.0,147.0
+77,Crane,1.0,105.0,157.5
+77,Materials,3600.0,1.0,1.5
+48,Labourers,3.0,60.0,90.0
+48,Truck IVECO Trakker,2.0,70.0,105.0
+48,Cold Milling Machine,1.0,230.0,345.0
+49,Labourers,3.0,60.0,90.0
+49,Truck IVECO Trakker,1.0,70.0,105.0
+49,Wheel Loader,1.0,60.0,90.0
+49,Bulldozer D8T,1.0,75.0,112.5
+46,Labourers,10.0,60.0,90.0
+46,Truck IVECO Trakker,6.0,70.0,105.0
+46,Wheel Loader,2.0,60.0,90.0
+46,Sheepfoot rolles,1.0,70.0,105.0
+46,Tank Truck,1.0,78.0,117.0
+46,Materials,32000.0,1.0,1.5
+44,Labourers,4.0,60.0,90.0
+44,Truck IVECO Trakker,2.0,70.0,105.0
+44,Crawler Excavator,1.0,98.0,147.0
+44,Crane,1.0,105.0,157.5
+44,Materials,10000.0,1.0,1.5
+58,Labourers,3.0,60.0,90.0
+58,Truck IVECO Trakker,2.0,70.0,105.0
+58,Cold Milling Machine,1.0,230.0,345.0
+59,Labourers,4.0,60.0,90.0
+59,Bulldozer D8T,1.0,75.0,112.5
+59,Truck IVECO Trakker,2.0,70.0,105.0
+59,Wheel Loader,1.0,60.0,90.0
+52,Labourers,3.0,60.0,90.0
+52,Crawler Excavator,1.0,98.0,147.0
+52,Sheepfoot rolles,1.0,70.0,105.0
+52,Tank Truck,1.0,78.0,117.0
+52,Materials,15000.0,1.0,1.5
+51,Labourers,8.0,60.0,90.0
+51,Truck IVECO Trakker,6.0,70.0,105.0
+51,Crawler Excavator,2.0,98.0,147.0
+55,Labourers,3.0,60.0,90.0
+55,Crawler Excavator,1.0,98.0,147.0
+55,Truck IVECO Trakker,1.0,70.0,105.0
+55,Crane,1.0,105.0,157.5
+55,Materials,26000.0,1.0,1.5
+56,Labourers,4.0,60.0,90.0
+56,Truck IVECO Trakker,2.0,70.0,105.0
+56,Crawler Excavator,1.0,98.0,147.0
+56,Crane,1.0,105.0,157.5
+56,Materials,10000.0,1.0,1.5
+85,Labourers,7.0,60.0,90.0
+85,Truck IVECO Trakker,5.0,70.0,105.0
+85,Paler,1.0,65.0,97.5
+85,Smooth Roller,1.0,60.0,90.0
+85,Paving Material,2500000.0,1.0,1.5
+86,Labourers,4.0,60.0,90.0
+86,Truck IVECO Trakker,1.0,70.0,105.0
+86,Pile Driver,1.0,48.0,72.0
+86,Materials,300000.0,1.0,1.5
+87,Labourers,5.0,60.0,90.0
+87,Truck IVECO Trakker,2.0,70.0,105.0
+87,Wheel Loader,2.0,60.0,90.0
+87,Pruning Machine,1.0,40.0,60.0
+87,Materials,15000.0,1.0,1.5
+88,Labourers,3.0,60.0,90.0
+88,Truck IVECO Trakker,1.0,70.0,105.0
+88,Materials,16500.0,1.0,1.5
+89,Labourers,2.0,60.0,90.0
+89,Truck IVECO Trakker,1.0,70.0,105.0
+89,Line Striper Machine,1.0,30.0,45.0
+89,Materials,80000.0,1.0,1.5
+91,Labourers,2.0,60.0,90.0
+91,Truck IVECO Trakker,1.0,70.0,105.0
+92,Labourers,2.0,60.0,90.0
+92,Truck IVECO Trakker,1.0,70.0,105.0
+92,Crane,1.0,105.0,157.5
+93,Labourers,2.0,60.0,90.0
+93,Truck IVECO Trakker,1.0,70.0,105.0
+93,Wheel Loader,1.0,60.0,90.0
+94,Labourers,2.0,60.0,90.0
+94,Truck IVECO Trakker,1.0,70.0,105.0

@@ -111,7 +111,7 @@ def main():
         except:
             continue
             
-    all_wbs = [str(x).strip() for x in df_schedule['Unnamed: 2'].dropna() if str(x).strip() != 'WBS']
+    all_wbs = [str(x).strip()[:-2] if str(x).strip().endswith('.0') else str(x).strip() for x in df_schedule['Unnamed: 2'].dropna() if str(x).strip() != 'WBS']
     
     def is_summary_task(wbs_val):
         if not wbs_val or wbs_val == 'nan': return False

@@ -23,14 +23,17 @@ def extract_project_info(excel_path, processed_dir, project_id, project_name, pr
     
     # 3. Extract Schedule data for Calendar Hours
     schedules_csv_path = os.path.join(processed_dir, 'task_schedules.csv')
-    df_schedules = pd.read_csv(schedules_csv_path)
+    if os.path.exists(schedules_csv_path):
+        df_schedules = pd.read_csv(schedules_csv_path)
+    else:
+        df_schedules = pd.DataFrame()
     
     import numpy as np
     
     project_calendar_days = 0.0
     project_working_hours = 0.0
     proj_start_date = None
-    if not df_schedules.empty:
+    if not df_schedules.empty and 'baseline_start' in df_schedules.columns and 'baseline_end' in df_schedules.columns:
         # Parse dates
         start_dates = pd.to_datetime(df_schedules['baseline_start'], errors='coerce')
         end_dates = pd.to_datetime(df_schedules['baseline_end'], errors='coerce')
@@ -91,18 +94,46 @@ def extract_project_info(excel_path, processed_dir, project_id, project_name, pr
     return project_info
 
 if __name__ == "__main__":
-    # Test for C2019-16
-    excel_file = r'E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2019-16 Lock Ganzepoot Excel.xlsx'
-    project_id = "C2019-16"
-    project_name = "Lock Ganzepoot Ypres"
-    project_type = "CON"
-    processed_dir = r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\processed\C2019-16"
+    projects = [
+        {
+            "id": "C2011-07",
+            "name": "Patient Transport System",
+            "type": "IT",
+            "file": r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2011-07 Patient Transport System.xlsx"
+        },
+        {
+            "id": "C2012-04",
+            "name": "Asti-Cuneo Highway",
+            "type": "CON",
+            "file": r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2012-04 Asti-Cuneo Highway.xlsx"
+        },
+        {
+            "id": "C2012-08",
+            "name": "Sea Electricity",
+            "type": "CON",
+            "file": r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2012-08 Sea Electricity.xlsx"
+        },
+        {
+            "id": "C2018-09",
+            "name": "CarSharing platform",
+            "type": "ITLG",
+            "file": r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2018-09 CarSharing platform.xlsx"
+        },
+        {
+            "id": "C2019-16",
+            "name": "Lock Ganzepoot Ypres",
+            "type": "CON",
+            "file": r"E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2019-16 Lock Ganzepoot Excel.xlsx"
+        }
+    ]
     
-    info = extract_project_info(
-        excel_path=excel_file,
-        processed_dir=processed_dir,
-        project_id=project_id,
-        project_name=project_name,
-        project_type=project_type
-    )
-    print("Extracted Data:", info)
+    for p in projects:
+        processed_dir = fr"E:\University\Year 3 - 3\DA3\ai_pipeline\data\processed\{p['id']}"
+        info = extract_project_info(
+            excel_path=p['file'],
+            processed_dir=processed_dir,
+            project_id=p['id'],
+            project_name=p['name'],
+            project_type=p['type']
+        )
+        print(f"Extracted {p['id']}: Cost = {info['total_baseline_cost']}")

@@ -105,9 +105,12 @@ def main():
             
     # 3. Process Baseline Schedule
     # Collect all WBS to identify summary tasks
-    all_wbs = [str(x).strip() for x in df_schedule['Unnamed: 2'].dropna() if str(x).strip() != 'WBS']
+    all_wbs = [str(x).strip()[:-2] if str(x).strip().endswith('.0') else str(x).strip() for x in df_schedule['Unnamed: 2'].dropna() if str(x).strip() != 'WBS']
     
     def is_summary_task(wbs_val):
+        wbs_val = str(wbs_val).strip()
+        if wbs_val.endswith('.0'): wbs_val = wbs_val[:-2]
+        if wbs_val.endswith('.0'): wbs_val = wbs_val[:-2]
         if not wbs_val or wbs_val == 'nan': return False
         prefix = wbs_val + '.'
         for other in all_wbs:
@@ -271,6 +274,7 @@ def main():
     tasks_rows = []
     edges_rows = []
     resources_rows = []
+    schedules = []
     
     for t in output_tasks:
         # Task Row
@@ -333,10 +337,20 @@ def main():
                 "quantity": r["quantity"],
                 "hourly_rate": r["hourly_rate"]
             })
+        
+        # Schedule Info
+        schedules.append({
+            "task_id": t["task_id"],
+            "baseline_start": "",
+            "baseline_end": "",
+            "predecessors": [p["target_id"] for p in t["g7_temporal"]["predecessors"]],
+            "successors": [s["target_id"] for s in t["g7_temporal"]["successors"]]
+        })
             
     pd.DataFrame(tasks_rows).to_csv(os.path.join(out_dir, 'tasks.csv'), index=False, encoding='utf-8')
     pd.DataFrame(edges_rows).to_csv(os.path.join(out_dir, 'predecessors.csv'), index=False, encoding='utf-8')
     pd.DataFrame(resources_rows).to_csv(os.path.join(out_dir, 'task_resources.csv'), index=False, encoding='utf-8')
+    pd.DataFrame(schedules).to_csv(os.path.join(out_dir, 'task_schedules.csv'), index=False, encoding='utf-8')
         
     print(f"Successfully processed {len(output_tasks)} tasks.")
     print(f"Saved CSVs to {out_dir}")

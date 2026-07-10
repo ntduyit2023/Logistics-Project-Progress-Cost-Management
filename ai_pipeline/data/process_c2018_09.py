@@ -106,6 +106,7 @@ def process_project():
     # 6. Process Tasks
     output_tasks = []
     schedules = []
+    resources_rows = []
     
     for row in leaf_tasks:
         task_id = str(row['General']).strip()
@@ -138,7 +139,15 @@ def process_project():
                     qty = 1.0
                     
             if name in res_rates:
-                labor_cost += (qty * res_rates[name] * total_hours)
+                hr_rate = res_rates[name]
+                labor_cost += (qty * hr_rate * total_hours)
+                resources_rows.append({
+                    "task_id": task_id,
+                    "resource_name": name,
+                    "quantity": qty,
+                    "hourly_rate": hr_rate,
+                    "ot_rate": hr_rate * 1.5
+                })
                 
         # NLP Classification
         classification = analyze_nlp_keywords(task_name)
@@ -221,6 +230,10 @@ def process_project():
     
     df_schedules = pd.DataFrame(schedules)
     df_schedules.to_csv(os.path.join(out_dir, 'task_schedules.csv'), index=False, encoding='utf-8')
+    
+    df_resources = pd.DataFrame(resources_rows)
+    if not df_resources.empty:
+        df_resources.to_csv(os.path.join(out_dir, 'task_resources.csv'), index=False, encoding='utf-8')
     
     print(f"Successfully processed {len(leaf_tasks)} tasks for C2018-09.")
     print(f"Saved CSVs to {out_dir}")
