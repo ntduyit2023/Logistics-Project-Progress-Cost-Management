@@ -21,28 +21,24 @@ import torch.nn as nn
 import numpy as np
 from typing import Dict, Optional, Tuple
 
+from .feature_interaction_matrix import get_gamma_matrix
+
 # ============================================================================
-# HẰNG SỐ: TÊN VÀ CHỈ SỐ CÁC NHÓM TRONG ENCODER (13 nhóm)
+# HẰNG SỐ: TÊN VÀ CHỈ SỐ CÁC NHÓM TRONG ENCODER (8 nhóm)
 # ============================================================================
-# Chỉ số trong vector S'_g (output của HierarchicalAttentionEncoder)
-# Khớp với group_indices trong hierarchical_encoder.py
 GROUP_NAMES = {
-    0:  "Hub (Core Temporal)",
-    1:  "G1 (Direct Costs)",
-    2:  "G2 (Indirect Costs)",
-    3:  "G3 (Opportunity Cost) [AI]",
-    4:  "G4 (Contractual)",
-    5:  "G5 (Logistics & SCM)",
-    6:  "G6 (Temporal Extended)",
-    7:  "G7 (Resources)",
-    8:  "G8 (Network Topology) [AI]",
-    9:  "G9 (Risks)",
-    10: "G10 (Earned Value) [AI]",
-    11: "G11 (Human & Org)",
-    12: "G12 (ESG)",
+    0: "Hub (Core Temporal)",
+    1: "G1 (Direct Costs)",
+    2: "G2 (Indirect Costs)",
+    3: "G3 (Contractual Costs)",
+    4: "G4 (Risk Costs)",
+    5: "G5 (Logistics Costs)",
+    6: "G6 (Time & Schedule)",
+    7: "G7 (AI Topology)",
 }
 
-NUM_GROUPS = 13  # Hub + G1-G12
+NUM_GROUPS = 8  # Khớp với schema rút gọn
+
 
 # ============================================================================
 # MA TRẬN TƯƠNG TÁC LIÊN NHÓM γ (13 × 13)
@@ -60,105 +56,20 @@ NUM_GROUPS = 13  # Hub + G1-G12
 # Thứ tự: Hub, G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G11, G12
 #          [0]  [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
 
-def _build_gamma_matrix() -> np.ndarray:
-    """
-    Xây dựng ma trận hệ số tương tác liên nhóm γ (13×13).
-
-    Hub (index 0) được thiết lập với mối quan hệ khuếch đại đặc biệt
-    tới G2, G6, G9 — vì thời gian kéo dài ảnh hưởng trực tiếp đến
-    chi phí gián tiếp, thời gian mở rộng, và rủi ro.
-
-    Returns:
-        Ma trận numpy 13×13 chứa các hệ số γ.
-    """
-    gamma = np.zeros((NUM_GROUPS, NUM_GROUPS), dtype=np.float32)
-
-    # --- Hub (0) tương tác với các nhóm khác ---
-    # Hub → G2: Duration kéo dài → Chi phí gián tiếp tăng (📈)
-    gamma[0, 2] = gamma[2, 0] = 0.8
-    # Hub → G6: Duration kéo dài → Thời gian mở rộng tăng (📈)
-    gamma[0, 6] = gamma[6, 0] = 0.8
-    # Hub → G9: Duration kéo dài → Rủi ro tăng (📈)
-    gamma[0, 9] = gamma[9, 0] = 0.5
-
-    # --- G1 (1) - Chi phí Trực tiếp ---
-    gamma[1, 2]  = gamma[2, 1]  = 0.5   # G1 🤝 G2
-    gamma[1, 3]  = gamma[3, 1]  = -0.5  # G1 ⚔️ G3
-    gamma[1, 4]  = gamma[4, 1]  = 0.5   # G1 🤝 G4
-    gamma[1, 5]  = gamma[5, 1]  = 0.5   # G1 🤝 G5
-    gamma[1, 6]  = gamma[6, 1]  = 0.8   # G1 📈 G6
-    gamma[1, 7]  = gamma[7, 1]  = 0.8   # G1 📈 G7
-    gamma[1, 10] = gamma[10, 1] = -0.5  # G1 ⚔️ G10
-    gamma[1, 11] = gamma[11, 1] = 0.8   # G1 📈 G11
-
-    # --- G2 (2) - Chi phí Gián tiếp ---
-    gamma[2, 6] = gamma[6, 2] = 0.8     # G2 📈 G6
-
-    # --- G3 (3) - Cơ hội [AI] ---
-    gamma[3, 10] = gamma[10, 3] = -0.5  # G3 ⚔️ G10
-
-    # --- G4 (4) - Hợp đồng ---
-    gamma[4, 5]  = gamma[5, 4]  = 0.5   # G4 🤝 G5
-    gamma[4, 6]  = gamma[6, 4]  = 0.8   # G4 📈 G6
-    gamma[4, 9]  = gamma[9, 4]  = 0.8   # G4 📈 G9
-    gamma[4, 10] = gamma[10, 4] = -0.5  # G4 ⚔️ G10
-    gamma[4, 12] = gamma[12, 4] = 0.5   # G4 🤝 G12
-
-    # --- G5 (5) - Logistics ---
-    gamma[5, 6]  = gamma[6, 5]  = 0.8   # G5 📈 G6
-    gamma[5, 7]  = gamma[7, 5]  = 0.8   # G5 📈 G7
-    gamma[5, 9]  = gamma[9, 5]  = 0.8   # G5 📈 G9
-    gamma[5, 12] = gamma[12, 5] = 0.5   # G5 🤝 G12
-
-    # --- G6 (6) - Thời gian Mở rộng ---
-    gamma[6, 7]  = gamma[7, 6]  = 0.8   # G6 📈 G7
-    gamma[6, 8]  = gamma[8, 6]  = 0.8   # G6 📈 G8
-    gamma[6, 9]  = gamma[9, 6]  = 0.8   # G6 📈 G9
-    gamma[6, 11] = gamma[11, 6] = 0.8   # G6 📈 G11
-
-    # --- G7 (7) - Tài nguyên ---
-    gamma[7, 9]  = gamma[9, 7]  = 0.8   # G7 📈 G9
-    gamma[7, 11] = gamma[11, 7] = 0.8   # G7 📈 G11
-
-    # --- G8 (8) - Topology [AI] ---
-    gamma[8, 9]  = gamma[9, 8]  = 0.8   # G8 📈 G9
-    gamma[8, 10] = gamma[10, 8] = 0.8   # G8 📈 G10
-
-    # --- G9 (9) - Rủi ro ---
-    gamma[9, 10] = gamma[10, 9] = -0.5  # G9 ⚔️ G10
-    gamma[9, 11] = gamma[11, 9] = 0.8   # G9 📈 G11
-    gamma[9, 12] = gamma[12, 9] = 0.8   # G9 📈 G12
-
-    # --- G10 (10) - Earned Value [AI] ---
-    gamma[10, 11] = gamma[11, 10] = 0.8  # G10 📈 G11
-    gamma[10, 12] = gamma[12, 10] = 0.5  # G10 🤝 G12
-
-    # --- G11 (11) - Con người & Tổ chức ---
-    gamma[11, 12] = gamma[12, 11] = 0.5  # G11 🤝 G12
-
-    return gamma
-
 
 # ============================================================================
 # TRỌNG SỐ TẦM QUAN TRỌNG β (Mặc định - có thể điều chỉnh / học)
 # ============================================================================
-# Trọng số tầm quan trọng mặc định cho 13 nhóm.
-# Giá trị cao hơn = nhóm đó ảnh hưởng lớn hơn đến TGC tổng.
-# Hub được đặt cao nhất vì thời gian là yếu tố cốt lõi nhất.
+# Trọng số tầm quan trọng mặc định cho 8 nhóm.
 DEFAULT_BETA = np.array([
-    1.5,   # [0]  Hub: Core Temporal — yếu tố chi phối
-    1.0,   # [1]  G1:  Direct Costs — chi phí chính
-    0.7,   # [2]  G2:  Indirect Costs — chi phí gián tiếp
-    0.5,   # [3]  G3:  Opportunity Cost [AI]
-    0.6,   # [4]  G4:  Contractual — hợp đồng
-    0.8,   # [5]  G5:  Logistics — chuỗi cung ứng
-    1.2,   # [6]  G6:  Temporal Extended — thời gian mở rộng
-    0.9,   # [7]  G7:  Resources — tài nguyên
-    0.8,   # [8]  G8:  Network Topology [AI]
-    1.0,   # [9]  G9:  Risks — rủi ro
-    0.6,   # [10] G10: Earned Value [AI]
-    0.7,   # [11] G11: Human & Org
-    0.5,   # [12] G12: ESG
+    1.5,   # [0] Hub
+    1.0,   # [1] G1_Direct
+    0.7,   # [2] G2_Indirect
+    0.6,   # [3] G3_Contractual
+    1.0,   # [4] G4_Risk
+    0.8,   # [5] G5_Logistics
+    0.9,   # [6] G6_Time
+    0.8,   # [7] G7_Topology
 ], dtype=np.float32)
 
 
@@ -209,7 +120,7 @@ class TGCLayer3(nn.Module):
             self.register_buffer('beta', beta_tensor)
 
         # Khởi tạo γ
-        gamma_np = _build_gamma_matrix()
+        gamma_np = get_gamma_matrix()
         gamma_tensor = torch.tensor(gamma_np, dtype=torch.float32)
         if learnable_gamma:
             self.gamma = nn.Parameter(gamma_tensor)
@@ -362,7 +273,7 @@ def compute_tgc_numpy(
     if beta is None:
         beta = DEFAULT_BETA.copy()
     if gamma is None:
-        gamma = _build_gamma_matrix()
+        gamma = get_gamma_matrix()
 
     # Xử lý vector đơn lẻ (1 task)
     single = False

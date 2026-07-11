@@ -3,7 +3,7 @@ GLPO Backend - Projects API Endpoints
 Chứa các API xử lý vòng đời của một Dự án (Tạo, Sửa, Xóa, Lấy Graph).
 """
 from typing import Optional
-from fastapi import APIRouter, Depends, Query, Path
+from fastapi import APIRouter, Depends, Query, Path, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
@@ -12,6 +12,7 @@ from app.schemas import (
     ProjectCreate, ProjectUpdate
 )
 from app.services import project_service
+from app.services.ai_runner import run_simulation_background
 
 router = APIRouter()
 
@@ -176,3 +177,30 @@ async def delete_project_api(
     """
     await project_service.delete_project(db, project_id)
     return APIResponse(success=True, message="Đã xóa dự án thành công.")
+
+@router.post("/{project_id}/run-simulation", response_model=APIResponse, summary="Chạy mô phỏng tối ưu AI")
+async def run_simulation_api(
+    background_tasks: BackgroundTasks,
+    project_id: int = Path(..., description="ID dự án"),
+    db: AsyncSession = Depends(get_db)
+) -> APIResponse:
+    """
+    Kích hoạt tiến trình chạy mô phỏng PPO/NSGA-II ngầm cho dự án.
+    """
+    # Lấy thông tin dự án
+    project = await project_service.get_project_summary(db, project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Không tìm thấy dự án")
+        
+    # Đổi trạng thái thành Simulating
+    # Cần một phương thức update trực tiếp status, tạm dùng patch update
+    await project_service.update_project(db, project_id, ProjectUpdate(status="Simulating"))
+    
+    # Ném tiến trình chạy Python script xuống Background
+    # Chuyển project_type xuống cho AI
+    background_tasks.add_task(run_simulation_background, str(project_id), project.type or "Logistics")
+    
+    return APIResponse(
+        success=True, 
+        message="Đã đưa tác vụ mô phỏng vào chạy ngầm. Trạng thái dự án đang là 'Simulating'."
+    )

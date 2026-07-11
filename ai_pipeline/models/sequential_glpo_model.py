@@ -58,14 +58,17 @@ from typing import Dict, Optional, Tuple
 import sys
 import os
 try:
-    from ai_pipeline.models.hierarchical_encoder import HierarchicalAttentionEncoder
+    from ai_pipeline.models.gat_model import LogisticsGATModel
     from ai_pipeline.models.dagnn_propagator import DAGNNPropagator
-    from ai_pipeline.models.tgc_layer3 import TGCLayer3, NUM_GROUPS
+    from ai_pipeline.models.tgc_layer3 import TGCLayer3
+    from ai_pipeline.models.project_encoders import EncoderRegistry
 except ImportError:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from hierarchical_encoder import HierarchicalAttentionEncoder
+    # Xử lý đường dẫn tương đối khi chạy độc lập
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from gat_model import LogisticsGATModel
     from dagnn_propagator import DAGNNPropagator
-    from tgc_layer3 import TGCLayer3, NUM_GROUPS
+    from tgc_layer3 import TGCLayer3
+    from project_encoders import EncoderRegistry, NUM_GROUPS
 
 
 class SequentialGLPOModel(nn.Module):
@@ -96,8 +99,7 @@ class SequentialGLPOModel(nn.Module):
     """
     def __init__(
         self,
-        feature_dim: int = 72,
-        num_groups: int = NUM_GROUPS,
+        project_type: str = "logistics_standard",
         gat_hidden_dim: int = 64,
         gat_out_dim: int = 32,
         gat_heads: int = 4,
@@ -110,25 +112,20 @@ class SequentialGLPOModel(nn.Module):
         super(SequentialGLPOModel, self).__init__()
 
         # Lưu hyperparameters
-        self.feature_dim = feature_dim
-        self.num_groups = num_groups
+        self.project_type = project_type
         self.gat_out_dim = gat_out_dim
         self.dagnn_out_dim = dagnn_out_dim
         self.dropout = dropout
 
         # =========================================================
-        # TẦNG 1 & 2: Hierarchical Attention Encoder
+        # TẦNG 1 & 2: Project-Specific Latent Encoder (Option B)
         # =========================================================
-        self.encoder = HierarchicalAttentionEncoder(
-            feature_dim=feature_dim,
-            num_groups=num_groups - 1,  # Encoder dùng num_groups=12, tự tạo 13 nhóm nội bộ
-        )
+        self.encoder, self.num_groups = EncoderRegistry.get_encoder(project_type, latent_dim=gat_hidden_dim)
 
         # =========================================================
         # TẦNG 3a: Graph Attention Network (GAT)
         # =========================================================
-        # Phóng chiếu S'_g (13 chiều) lên không gian ẩn của GAT
-        self.node_proj = nn.Linear(num_groups, gat_hidden_dim)
+        # GAT trực tiếp nhận Latent Space (gat_hidden_dim) từ Encoder
 
         # Các lớp GAT: Message Passing trên đồ thị
         self.gat1 = GATConv(
@@ -156,20 +153,20 @@ class SequentialGLPOModel(nn.Module):
         # TẦNG 3c: Decoder — Phóng chiếu ngược về không gian 13 nhóm
         # =========================================================
         # Kết hợp thông tin từ DAGNN embedding VÀ S'_g gốc (Residual Connection)
-        # Đầu vào: [dagnn_out || S'_g gốc] → 13 giá trị nhóm tăng cường
+        # Đầu vào: [dagnn_out || latent_emb] → num_groups giá trị nhóm (để dùng cho TGC)
         self.decoder = nn.Sequential(
-            nn.Linear(dagnn_out_dim + num_groups, num_groups * 2),
-            nn.LayerNorm(num_groups * 2),
+            nn.Linear(dagnn_out_dim + gat_hidden_dim, self.num_groups * 2),
+            nn.LayerNorm(self.num_groups * 2),
             nn.LeakyReLU(0.2),
             nn.Dropout(dropout),
-            nn.Linear(num_groups * 2, num_groups),
+            nn.Linear(self.num_groups * 2, self.num_groups),
         )
 
         # =========================================================
         # TẦNG 3d: TGC Layer 3 (Tổng Chi phí Quy đổi)
         # =========================================================
         self.tgc = TGCLayer3(
-            num_groups=num_groups,
+            num_groups=self.num_groups,
             learnable_beta=learnable_beta,
             learnable_gamma=learnable_gamma,
         )
@@ -201,17 +198,20 @@ class SequentialGLPOModel(nn.Module):
         """
         # Chống rò rỉ dữ liệu (Data Leakage) bằng cách xóa sạch đặc trưng CPM gán sẵn trong x
         x = data.x.clone()
-        if x.shape[1] >= 68:
+        if not encoded_input and x.shape[1] >= 68: # Safe check
             x[:, [65, 66, 67]] = 0.0
         edge_index = data.edge_index
 
-        # ── TẦNG 1 & 2: Encoder ──────────────────────────────────
-        S_prime_g, group_masks = self.encoder(x)
-        # S_prime_g: (N, 13), group_masks: (N, 13)
+        # ── TẦNG 1 & 2: Project-Specific Encoder (Latent Projection)
+        if encoded_input:
+            latent_emb = x
+        else:
+            latent_emb = self.encoder(x)
+        # latent_emb: (N, gat_hidden_dim)
 
         # ── TẦNG 3a: GAT ─────────────────────────────────────────
-        # Phóng chiếu S'_g lên không gian ẩn
-        h = F.leaky_relu(self.node_proj(S_prime_g))  # (N, gat_hidden_dim)
+        # Không cần node_proj nữa, truyền thẳng latent_emb vào GAT
+        h = latent_emb
 
         # Message Passing qua đồ thị
         h = self.gat1(h, edge_index)
@@ -230,23 +230,20 @@ class SequentialGLPOModel(nn.Module):
         # ── TẦNG 3b: DAGNN ───────────────────────────────────────
         h_dagnn = self.dagnn(node_embeddings, edge_index)  # (N, dagnn_out_dim)
 
-        # ── TẦNG 3c: Decoder (Phóng chiếu ngược về 13 nhóm) ─────
-        # Residual Connection: kết hợp H_DAGNN với S'_g gốc
-        decoder_input = torch.cat([h_dagnn, S_prime_g], dim=1)  # (N, dagnn_out_dim + 13)
-        S_prime_g_enhanced = self.decoder(decoder_input)  # (N, 13)
+        # ── TẦNG 3c: Decoder (Phóng chiếu về num_groups) ─────────
+        # Kết hợp H_DAGNN với Latent Embedding gốc
+        decoder_input = torch.cat([h_dagnn, latent_emb], dim=1)  # (N, dagnn_out_dim + gat_hidden_dim)
+        S_prime_g_enhanced = self.decoder(decoder_input)  # (N, num_groups)
 
-        # Áp dụng mask: nhóm đã chết không được hồi sinh
-        S_prime_g_enhanced = S_prime_g_enhanced * group_masks
-
-        # Residual Addition: S'_g tăng cường = S'_g gốc + Δ (điều chỉnh từ đồ thị)
-        S_prime_g_enhanced = S_prime_g + S_prime_g_enhanced
+        # Trong Option B, chúng ta cho phép các nhóm hoạt động tự do (mask = 1.0)
+        group_masks = torch.ones_like(S_prime_g_enhanced, device=S_prime_g_enhanced.device)
 
         # ── TẦNG 3d: TGC ─────────────────────────────────────────
         tgc = self.tgc(S_prime_g_enhanced, group_masks)  # (N,)
 
         return {
             'tgc': tgc,
-            'S_prime_g': S_prime_g,
+            'latent_emb': latent_emb,
             'S_prime_g_enhanced': S_prime_g_enhanced,
             'group_masks': group_masks,
             'node_embeddings': node_embeddings,
@@ -257,31 +254,27 @@ class SequentialGLPOModel(nn.Module):
     def forward_detailed(
         self,
         data,
+        encoded_input: bool = False
     ) -> Dict[str, object]:
         """
         Mô tả (Description):
             Phiên bản phân tích chi tiết của forward().
             Trả về thêm thông tin về top synergies, gate values, và propagation depth.
-
-        Đầu vào (Args):
-            data: Đối tượng đồ thị PyG (giống forward()).
-
-        Đầu ra (Returns):
-            Dict mở rộng, bao gồm tất cả kết quả của forward() CỘNG THÊM:
-                - 'tgc_details': Dict từ TGCLayer3.forward_detailed().
-                - 'dagnn_info': Dict từ DAGNNPropagator.forward_with_attention().
         """
         # Chống rò rỉ dữ liệu (Data Leakage) bằng cách xóa sạch đặc trưng CPM gán sẵn trong x
         x = data.x.clone()
-        if x.shape[1] >= 68:
+        if not encoded_input and x.shape[1] >= 68:
             x[:, [65, 66, 67]] = 0.0
         edge_index = data.edge_index
 
-        # Tầng 1 & 2
-        S_prime_g, group_masks = self.encoder(x)
+        # Tầng 1 & 2: Project-Specific Encoder
+        if encoded_input:
+            latent_emb = x
+        else:
+            latent_emb = self.encoder(x)
 
         # Tầng 3a: GAT
-        h = F.leaky_relu(self.node_proj(S_prime_g))
+        h = latent_emb
         h = self.gat1(h, edge_index)
         h = F.elu(h)
         h = F.dropout(h, p=self.dropout, training=self.training)
@@ -297,17 +290,18 @@ class SequentialGLPOModel(nn.Module):
         h_dagnn, dagnn_info = self.dagnn.forward_with_attention(node_embeddings, edge_index)
 
         # Tầng 3c: Decoder
-        decoder_input = torch.cat([h_dagnn, S_prime_g], dim=1)
+        decoder_input = torch.cat([h_dagnn, latent_emb], dim=1)
         S_prime_g_enhanced = self.decoder(decoder_input)
-        S_prime_g_enhanced = S_prime_g_enhanced * group_masks
-        S_prime_g_enhanced = S_prime_g + S_prime_g_enhanced
+        
+        # Trong Option B, chúng ta cho phép các nhóm hoạt động tự do (mask = 1.0)
+        group_masks = torch.ones_like(S_prime_g_enhanced, device=S_prime_g_enhanced.device)
 
         # Tầng 3d: TGC (phiên bản chi tiết)
         tgc_details = self.tgc.forward_detailed(S_prime_g_enhanced, group_masks)
 
         return {
             'tgc': tgc_details['tgc'],
-            'S_prime_g': S_prime_g,
+            'latent_emb': latent_emb,
             'S_prime_g_enhanced': S_prime_g_enhanced,
             'group_masks': group_masks,
             'node_embeddings': node_embeddings,

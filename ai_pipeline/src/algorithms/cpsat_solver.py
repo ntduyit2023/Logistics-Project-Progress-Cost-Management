@@ -14,6 +14,11 @@ import numpy as np
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
 
+try:
+    from ai_pipeline.src.utils.agenda_calculator import calculate_duration_hours
+except ImportError:
+    from src.utils.agenda_calculator import calculate_duration_hours
+
 # Thử import thư viện Google OR-Tools
 ORTOOLS_AVAILABLE = False
 try:
@@ -28,7 +33,9 @@ def run_cpsat_scheduling(
     resource_capacities: Dict[str, int],
     calendar_data: Optional[Dict[str, Any]] = None,
     horizon_multiplier: float = 3.0,
-    time_limit_sec: float = 60.0
+    time_limit_sec: float = 60.0,
+    hours_per_day: float = 8.0,
+    days_per_week: float = 5.0
 ) -> Dict[str, Any]:
     """
     Chạy bộ lập lịch CP-SAT để tìm Baseline Schedule tối ưu cho bài toán RCPSP.
@@ -83,7 +90,13 @@ def run_cpsat_scheduling(
         
         for task in tasks:
             task_id = task['id']
-            duration = max(1, int(task.get('most_probable_duration', task.get('duration', 0))))
+            d_m = float(task.get('duration_months', 0.0) or 0.0)
+            d_w = float(task.get('duration_weeks', 0.0) or 0.0)
+            d_d = float(task.get('duration_days', 0.0) or 0.0)
+            d_h = float(task.get('duration_hours', 0.0) or 0.0)
+            cal_type = str(task.get('calendar_type', 'Agenda'))
+            dur_calc = calculate_duration_hours(d_m, d_w, d_d, d_h, hours_per_day, days_per_week, cal_type)
+            duration = max(1, int(task.get('most_probable_duration', task.get('duration', dur_calc))))
             
             # Khai báo các biến Start, End, Interval trong CP-SAT
             start_var = model.NewIntVar(0, horizon, f"start_{task_id}")

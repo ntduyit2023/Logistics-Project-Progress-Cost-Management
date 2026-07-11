@@ -1,3 +1,6 @@
 
 # Ignore large dataset
 ai_pipeline/data/raw/BPI_Challenge_2019/BPI_Challenge_2019.xes
+*.pyc
+__pycache__/
+ai_pipeline/__pycache__

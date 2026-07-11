@@ -47,13 +47,13 @@ class ProjectSummary(BaseModel):
     metadata_json: Optional[Dict[str, Any]]
     num_tasks: int
     num_edges: int
-    network_density: Optional[float]
-    type: Optional[str]
+    network_density: Optional[float] = None
+    type: Optional[str] = None
     status: str
-    base_cost: Optional[float]
-    total_cost: Optional[float]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    base_cost: Optional[float] = None
+    total_cost: Optional[float] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class ProjectDetail(ProjectSummary):

@@ -12,39 +12,31 @@ class FeatureNormalizer(nn.Module):
         
         # 1. Nhóm Log1p: Giá trị lớn, right-skewed (Tiền tệ, Thời gian, Số đếm)
         self.log1p_indices = [
-            0, 1, 2, 3, 4, 
-            7, 8, 9, 10, 11, 12, 13, 14, 
-            16, 17, 18, 19, 20, 
-            21, 22, 23, 24, 
-            25, 26, 27, 28, 29, 30, 31, 
-            32, 33, 34, 35, 36, 
-            37, 38, 
-            45, 46, 
-            49, 50, 
-            53, 54, 55, 56, 57, 58, 59, 
-            61, 62, 63, 64, 
-            66, 67, 68, 69
+            0, 1, 2, 3,  # Thời gian
+            5, 6, 7, 8, 9, 10,  # Direct Cost
+            11, 12, 13, 14,  # Indirect Cost
+            15, 16, 17,  # Contractual Cost
+            19, 20, 21,  # Risk Cost
+            22, 23, 24, 25, 26,  # Logistics Cost
+            27, 28,  # Time & Schedule
+            29, 30, 32, 33  # Topology (demands, res, preds, succs)
         ]
         
         # 2. Nhóm Pass-through: Đã chuẩn [0, 1] hoặc Boolean (Không đổi)
         self.passthrough_indices = [
-            5, 6, 15, 41, 44, 47, 48, 60, 65
+            4,   # calendar_type_247
+            18,  # complexity
+            31   # is_critical
         ]
         
         # 3. Nhóm Div100: Phần trăm [0, 100] -> [0, 1]
-        self.div100_indices = [
-            39, 40, 43, 51, 52
-        ]
+        self.div100_indices = []
         
         # 4. Nhóm MinMax: Thang điểm cố định [1, 5] -> [0, 1]
-        self.minmax_indices = [
-            42
-        ]
+        self.minmax_indices = []
         
         # 5. Nhóm Clamp + Scale: Chỉ số hiệu suất EVM xoay quanh 1.0 (CPI, SPI)
-        self.clamp_scale_indices = [
-            70, 71
-        ]
+        self.clamp_scale_indices = []
         
         # Kiểm tra sanity check: Tổng số features = 72?
         total_indices = len(self.log1p_indices) + len(self.passthrough_indices) + \

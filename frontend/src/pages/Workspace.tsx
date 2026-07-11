@@ -86,6 +86,24 @@ const Workspace = () => {
     fetchProject();
   }, [projectId, navigate]);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (projectData?.status === 'Simulating') {
+      interval = setInterval(async () => {
+        try {
+          if (projectId && !isNaN(Number(projectId))) {
+            const res = await api.getProject(Number(projectId));
+            setProjectData(res.data);
+          }
+        } catch (err) {
+          console.error("Polling error", err);
+        }
+      }, 3000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [projectData?.status, projectId]);
   const handleSaveTask = async (data: any) => {
     try {
       if (!projectId || isNaN(Number(projectId))) {
@@ -135,6 +153,16 @@ const Workspace = () => {
     }
   };
 
+  const handleRunAI = async () => {
+    try {
+      if (!projectId || isNaN(Number(projectId))) return;
+      await api.runAISimulation(Number(projectId));
+      window.location.reload();
+    } catch (err) {
+      alert('Failed to run AI Simulation: ' + (err as Error).message);
+    }
+  };
+
   const tasks = useMemo(() => projectData?.tasks || [], [projectData]);
   const dependencies = useMemo(() => projectData?.constraint_logic || [], [projectData]);
   const cpm_static_makespan = projectData?.tasks?.length * 5 || 0;
@@ -145,6 +173,7 @@ const Workspace = () => {
   const monte_carlo = useMemo(() => projectData?.monte_carlo || null, [projectData]);
   const ppo_schedule = useMemo(() => projectData?.ppo_schedule || null, [projectData]);
   const project_state_evolution = useMemo(() => projectData?.project_state_evolution || null, [projectData]);
+  const simulationResults = useMemo(() => projectData?.metadata_json?.simulation_results || {}, [projectData]);
 
   const { selectedOptionModes, optionLabel, optionMakespan, optionCost, optionRisk } = useMemo(() => {
     let modes: number[] = new Array(tasks.length).fill(0);
@@ -291,6 +320,14 @@ const Workspace = () => {
             Manage Resources
           </button>
           <button 
+            onClick={handleRunAI}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center"
+            disabled={projectData?.status === 'Simulating'}
+          >
+            <Sparkles className="mr-2" size={16} /> 
+            {projectData?.status === 'Simulating' ? 'AI is running...' : 'Run AI Pipeline'}
+          </button>
+          <button 
             onClick={() => {
               setEditingTask(null);
               setIsTaskModalOpen(true);
@@ -393,24 +430,32 @@ const Workspace = () => {
 
               {activeTab === 'recommendations' && (
                 <div className="space-y-4">
-                  <RecommendationCard 
-                    type="Fast Tracking" 
-                    icon={Zap} colorClass="text-amber-600" title="Song song hóa WBS 1.1.2 & 1.1.3" 
-                    desc="AI phát hiện 2 công việc này không có ràng buộc kỹ thuật cứng. Có thể thi công song song để rút ngắn tiến độ."
-                    impact="Tiết kiệm 12 ngày" confidence="85%"
-                  />
-                  <RecommendationCard 
-                    type="Resource Leveling" 
-                    icon={ShieldCheck} colorClass="text-emerald-600" title="Giảm tải tháng 11/2012" 
-                    desc="Mật độ công việc vượt ngưỡng an toàn (Peak: 15 tasks/ngày). Đề xuất dời WBS 2.4 sang tháng 1 để tránh bottleneck."
-                    impact="Giảm 30% rủi ro" confidence="92%"
-                  />
-                  <RecommendationCard 
-                    type="Crashing" 
-                    icon={TrendingDown} colorClass="text-blue-600" title="Tăng tốc WBS 4.1 (Critical)" 
-                    desc="Công việc WBS 4.1 nằm trên đường găng (Critical Path) có rủi ro trễ hạn cao. Đề xuất bổ sung thêm 2 nhân sự."
-                    impact="Tránh trễ 5 ngày" confidence="88%"
-                  />
+                  {projectData?.status === 'Simulating' ? (
+                    <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                      <p className="text-sm font-medium text-center">AI đang tiến hành phân tích dự án...</p>
+                      <p className="text-xs text-center mt-1">Quá trình này có thể mất vài phút.</p>
+                    </div>
+                  ) : simulationResults?.recommendations && simulationResults.recommendations.length > 0 ? (
+                    simulationResults.recommendations.map((rec: any, idx: number) => (
+                      <RecommendationCard 
+                        key={idx}
+                        type={rec.type || "AI Suggestion"} 
+                        icon={Zap} 
+                        colorClass="text-blue-600" 
+                        title={rec.title || `Khuyến nghị ${idx + 1}`} 
+                        desc={rec.desc || ""}
+                        impact={rec.impact || ""} 
+                        confidence={rec.confidence || "90%"}
+                      />
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 text-slate-400">
+                      <Activity size={32} className="mb-2 opacity-50" />
+                      <p className="text-sm font-medium">Chưa có đề xuất tối ưu.</p>
+                      <p className="text-xs text-center mt-1">Hãy khởi chạy AI Pipeline để nhận khuyến nghị.</p>
+                    </div>
+                  )}
                 </div>
               )}
 

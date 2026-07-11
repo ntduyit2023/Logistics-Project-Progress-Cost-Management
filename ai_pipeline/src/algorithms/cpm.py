@@ -9,6 +9,11 @@ Dự trữ Toàn phần (Total Slack), Dự trữ Tự do (Free Slack), và xác
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
 
+try:
+    from ai_pipeline.src.utils.agenda_calculator import calculate_duration_hours
+except ImportError:
+    from src.utils.agenda_calculator import calculate_duration_hours
+
 def build_project_graph(
     tasks: List[Dict[str, Any]],
     dependencies: List[Tuple[Any, Any]]
@@ -51,7 +56,7 @@ def build_project_graph(
         
     return G
 
-def calculate_cpm(G: nx.DiGraph) -> Tuple[nx.DiGraph, float]:
+def calculate_cpm(G: nx.DiGraph, hours_per_day: float = 8.0, days_per_week: float = 5.0) -> Tuple[nx.DiGraph, float]:
     """
     Thực hiện các bước tính toán duyệt xuôi (Forward Pass) và duyệt ngược (Backward Pass) trên đồ thị dự án G.
 
@@ -74,17 +79,31 @@ def calculate_cpm(G: nx.DiGraph) -> Tuple[nx.DiGraph, float]:
     G_cpm = G.copy()
     topo_order = list(nx.topological_sort(G_cpm))
     
+    def safe_float(v):
+        try:
+            val = float(v)
+            import math
+            return 0.0 if math.isnan(val) else val
+        except (ValueError, TypeError):
+            return 0.0
+
     # --- 1. Duyệt Xuôi (Forward Pass): Tính ES & EF ---
     for node in topo_order:
         preds = list(G_cpm.predecessors(node))
-        duration = G_cpm.nodes[node].get('most_probable_duration', G_cpm.nodes[node].get('duration', 0.0))
+        d_m = safe_float(G_cpm.nodes[node].get('duration_months', 0.0))
+        d_w = safe_float(G_cpm.nodes[node].get('duration_weeks', 0.0))
+        d_d = safe_float(G_cpm.nodes[node].get('duration_days', 0.0))
+        d_h = safe_float(G_cpm.nodes[node].get('duration_hours', 0.0))
+        cal_type = str(G_cpm.nodes[node].get('calendar_type', 'Agenda'))
+        dur_calc = calculate_duration_hours(d_m, d_w, d_d, d_h, hours_per_day, days_per_week, cal_type)
+        duration = safe_float(G_cpm.nodes[node].get('most_probable_duration', G_cpm.nodes[node].get('duration', dur_calc)))
         
         if not preds:
             G_cpm.nodes[node]['es'] = 0.0
         else:
-            G_cpm.nodes[node]['es'] = float(max(G_cpm.nodes[p]['ef'] for p in preds))
+            G_cpm.nodes[node]['es'] = safe_float(max(G_cpm.nodes[p]['ef'] for p in preds))
             
-        G_cpm.nodes[node]['ef'] = G_cpm.nodes[node]['es'] + float(duration)
+        G_cpm.nodes[node]['ef'] = G_cpm.nodes[node]['es'] + duration
         
     # Thời gian hoàn thành dự án (Makespan) là giá trị EF lớn nhất của tất cả các nút
     project_duration = max(G_cpm.nodes[n]['ef'] for n in G_cpm.nodes()) if topo_order else 0.0
@@ -92,14 +111,20 @@ def calculate_cpm(G: nx.DiGraph) -> Tuple[nx.DiGraph, float]:
     # --- 2. Duyệt Ngược (Backward Pass): Tính LS & LF ---
     for node in reversed(topo_order):
         succs = list(G_cpm.successors(node))
-        duration = G_cpm.nodes[node].get('most_probable_duration', G_cpm.nodes[node].get('duration', 0.0))
+        d_m = safe_float(G_cpm.nodes[node].get('duration_months', 0.0))
+        d_w = safe_float(G_cpm.nodes[node].get('duration_weeks', 0.0))
+        d_d = safe_float(G_cpm.nodes[node].get('duration_days', 0.0))
+        d_h = safe_float(G_cpm.nodes[node].get('duration_hours', 0.0))
+        cal_type = str(G_cpm.nodes[node].get('calendar_type', 'Agenda'))
+        dur_calc = calculate_duration_hours(d_m, d_w, d_d, d_h, hours_per_day, days_per_week, cal_type)
+        duration = safe_float(G_cpm.nodes[node].get('most_probable_duration', G_cpm.nodes[node].get('duration', dur_calc)))
         
         if not succs:
             G_cpm.nodes[node]['lf'] = project_duration
         else:
-            G_cpm.nodes[node]['lf'] = float(min(G_cpm.nodes[s]['ls'] for s in succs))
+            G_cpm.nodes[node]['lf'] = safe_float(min(G_cpm.nodes[s]['ls'] for s in succs))
             
-        G_cpm.nodes[node]['ls'] = G_cpm.nodes[node]['lf'] - float(duration)
+        G_cpm.nodes[node]['ls'] = G_cpm.nodes[node]['lf'] - duration
         
     # --- 3. Tính toán Dự trữ (Slack) và Đường Găng (Criticality) ---
     for node in G_cpm.nodes():
@@ -124,7 +149,7 @@ def get_critical_path(G: nx.DiGraph) -> List[Any]:
     topo_order = list(nx.topological_sort(G))
     return [node for node in topo_order if G.nodes[node].get('is_critical', False)]
 
-def get_cpm_summary(G: nx.DiGraph) -> List[Dict[str, Any]]:
+def get_cpm_summary(G: nx.DiGraph, hours_per_day: float = 8.0, days_per_week: float = 5.0) -> List[Dict[str, Any]]:
     """
     Định dạng kết quả tính toán CPM thành cấu trúc bảng phẳng dễ hiển thị.
     """
@@ -132,10 +157,18 @@ def get_cpm_summary(G: nx.DiGraph) -> List[Dict[str, Any]]:
     topo_order = list(nx.topological_sort(G))
     for node in topo_order:
         data = G.nodes[node]
+        cal_type = str(data.get('calendar_type', 'Agenda'))
+        dur_fallback = calculate_duration_hours(
+            float(data.get('duration_months', 0.0) or 0.0),
+            float(data.get('duration_weeks', 0.0) or 0.0),
+            float(data.get('duration_days', 0.0) or 0.0),
+            float(data.get('duration_hours', 0.0) or 0.0),
+            hours_per_day, days_per_week, cal_type
+        )
         summary.append({
             'id': node,
             'name': data.get('name', ''),
-            'duration': data.get('most_probable_duration', data.get('duration', 0.0)),
+            'duration': data.get('most_probable_duration', data.get('duration', dur_fallback)),
             'es': data.get('es', 0.0),
             'ef': data.get('ef', 0.0),
             'ls': data.get('ls', 0.0),

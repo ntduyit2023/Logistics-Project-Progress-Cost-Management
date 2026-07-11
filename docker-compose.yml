@@ -70,9 +70,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: ${BACKEND_MEM_LIMIT:-1G}
+          memory: ${BACKEND_MEM_LIMIT:-4G}
         reservations:
-          memory: 256M
+          memory: 1G
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     restart: unless-stopped
 
   # --------------------------------------------------

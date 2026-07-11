@@ -15,3 +15,11 @@ pydantic-settings==2.14.2
 # === Data Processing ===
 pandas==3.0.3
 networkx==3.6.1
+
+# === AI Pipeline ===
+torch
+torch_geometric
+pymoo
+ortools
+gymnasium
+stable-baselines3

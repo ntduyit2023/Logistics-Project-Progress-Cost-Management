@@ -56,7 +56,7 @@ export const api = {
 
   // --- AI SIMULATION ---
   async runAISimulation(projectId: number) {
-    const res = await fetch(`${API_BASE_URL}/projects/${projectId}/simulate`, {
+    const res = await fetch(`${API_BASE_URL}/projects/${projectId}/run-simulation`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });

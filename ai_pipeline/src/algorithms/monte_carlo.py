@@ -13,6 +13,11 @@ import numpy as np
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
 
+try:
+    from ai_pipeline.src.utils.agenda_calculator import calculate_duration_hours
+except ImportError:
+    from src.utils.agenda_calculator import calculate_duration_hours
+
 def sample_pert_beta(a: float, m: float, b: float) -> float:
     """
     Lấy mẫu một giá trị đơn lẻ từ phân phối Beta-PERT.
@@ -41,7 +46,9 @@ def run_monte_carlo_simulation(
     attention_score: Optional[Dict[Any, float]] = None,
     gamma: float = 1.0,
     num_iterations: int = 10000,
-    deadline: Optional[float] = None
+    deadline: Optional[float] = None,
+    hours_per_day: float = 8.0,
+    days_per_week: float = 5.0
 ) -> Dict[str, Any]:
     """
     Chạy mô phỏng Monte Carlo Cấp độ 2 trên đồ thị dự án.
@@ -104,18 +111,30 @@ def run_monte_carlo_simulation(
     
     for idx, node in enumerate(topo_order):
         task_data = G.nodes[node]
-        planned_duration = float(task_data.get('most_probable_duration', task_data.get('duration', 0.0)))
-        
+        def safe_float(v):
+            try:
+                import math
+                val = float(v)
+                return 0.0 if math.isnan(val) or math.isinf(val) else val
+            except (ValueError, TypeError):
+                return 0.0
+        d_m = safe_float(task_data.get('duration_months', 0.0))
+        d_w = safe_float(task_data.get('duration_weeks', 0.0))
+        d_d = safe_float(task_data.get('duration_days', 0.0))
+        d_h = safe_float(task_data.get('duration_hours', 0.0))
+        cal_type = str(task_data.get('calendar_type', 'Agenda'))
+        dur_calc = calculate_duration_hours(d_m, d_w, d_d, d_h, hours_per_day, days_per_week, cal_type)
+        planned_duration = safe_float(task_data.get('most_probable_duration', task_data.get('duration', dur_calc)))
         # Đọc thời lượng lạc quan và bi quan thực tế từ dữ liệu
-        o_val = float(task_data.get('optimistic_duration', task_data.get('optimistic_time', planned_duration)))
-        p_val = float(task_data.get('pessimistic_duration', task_data.get('pessimistic_time', planned_duration)))
+        o_val = safe_float(task_data.get('optimistic_duration', task_data.get('optimistic_time', planned_duration)))
+        p_val = safe_float(task_data.get('pessimistic_duration', task_data.get('pessimistic_time', planned_duration)))
         default_sigma = (p_val - o_val) / 6.0 if p_val > o_val else 0.1 * planned_duration
         
         # Lấy dự báo của DAGNN và GAT với các giá trị fallback dự phòng
-        delay_val = delay_pred.get(node, 0.0) if delay_pred else 0.0
+        delay_val = safe_float(delay_pred.get(node, 0.0) if delay_pred else 0.0)
         d_val = planned_duration + delay_val
-        sigma_val = sigma_pred.get(node, default_sigma) if sigma_pred else default_sigma
-        attn_val = attention_score.get(node, 0.0) if attention_score else 0.0
+        sigma_val = safe_float(sigma_pred.get(node, default_sigma) if sigma_pred else default_sigma)
+        attn_val = safe_float(attention_score.get(node, 0.0) if attention_score else 0.0)
         
         # Công thức PERT-Beta Cấp độ 2: Attention của GAT kéo dài biên bi quan
         a_i = max(0.0, d_val - 2.0 * sigma_val)

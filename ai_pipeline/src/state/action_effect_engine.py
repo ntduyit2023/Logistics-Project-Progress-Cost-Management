@@ -236,45 +236,48 @@ class ActionEffectEngine:
                 if t_id in task_map:
                     t = task_map[t_id]
                     
-                    # Update dynamic features
-                    x_mat[idx, 1] = float(t.get('duration_months', 0))
-                    x_mat[idx, 2] = float(t.get('duration_weeks', 0))
-                    x_mat[idx, 3] = float(t.get('duration_days', 0))
-                    x_mat[idx, 4] = float(t.get('most_probable_duration', t.get('duration', 0)))
+                    # Hub Time (0-4)
+                    x_mat[idx, 0] = float(t.get('duration_months', 0))
+                    x_mat[idx, 1] = float(t.get('duration_weeks', 0))
+                    x_mat[idx, 2] = float(t.get('duration_days', 0))
+                    x_mat[idx, 3] = float(t.get('duration_hours', 0))
+                    # 4 is calendar_type_247, skip
                     
-                    # Direct Costs (G1: 7-14)
-                    x_mat[idx, 7] = float(t.get('internal_labor_cost', 0))
-                    x_mat[idx, 8] = float(t.get('subcontracting_cost', 0))
-                    x_mat[idx, 9] = float(t.get('overtime_crashing_cost', 0))
-                    x_mat[idx, 11] = float(t.get('equipment_cost', 0))
+                    # Direct Costs (5-10)
+                    x_mat[idx, 5] = float(t.get('internal_labor_cost', 0))
+                    x_mat[idx, 6] = float(t.get('overtime_cost', 0))
+                    x_mat[idx, 7] = float(t.get('equipment_fuel_cost', 0))
+                    x_mat[idx, 8] = float(t.get('qa_qc_cost', 0))
+                    x_mat[idx, 9] = float(t.get('material_cost', 0))
+                    x_mat[idx, 10] = float(t.get('outsourcing_cost', 0))
                     
-                    # Indirect Costs (G2: 15-20)
-                    x_mat[idx, 15] = float(t.get('pm_overhead', 0))
-                    x_mat[idx, 18] = float(t.get('communication_cost', 0))
-                    x_mat[idx, 20] = float(t.get('quality_mgmt_overhead', 0))
+                    # Indirect Costs (11-14)
+                    x_mat[idx, 11] = float(t.get('training_cost', 0))
+                    x_mat[idx, 12] = float(t.get('facility_rent', 0))
+                    x_mat[idx, 13] = float(t.get('communication_cost', 0))
+                    x_mat[idx, 14] = float(t.get('utilities_cost', 0))
                     
-                    # Resources (G7: 37-41)
-                    tot_req = 0.0
-                    if 'resource_demand' in t and isinstance(t['resource_demand'], dict):
-                        tot_req = float(sum(t['resource_demand'].values()))
-                    x_mat[idx, 37] = tot_req
-                    x_mat[idx, 40] = float(t.get('equipment_utilization', 0))
+                    # Contractual (15-17)
+                    x_mat[idx, 15] = float(t.get('insurance_cost', 0))
+                    x_mat[idx, 16] = float(t.get('licensing_cost', 0))
+                    x_mat[idx, 17] = float(t.get('warranty_cost', 0))
                     
-                    # Risks (G9: 42-48)
-                    x_mat[idx, 42] = float(t.get('technical_complexity', 0))
-                    x_mat[idx, 43] = float(t.get('rework_probability', 0))
-                    x_mat[idx, 44] = float(t.get('external_dependency_level', 0))
+                    # Risks (18-21)
+                    x_mat[idx, 18] = float(t.get('complexity', t.get('technical_complexity', 0)))
+                    x_mat[idx, 19] = float(t.get('weather_contingency', 0))
+                    x_mat[idx, 20] = float(t.get('general_contingency', 0))
+                    x_mat[idx, 21] = float(t.get('rework_risk', t.get('rework_probability', 0)))
                     
-                    # Org & ESG (G11/12: 52-54)
-                    x_mat[idx, 52] = float(t.get('hr_stability_risk', 0))
-                    x_mat[idx, 54] = float(t.get('occupational_safety_risk', 0))
+                    # Time / Schedule (27-28)
+                    x_mat[idx, 27] = float(t.get('overtime_hours', 0))
+                    x_mat[idx, 28] = float(t.get('lag_time', 0))
                     
-                    # G8: Recomputed Topological Features (63-67)
-                    x_mat[idx, 63] = float(in_degree[idx])
-                    x_mat[idx, 64] = float(out_degree[idx])
-                    x_mat[idx, 65] = float(is_critical[idx])
-                    x_mat[idx, 66] = float(total_float[idx])
-                    x_mat[idx, 67] = float(path_length[idx])
+                    # AI Topology (29-33)
+                    x_mat[idx, 29] = float(in_degree[idx])
+                    x_mat[idx, 30] = float(out_degree[idx])
+                    x_mat[idx, 31] = float(is_critical[idx])
+                    x_mat[idx, 32] = float(total_float[idx])
+                    x_mat[idx, 33] = float(path_length[idx])
             updated_x = x_mat
 
         # Add downstream affected tasks to affected_ids

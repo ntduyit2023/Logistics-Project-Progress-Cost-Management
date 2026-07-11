@@ -63,12 +63,25 @@ class ProjectMultiObjectiveProblem:
         
         for task in tasks:
             # Thời lượng
-            d_norm = float(task.get('most_probable_duration', task.get('duration', 0.0)))
+            d_m = float(task.get('duration_months', 0.0) or 0.0)
+            d_w = float(task.get('duration_weeks', 0.0) or 0.0)
+            d_d = float(task.get('duration_days', 0.0) or 0.0)
+            d_h = float(task.get('duration_hours', 0.0) or 0.0)
+            d_norm = float(task.get('most_probable_duration', task.get('duration', d_m * 720 + d_w * 168 + d_d * 24 + d_h)))
             d_crash = float(task.get('crash_duration', d_norm * 0.7))
             d_out = float(task.get('outsource_duration', d_norm * 0.8))
             
+            # Hàm an toàn cho chi phí
+            def safe_float(v):
+                try:
+                    val = float(v)
+                    import math
+                    return 0.0 if math.isnan(val) else val
+                except (ValueError, TypeError):
+                    return 0.0
+
             # Chi phí
-            c_norm = float(task.get('total_cost', 0.0))
+            c_norm = safe_float(task.get('total_cost', 0.0))
             if c_norm == 0.0:
                 # Tính tổng chi phí từ các cột chi phí thành phần có trong dataset
                 cost_keys = [
@@ -78,7 +91,7 @@ class ProjectMultiObjectiveProblem:
                     'facility_rent', 'utilities', 'communication_cost',
                     'internal_training', 'quality_mgmt_overhead'
                 ]
-                c_norm = sum(float(task.get(k, 0.0)) for k in cost_keys)
+                c_norm = sum(safe_float(task.get(k, 0.0)) for k in cost_keys)
                 
             c_crash = float(task.get('crash_cost', c_norm * 1.5))
             c_out = float(task.get('outsource_cost', c_norm * 2.0))

@@ -25,6 +25,7 @@ from ai_pipeline.src.algorithms.pert import calculate_project_pert
 from ai_pipeline.src.algorithms.monte_carlo import run_monte_carlo_simulation
 from ai_pipeline.src.algorithms.nsga2 import run_nsga2_optimization
 from ai_pipeline.src.algorithms.cpsat_solver import run_cpsat_scheduling
+from ai_pipeline.src.utils.agenda_calculator import load_agenda_from_db, calculate_duration_hours
 
 def main():
     parser = argparse.ArgumentParser(description="GLPO Main Pipeline Orchestrator (AI + OR + RL)")
@@ -75,7 +76,7 @@ def main():
         
     resource_capacities = {}
     for _, row in res_df.iterrows():
-        resource_capacities[str(row['ID'])] = float(row.get('Availability', 1.0))
+        resource_capacities[str(row['ID'])] = int(float(row.get('Availability', 1.0)))
         
     for t in tasks:
         t_id = t['id']
@@ -83,10 +84,46 @@ def main():
         t['resource_demand'] = {str(row['resource_id']): int(row['request_quantity']) for _, row in t_req.iterrows()}
         
     G = build_project_graph(tasks, dependencies)
-    _, static_makespan = calculate_cpm(G)
+    
+    # Load agenda từ database
+    try:
+        project_id_int = int(project_id)
+    except (ValueError, TypeError):
+        project_id_int = 0
+    agenda = load_agenda_from_db(project_id_int)
+    hours_per_day = agenda['hours_per_day']
+    days_per_week = agenda['days_per_week']
+    overtime_multiplier = agenda['overtime_multiplier']
+    print(f"   • Agenda: {hours_per_day}h/ngày, {days_per_week} ngày/tuần, OT x{overtime_multiplier}")
+    
+    G_cpm, static_makespan = calculate_cpm(G, hours_per_day=hours_per_day, days_per_week=days_per_week)
     print(f"   • Số lượng công việc: {len(tasks)} tasks")
     print(f"   • Số cạnh phụ thuộc: {len(dependencies)}")
     print(f"   • Makespan CPM tĩnh: {static_makespan:.2f} giờ")
+    
+    # Validate baseline_start vs CPM ES
+    import datetime
+    baseline_starts = {}
+    for t in tasks:
+        bs = t.get('baseline_start')
+        if bs and str(bs).lower() != 'nan':
+            try:
+                baseline_starts[t['id']] = pd.to_datetime(bs)
+            except Exception:
+                pass
+    if baseline_starts:
+        project_start = min(baseline_starts.values())
+        mismatches = 0
+        for node in G_cpm.nodes():
+            if node in baseline_starts:
+                bs_relative_hours = (baseline_starts[node] - project_start).total_seconds() / 3600.0
+                cpm_es = G_cpm.nodes[node].get('es', 0.0)
+                if abs(bs_relative_hours - cpm_es) > hours_per_day:  # Tolerance: 1 working day
+                    mismatches += 1
+        if mismatches > 0:
+            print(f"   ⚠️ {mismatches} tasks có baseline_start lệch so với CPM ES > 1 ngày làm việc")
+        else:
+            print(f"   ✅ Baseline Start khớp với CPM ES cho tất cả {len(baseline_starts)} tasks")
     
     # Set default values if not specified
     if args.deadline is None:
@@ -95,15 +132,20 @@ def main():
         deadline = args.deadline
         
     if args.budget is None:
-        # Sum of normal costs using the same component columns as in NSGA-II
         cost_keys = [
-            'internal_labor_cost', 'subcontracting_cost', 'overtime_crashing_cost',
-            'material_cost', 'equipment_cost', 'direct_transportation',
-            'energy_fuel_cost', 'testing_and_inspection', 'pm_overhead',
-            'facility_rent', 'utilities', 'communication_cost',
-            'internal_training', 'quality_mgmt_overhead'
+            'internal_labor_cost', 'outsourcing_cost', 'overtime_cost',
+            'material_cost', 'equipment_fuel_cost', 'qa_qc_cost',
+            'training_cost', 'facility_rent', 'communication_cost', 'utilities_cost',
+            'insurance_cost', 'licensing_cost', 'warranty_cost'
         ]
-        total_normal_cost = sum(sum(float(t.get(k, 0.0)) for k in cost_keys) for t in tasks)
+        def safe_float(v):
+            try:
+                val = float(v)
+                import math
+                return 0.0 if math.isnan(val) else val
+            except (ValueError, TypeError):
+                return 0.0
+        total_normal_cost = sum(sum(safe_float(t.get(k, 0.0)) for k in cost_keys) for t in tasks)
         budget = total_normal_cost * 1.5
         # Fallback if cost columns are all 0
         if budget == 0.0:
@@ -130,7 +172,7 @@ def main():
         print("   • Thiếu checkpoint gat_pretrained.pth hoặc dagnn_pretrained.pth.")
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model = SequentialGLPOModel(feature_dim=72, gat_out_dim=32, dagnn_out_dim=32).to(device)
+    model = SequentialGLPOModel(project_type="logistics_standard", gat_out_dim=32, dagnn_out_dim=32).to(device)
     data_pyg = project_graph.data.to(device)
 
     if run_offline:
@@ -167,14 +209,20 @@ def main():
     with torch.no_grad():
         detailed_out = model.forward_detailed(data_pyg)
         
-    h_dagnn = detailed_out['h_dagnn'].cpu().numpy()
-    gate_values = detailed_out['dagnn_info']['gate_values'].cpu().numpy()
+    h_dagnn = detailed_out['h_dagnn'].cpu()
+    # Sanitize NaN/Inf trong DAGNN output
+    h_dagnn = torch.nan_to_num(h_dagnn, nan=0.0, posinf=1.0, neginf=-1.0)
+    h_dagnn_np = h_dagnn.numpy()
+    
+    gate_values_raw = detailed_out['dagnn_info']['gate_values'].cpu()
+    gate_values_raw = torch.nan_to_num(gate_values_raw, nan=0.0, posinf=1.0, neginf=-1.0)
+    gate_values = gate_values_raw.numpy()
     
     # Map AI features to task parameters
     attention_score = {project_graph.idx_to_node[i]: float(gate_values[i]) for i in range(len(gate_values))}
-    delay_pred = {project_graph.idx_to_node[i]: float(np.mean(h_dagnn[i]) * 5.0) for i in range(len(h_dagnn))}
-    sigma_pred = {project_graph.idx_to_node[i]: float(np.std(h_dagnn[i]) * 2.5) for i in range(len(h_dagnn))}
-    print(f"   • Trích xuất thành công GAT attention & DAGNN embeddings.")
+    delay_pred = {project_graph.idx_to_node[i]: float(np.nanmean(h_dagnn_np[i]) * 5.0) for i in range(len(h_dagnn_np))}
+    sigma_pred = {project_graph.idx_to_node[i]: float(max(0.01, np.nanstd(h_dagnn_np[i]) * 2.5)) for i in range(len(h_dagnn_np))}
+    print(f"   • Trích xuất thành công GAT attention & DAGNN embeddings (NaN sanitized).")
     
     # ── BƯỚC 3: MONTE CARLO LEVEL 2 ───────────────────────────────────────────
     print("\n🎲 [BƯỚC 3] Monte Carlo Level 2 Simulation...")
@@ -186,7 +234,9 @@ def main():
         attention_score=attention_score,
         gamma=1.5,
         num_iterations=1000,
-        deadline=deadline
+        deadline=deadline,
+        hours_per_day=hours_per_day,
+        days_per_week=days_per_week
     )
     print(f"   • Mean makespan: {mc_res['mean_makespan']:.2f} giờ")
     print(f"   • Xác suất đúng hạn (On-time Prob): {mc_res['P(on_time)'] * 100:.2f}%")
@@ -264,7 +314,9 @@ def main():
         tasks=tasks_with_modes,
         dependencies=dependencies,
         resource_capacities=resource_capacities,
-        time_limit_sec=15.0
+        time_limit_sec=15.0,
+        hours_per_day=hours_per_day,
+        days_per_week=days_per_week
     )
     print(f"   • CP-SAT Solver Status: {cpsat_res['status']}")
     print(f"   • CP-SAT Baseline Makespan: {cpsat_res['makespan']} giờ")
@@ -295,28 +347,36 @@ def main():
         cfg_chk = checkpoint.get('config', {})
         use_pretrained = cfg_chk.get('use_pretrained', True)
         enable_relative_state = cfg_chk.get('enable_relative_state', True)
-        obs_dim = cfg_chk.get('obs_dim', 86)
+        obs_dim = 48 # Bắt buộc dùng 48 vì schema đã đổi
         action_dim = cfg_chk.get('action_dim', 3)
         hidden_dims = cfg_chk.get('hidden_dims', [256, 128])
         
-        agent = ActorCritic(obs_dim=obs_dim, action_dim=action_dim, hidden_dims=hidden_dims)
+        agent = ActorCritic(obs_dim=obs_dim, action_dim=action_dim, hidden_dims=hidden_dims, use_pretrained=use_pretrained)
         agent.use_pretrained = use_pretrained
         agent.project_pyg_data = [pg.data for pg in dataset.graphs]
         if agent.use_pretrained:
             agent.setup_pretrained_encoder(torch.device('cpu'))
             
-        agent.load_state_dict(checkpoint['agent_state_dict'])
-        agent.eval()
+        try:
+            agent.load_state_dict(checkpoint['agent_state_dict'])
+            agent.eval()
+        except RuntimeError as e:
+            print(f"[WARNING] Không thể nạp weights cho PPO Agent do khác biệt kiến trúc: {e}")
+            print("   • Đang khởi tạo PPO Agent ngẫu nhiên.")
         
         # Áp dụng cấu hình lên env
         env.enable_relative_state = enable_relative_state
         
         obs_normalizer = RunningMeanStd(shape=(obs_dim,))
         if 'obs_normalizer' in checkpoint:
+            # Chỉ nạp nếu kích thước khớp
             norm_data = checkpoint['obs_normalizer']
-            obs_normalizer.mean = norm_data['mean']
-            obs_normalizer.var = norm_data['var']
-            obs_normalizer.count = norm_data['count']
+            if norm_data['mean'].shape[0] == obs_dim:
+                obs_normalizer.mean = norm_data['mean']
+                obs_normalizer.var = norm_data['var']
+                obs_normalizer.count = norm_data['count']
+            else:
+                print("   • Bỏ qua nạp obs_normalizer do khác biệt kích thước.")
             
         # Tìm project_idx
         project_idx = 0
@@ -341,10 +401,12 @@ def main():
             )
             obs_norm = obs_normalizer.normalize(obs_flat)
             if use_pretrained:
-                obs_norm[70] = float(project_idx)
-                obs_norm[71] = float(task_idx)
+                obs_norm[32] = float(project_idx)
+                obs_norm[33] = float(task_idx)
                 
             obs_tensor = torch.tensor(obs_norm, dtype=torch.float32).unsqueeze(0)
+            # Sanitize NaN in observation before PPO forward pass
+            obs_tensor = torch.nan_to_num(obs_tensor, nan=0.0, posinf=1.0, neginf=-1.0)
             
             mask = env.action_masks()
             mask_tensor = torch.tensor(mask, dtype=torch.bool).unsqueeze(0)

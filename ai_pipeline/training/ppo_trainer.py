@@ -50,7 +50,7 @@ if project_root not in sys.path:
 # ============================================================================
 DEFAULT_PPO_CONFIG = {
     # ── Kiến trúc mạng ──
-    'obs_dim': 86,              # 72 (task_features) + 6 (task_context) + 8 (project_state)
+    'obs_dim': 48,              # 34 (task_features) + 6 (task_context) + 8 (project_state)
     'action_dim': 3,            # Normal / Crash / Outsource
     'hidden_dims': [256, 128],  # Kích thước các tầng ẩn
 
@@ -109,13 +109,14 @@ class ActorCritic(nn.Module):
 
     def __init__(
         self,
-        obs_dim: int = 86,
+        obs_dim: int = 48,
         action_dim: int = 3,
         hidden_dims: List[int] = None,
+        use_pretrained: bool = False,
     ):
         super().__init__()
 
-        self.use_pretrained = False
+        self.use_pretrained = use_pretrained
         self.project_pyg_data = None
 
         if hidden_dims is None:
@@ -123,7 +124,9 @@ class ActorCritic(nn.Module):
 
         # ── Backbone chung ────────────────────────────────────────
         layers = []
-        in_dim = obs_dim
+        # Nếu dùng pretrained, task_features (34) sẽ được thay thế bằng task_embeddings (64)
+        in_dim = (64 + 14) if self.use_pretrained else obs_dim
+        
         for h_dim in hidden_dims:
             layers.extend([
                 nn.Linear(in_dim, h_dim),
@@ -154,7 +157,7 @@ class ActorCritic(nn.Module):
         """Khởi tạo và nạp trọng số đã tiền huấn luyện cho GAT + DAGNN."""
         if self.use_pretrained:
             from ai_pipeline.models.sequential_glpo_model import SequentialGLPOModel
-            self.encoder_model = SequentialGLPOModel(feature_dim=72, gat_out_dim=32, dagnn_out_dim=32).to(device)
+            self.encoder_model = SequentialGLPOModel(project_type="logistics_standard", gat_out_dim=32, dagnn_out_dim=32).to(device)
 
             base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             gat_path = os.path.join(base_dir, 'checkpoints', 'gat_pretrained.pth')
@@ -201,9 +204,9 @@ class ActorCritic(nn.Module):
         Forward pass.
         """
         if self.use_pretrained and hasattr(self, 'encoder_model') and self.project_pyg_data is not None:
-            # obs: [B, 86]
-            project_idx_batch = obs[:, 70].long()
-            task_idx_batch = obs[:, 71].long()
+            # Lấy project_idx và task_idx từ 2 phần tử cuối cùng của obs
+            project_idx_batch = obs[:, -2].long()
+            task_idx_batch = obs[:, -1].long()
 
             unique_p_indices = torch.unique(project_idx_batch)
             B = obs.size(0)
@@ -215,8 +218,10 @@ class ActorCritic(nn.Module):
                 if p_val < len(self.project_pyg_data):
                     pyg_data = self.project_pyg_data[p_val].to(device)
 
-                    # Chạy mạng encoder (grad flows if un-frozen)
+                    # Chạy mạng encoder (Option B: SequentialGLPOModel nhận latent space nội bộ)
                     out = self.encoder_model(pyg_data)
+                    # out['latent_emb'] là 64-D, dagnn_emb (h_dagnn) là 32-D, node_embeddings là 32-D.
+                    # PPO lấy (node_embeddings || h_dagnn) = 64-D
                     gat_emb = out['node_embeddings']  # [N, 32]
                     dagnn_emb = out['h_dagnn']        # [N, 32]
                     combined_emb = torch.cat([gat_emb, dagnn_emb], dim=-1)  # [N, 64]
@@ -225,15 +230,18 @@ class ActorCritic(nn.Module):
                     p_task_indices = task_idx_batch[p_mask]
                     task_embeddings[p_mask] = combined_emb[p_task_indices]
 
-            # Lấy 8 đặc trưng cuối của task_features làm phần bù để đủ 72 chiều
-            raw_feats_8 = obs[:, 64:72]
+            # Sanitize NaN in embeddings
+            task_embeddings = torch.nan_to_num(task_embeddings, nan=0.0, posinf=1.0, neginf=-1.0)
 
-            # Xây dựng observation mới [B, 86]
+            # Xây dựng observation mới [B, 78] (64 + 14)
+            # obs[:, -16:-2] chứa task_context (6) + project_state (8) = 14
+            # (Vì obs = [features, context(6), state(8), p_idx(1), t_idx(1)])
             modified_obs = torch.cat([
                 task_embeddings,  # [B, 64]
-                raw_feats_8,      # [B, 8]
-                obs[:, 72:],      # [B, 14] -> Context (6) + Project State (8)
+                obs[:, -16:-2],   # [B, 14]
             ], dim=-1)
+            # Sanitize NaN in modified observation
+            modified_obs = torch.nan_to_num(modified_obs, nan=0.0, posinf=1.0, neginf=-1.0)
 
             features = self.backbone(modified_obs)
         else:
@@ -241,6 +249,8 @@ class ActorCritic(nn.Module):
 
         # Actor: tính logits và áp dụng masking
         logits = self.actor(features)
+        # Sanitize NaN in logits to prevent Categorical crash
+        logits = torch.nan_to_num(logits, nan=0.0, posinf=10.0, neginf=-10.0)
 
         if action_mask is not None:
             # Đặt logits của hành động bị khóa = -inf
@@ -403,16 +413,15 @@ def flatten_obs(
         task_context = np.clip(task_context, -10.0, 10.0)
         project_state = np.clip(project_state, -10.0, 10.0)
 
+    # Nối tất cả lại
+    obs_parts = [task_features, task_context, project_state]
+    
     if use_pretrained:
-        # Lưu project_idx và task_idx tại index 70 và 71 của task_features
-        task_features[70] = float(project_idx)
-        task_features[71] = float(task_idx)
+        # Thay vì ghi đè lên task_features (có thể gây IndexError nếu feature_dim < 34),
+        # ta nối thêm project_idx và task_idx vào cuối vector.
+        obs_parts.append(np.array([float(project_idx), float(task_idx)], dtype=np.float32))
 
-    return np.concatenate([
-        task_features,
-        task_context,
-        project_state,
-    ], dtype=np.float32)
+    return np.concatenate(obs_parts, dtype=np.float32)
 
 
 # ============================================================================
@@ -442,9 +451,23 @@ class RunningMeanStd:
         self.count = total_count
 
     def normalize(self, x: np.ndarray) -> np.ndarray:
-        return (x - self.mean.astype(np.float32)) / (
-            np.sqrt(self.var.astype(np.float32)) + 1e-8
-        )
+        if self.count == 0:
+            return x
+        
+        # Chỉ normalize phần đầu của mảng (phần thực sự là features)
+        # Các biến theo dõi nội bộ như project_idx, task_idx ở cuối sẽ không bị thay đổi
+        dim = self.mean.shape[0]
+        out = x.copy()
+        
+        # Fix array broadcasting size error if x is longer than mean (e.g. appended indices)
+        if x.shape[-1] >= dim:
+            out[..., :dim] = (x[..., :dim] - self.mean.astype(np.float32)) / (
+                np.sqrt(self.var.astype(np.float32)) + 1e-8
+            )
+        else:
+            out = (x - self.mean.astype(np.float32)) / (np.sqrt(self.var.astype(np.float32)) + 1e-8)
+            
+        return out
 
 
 # ============================================================================
@@ -680,8 +703,8 @@ class PPOTrainer:
                 obs_norm = self.obs_normalizer.normalize(obs_flat)
                 if use_pretrained:
                     # Ghi đè chỉ số không chuẩn hóa
-                    obs_norm[70] = float(pidx)
-                    obs_norm[71] = float(tidx)
+                    obs_norm[32] = float(pidx)
+                    obs_norm[33] = float(tidx)
 
                 obs_tensor = torch.tensor(obs_norm, dtype=torch.float32).unsqueeze(0)
 
@@ -803,8 +826,8 @@ class PPOTrainer:
             if not done:
                 obs_norm = self.obs_normalizer.normalize(obs_flat)
                 if use_pretrained:
-                    obs_norm[70] = float(pidx)
-                    obs_norm[71] = float(tidx)
+                    obs_norm[32] = float(pidx)
+                    obs_norm[33] = float(tidx)
                 obs_tensor = torch.tensor(obs_norm, dtype=torch.float32).unsqueeze(0)
                 with torch.no_grad():
                     _, _, _, last_value = self.agent.get_action_and_value(obs_tensor)
@@ -1071,8 +1094,8 @@ class PPOTrainer:
                 while not done:
                     obs_norm = self.obs_normalizer.normalize(obs_flat)
                     if use_pretrained:
-                        obs_norm[70] = float(env_idx)
-                        obs_norm[71] = float(tidx)
+                        obs_norm[32] = float(env_idx)
+                        obs_norm[33] = float(tidx)
 
                     obs_tensor = torch.tensor(
                         obs_norm, dtype=torch.float32

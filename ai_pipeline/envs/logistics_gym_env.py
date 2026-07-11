@@ -58,23 +58,18 @@ OUTSOURCE_DURATION_FACTOR = 0.5  # Thời lượng giảm còn 50%
 OUTSOURCE_COST_FACTOR = 2.0      # Chi phí tăng 200%
 
 # Số nhóm đặc trưng
-NUM_GROUPS = 13
+NUM_GROUPS = 8
 
-# Mapping chỉ số nhóm trong vector 72 chiều
+# Mapping chỉ số nhóm trong vector 34 chiều
 GROUP_INDICES = {
-    0:  list(range(0, 7)),      # Hub
-    1:  list(range(7, 15)),     # G1
-    2:  list(range(15, 21)),    # G2
-    3:  list(range(60, 63)),    # G3 (AI)
-    4:  list(range(21, 25)),    # G4
-    5:  list(range(25, 32)),    # G5
-    6:  list(range(32, 37)),    # G6
-    7:  list(range(37, 42)),    # G7
-    8:  list(range(63, 68)),    # G8 (AI)
-    9:  list(range(42, 49)),    # G9
-    10: list(range(68, 72)),    # G10 (AI)
-    11: list(range(49, 55)),    # G11
-    12: list(range(55, 60)),    # G12
+    0:  list(range(0, 5)),      # Hub Time (0-4)
+    1:  list(range(5, 11)),     # G1: Direct Costs (5-10)
+    2:  list(range(11, 15)),    # G2: Indirect Costs (11-14)
+    3:  list(range(15, 18)),    # G3: Contractual (15-17)
+    4:  list(range(18, 22)),    # G4: Risk (18-21)
+    5:  list(range(22, 27)),    # G5: Logistics (22-26)
+    6:  list(range(27, 29)),    # G6: Time (27-28)
+    7:  list(range(29, 34)),    # G7: AI Topology (29-33)
 }
 
 
@@ -136,12 +131,12 @@ class LogisticsGymEnv(gym.Env):
         self._rms = np.maximum(self._rms, 1.0)
 
         # Chuẩn hóa các ràng buộc dự án dựa trên tỷ lệ chuẩn hóa RMS để khớp với đầu vào
-        cost_rms = self._rms[0, 7:15].mean()
+        cost_rms = self._rms[0, 5:11].mean()
         if 'total_budget' in self._global_constraints:
             self._global_constraints['total_budget'] /= cost_rms
             
         if 'carbon_cap' in self._global_constraints and self._global_constraints['carbon_cap'] != float('inf'):
-            self._global_constraints['carbon_cap'] /= self._rms[0, 55]
+            pass # V34 schema doesn't have an explicit carbon footprint feature, skip scaling
 
         # Đặt các tham số PPO trên thang đo chuẩn hóa mới
         self.reward_scale = 1.0       # Đồ thị đã chuẩn hóa nên không cần chia thêm
@@ -154,10 +149,13 @@ class LogisticsGymEnv(gym.Env):
         # ── Xây dựng cấu trúc đồ thị ─────────────────────────────
         self._build_graph_structure()
 
+        self.feature_dim = self._original_features.shape[1]
+        self.project_type = project_data.get('project_type', 'logistics_standard')
+
         # ── Định nghĩa Observation Space ──────────────────────────
         self.observation_space = spaces.Dict({
             'task_features': spaces.Box(
-                low=-np.inf, high=np.inf, shape=(72,), dtype=np.float32,
+                low=-np.inf, high=np.inf, shape=(self.feature_dim,), dtype=np.float32,
             ),
             'task_context': spaces.Box(
                 low=-np.inf, high=np.inf, shape=(6,), dtype=np.float32,
@@ -254,13 +252,13 @@ class LogisticsGymEnv(gym.Env):
             'makespan': makespan,
         }
 
-    def _compute_S_prime_g(self, features_72: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def _compute_S_prime_g(self, features_34: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """
         Tính S'_g (phiên bản NumPy thuần) bằng trung bình có trọng số theo nhóm.
         Đây là phiên bản Backup (không cần Neural Network).
         """
         # Chuẩn hóa đặc trưng bằng RMS để khớp với mạng nơ-ron
-        features_72_norm = features_72 / self._rms[0]
+        features_34_norm = features_34 / self._rms[0]
 
         S_g = np.zeros(NUM_GROUPS, dtype=np.float32)
         group_masks = np.zeros(NUM_GROUPS, dtype=np.float32)
@@ -268,7 +266,7 @@ class LogisticsGymEnv(gym.Env):
         for g_id, indices in GROUP_INDICES.items():
             if len(indices) == 0:
                 continue
-            vals = features_72_norm[indices]
+            vals = features_34_norm[indices]
             if np.any(np.abs(vals) > 0):
                 group_masks[g_id] = 1.0
                 S_g[g_id] = np.mean(vals)
@@ -415,17 +413,17 @@ class LogisticsGymEnv(gym.Env):
         # Cập nhật vector đặc trưng 72-chiều (phản ánh quyết định)
         features = state['features'][task_idx]
 
-        # Cập nhật chi phí trực tiếp G1 (index 7-14): nhân với hệ số chi phí
-        for fi in range(7, 15):
+        # Cập nhật chi phí trực tiếp G1 (index 5-10): nhân với hệ số chi phí
+        for fi in range(5, 11):
             features[fi] *= cost_multiplier
 
-        # Cập nhật chi phí thuê ngoài G1 (index 8) nếu Outsource
+        # Cập nhật chi phí thuê ngoài G1 (index 10) nếu Outsource
         if action == MODE_OUTSOURCE:
-            features[8] += old_duration * 10.0  # Thêm chi phí subcontracting
+            features[10] += old_duration * 10.0  # Thêm chi phí subcontracting
 
-        # Cập nhật Hub duration (index 1-4)
+        # Cập nhật Hub duration (index 0-3)
         duration_ratio = new_duration / max(old_duration, 1e-6)
-        for fi in range(1, 5):
+        for fi in range(0, 4):
             features[fi] *= duration_ratio
 
         state['features'][task_idx] = features
@@ -439,8 +437,8 @@ class LogisticsGymEnv(gym.Env):
         # Cập nhật G8 (Network Topology) cho tất cả task
         cpm = state['cpm_results']
         for i in range(self.num_tasks):
-            state['features'][i, 65] = cpm['is_critical'][i]
-            state['features'][i, 66] = cpm['total_float'][i]
+            state['features'][i, 31] = cpm['is_critical'][i]
+            state['features'][i, 32] = cpm['total_float'][i]
 
         # ── 3. Tính Reward ────────────────────────────────────────
         S_prime_g, group_masks = self._compute_S_prime_g(state['features'][task_idx])
@@ -484,10 +482,9 @@ class LogisticsGymEnv(gym.Env):
 
         reward = float(reward_info['reward']) / self.reward_scale
 
-        # Cập nhật tích lũy
-        state['cumulative_tgc'] += reward_info['tgc']
-        if len(state['features'][task_idx]) > 55:
-            state['cumulative_env_impact'] += float(state['features'][task_idx, 55])
+        # Update environmental impact if available
+        # In 34D schema, index for environmental impact is absent, so we just add 0
+        state['cumulative_env_impact'] += 0.0
 
         # ── 4. Tiến tới task tiếp theo ────────────────────────────
         state['current_topo_idx'] += 1
@@ -577,7 +574,7 @@ class LogisticsGymEnv(gym.Env):
         task_idx = self._topo_order[state['current_topo_idx']]
         cpm = state['cpm_results']
 
-        # 1. Task Features (72 chiều) - đã được chuẩn hóa qua RMS
+        # 1. Task Features (34 chiều) - đã được chuẩn hóa qua RMS
         task_features = (state['features'][task_idx] / self._rms[0]).copy()
 
         # 2. Task Context (6 chiều) - Quy chuẩn hóa hoàn toàn (Abstract State)
@@ -672,7 +669,7 @@ class LogisticsGymEnv(gym.Env):
     def _get_terminal_obs(self) -> Dict[str, np.ndarray]:
         """Observation khi episode kết thúc (padding zeros)."""
         return {
-            'task_features': np.zeros(72, dtype=np.float32),
+            'task_features': np.zeros(self.feature_dim, dtype=np.float32),
             'task_context': np.zeros(6, dtype=np.float32),
             'project_state': np.zeros(8, dtype=np.float32),
         }
@@ -738,22 +735,21 @@ def create_env_from_project_graph(project_graph, global_constraints=None, penalt
         LogisticsGymEnv: Môi trường Gymnasium sẵn sàng sử dụng.
     """
     data = project_graph.data
-    features = data.x.numpy()
-    edge_index = data.edge_index.numpy()
+    features = data.x.cpu().numpy()
+    edge_index = data.edge_index.cpu().numpy()
 
-    # Tính thời lượng từ vector 72-chiều (Hub: index 1-4)
+    # Tính thời lượng từ vector 34-chiều (Hub: index 0-3)
     N = features.shape[0]
-    durations = np.zeros(N, dtype=np.float32)
-    u_tensor = data.u.numpy()[0]  # [hours_per_day, days_per_week, holidays]
-    hours_per_day = float(u_tensor[0])
-    days_per_week = float(u_tensor[1])
-
+    durations = np.zeros(N)
     for i in range(N):
-        d_m = float(features[i, 1])  # duration_months
-        d_w = float(features[i, 2])  # duration_weeks
-        d_d = float(features[i, 3])  # duration_days
-        d_h = float(features[i, 4])  # duration_hours
-        is_24_7 = float(features[i, 6])  # calendar_type 24/7
+        d_m = float(features[i, 0])  # duration_months
+        d_w = float(features[i, 1])  # duration_weeks
+        d_d = float(features[i, 2])  # duration_days
+        d_h = float(features[i, 3])  # duration_hours
+        is_24_7 = float(features[i, 4])  # calendar_type 24/7
+        u_tensor = data.u.cpu().numpy()[0]  # [hours_per_day, days_per_week, holidays]
+        hours_per_day = float(u_tensor[0])
+        days_per_week = float(u_tensor[1])
 
         if is_24_7 > 0.5:
             total_h = d_m * 30 * 24 + d_w * 7 * 24 + d_d * 24 + d_h
@@ -764,12 +760,8 @@ def create_env_from_project_graph(project_graph, global_constraints=None, penalt
         durations[i] = total_h
 
     # Xây dựng resource demands (từ task_resources)
+    # Bỏ qua vì GlPoProjectGraph không có thuộc tính nodes và schema mới không chứa resource_quantity trong features
     resource_demands = {}
-    # Sử dụng thông tin G7 (index 37-41) từ features
-    for i in range(N):
-        demand = float(features[i, 37])  # request_quantity
-        if demand > 0:
-            resource_demands[i] = {'default_resource': demand}
 
     # Ràng buộc mặc định nếu không cung cấp
     if global_constraints is None:

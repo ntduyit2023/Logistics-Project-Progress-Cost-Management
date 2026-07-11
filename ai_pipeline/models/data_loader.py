@@ -58,10 +58,19 @@ class GlPoProjectGraph:
             working_days_df = pd.read_csv(os.path.join(self.project_dir, 'agenda_working_days.csv'))
         except FileNotFoundError:
             working_days_df = pd.DataFrame(columns=['Day', 'Working'])
+        
+        # Fallback: nếu không có agenda CSV, thử load từ database
+        _agenda_from_db = None
+        if agenda_df.empty and working_days_df.empty:
+            try:
+                from ai_pipeline.src.utils.agenda_calculator import load_agenda_from_db
+                _agenda_from_db = load_agenda_from_db(int(self.project_id))
+            except Exception:
+                pass
             
         # 2. Build ID Mapping
         for idx, row in tasks_df.iterrows():
-            t_id = str(row['id'])
+            t_id = str(row.get('id', row.get('task_id', row.get('ID', ''))))
             self.node_to_idx[t_id] = idx
             self.idx_to_node[idx] = t_id
             
@@ -69,10 +78,12 @@ class GlPoProjectGraph:
         res_agg = {}
         if not task_resources_df.empty:
             grouped = task_resources_df.groupby('task_id')
+            req_col = 'request_quantity' if 'request_quantity' in task_resources_df.columns else task_resources_df.columns[-1]
+            res_col = 'resource_id' if 'resource_id' in task_resources_df.columns else task_resources_df.columns[1]
             for t_id, group in grouped:
                 res_agg[str(t_id)] = {
-                    'total_demand': group['request_quantity'].sum(),
-                    'unique_res': group['resource_id'].nunique()
+                    'total_demand': group[req_col].sum() if req_col in group else 0,
+                    'unique_res': group[res_col].nunique() if res_col in group else 0
                 }
                 
         # 3.5 Parse Agenda for CPM & Global Constraints
@@ -81,12 +92,16 @@ class GlPoProjectGraph:
             yes_count = len(agenda_df[agenda_df['Working'].astype(str).str.lower() == 'yes'])
             if yes_count > 0:
                 hours_per_day = float(yes_count)
+        elif _agenda_from_db:
+            hours_per_day = _agenda_from_db['hours_per_day']
                 
         days_per_week = 5.0
         if not working_days_df.empty:
             working_days_count = len(working_days_df[working_days_df['Working'].astype(str).str.lower() == 'yes'])
             if working_days_count > 0:
                 days_per_week = float(working_days_count)
+        elif _agenda_from_db:
+            days_per_week = _agenda_from_db['days_per_week']
                 
         total_holidays = float(len(holidays_df)) if not holidays_df.empty else 0.0
         
@@ -97,8 +112,8 @@ class GlPoProjectGraph:
         adj_backward = defaultdict(list)
         
         for _, row in edges_df.iterrows():
-            pred_id = str(row['predecessor_task_id'])
-            succ_id = str(row['successor_task_id'])
+            pred_id = str(row.get('predecessor_task_id', row.get('source_id', '')))
+            succ_id = str(row.get('successor_task_id', row.get('target_id', '')))
             if pred_id in self.node_to_idx and succ_id in self.node_to_idx:
                 u = self.node_to_idx[pred_id]
                 v = self.node_to_idx[succ_id]
@@ -167,125 +182,78 @@ class GlPoProjectGraph:
         # 5. Node Feature Engineering (72 Dimensions)
         node_features = []
         for idx, row in tasks_df.iterrows():
-            t_id = str(row['id'])
+            t_id = str(row.get('id', row.get('task_id', row.get('ID', ''))))
             
-            # Initialize 72-dim feature vector explicitly to avoid magic numbers
-            x_row = [0.0] * 72
+            # Initialize 34-dim feature vector explicitly
+            x_row = [0.0] * 34
             
-            # === Hub (0-6) ===
-            x_row[0] = 0.0  # baseline_start_relative (Missing)
-            x_row[1] = float(row.get('duration_months', 0))
-            x_row[2] = float(row.get('duration_weeks', 0))
-            x_row[3] = float(row.get('duration_days', 0))
-            x_row[4] = float(row.get('duration_hours', 0))
+            # === Hub Time (0-4) ===
+            x_row[0] = float(row.get('duration_months', 0))
+            x_row[1] = float(row.get('duration_weeks', 0))
+            x_row[2] = float(row.get('duration_days', 0))
+            x_row[3] = float(row.get('duration_hours', 0))
             cal_type = str(row.get('calendar_type', 'Agenda'))
-            x_row[5] = 1.0 if 'Agenda' in cal_type else 0.0
-            x_row[6] = 1.0 if '24/7' in cal_type else 0.0
+            x_row[4] = 1.0 if '24/7' in cal_type else 0.0
             
-            # === G1: Direct Costs (7-14) ===
-            x_row[7] = float(row.get('internal_labor_cost', 0))
-            x_row[8] = float(row.get('subcontracting_cost', 0))
-            x_row[9] = float(row.get('overtime_crashing_cost', 0))
-            x_row[10] = float(row.get('material_cost', 0))
-            x_row[11] = float(row.get('equipment_cost', 0))
-            x_row[12] = float(row.get('direct_transportation', 0))
-            x_row[13] = float(row.get('energy_fuel_cost', 0))
-            x_row[14] = float(row.get('testing_and_inspection', 0))
+            # === G1: Direct Costs (5-10) ===
+            x_row[5] = float(row.get('internal_labor_cost', 0))
+            x_row[6] = float(row.get('overtime_cost', 0))
+            x_row[7] = float(row.get('equipment_fuel_cost', 0))
+            x_row[8] = float(row.get('qa_qc_cost', 0))
+            x_row[9] = float(row.get('material_cost', 0))
+            x_row[10] = float(row.get('outsourcing_cost', 0))
             
-            # === G2: Indirect Costs (15-20) ===
-            x_row[15] = float(row.get('pm_overhead', 0))
-            x_row[16] = float(row.get('facility_rent', 0))
-            x_row[17] = float(row.get('utilities', 0))
-            x_row[18] = float(row.get('communication_cost', 0))
-            x_row[19] = float(row.get('internal_training', 0))
-            x_row[20] = float(row.get('quality_mgmt_overhead', 0))
+            # === G2: Indirect Costs (11-14) ===
+            x_row[11] = float(row.get('training_cost', 0))
+            x_row[12] = float(row.get('facility_rent', 0))
+            x_row[13] = float(row.get('communication_cost', 0))
+            x_row[14] = float(row.get('utilities_cost', 0))
             
-            # === G4: Contractual (21-24) ===
-            x_row[21] = float(row.get('permits_and_licensing', 0))
-            x_row[22] = float(row.get('project_insurance', 0))
-            x_row[23] = float(row.get('warranty_and_after_sales', 0))
-            x_row[24] = float(row.get('regulatory_compliance', 0))
+            # === G3: Contractual (15-17) ===
+            x_row[15] = float(row.get('insurance_cost', 0))
+            x_row[16] = float(row.get('licensing_cost', 0))
+            x_row[17] = float(row.get('warranty_cost', 0))
             
-            # === G5: Logistics (25-31) ===
-            x_row[25] = float(row.get('inventory_holding_cost', 0))
-            x_row[26] = float(row.get('ordering_cost', 0))
-            x_row[27] = float(row.get('shortage_stockout', 0))
-            x_row[28] = float(row.get('obsolescence_cost', 0))
-            x_row[29] = float(row.get('international_freight', 0))
-            x_row[30] = float(row.get('packaging_and_handling', 0))
-            x_row[31] = float(row.get('reverse_logistics', 0))
+            # === G4: Risk (18-21) ===
+            x_row[18] = float(row.get('complexity', 0))
+            x_row[19] = float(row.get('weather_contingency', 0))
+            x_row[20] = float(row.get('general_contingency', 0))
+            x_row[21] = float(row.get('rework_risk', 0))
             
-            # === G6: Temporal (32-36) ===
-            x_row[32] = float(row.get('wait_queue_time', 0))
-            x_row[33] = float(row.get('setup_transition_time', 0))
-            x_row[34] = float(row.get('induction_time', 0))
-            x_row[35] = float(row.get('lead_time', 0))
-            x_row[36] = float(row.get('pert_3_point_estimate', 0))
+            # === G5: Logistics (22-26) ===
+            x_row[22] = float(row.get('holding_cost', 0))
+            x_row[23] = float(row.get('international_freight', 0))
+            x_row[24] = float(row.get('handling_cost', 0))
+            x_row[25] = float(row.get('reverse_logistics', 0))
+            x_row[26] = float(row.get('defect_cost', 0))
             
-            # === G7: Resources (37-41) ===
-            r_stats = res_agg.get(t_id, {'total_demand': 0.0, 'unique_res': 0.0})
-            x_row[37] = float(r_stats['total_demand']) # request_quantity
-            x_row[38] = float(row.get('allocated_quantity', 0))
-            x_row[39] = float(row.get('labor_productivity', 0))
-            x_row[40] = float(row.get('equipment_utilization', 0))
-            x_row[41] = float(row.get('resource_substitutability', 0))
+            # === G6: Time (27-28) ===
+            x_row[27] = float(row.get('overtime_hours', 0))
+            x_row[28] = float(row.get('lag_time', 0))
             
-            # === G9: Risks (42-48) ===
-            x_row[42] = float(row.get('technical_complexity', 0))
-            x_row[43] = float(row.get('rework_probability', 0))
-            x_row[44] = float(row.get('external_dependency_level', 0))
-            x_row[45] = float(row.get('contingency_reserve', 0))
-            x_row[46] = float(row.get('management_reserve', 0))
-            x_row[47] = float(row.get('weather_seasonal_risk', 0))
-            x_row[48] = float(row.get('technology_risk', 0))
-            
-            # === G11 & G12: Org & ESG (49-59) ===
-            x_row[49] = float(row.get('required_skill_level', 0))
-            x_row[50] = float(row.get('staff_experience', 0))
-            x_row[51] = float(row.get('learning_curve_effect', 0))
-            x_row[52] = float(row.get('hr_stability_risk', 0))
-            x_row[53] = float(row.get('cross_functional_coordination', 0))
-            x_row[54] = float(row.get('occupational_safety_risk', 0))
-            x_row[55] = float(row.get('environmental_impact', 0))
-            x_row[56] = float(row.get('waste_disposal_cost', 0))
-            x_row[57] = float(row.get('community_social_impact', 0))
-            x_row[58] = float(row.get('carbon_tax_credit', 0))
-            x_row[59] = float(row.get('esg_compliance', 0))
-            
-            # === AI-Computed: G3, G8, G10 ===
-            # G3: Opportunity Cost (60-62) initialized to 0.0, updated dynamically during simulation
-            x_row[60] = 0.0  # schedule_flexibility
-            x_row[61] = 0.0  # resource_alternative_cost
-            x_row[62] = 0.0  # delay_impact_cost
-            
-            # G8: Network Topology (63-67) computed statically by Data Loader
-            x_row[63] = float(in_degree[idx])
-            x_row[64] = float(out_degree[idx])
-            x_row[65] = float(is_critical[idx])
-            x_row[66] = float(total_float[idx])
-            x_row[67] = float(path_length[idx])
-            
-            # G10: Earned Value (68-71) initialized to 0.0, updated dynamically during execution
-            x_row[68] = 0.0  # planned_value
-            x_row[69] = 0.0  # earned_value
-            x_row[70] = 0.0  # cpi
-            x_row[71] = 0.0  # spi
+            # === G7: AI Topology (29-33) ===
+            x_row[29] = float(in_degree[idx])
+            x_row[30] = float(out_degree[idx])
+            x_row[31] = float(is_critical[idx])
+            x_row[32] = float(total_float[idx])
+            x_row[33] = float(path_length[idx])
             
             node_features.append(x_row)
             
-        # 5.5 Optimal Feature Group Normalization Layer (72-D Matrix)
+        # 5.5 Optimal Feature Group Normalization Layer (34-D Matrix)
         node_features_mat = np.array(node_features, dtype=np.float32)
+        node_features_mat = np.nan_to_num(node_features_mat, nan=0.0, posinf=0.0, neginf=0.0)
         
-        # 1. Log Transform for Costs (G1, G2, G4, G5: 7-31, 45, 46, 56, 58) -> Maps [0, 5e8] to [0, 20.03]
-        cost_indices = list(range(7, 32)) + [45, 46, 56, 58]
+        # 1. Log Transform for Costs (G1, G2, G3, G4, G5: 5-26) -> Maps [0, 5e8] to [0, 20.03]
+        cost_indices = list(range(5, 27))
         node_features_mat[:, cost_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, cost_indices]))
 
-        # 2. Log Scaling for Durations (Hub 1-4, G6 32-36) -> Maps [0, 1500h] to [0, 7.31]
-        dur_indices = [1, 2, 3, 4, 32, 33, 34, 35, 36]
+        # 2. Log Scaling for Durations (Hub 0-3, G6 27-28, G7 topology 32) -> Maps [0, 1500h] to [0, 7.31]
+        dur_indices = [0, 1, 2, 3, 27, 28, 32]
         node_features_mat[:, dur_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, dur_indices]))
 
-        # 3. Min-Max Graph Scaling for Topology & Resource Demands (G7: 37-38, G8: 63-64, 66-67) -> Maps to [0, 1]
-        topo_res_indices = [37, 38, 63, 64, 66, 67]
+        # 3. Min-Max Graph Scaling for Topology & Resource Demands (G7: 29-30, 32-33) -> Maps to [0, 1]
+        topo_res_indices = [29, 30, 32, 33]
         for c in topo_res_indices:
             max_v = float(np.max(np.abs(node_features_mat[:, c])))
             if max_v > 1e-6:
@@ -299,8 +267,8 @@ class GlPoProjectGraph:
         edge_features = []
         
         for _, row in edges_df.iterrows():
-            pred_id = str(row['predecessor_task_id'])
-            succ_id = str(row['successor_task_id'])
+            pred_id = str(row.get('predecessor_task_id', row.get('source_id', '')))
+            succ_id = str(row.get('successor_task_id', row.get('target_id', '')))
             
             if pred_id in self.node_to_idx and succ_id in self.node_to_idx:
                 source_idx = self.node_to_idx[pred_id]

@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from feature_interaction_matrix import build_sparse_matrix, INTERACTIONS
-from feature_normalizer import FeatureNormalizer
+from .feature_interaction_matrix import build_sparse_matrix, get_interactions, get_feature_group_map
+from .feature_normalizer import FeatureNormalizer
 
 class HierarchicalAttentionEncoder(nn.Module):
     """
@@ -22,14 +22,15 @@ class HierarchicalAttentionEncoder(nn.Module):
         interaction_matrix (nn.Parameter): Ma trận Tương tác (Domain Knowledge) 72x72 không huấn luyện.
         group_indices (dict): Từ điển lưu trữ ranh giới (chỉ số) của từng nhóm trong mảng 72.
     """
-    def __init__(self, feature_dim=72, num_groups=12):
+    def __init__(self, feature_dim=34, num_groups=8, project_type="Logistics"):
         super(HierarchicalAttentionEncoder, self).__init__()
         self.feature_dim = feature_dim
         self.num_groups = num_groups
+        self.project_type = project_type
         
         # 1. Khởi tạo Ma trận Tương tác Domain Knowledge (72x72)
-        # Chúng ta dùng sparse matrix đã định nghĩa trong feature_interaction_matrix.py
-        np_matrix = build_sparse_matrix(INTERACTIONS, size=feature_dim)
+        interactions = get_interactions(project_type)
+        np_matrix = build_sparse_matrix(interactions, size=feature_dim)
         
         # Đóng băng ma trận (không train phần này, đây là Domain Knowledge)
         # Nhưng có thể cho phép train một chút (fine-tuning) bằng cách gán requires_grad=True sau này
@@ -39,35 +40,18 @@ class HierarchicalAttentionEncoder(nn.Module):
         self.learnable_interaction = nn.Parameter(torch.zeros_like(self.interaction_matrix), requires_grad=True)
         
         # Định nghĩa ranh giới các Group (Index mapping)
-        self.group_indices = {
-            0: list(range(0, 7)),    # Hub
-            1: list(range(7, 15)),   # G1
-            2: list(range(15, 21)),  # G2
-            3: list(range(60, 63)),  # G3 (AI)
-            4: list(range(21, 25)),  # G4
-            5: list(range(25, 32)),  # G5
-            6: list(range(32, 37)),  # G6
-            7: list(range(37, 42)),  # G7
-            8: list(range(63, 68)),  # G8 (AI)
-            9: list(range(42, 49)),  # G9
-            10: list(range(68, 72)), # G10 (AI)
-            11: list(range(49, 55)), # G11
-            12: list(range(55, 60))  # G12
-        }
+        self.group_indices = get_feature_group_map(project_type)
         
-        # Ánh xạ Group ID 1-12 vào index 0-11 
-        self.group_mapping = {
-            0: 0, 1: 1, 2: 2, 4: 3, 5: 4, 6: 5, 7: 6, 9: 7, 11: 8, 12: 9, 3: 10, 8: 11, 10: 12
-        }
+        # Ánh xạ Group ID 0-7 vào index 0-7
+        self.group_mapping = {i: i for i in range(num_groups)}
         
         # Cấu trúc mạng phụ để học thêm (nếu cần)
         self.feature_transform = nn.Linear(feature_dim, feature_dim)
         
-        # Xây dựng Ma trận Tương tác Tầng 2: F-G (Feature to Group) từ Ma trận Tầng 1 (72x72)
-        # Kích thước: (72 features, 13 groups)
-        # X_{f->g} = Tổng các tương tác từ feature f tới tất cả features trong nhóm g
-        X_fg = torch.zeros((72, 13))
-        for f in range(72):
+        # Xây dựng Ma trận Tương tác Tầng 2: F-G (Feature to Group) từ Ma trận Tầng 1
+        # Kích thước: (34 features, 8 groups)
+        X_fg = torch.zeros((feature_dim, num_groups))
+        for f in range(feature_dim):
             for g_id, indices in self.group_indices.items():
                 if f not in indices and len(indices) > 0: # f không thuộc nhóm g
                     X_fg[f, g_id] = float(np_matrix[f, indices].sum())
@@ -99,7 +83,7 @@ class HierarchicalAttentionEncoder(nn.Module):
         batch_size = x.shape[0]
         device = x.device
         
-        group_masks = torch.zeros((batch_size, 13), device=device) # 13 vì có Hub (0) + 12 groups
+        group_masks = torch.zeros((batch_size, self.num_groups), device=device)
         for g_id, indices in self.group_indices.items():
             # Sum absolute values to see if group is active
             group_sum = torch.sum(torch.abs(x_norm[:, indices]), dim=1)
@@ -114,7 +98,7 @@ class HierarchicalAttentionEncoder(nn.Module):
         x_transformed = F.relu(self.feature_transform(x_norm))
         
         # Bước 1: Tầng 1 - Intra-group Attention
-        S_g = torch.zeros((batch_size, 13), device=device)
+        S_g = torch.zeros((batch_size, self.num_groups), device=device)
         
         for g_id, indices in self.group_indices.items():
             if len(indices) == 0: continue

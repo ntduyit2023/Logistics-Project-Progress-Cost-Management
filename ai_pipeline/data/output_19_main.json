@@ -1,0 +1,1216 @@
+{
+    "project_id": "19",
+    "cpm_static_makespan": 368.0,
+    "deadline": 478.40000000000003,
+    "budget": 246675.0,
+    "dependencies": [
+        [
+            "19_1",
+            "19_2"
+        ],
+        [
+            "19_1",
+            "19_3"
+        ],
+        [
+            "19_1",
+            "19_4"
+        ],
+        [
+            "19_4",
+            "19_5"
+        ],
+        [
+            "19_5",
+            "19_6"
+        ],
+        [
+            "19_4",
+            "19_6"
+        ],
+        [
+            "19_6",
+            "19_7"
+        ],
+        [
+            "19_5",
+            "19_7"
+        ],
+        [
+            "19_7",
+            "19_30"
+        ],
+        [
+            "19_2",
+            "19_30"
+        ],
+        [
+            "19_3",
+            "19_30"
+        ],
+        [
+            "19_30",
+            "19_8"
+        ],
+        [
+            "19_8",
+            "19_9"
+        ],
+        [
+            "19_8",
+            "19_10"
+        ],
+        [
+            "19_10",
+            "19_11"
+        ],
+        [
+            "19_10",
+            "19_12"
+        ],
+        [
+            "19_11",
+            "19_13"
+        ],
+        [
+            "19_12",
+            "19_13"
+        ],
+        [
+            "19_9",
+            "19_14"
+        ],
+        [
+            "19_10",
+            "19_14"
+        ],
+        [
+            "19_13",
+            "19_15"
+        ],
+        [
+            "19_14",
+            "19_15"
+        ],
+        [
+            "19_15",
+            "19_16"
+        ],
+        [
+            "19_15",
+            "19_17"
+        ],
+        [
+            "19_15",
+            "19_18"
+        ],
+        [
+            "19_16",
+            "19_31"
+        ],
+        [
+            "19_17",
+            "19_31"
+        ],
+        [
+            "19_18",
+            "19_31"
+        ],
+        [
+            "19_31",
+            "19_19"
+        ],
+        [
+            "19_19",
+            "19_20"
+        ],
+        [
+            "19_20",
+            "19_21"
+        ],
+        [
+            "19_21",
+            "19_22"
+        ],
+        [
+            "19_21",
+            "19_23"
+        ],
+        [
+            "19_23",
+            "19_24"
+        ],
+        [
+            "19_21",
+            "19_25"
+        ],
+        [
+            "19_21",
+            "19_26"
+        ],
+        [
+            "19_22",
+            "19_32"
+        ],
+        [
+            "19_24",
+            "19_32"
+        ],
+        [
+            "19_25",
+            "19_32"
+        ],
+        [
+            "19_26",
+            "19_32"
+        ],
+        [
+            "19_32",
+            "19_27"
+        ],
+        [
+            "19_27",
+            "19_28"
+        ],
+        [
+            "19_28",
+            "19_29"
+        ]
+    ],
+    "tasks_metadata": [
+        {
+            "id": "19_18",
+            "name": "Reparing walls",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_1",
+            "name": "Installation of power generators, lighting, toilets, fencing,  supply of concrete and wooden partition",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_10",
+            "name": "Pumping lock chamber completely dry",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_11",
+            "name": "Cleaning lock floor",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "19_12",
+            "name": "supply concrete blocks (to prevent the floor comes up)",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "19_13",
+            "name": "placing concrete blocks",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_14",
+            "name": "Cleaning walls and threshold",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "19_15",
+            "name": "Installing stairs in lock chamber",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_16",
+            "name": "Replacing hinges, pivot shoes and pivots",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_17",
+            "name": "Cleaning lock head",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "19_19",
+            "name": "Transport of gates to the site",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "19_2",
+            "name": "Remove railing and platforms",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_20",
+            "name": "Put gates in place",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_21",
+            "name": "Adjusting gates (Tightening hinges , front beams, sealing, anchorage points)",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_22",
+            "name": "Installing railing",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_23",
+            "name": "preliminary works at threshold",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_24",
+            "name": "Repairing threshold",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_25",
+            "name": "Install platforms",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_26",
+            "name": "Installing ladder",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_27",
+            "name": "Remove concrete blocks",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_28",
+            "name": "Remove concrete and wooden partition",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_29",
+            "name": "Cleaning site",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_3",
+            "name": "preliminary works at gates (loosing hinges, disconnect hinges, hydraulics, anchorage points)",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_30",
+            "name": "End Of Preparation/Start Restoration of lock head",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": []
+        },
+        {
+            "id": "19_31",
+            "name": "End Restoration of lock head/Start Installing new gates",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": []
+        },
+        {
+            "id": "19_32",
+            "name": "End Installing new gates/ Start Termination",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": []
+        },
+        {
+            "id": "19_4",
+            "name": "Sealing canal lock gates at other side and overflow sewers",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_5",
+            "name": "Placing of concrete partition + Placing of wooden partition",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_6",
+            "name": "Installing pumps",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_7",
+            "name": "Check safety wooden partition + Check safety concrete partition",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        },
+        {
+            "id": "19_8",
+            "name": "Remove gates",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 2.0
+                }
+            ]
+        },
+        {
+            "id": "19_9",
+            "name": "Remove hinges",
+            "most_probable_duration": 0.0,
+            "normal_cost": NaN,
+            "crash_cost": NaN,
+            "outsource_cost": NaN,
+            "resources": [
+                {
+                    "resource_id": "223",
+                    "quantity": 3.0
+                }
+            ]
+        }
+    ],
+    "monte_carlo": {
+        "mean_makespan": 421.97231431215033,
+        "on_time_prob": 1.0,
+        "P90": 433.75963900073646,
+        "criticality_indices": {
+            "19_1": 1.0,
+            "19_2": 0.0,
+            "19_3": 0.0,
+            "19_4": 1.0,
+            "19_5": 1.0,
+            "19_6": 1.0,
+            "19_7": 1.0,
+            "19_30": 1.0,
+            "19_8": 1.0,
+            "19_9": 0.0,
+            "19_10": 1.0,
+            "19_11": 0.493,
+            "19_12": 0.507,
+            "19_14": 0.0,
+            "19_13": 1.0,
+            "19_15": 1.0,
+            "19_16": 0.0,
+            "19_17": 1.0,
+            "19_18": 0.0,
+            "19_31": 1.0,
+            "19_19": 1.0,
+            "19_20": 1.0,
+            "19_21": 1.0,
+            "19_22": 0.0,
+            "19_23": 1.0,
+            "19_25": 0.0,
+            "19_26": 0.0,
+            "19_24": 1.0,
+            "19_32": 1.0,
+            "19_27": 1.0,
+            "19_28": 1.0,
+            "19_29": 1.0
+        }
+    },
+    "pareto_nsga2": {
+        "solutions_found": 14,
+        "selected": {
+            "makespan": 688.0,
+            "cost": 245882.0,
+            "risk": 10.3,
+            "modes": [
+                0,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0
+            ]
+        },
+        "options": [
+            {
+                "makespan": 688.0,
+                "cost": 245882.0,
+                "risk": 10.3,
+                "modes": [
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0
+                ]
+            },
+            {
+                "makespan": 697.5999999999999,
+                "cost": 245140.0,
+                "risk": 10.500000000000002,
+                "modes": [
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "makespan": 697.5999999999999,
+                "cost": 245140.0,
+                "risk": 10.500000000000002,
+                "modes": [
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "makespan": 697.5999999999999,
+                "cost": 245140.0,
+                "risk": 10.500000000000002,
+                "modes": [
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                ]
+            }
+        ]
+    },
+    "cp_sat_schedule": {
+        "status": "INFEASIBLE",
+        "makespan": 0,
+        "schedule": {}
+    },
+    "ppo_schedule": {
+        "makespan": 141.6862030029297,
+        "tgc": 0.0,
+        "reward": 10.898725274564029,
+        "modes": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+        ]
+    },
+    "project_state_evolution": {
+        "current_state_id": 1,
+        "before_after_comparison": {
+            "before_state_id": 0,
+            "after_state_id": 1,
+            "action_applied": {
+                "action_type": "Crash",
+                "affected_tasks": [
+                    "19_1",
+                    "19_10",
+                    "19_30",
+                    "19_31",
+                    "19_32",
+                    "19_6",
+                    "19_7"
+                ],
+                "priority": 1,
+                "overlap_ratio": 0.3,
+                "crash_level": 1.5,
+                "outsource_level": 2.0,
+                "resource_delta": {},
+                "expected_duration_delta": 688.0,
+                "expected_cost_delta": 245882.0,
+                "expected_risk_delta": 10.3,
+                "custom_params": {
+                    "modes": [
+                        0,
+                        1,
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        1,
+                        1,
+                        0,
+                        0,
+                        1,
+                        1,
+                        0,
+                        0
+                    ]
+                }
+            },
+            "metrics_comparison": {
+                "makespan": {
+                    "before": 368.0,
+                    "after": 7.0,
+                    "delta": -361.0,
+                    "percent_change": -98.09782608695652
+                },
+                "total_cost": {
+                    "before": NaN,
+                    "after": NaN,
+                    "delta": NaN,
+                    "percent_change": 0.0
+                },
+                "on_time_probability": {
+                    "before": 1.0,
+                    "after": 1.0,
+                    "delta": 0.0
+                },
+                "P90_makespan": {
+                    "before": 434.2517515038855,
+                    "after": 358.5207372960608,
+                    "delta": -75.73101420782467
+                }
+            },
+            "critical_path_evolution": {
+                "before_count": 0,
+                "after_count": 29,
+                "newly_critical_tasks": [
+                    "19_27",
+                    "19_11",
+                    "19_30",
+                    "19_13",
+                    "19_12",
+                    "19_15",
+                    "19_22",
+                    "19_29",
+                    "19_21",
+                    "19_10",
+                    "19_28",
+                    "19_14",
+                    "19_4",
+                    "19_6",
+                    "19_20",
+                    "19_8",
+                    "19_25",
+                    "19_23",
+                    "19_16",
+                    "19_5",
+                    "19_1",
+                    "19_7",
+                    "19_18",
+                    "19_31",
+                    "19_26",
+                    "19_19",
+                    "19_32",
+                    "19_17",
+                    "19_24"
+                ],
+                "no_longer_critical_tasks": []
+            },
+            "resource_utilization_evolution": {
+                "before": {
+                    "total_demand": {
+                        "223": 65.0
+                    },
+                    "capacities": {
+                        "223": 1
+                    },
+                    "utilization_rate": {
+                        "223": 65.0
+                    }
+                },
+                "after": {
+                    "total_demand": {
+                        "223": 69.0
+                    },
+                    "capacities": {
+                        "223": 1
+                    },
+                    "utilization_rate": {
+                        "223": 69.0
+                    }
+                }
+            },
+            "top_attention_shifts": [
+                {
+                    "task_id": "19_21",
+                    "score_before": 0.5672650933265686,
+                    "score_after": 0.49769988656044006,
+                    "delta": -0.06956520676612854
+                },
+                {
+                    "task_id": "19_19",
+                    "score_before": 0.5242657661437988,
+                    "score_after": 0.586296796798706,
+                    "delta": 0.06203103065490723
+                },
+                {
+                    "task_id": "19_5",
+                    "score_before": 0.5410275459289551,
+                    "score_after": 0.48897266387939453,
+                    "delta": -0.05205488204956055
+                },
+                {
+                    "task_id": "19_6",
+                    "score_before": 0.5817407369613647,
+                    "score_after": 0.5324763059616089,
+                    "delta": -0.04926443099975586
+                },
+                {
+                    "task_id": "19_32",
+                    "score_before": 0.5930023193359375,
+                    "score_after": 0.5534510612487793,
+                    "delta": -0.0395512580871582
+                }
+            ]
+        },
+        "state_history": [
+            {
+                "state_id": 0,
+                "timestamp": 1783741033.982628,
+                "action_applied": null,
+                "makespan": 368.0,
+                "critical_path": [],
+                "total_cost": NaN,
+                "direct_cost": 119120.0,
+                "indirect_cost": NaN,
+                "monte_carlo": {
+                    "mean_makespan": 422.1667143566651,
+                    "on_time_prob": 1.0,
+                    "P90": 434.2517515038855
+                },
+                "resource_metrics": {
+                    "total_demand": {
+                        "223": 65.0
+                    },
+                    "capacities": {
+                        "223": 1
+                    },
+                    "utilization_rate": {
+                        "223": 65.0
+                    }
+                }
+            },
+            {
+                "state_id": 1,
+                "timestamp": 1783741034.1112914,
+                "action_applied": {
+                    "action_type": "Crash",
+                    "affected_tasks": [
+                        "19_1",
+                        "19_10",
+                        "19_30",
+                        "19_31",
+                        "19_32",
+                        "19_6",
+                        "19_7"
+                    ],
+                    "priority": 1,
+                    "overlap_ratio": 0.3,
+                    "crash_level": 1.5,
+                    "outsource_level": 2.0,
+                    "resource_delta": {},
+                    "expected_duration_delta": 688.0,
+                    "expected_cost_delta": 245882.0,
+                    "expected_risk_delta": 10.3,
+                    "custom_params": {
+                        "modes": [
+                            0,
+                            1,
+                            1,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1,
+                            1,
+                            1,
+                            0,
+                            0,
+                            1,
+                            1,
+                            0,
+                            0
+                        ]
+                    }
+                },
+                "makespan": 7.0,
+                "critical_path": [
+                    "19_18",
+                    "19_1",
+                    "19_10",
+                    "19_11",
+                    "19_12",
+                    "19_13",
+                    "19_14",
+                    "19_15",
+                    "19_16",
+                    "19_17",
+                    "19_19",
+                    "19_20",
+                    "19_21",
+                    "19_22",
+                    "19_23",
+                    "19_24",
+                    "19_25",
+                    "19_26",
+                    "19_27",
+                    "19_28",
+                    "19_29",
+                    "19_30",
+                    "19_31",
+                    "19_32",
+                    "19_4",
+                    "19_5",
+                    "19_6",
+                    "19_7",
+                    "19_8"
+                ],
+                "total_cost": NaN,
+                "direct_cost": 122240.0,
+                "indirect_cost": NaN,
+                "monte_carlo": {
+                    "mean_makespan": 347.31385415273115,
+                    "on_time_prob": 1.0,
+                    "P90": 358.5207372960608
+                },
+                "resource_metrics": {
+                    "total_demand": {
+                        "223": 69.0
+                    },
+                    "capacities": {
+                        "223": 1
+                    },
+                    "utilization_rate": {
+                        "223": 69.0
+                    }
+                }
+            }
+        ]
+    }
+}
