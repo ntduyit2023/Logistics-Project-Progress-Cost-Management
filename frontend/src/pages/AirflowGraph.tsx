@@ -26,11 +26,11 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   const nodesWithTime = nodes.filter(n => n.data && n.data.baseline_start);
   if (nodesWithTime.length > nodes.length * 0.2) {
     // TIME-BASED GANTT LAYOUT
-    const PIXELS_PER_DAY = 120; // Increased spacing to prevent edge/node overlap
+    const PIXELS_PER_DAY = 300; // Increased spacing to prevent edge/node overlap
     const NODE_WIDTH = 250;
     const NODE_HEIGHT = 80;
     const LANE_SPACING = 30;
-    
+
     // Sort nodes topologically or by time to assign lanes properly
     const sortedNodes = [...nodes].sort((a, b) => {
       const timeA = a.data?.baseline_start ? new Date(a.data.baseline_start).getTime() : 0;
@@ -56,7 +56,7 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
         const days = (t - minTime) / (1000 * 60 * 60 * 24);
         x = days * PIXELS_PER_DAY;
       }
-      
+
       const durationDays = node.data?.duration || 1;
       const estimatedEndX = x + NODE_WIDTH + (durationDays * 2); // Approximate space taken by this node horizontally
 
@@ -89,8 +89,8 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
 
   // FALLBACK TO DAGRE
   const isHorizontal = direction === 'LR';
-  dagreGraph.setGraph({ 
-    rankdir: direction, 
+  dagreGraph.setGraph({
+    rankdir: direction,
     nodesep: 150,
     ranksep: 450,
     edgesep: 80,
@@ -111,7 +111,7 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
     const nodeWithPosition = dagreGraph.node(node.id);
     node.targetPosition = isHorizontal ? 'left' : 'top';
     node.sourcePosition = isHorizontal ? 'right' : 'bottom';
-    
+
     node.position = {
       x: nodeWithPosition.x - 208 / 2,
       y: nodeWithPosition.y - 64 / 2,
@@ -133,8 +133,8 @@ interface AirflowGraphProps {
   criticalityIndices?: Record<string, number>;
 }
 
-const AirflowGraph: React.FC<AirflowGraphProps> = ({ 
-  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, criticalityIndices 
+const AirflowGraph: React.FC<AirflowGraphProps> = ({
+  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, criticalityIndices
 }) => {
   // Simple function to get Vietnamese name and WBS based on task WBS
   const getTaskNameByWbs = (wbs: string): string => {
@@ -210,23 +210,23 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       const mode = selectedOptionModes && selectedOptionModes[idx] !== undefined ? selectedOptionModes[idx] : 0;
       const wbs = task.wbs || task.id.split("_")[1] || task.id;
       const isCritical = (criticalityIndices && criticalityIndices[task.id] > 0.75) || task.duration_days > 50;
-      
-      const duration = mode === 1 
-        ? Math.round((task.most_probable_duration || task.duration_days || 10) / 1.5) 
-        : mode === 2 
-          ? Math.round((task.most_probable_duration || task.duration_days || 10) / 2.0) 
+
+      const duration = mode === 1
+        ? Math.round((task.most_probable_duration || task.duration_days || 10) / 1.5)
+        : mode === 2
+          ? Math.round((task.most_probable_duration || task.duration_days || 10) / 2.0)
           : (task.most_probable_duration || task.duration_days || 10);
 
-      const cost = mode === 1 
+      const cost = mode === 1
         ? (task.crash_cost || 1500)
-        : mode === 2 
+        : mode === 2
           ? (task.outsource_cost || 2000)
           : (task.total_cost || (
-              (task.internal_labor_cost || 0) + 
-              (task.equipment_fuel_cost || 0) + 
-              (task.material_cost || 0) + 
-              (task.outsourcing_cost || 0)
-            ) || 1000);
+            (task.internal_labor_cost || 0) +
+            (task.equipment_fuel_cost || 0) +
+            (task.material_cost || 0) +
+            (task.outsourcing_cost || 0)
+          ) || 1000);
 
       return {
         id: String(task.id),
@@ -262,9 +262,9 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
         id: `e-${dep.sourceId}-${dep.targetId}`,
         source: dep.sourceId,
         target: dep.targetId,
-        type: 'smoothstep',
-        animated: true,
-        style: { stroke: '#94a3b8', strokeWidth: 1.5, opacity: 0.6 },
+        type: 'default',
+        animated: false,
+        style: { stroke: '#94a3b8', strokeWidth: 1.5, opacity: 0.4 },
         markerEnd: {
           type: MarkerType.ArrowClosed,
           width: 15,
@@ -344,10 +344,9 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       </div>
 
       {/* Drawer */}
-      <div 
-        className={`absolute top-0 right-0 h-full w-96 bg-white shadow-2xl border-l border-slate-200 transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${
-          selectedTask ? 'translate-x-0' : 'translate-x-full'
-        }`}
+      <div
+        className={`absolute top-0 right-0 h-full w-96 bg-white shadow-2xl border-l border-slate-200 transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${selectedTask ? 'translate-x-0' : 'translate-x-full'
+          }`}
       >
         {selectedTask && (
           <>
@@ -377,7 +376,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                   {selectedTask.task_name}
                 </h2>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedTask(null)}
                 className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors"
               >
@@ -395,7 +394,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                   </div>
                   <div className="text-lg font-extrabold text-slate-800">{selectedTask.duration} <span className="text-xs font-normal text-slate-500">hours</span></div>
                 </div>
-                
+
                 <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
                   <div className="flex items-center text-emerald-600 mb-1">
                     <DollarSign size={13} className="mr-1.5" />
@@ -407,27 +406,27 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
 
               {/* Actions */}
               {(onEditTask || onDeleteTask) && (
-              <div className="mb-6 flex gap-3">
-                {onEditTask && <button 
-                  onClick={() => {
-                    const t = tasks.find(x => String(x.id) === selectedTask.task_label || String(x.id) === selectedTask.task_id);
-                    if (t) onEditTask(t);
-                  }}
-                  className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 rounded-lg border border-blue-200 transition-colors"
-                >
-                  Edit Node
-                </button>}
-                {onDeleteTask && <button 
-                  onClick={async () => {
-                    if (window.confirm("Delete this node?")) {
-                      onDeleteTask(selectedTask.task_label || selectedTask.task_id);
-                    }
-                  }}
-                  className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-lg border border-red-200 transition-colors"
-                >
-                  Delete Node
-                </button>}
-              </div>
+                <div className="mb-6 flex gap-3">
+                  {onEditTask && <button
+                    onClick={() => {
+                      const t = tasks.find(x => String(x.id) === selectedTask.task_label || String(x.id) === selectedTask.task_id);
+                      if (t) onEditTask(t);
+                    }}
+                    className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 rounded-lg border border-blue-200 transition-colors"
+                  >
+                    Edit Node
+                  </button>}
+                  {onDeleteTask && <button
+                    onClick={async () => {
+                      if (window.confirm("Delete this node?")) {
+                        onDeleteTask(selectedTask.task_label || selectedTask.task_id);
+                      }
+                    }}
+                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-lg border border-red-200 transition-colors"
+                  >
+                    Delete Node
+                  </button>}
+                </div>
               )}
 
               {/* Resource Allocations */}

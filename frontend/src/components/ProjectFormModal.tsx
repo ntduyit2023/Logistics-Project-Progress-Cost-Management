@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save } from 'lucide-react';
+import { X, Save, FolderPlus, FolderEdit } from 'lucide-react';
 
 interface ProjectFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { project_name: string; status: string }) => void;
-  initialData?: { project_name: string; status: string } | null;
+  onSubmit: (data: { project_name: string; status: string; type?: string }) => void;
+  initialData?: { project_name: string; status: string; type?: string } | null;
 }
 
 export default function ProjectFormModal({ isOpen, onClose, onSubmit, initialData }: ProjectFormModalProps) {
   const [projectName, setProjectName] = useState('');
   const [status, setStatus] = useState('Planning');
+  const [projectType, setProjectType] = useState('Construction');
 
   useEffect(() => {
     if (initialData) {
       setProjectName(initialData.project_name);
       setStatus(initialData.status || 'Planning');
+      setProjectType(initialData.type || 'Construction');
     } else {
       setProjectName('');
       setStatus('Planning');
+      setProjectType('Construction');
     }
   }, [initialData, isOpen]);
 
@@ -31,62 +34,84 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, initialDat
       alert("Project name must be at least 3 characters long.");
       return;
     }
-    onSubmit({ project_name: projectName, status });
+    onSubmit({ project_name: projectName, status, type: projectType });
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex justify-between items-center p-4 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="text-lg font-bold text-slate-800">
-            {initialData ? 'Edit Project' : 'Create New Project'}
-          </h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition p-1 rounded-md hover:bg-slate-200/50">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg ${initialData ? 'bg-blue-100 text-blue-600' : 'bg-violet-100 text-violet-600'}`}>
+              {initialData ? <FolderEdit size={20} /> : <FolderPlus size={20} />}
+            </div>
+            <h2 className="text-lg font-bold text-slate-800">
+              {initialData ? 'Edit Project Details' : 'Create New Project'}
+            </h2>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition p-1.5 rounded-lg hover:bg-slate-200/50">
             <X size={20} />
           </button>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-5">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Project Name</label>
+              <label className="block text-sm font-bold text-slate-700 mb-1.5">Project Name <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
                 placeholder="e.g. Alpha Tower Construction"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors"
+                className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all bg-slate-50 focus:bg-white"
                 autoFocus
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Status</label>
-              <select 
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-colors bg-white"
-              >
-                <option value="Planning">Planning</option>
-                <option value="Execution">Execution</option>
-                <option value="Completed">Completed</option>
-                <option value="On Hold">On Hold</option>
-              </select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Project Type</label>
+                <select 
+                  value={projectType}
+                  onChange={(e) => setProjectType(e.target.value)}
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all bg-slate-50 focus:bg-white"
+                >
+                  <option value="Construction">Construction</option>
+                  <option value="IT Software">IT Software</option>
+                  <option value="Logistics">Logistics</option>
+                  <option value="Research">Research</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Status</label>
+                <select 
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all bg-slate-50 focus:bg-white"
+                >
+                  <option value="Planning">Planning</option>
+                  <option value="Execution">Execution</option>
+                  <option value="Completed">Completed</option>
+                  <option value="On Hold">On Hold</option>
+                </select>
+              </div>
             </div>
           </div>
           
-          <div className="mt-6 flex gap-3 justify-end">
+          <div className="mt-8 pt-5 border-t border-slate-100 flex gap-3 justify-end">
             <button 
               type="button" 
               onClick={onClose}
-              className="px-4 py-2 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              className="px-5 py-2.5 text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-all"
             >
               Cancel
             </button>
             <button 
               type="submit" 
               disabled={!projectName.trim()}
-              className="px-4 py-2 text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50 rounded-lg transition-colors flex items-center"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all flex items-center shadow-sm hover:shadow"
             >
               <Save size={16} className="mr-2" />
               {initialData ? 'Save Changes' : 'Create Project'}
