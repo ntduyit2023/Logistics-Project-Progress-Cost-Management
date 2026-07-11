@@ -38,7 +38,8 @@ def run_pure_or_monte_carlo(tasks, dependencies, num_iterations=10000):
         
     adj = {i: [] for i in range(n)}
     rev_adj = {i: [] for i in range(n)}
-    for u, v in dependencies:
+    for edge in dependencies:
+        u, v = edge[0], edge[1]
         if u in node_to_idx and v in node_to_idx:
             u_idx = node_to_idx[u]
             v_idx = node_to_idx[v]

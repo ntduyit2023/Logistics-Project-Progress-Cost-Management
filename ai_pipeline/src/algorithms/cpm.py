@@ -39,21 +39,31 @@ def build_project_graph(
         G.add_node(task_id, **task)
         
     # Thêm các cạnh phụ thuộc
-    for pred, succ in dependencies:
+    for edge in dependencies:
+        if len(edge) == 3:
+            pred, succ, attrs = edge
+        else:
+            pred, succ = edge[0], edge[1]
+            attrs = {}
+            
         # Bỏ qua nếu thông tin nút bị rỗng hoặc NaN
         if not pred or not succ or str(pred).lower() == 'nan' or str(succ).lower() == 'nan':
             continue
-        if pred not in G.nodes:
-            raise ValueError(f"Task đi trước '{pred}' không tồn tại trong danh sách công việc.")
-        if succ not in G.nodes:
-            raise ValueError(f"Task đi sau '{succ}' không tồn tại trong danh sách công việc.")
-        G.add_edge(pred, succ)
+        if pred not in G.nodes or succ not in G.nodes:
+            continue # Bỏ qua các quan hệ có nút không tồn tại thay vì ném lỗi
+        G.add_edge(pred, succ, **attrs)
         
-    # Phát hiện chu trình
-    if not nx.is_directed_acyclic_graph(G):
-        cycles = list(nx.simple_cycles(G))
-        raise ValueError(f"Đồ thị phụ thuộc chứa chu trình! Các chu trình phát hiện: {cycles}")
-        
+    # Phát hiện và tự động gỡ chu trình (Break cycles)
+    while not nx.is_directed_acyclic_graph(G):
+        try:
+            cycle = nx.find_cycle(G, orientation="original")
+            # cycle là list các cạnh, ví dụ [('A', 'B'), ('B', 'C'), ('C', 'A')]
+            # Chúng ta sẽ xóa cạnh cuối cùng để gỡ chu trình
+            edge_to_remove = cycle[-1]
+            G.remove_edge(edge_to_remove[0], edge_to_remove[1])
+        except nx.NetworkXNoCycle:
+            break
+            
     return G
 
 def calculate_cpm(G: nx.DiGraph, hours_per_day: float = 8.0, days_per_week: float = 5.0) -> Tuple[nx.DiGraph, float]:
@@ -101,7 +111,27 @@ def calculate_cpm(G: nx.DiGraph, hours_per_day: float = 8.0, days_per_week: floa
         if not preds:
             G_cpm.nodes[node]['es'] = 0.0
         else:
-            G_cpm.nodes[node]['es'] = safe_float(max(G_cpm.nodes[p]['ef'] for p in preds))
+            max_es = 0.0
+            for p in preds:
+                edge_data = G_cpm.edges[p, node]
+                dep_type = str(edge_data.get('dependency_type', 'FS')).upper()
+                lag_h = float(edge_data.get('lag_hours', 0.0))
+                
+                p_ef = safe_float(G_cpm.nodes[p].get('ef', 0.0))
+                p_es = safe_float(G_cpm.nodes[p].get('es', 0.0))
+                
+                if dep_type == 'SS':
+                    v_es = p_es + lag_h
+                elif dep_type == 'FF':
+                    v_es = p_ef + lag_h - duration
+                elif dep_type == 'SF':
+                    v_es = p_es + lag_h - duration
+                else: # FS
+                    v_es = p_ef + lag_h
+                    
+                if v_es > max_es:
+                    max_es = v_es
+            G_cpm.nodes[node]['es'] = safe_float(max_es)
             
         G_cpm.nodes[node]['ef'] = G_cpm.nodes[node]['es'] + duration
         
@@ -122,7 +152,40 @@ def calculate_cpm(G: nx.DiGraph, hours_per_day: float = 8.0, days_per_week: floa
         if not succs:
             G_cpm.nodes[node]['lf'] = project_duration
         else:
-            G_cpm.nodes[node]['lf'] = safe_float(min(G_cpm.nodes[s]['ls'] for s in succs))
+            min_lf = float('inf')
+            for s in succs:
+                edge_data = G_cpm.edges[node, s]
+                dep_type = str(edge_data.get('dependency_type', 'FS')).upper()
+                lag_h = float(edge_data.get('lag_hours', 0.0))
+                
+                s_ls = safe_float(G_cpm.nodes[s].get('ls', project_duration))
+                s_lf = safe_float(G_cpm.nodes[s].get('lf', project_duration))
+                
+                # Retrieve successor's computed duration
+                s_d_m = safe_float(G_cpm.nodes[s].get('duration_months', 0.0))
+                s_d_w = safe_float(G_cpm.nodes[s].get('duration_weeks', 0.0))
+                s_d_d = safe_float(G_cpm.nodes[s].get('duration_days', 0.0))
+                s_d_h = safe_float(G_cpm.nodes[s].get('duration_hours', 0.0))
+                s_cal_type = str(G_cpm.nodes[s].get('calendar_type', 'Agenda'))
+                s_dur_calc = calculate_duration_hours(s_d_m, s_d_w, s_d_d, s_d_h, hours_per_day, days_per_week, s_cal_type)
+                s_duration = safe_float(G_cpm.nodes[s].get('most_probable_duration', G_cpm.nodes[s].get('duration', s_dur_calc)))
+
+                if dep_type == 'SS':
+                    # SS: ES[s] >= ES[node] + lag -> ES[node] <= ES[s] - lag -> LS[node] <= LS[s] - lag -> LF[node] <= LS[s] - lag + duration
+                    u_lf = s_ls - lag_h + duration
+                elif dep_type == 'FF':
+                    # FF: EF[s] >= EF[node] + lag -> LF[node] <= LF[s] - lag
+                    u_lf = s_lf - lag_h
+                elif dep_type == 'SF':
+                    # SF: EF[s] >= ES[node] + lag -> ES[node] <= EF[s] - lag -> LF[node] <= LF[s] - lag + duration
+                    u_lf = s_lf - lag_h + duration
+                else: # FS
+                    # FS: ES[s] >= EF[node] + lag -> EF[node] <= ES[s] - lag -> LF[node] <= LS[s] - lag
+                    u_lf = s_ls - lag_h
+                    
+                if u_lf < min_lf:
+                    min_lf = u_lf
+            G_cpm.nodes[node]['lf'] = safe_float(min_lf)
             
         G_cpm.nodes[node]['ls'] = G_cpm.nodes[node]['lf'] - duration
         

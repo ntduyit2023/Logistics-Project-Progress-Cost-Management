@@ -121,6 +121,7 @@ class LogisticsGymEnv(gym.Env):
         # ── Lưu trữ dữ liệu dự án gốc (không thay đổi) ──────────
         self._original_features = np.array(project_data['features'], dtype=np.float32)
         self._edge_index = np.array(project_data['edge_index'], dtype=np.int64)
+        self._edge_attr = np.array(project_data.get('edge_attr', [])) if project_data.get('edge_attr') is not None else None
         self._base_durations = np.array(project_data['durations'], dtype=np.float32)
         self._resource_demands = project_data.get('resource_demands', {})
         self._resource_capacities = project_data.get('resource_capacities', {})
@@ -182,8 +183,8 @@ class LogisticsGymEnv(gym.Env):
             for i in range(self._edge_index.shape[1]):
                 src = int(self._edge_index[0, i])
                 dst = int(self._edge_index[1, i])
-                self._adj_forward[src].append(dst)
-                self._adj_backward[dst].append(src)
+                self._adj_forward[src].append((dst, i))
+                self._adj_backward[dst].append((src, i))
                 self._out_degree[src] += 1
                 self._in_degree[dst] += 1
 
@@ -202,7 +203,7 @@ class LogisticsGymEnv(gym.Env):
         while queue:
             u = queue.popleft()
             order.append(u)
-            for v in self._adj_forward[u]:
+            for v, _ in self._adj_forward[u]:
                 in_deg[v] -= 1
                 if in_deg[v] == 0:
                     queue.append(v)
@@ -229,8 +230,26 @@ class LogisticsGymEnv(gym.Env):
         # Forward Pass
         for u in self._topo_order:
             EF[u] = ES[u] + durations[u]
-            for v in self._adj_forward[u]:
-                ES[v] = max(ES[v], EF[u])
+            for v, edge_idx in self._adj_forward[u]:
+                # Xử lý Link Type và Lag
+                if self._edge_attr is not None:
+                    attr = self._edge_attr[edge_idx]
+                    is_fs, is_ss, is_ff, is_sf = attr[0], attr[1], attr[2], attr[3]
+                    # lag in hours (chỉ số 7)
+                    lag_h = attr[7]
+                else:
+                    is_fs, is_ss, is_ff, is_sf, lag_h = 1.0, 0.0, 0.0, 0.0, 0.0
+
+                if is_ss > 0.5:
+                    ES[v] = max(ES[v], ES[u] + lag_h)
+                elif is_ff > 0.5:
+                    # FF -> EF[v] >= EF[u] + lag -> ES[v] >= EF[u] + lag - durations[v]
+                    ES[v] = max(ES[v], EF[u] + lag_h - durations[v])
+                elif is_sf > 0.5:
+                    # SF -> EF[v] >= ES[u] + lag -> ES[v] >= ES[u] + lag - durations[v]
+                    ES[v] = max(ES[v], ES[u] + lag_h - durations[v])
+                else: # Mặc định là FS
+                    ES[v] = max(ES[v], EF[u] + lag_h)
 
         # Backward Pass
         makespan = float(np.max(EF)) if N > 0 else 0.0
@@ -239,8 +258,26 @@ class LogisticsGymEnv(gym.Env):
 
         for u in reversed(self._topo_order):
             LS[u] = LF[u] - durations[u]
-            for p in self._adj_backward[u]:
-                LF[p] = min(LF[p], LS[u])
+            for p, edge_idx in self._adj_backward[u]:
+                if self._edge_attr is not None:
+                    attr = self._edge_attr[edge_idx]
+                    is_fs, is_ss, is_ff, is_sf = attr[0], attr[1], attr[2], attr[3]
+                    lag_h = attr[7]
+                else:
+                    is_fs, is_ss, is_ff, is_sf, lag_h = 1.0, 0.0, 0.0, 0.0, 0.0
+
+                if is_ss > 0.5:
+                    # SS -> ES[u] >= ES[p] + lag -> ES[p] <= ES[u] - lag -> LS[p] <= LS[u] - lag -> LF[p] <= LS[u] - lag + durations[p]
+                    LF[p] = min(LF[p], LS[u] - lag_h + durations[p])
+                elif is_ff > 0.5:
+                    # FF -> EF[u] >= EF[p] + lag -> LF[p] <= LF[u] - lag
+                    LF[p] = min(LF[p], LF[u] - lag_h)
+                elif is_sf > 0.5:
+                    # SF -> EF[u] >= ES[p] + lag -> LS[p] <= LF[u] - lag -> LF[p] <= LF[u] - lag + durations[p]
+                    LF[p] = min(LF[p], LF[u] - lag_h + durations[p])
+                else: # FS
+                    # FS -> ES[u] >= EF[p] + lag -> LF[p] <= LS[u] - lag
+                    LF[p] = min(LF[p], LS[u] - lag_h)
 
         total_float = LS - ES
         is_critical = (np.abs(total_float) < 1e-6).astype(np.float32)
@@ -419,7 +456,8 @@ class LogisticsGymEnv(gym.Env):
 
         # Cập nhật chi phí thuê ngoài G1 (index 10) nếu Outsource
         if action == MODE_OUTSOURCE:
-            features[10] += old_duration * 10.0  # Thêm chi phí subcontracting
+            base_cost = features[5:11].sum()
+            features[10] += max(old_duration * 50.0, base_cost * 2.0)  # Hình phạt nặng nếu ép Outsource
 
         # Cập nhật Hub duration (index 0-3)
         duration_ratio = new_duration / max(old_duration, 1e-6)
@@ -550,15 +588,15 @@ class LogisticsGymEnv(gym.Env):
 
         # ── Kiểm tra MODE_OUTSOURCE (2) ──────────────────────────
         subcontracting_cost = float(features[8])  # subcontracting_cost (index 8)
-        # Outsource luôn có chi phí cao → chỉ cho phép nếu có cơ sở dữ liệu
-        # hoặc ít nhất task có chi phí lao động (có thể chuyển đổi)
-        internal_labor = float(features[7])  # internal_labor_cost (index 7)
-        if subcontracting_cost <= 0 and internal_labor <= 0:
+        outsourcing_cost_val = float(features[10]) # outsourcing_cost (index 10)
+        
+        # Outsource luôn có chi phí cao → chỉ cho phép nếu có cơ sở dữ liệu về thuê ngoài
+        if subcontracting_cost <= 0 and outsourcing_cost_val <= 0:
             mask[MODE_OUTSOURCE] = False
 
         # Kiểm tra ngân sách: Outsource sẽ tăng chi phí 2x
         total_budget = self.episode_constraints.get('total_budget', float('inf'))
-        estimated_outsource_tgc = state['cumulative_tgc'] + internal_labor * OUTSOURCE_COST_FACTOR
+        estimated_outsource_tgc = state['cumulative_tgc'] + max(subcontracting_cost, outsourcing_cost_val) * OUTSOURCE_COST_FACTOR
         if estimated_outsource_tgc > total_budget * 1.5:
             mask[MODE_OUTSOURCE] = False
 
@@ -722,17 +760,9 @@ class LogisticsGymEnv(gym.Env):
 # ============================================================================
 # HÀM TIỆN ÍCH: Tạo project_data từ GlPoProjectGraph
 # ============================================================================
-def create_env_from_project_graph(project_graph, global_constraints=None, penalty_weight=1000.0, reward_scale=1000.0, domain_randomization=True):
+def create_env_from_project_graph(project_graph, global_constraints=None, penalty_weight=1000.0, reward_scale=1000.0, domain_randomization=True, resource_demands=None, resource_capacities=None, hours_per_day=8.0, days_per_week=5.0):
     """
     Tạo LogisticsGymEnv từ đối tượng GlPoProjectGraph.
-
-    Args:
-        project_graph: Đối tượng GlPoProjectGraph (từ data_loader.py).
-        global_constraints: Dict ràng buộc toàn cục (deadline, budget...).
-        domain_randomization (bool): Bật/Tắt xáo trộn miền.
-
-    Returns:
-        LogisticsGymEnv: Môi trường Gymnasium sẵn sàng sử dụng.
     """
     data = project_graph.data
     features = data.x.cpu().numpy()
@@ -747,21 +777,28 @@ def create_env_from_project_graph(project_graph, global_constraints=None, penalt
         d_d = float(features[i, 2])  # duration_days
         d_h = float(features[i, 3])  # duration_hours
         is_24_7 = float(features[i, 4])  # calendar_type 24/7
-        u_tensor = data.u.cpu().numpy()[0]  # [hours_per_day, days_per_week, holidays]
-        hours_per_day = float(u_tensor[0])
-        days_per_week = float(u_tensor[1])
+        
+        # Nếu data.u có tensor thì ưu tiên dùng, nếu không thì dùng tham số truyền vào
+        if hasattr(data, 'u') and data.u is not None and data.u.size(0) > 0 and data.u.size(1) >= 2:
+            u_tensor = data.u.cpu().numpy()[0]
+            env_hours_per_day = float(u_tensor[0])
+            env_days_per_week = float(u_tensor[1])
+        else:
+            env_hours_per_day = hours_per_day
+            env_days_per_week = days_per_week
 
         if is_24_7 > 0.5:
             total_h = d_m * 30 * 24 + d_w * 7 * 24 + d_d * 24 + d_h
         else:
-            total_h = (d_m * 4 * days_per_week * hours_per_day
-                       + d_w * days_per_week * hours_per_day
-                       + d_d * hours_per_day + d_h)
+            total_h = (d_m * 4 * env_days_per_week * env_hours_per_day
+                       + d_w * env_days_per_week * env_hours_per_day
+                       + d_d * env_hours_per_day + d_h)
         durations[i] = total_h
 
-    # Xây dựng resource demands (từ task_resources)
-    # Bỏ qua vì GlPoProjectGraph không có thuộc tính nodes và schema mới không chứa resource_quantity trong features
-    resource_demands = {}
+    if resource_demands is None:
+        resource_demands = {}
+    if resource_capacities is None:
+        resource_capacities = {}
 
     # Ràng buộc mặc định nếu không cung cấp
     if global_constraints is None:
@@ -802,9 +839,12 @@ def create_env_from_project_graph(project_graph, global_constraints=None, penalt
             'min_quality': 0.0,
         }
 
+    edge_attr = data.edge_attr.cpu().numpy() if hasattr(data, 'edge_attr') and data.edge_attr is not None else None
+
     project_data = {
         'features': features,
         'edge_index': edge_index,
+        'edge_attr': edge_attr,
         'durations': durations,
         'resource_demands': resource_demands,
         'resource_capacities': {},

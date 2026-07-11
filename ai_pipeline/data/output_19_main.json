@@ -6,175 +6,476 @@
     "dependencies": [
         [
             "19_1",
-            "19_2"
+            "19_2",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_1",
-            "19_3"
+            "19_3",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_1",
-            "19_4"
+            "19_4",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_4",
-            "19_5"
+            "19_5",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_5",
-            "19_6"
+            "19_6",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_4",
-            "19_6"
+            "19_6",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_6",
-            "19_7"
+            "19_7",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_5",
-            "19_7"
+            "19_7",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_7",
-            "19_30"
+            "19_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_2",
-            "19_30"
+            "19_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_3",
-            "19_30"
+            "19_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_30",
-            "19_8"
+            "19_8",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_8",
-            "19_9"
+            "19_9",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_8",
-            "19_10"
+            "19_10",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_10",
-            "19_11"
+            "19_11",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_10",
-            "19_12"
+            "19_12",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_11",
-            "19_13"
+            "19_13",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_12",
-            "19_13"
+            "19_13",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_9",
-            "19_14"
+            "19_14",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_10",
-            "19_14"
+            "19_14",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_13",
-            "19_15"
+            "19_15",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_14",
-            "19_15"
+            "19_15",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_15",
-            "19_16"
+            "19_16",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_15",
-            "19_17"
+            "19_17",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_15",
-            "19_18"
+            "19_18",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_16",
-            "19_31"
+            "19_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_17",
-            "19_31"
+            "19_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_18",
-            "19_31"
+            "19_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_31",
-            "19_19"
+            "19_19",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_19",
-            "19_20"
+            "19_20",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_20",
-            "19_21"
+            "19_21",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_22"
+            "19_22",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_23"
+            "19_23",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_23",
-            "19_24"
+            "19_24",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_25"
+            "19_25",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_26"
+            "19_26",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_22",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_24",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_25",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_26",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_32",
-            "19_27"
+            "19_27",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_27",
-            "19_28"
+            "19_28",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_28",
-            "19_29"
+            "19_29",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ]
     ],
     "tasks_metadata": [
@@ -613,9 +914,9 @@
         }
     ],
     "monte_carlo": {
-        "mean_makespan": 418.46441978191916,
+        "mean_makespan": 420.2889112002349,
         "on_time_prob": 1.0,
-        "P90": 428.9443467967456,
+        "P90": 431.3878990147301,
         "criticality_indices": {
             "19_1": 1.0,
             "19_2": 0.0,
@@ -628,8 +929,8 @@
             "19_8": 1.0,
             "19_9": 0.0,
             "19_10": 1.0,
-            "19_11": 0.518,
-            "19_12": 0.482,
+            "19_11": 0.524,
+            "19_12": 0.476,
             "19_14": 0.0,
             "19_13": 1.0,
             "19_15": 1.0,
@@ -652,17 +953,18 @@
         }
     },
     "pareto_nsga2": {
-        "solutions_found": 15,
+        "solutions_found": 17,
         "selected": {
             "makespan": 344.0,
             "cost": 245882.0,
-            "risk": 10.300000000000002,
+            "risk": 10.4,
             "modes": [
                 0,
                 1,
                 1,
                 0,
                 0,
+                1,
                 0,
                 0,
                 0,
@@ -683,10 +985,9 @@
                 0,
                 1,
                 1,
-                1,
                 0,
                 0,
-                1,
+                0,
                 1,
                 0,
                 0
@@ -696,13 +997,14 @@
             {
                 "makespan": 344.0,
                 "cost": 245882.0,
-                "risk": 10.300000000000002,
+                "risk": 10.4,
                 "modes": [
                     0,
                     1,
                     1,
                     0,
                     0,
+                    1,
                     0,
                     0,
                     0,
@@ -723,49 +1025,9 @@
                     0,
                     1,
                     1,
-                    1,
-                    0,
-                    0,
-                    1,
-                    1,
-                    0,
-                    0
-                ]
-            },
-            {
-                "makespan": 344.0,
-                "cost": 246582.0,
-                "risk": 10.3,
-                "modes": [
-                    0,
-                    1,
                     0,
                     0,
                     0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    1,
-                    1,
-                    0,
-                    0,
-                    1,
                     1,
                     0,
                     0
@@ -774,7 +1036,7 @@
             {
                 "makespan": 344.0,
                 "cost": 245882.0,
-                "risk": 10.300000000000002,
+                "risk": 10.4,
                 "modes": [
                     0,
                     1,
@@ -796,6 +1058,45 @@
                     0,
                     0,
                     0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0
+                ]
+            },
+            {
+                "makespan": 344.0,
+                "cost": 246106.0,
+                "risk": 10.300000000000002,
+                "modes": [
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
                     0,
                     0,
                     0,
@@ -813,7 +1114,7 @@
             {
                 "makespan": 348.79999999999995,
                 "cost": 245140.0,
-                "risk": 10.4,
+                "risk": 10.6,
                 "modes": [
                     0,
                     1,
@@ -838,8 +1139,8 @@
                     0,
                     0,
                     0,
-                    1,
-                    1,
+                    0,
+                    0,
                     1,
                     0,
                     0,
@@ -857,28 +1158,22 @@
         "schedule": {}
     },
     "ppo_schedule": {
-        "makespan": 144.00892639160156,
+        "makespan": 136.6562042236328,
         "tgc": 0.0,
-        "reward": 12.075065654107561,
+        "reward": -117.22458286354174,
         "modes": [
             1,
             0,
             1,
+            2,
             0,
             0,
-            0,
-            0,
+            2,
             1,
             1,
             0,
             0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
+            2,
             1,
             0,
             0,
@@ -886,13 +1181,19 @@
             0,
             0,
             0,
+            2,
+            2,
+            2,
+            1,
+            0,
+            0,
             0,
             0,
             0,
             0,
             1,
-            0,
-            0
+            2,
+            2
         ]
     },
     "project_state_evolution": {
@@ -905,10 +1206,9 @@
                 "affected_tasks": [
                     "19_1",
                     "19_10",
-                    "19_30",
+                    "19_13",
                     "19_31",
                     "19_32",
-                    "19_6",
                     "19_7"
                 ],
                 "priority": 1,
@@ -918,7 +1218,7 @@
                 "resource_delta": {},
                 "expected_duration_delta": 344.0,
                 "expected_cost_delta": 245882.0,
-                "expected_risk_delta": 10.300000000000002,
+                "expected_risk_delta": 10.4,
                 "custom_params": {
                     "modes": [
                         0,
@@ -926,6 +1226,7 @@
                         1,
                         0,
                         0,
+                        1,
                         0,
                         0,
                         0,
@@ -946,10 +1247,9 @@
                         0,
                         1,
                         1,
-                        1,
                         0,
                         0,
-                        1,
+                        0,
                         1,
                         0,
                         0
@@ -959,14 +1259,14 @@
             "metrics_comparison": {
                 "makespan": {
                     "before": 368.0,
-                    "after": 344.3333333333333,
-                    "delta": -23.666666666666686,
-                    "percent_change": -6.43115942028986
+                    "after": 343.33333333333337,
+                    "delta": -24.66666666666663,
+                    "percent_change": -6.702898550724627
                 },
                 "total_cost": {
-                    "before": NaN,
-                    "after": NaN,
-                    "delta": NaN,
+                    "before": 0.0,
+                    "after": 0.0,
+                    "delta": 0.0,
                     "percent_change": 0.0
                 },
                 "on_time_probability": {
@@ -975,38 +1275,38 @@
                     "delta": 0.0
                 },
                 "P90_makespan": {
-                    "before": 428.57898289423946,
-                    "after": 410.23500590495627,
-                    "delta": -18.343976989283192
+                    "before": 430.97959177730536,
+                    "after": 409.25093515150786,
+                    "delta": -21.7286566257975
                 }
             },
             "critical_path_evolution": {
                 "before_count": 0,
                 "after_count": 23,
                 "newly_critical_tasks": [
-                    "19_6",
-                    "19_24",
-                    "19_29",
-                    "19_7",
-                    "19_20",
-                    "19_19",
-                    "19_21",
                     "19_11",
+                    "19_28",
+                    "19_30",
+                    "19_7",
+                    "19_15",
+                    "19_23",
+                    "19_24",
                     "19_1",
-                    "19_27",
+                    "19_6",
+                    "19_10",
+                    "19_29",
                     "19_32",
                     "19_5",
-                    "19_13",
-                    "19_23",
-                    "19_4",
-                    "19_28",
                     "19_8",
-                    "19_12",
-                    "19_10",
-                    "19_30",
+                    "19_21",
                     "19_17",
-                    "19_31",
-                    "19_15"
+                    "19_19",
+                    "19_20",
+                    "19_4",
+                    "19_13",
+                    "19_27",
+                    "19_12",
+                    "19_31"
                 ],
                 "no_longer_critical_tasks": []
             },
@@ -1036,51 +1336,51 @@
             },
             "top_attention_shifts": [
                 {
-                    "task_id": "19_32",
-                    "score_before": 0.6547101736068726,
-                    "score_after": 0.49306297302246094,
-                    "delta": -0.16164720058441162
+                    "task_id": "19_31",
+                    "score_before": 0.6658943891525269,
+                    "score_after": 0.6084521412849426,
+                    "delta": -0.05744224786758423
+                },
+                {
+                    "task_id": "19_15",
+                    "score_before": 0.6061467528343201,
+                    "score_after": 0.5588607788085938,
+                    "delta": -0.04728597402572632
+                },
+                {
+                    "task_id": "19_28",
+                    "score_before": 0.5729132890701294,
+                    "score_after": 0.528678297996521,
+                    "delta": -0.0442349910736084
                 },
                 {
                     "task_id": "19_13",
-                    "score_before": 0.6855499744415283,
-                    "score_after": 0.5285859107971191,
-                    "delta": -0.15696406364440918
+                    "score_before": 0.59073805809021,
+                    "score_after": 0.5526671409606934,
+                    "delta": -0.0380709171295166
                 },
                 {
-                    "task_id": "19_30",
-                    "score_before": 0.6730022430419922,
-                    "score_after": 0.5240668654441833,
-                    "delta": -0.14893537759780884
-                },
-                {
-                    "task_id": "19_31",
-                    "score_before": 0.7044714689254761,
-                    "score_after": 0.5556885004043579,
-                    "delta": -0.14878296852111816
-                },
-                {
-                    "task_id": "19_27",
-                    "score_before": 0.6515130996704102,
-                    "score_after": 0.5100864171981812,
-                    "delta": -0.141426682472229
+                    "task_id": "19_17",
+                    "score_before": 0.5872179269790649,
+                    "score_after": 0.5521460771560669,
+                    "delta": -0.03507184982299805
                 }
             ]
         },
         "state_history": [
             {
                 "state_id": 0,
-                "timestamp": 1783752386.8882906,
+                "timestamp": 1783779349.755228,
                 "action_applied": null,
                 "makespan": 368.0,
                 "critical_path": [],
-                "total_cost": NaN,
+                "total_cost": 0.0,
                 "direct_cost": 119120.0,
-                "indirect_cost": NaN,
+                "indirect_cost": 0.0,
                 "monte_carlo": {
-                    "mean_makespan": 418.37156764997724,
+                    "mean_makespan": 419.80271511991145,
                     "on_time_prob": 1.0,
-                    "P90": 428.57898289423946
+                    "P90": 430.97959177730536
                 },
                 "resource_metrics": {
                     "total_demand": {
@@ -1096,16 +1396,15 @@
             },
             {
                 "state_id": 1,
-                "timestamp": 1783752387.0352566,
+                "timestamp": 1783779349.9082751,
                 "action_applied": {
                     "action_type": "Crash",
                     "affected_tasks": [
                         "19_1",
                         "19_10",
-                        "19_30",
+                        "19_13",
                         "19_31",
                         "19_32",
-                        "19_6",
                         "19_7"
                     ],
                     "priority": 1,
@@ -1115,7 +1414,7 @@
                     "resource_delta": {},
                     "expected_duration_delta": 344.0,
                     "expected_cost_delta": 245882.0,
-                    "expected_risk_delta": 10.300000000000002,
+                    "expected_risk_delta": 10.4,
                     "custom_params": {
                         "modes": [
                             0,
@@ -1123,6 +1422,7 @@
                             1,
                             0,
                             0,
+                            1,
                             0,
                             0,
                             0,
@@ -1143,17 +1443,16 @@
                             0,
                             1,
                             1,
-                            1,
                             0,
                             0,
-                            1,
+                            0,
                             1,
                             0,
                             0
                         ]
                     }
                 },
-                "makespan": 344.3333333333333,
+                "makespan": 343.33333333333337,
                 "critical_path": [
                     "19_1",
                     "19_10",
@@ -1179,13 +1478,13 @@
                     "19_7",
                     "19_8"
                 ],
-                "total_cost": NaN,
+                "total_cost": 0.0,
                 "direct_cost": 122240.0,
-                "indirect_cost": NaN,
+                "indirect_cost": 0.0,
                 "monte_carlo": {
-                    "mean_makespan": 398.1267777267239,
+                    "mean_makespan": 398.1352644080899,
                     "on_time_prob": 1.0,
-                    "P90": 410.23500590495627
+                    "P90": 409.25093515150786
                 },
                 "resource_metrics": {
                     "total_demand": {

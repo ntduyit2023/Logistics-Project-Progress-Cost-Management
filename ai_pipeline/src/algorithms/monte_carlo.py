@@ -77,7 +77,8 @@ def run_monte_carlo_simulation(
     G = nx.DiGraph()
     for task in tasks:
         G.add_node(task['id'], **task)
-    for pred, succ in dependencies:
+    for edge in dependencies:
+        pred, succ = edge[0], edge[1]
         if not pred or not succ or str(pred).lower() == 'nan' or str(succ).lower() == 'nan':
             continue
         G.add_edge(pred, succ)

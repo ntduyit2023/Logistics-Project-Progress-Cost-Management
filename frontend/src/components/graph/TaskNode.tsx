@@ -51,4 +51,4 @@ const TaskNode = ({ data }: any) => {
   );
 };
 
-export default TaskNode;
+export default React.memo(TaskNode);

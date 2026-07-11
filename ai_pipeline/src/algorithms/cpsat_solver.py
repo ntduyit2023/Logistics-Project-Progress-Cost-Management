@@ -59,7 +59,8 @@ def run_cpsat_scheduling(
     """
     # Lọc bỏ các cạnh rỗng / NaN ngay từ đầu
     valid_deps = []
-    for pred, succ in dependencies:
+    for edge in dependencies:
+        pred, succ = edge[0], edge[1]
         if not pred or not succ or str(pred).lower() == 'nan' or str(succ).lower() == 'nan':
             continue
         valid_deps.append((pred, succ))

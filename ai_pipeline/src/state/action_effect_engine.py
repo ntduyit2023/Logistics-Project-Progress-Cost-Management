@@ -119,7 +119,8 @@ class ActionEffectEngine:
                 if t_id in task_map:
                     t = task_map[t_id]
                     # Fast tracking introduces overlap lead time with predecessors
-                    for pred, succ in dependencies:
+                    for edge in dependencies:
+                        pred, succ = edge[0], edge[1]
                         if succ == t_id and pred in task_map:
                             pred_d = float(task_map[pred].get('most_probable_duration', task_map[pred].get('duration', 0.0)))
                             lead_time = pred_d * overlap
@@ -167,7 +168,8 @@ class ActionEffectEngine:
         adj_forward = defaultdict(list)
         adj_backward = defaultdict(list)
         
-        for pred, succ in updated_dependencies:
+        for edge in updated_dependencies:
+            pred, succ = edge[0], edge[1]
             if pred in node_to_idx and succ in node_to_idx:
                 u = node_to_idx[pred]
                 v = node_to_idx[succ]

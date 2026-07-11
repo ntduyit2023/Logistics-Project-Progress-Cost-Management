@@ -68,16 +68,26 @@ def main():
     tasks = tasks_df.to_dict(orient='records')
     dependencies = []
     for _, row in edges_df.iterrows():
-        dependencies.append((str(row['predecessor_task_id']), str(row['successor_task_id'])))
+        attrs = {
+            'dependency_type': row.get('dependency_type', 'FS'),
+            'lag_months': row.get('lag_months', 0.0),
+            'lag_weeks': row.get('lag_weeks', 0.0),
+            'lag_days': row.get('lag_days', 0.0),
+            'lag_hours': row.get('lag_hours', 0.0),
+        }
+        dependencies.append((str(row['predecessor_task_id']), str(row['successor_task_id']), attrs))
         
     resource_capacities = {}
     for _, row in res_df.iterrows():
         resource_capacities[str(row['ID'])] = int(float(row.get('Availability', 1.0)))
         
-    for t in tasks:
+    resource_demands_dict = {}
+    for i, t in enumerate(tasks):
         t_id = t['id']
         t_req = task_res_df[task_res_df['task_id'] == t_id]
-        t['resource_demand'] = {str(row['resource_id']): int(row['request_quantity']) for _, row in t_req.iterrows()}
+        demand = {str(row['resource_id']): int(row['request_quantity']) for _, row in t_req.iterrows()}
+        t['resource_demand'] = demand
+        resource_demands_dict[i] = demand
         
     G = build_project_graph(tasks, dependencies)
     
@@ -341,7 +351,13 @@ def main():
     # ── BƯỚC 6: PPO RUNTIME CONTROL ────────────────────────────────────────────
     print("\n🤖 [BƯỚC 6] PPO Agent Runtime Dynamic Control...")
     # Initialize env
-    env = create_env_from_project_graph(project_graph)
+    env = create_env_from_project_graph(
+        project_graph,
+        resource_demands=resource_demands_dict,
+        resource_capacities=resource_capacities,
+        hours_per_day=hours_per_day,
+        days_per_week=days_per_week
+    )
     # Configure env constraints
     env._global_constraints['deadline'] = deadline
     env._global_constraints['budget'] = budget
@@ -522,8 +538,10 @@ def main():
             return {k: sanitize_dict(v) for k, v in d.items()}
         elif isinstance(d, list):
             return [sanitize_dict(v) for v in d]
-        elif isinstance(d, float):
-            return 0.0 if math.isnan(d) or math.isinf(d) else d
+        elif isinstance(d, (float, np.floating)):
+            return 0.0 if np.isnan(d) or np.isinf(d) else float(d)
+        elif isinstance(d, (int, np.integer)):
+            return int(d)
         return d
         
     sanitized_output = sanitize_dict(output_data)

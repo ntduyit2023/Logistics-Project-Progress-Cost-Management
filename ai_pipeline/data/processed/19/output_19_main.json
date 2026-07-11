@@ -6,175 +6,476 @@
     "dependencies": [
         [
             "19_1",
-            "19_2"
+            "19_2",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_1",
-            "19_3"
+            "19_3",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_1",
-            "19_4"
+            "19_4",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_4",
-            "19_5"
+            "19_5",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_5",
-            "19_6"
+            "19_6",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_4",
-            "19_6"
+            "19_6",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_6",
-            "19_7"
+            "19_7",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_5",
-            "19_7"
+            "19_7",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_7",
-            "19_30"
+            "19_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_2",
-            "19_30"
+            "19_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_3",
-            "19_30"
+            "19_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_30",
-            "19_8"
+            "19_8",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_8",
-            "19_9"
+            "19_9",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_8",
-            "19_10"
+            "19_10",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_10",
-            "19_11"
+            "19_11",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_10",
-            "19_12"
+            "19_12",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_11",
-            "19_13"
+            "19_13",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_12",
-            "19_13"
+            "19_13",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_9",
-            "19_14"
+            "19_14",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_10",
-            "19_14"
+            "19_14",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_13",
-            "19_15"
+            "19_15",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_14",
-            "19_15"
+            "19_15",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_15",
-            "19_16"
+            "19_16",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_15",
-            "19_17"
+            "19_17",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_15",
-            "19_18"
+            "19_18",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_16",
-            "19_31"
+            "19_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_17",
-            "19_31"
+            "19_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_18",
-            "19_31"
+            "19_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_31",
-            "19_19"
+            "19_19",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_19",
-            "19_20"
+            "19_20",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_20",
-            "19_21"
+            "19_21",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_22"
+            "19_22",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_23"
+            "19_23",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_23",
-            "19_24"
+            "19_24",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_25"
+            "19_25",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_21",
-            "19_26"
+            "19_26",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_22",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_24",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_25",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_26",
-            "19_32"
+            "19_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_32",
-            "19_27"
+            "19_27",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_27",
-            "19_28"
+            "19_28",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "19_28",
-            "19_29"
+            "19_29",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ]
     ],
     "tasks_metadata": [
@@ -182,9 +483,9 @@
             "id": "19_18",
             "name": "Reparing walls",
             "most_probable_duration": 32.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 4180.0,
+            "crash_cost": 6270.0,
+            "outsource_cost": 8680.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -196,9 +497,9 @@
             "id": "19_1",
             "name": "Installation of power generators, lighting, toilets, fencing,  supply of concrete and wooden partition",
             "most_probable_duration": 32.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3920.0,
+            "crash_cost": 5880.0,
+            "outsource_cost": 8160.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -210,9 +511,9 @@
             "id": "19_10",
             "name": "Pumping lock chamber completely dry",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 2140.0,
+            "crash_cost": 3210.0,
+            "outsource_cost": 4440.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -224,9 +525,9 @@
             "id": "19_11",
             "name": "Cleaning lock floor",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 2620.0,
+            "crash_cost": 3930.0,
+            "outsource_cost": 5400.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -238,9 +539,9 @@
             "id": "19_12",
             "name": "supply concrete blocks (to prevent the floor comes up)",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 9720.0,
+            "crash_cost": 14580.0,
+            "outsource_cost": 19600.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -252,9 +553,9 @@
             "id": "19_13",
             "name": "placing concrete blocks",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3140.0,
+            "crash_cost": 4710.0,
+            "outsource_cost": 6440.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -266,9 +567,9 @@
             "id": "19_14",
             "name": "Cleaning walls and threshold",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3850.0,
+            "crash_cost": 5775.0,
+            "outsource_cost": 7860.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -280,9 +581,9 @@
             "id": "19_15",
             "name": "Installing stairs in lock chamber",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 4160.0,
+            "crash_cost": 6240.0,
+            "outsource_cost": 8480.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -294,9 +595,9 @@
             "id": "19_16",
             "name": "Replacing hinges, pivot shoes and pivots",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 10360.0,
+            "crash_cost": 15540.0,
+            "outsource_cost": 20880.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -308,9 +609,9 @@
             "id": "19_17",
             "name": "Cleaning lock head",
             "most_probable_duration": 48.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3960.0,
+            "crash_cost": 5940.0,
+            "outsource_cost": 8400.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -322,9 +623,9 @@
             "id": "19_19",
             "name": "Transport of gates to the site",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 320.0,
+            "crash_cost": 480.0,
+            "outsource_cost": 800.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -336,9 +637,9 @@
             "id": "19_2",
             "name": "Remove railing and platforms",
             "most_probable_duration": 32.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 4780.0,
+            "crash_cost": 7170.0,
+            "outsource_cost": 9880.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -350,9 +651,9 @@
             "id": "19_20",
             "name": "Put gates in place",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 24960.0,
+            "crash_cost": 37440.0,
+            "outsource_cost": 50080.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -364,9 +665,9 @@
             "id": "19_21",
             "name": "Adjusting gates (Tightening hinges , front beams, sealing, anchorage points)",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 8640.0,
+            "crash_cost": 12960.0,
+            "outsource_cost": 17440.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -378,9 +679,9 @@
             "id": "19_22",
             "name": "Installing railing",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 2840.0,
+            "crash_cost": 4260.0,
+            "outsource_cost": 5840.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -392,9 +693,9 @@
             "id": "19_23",
             "name": "preliminary works at threshold",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3140.0,
+            "crash_cost": 4710.0,
+            "outsource_cost": 6440.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -406,9 +707,9 @@
             "id": "19_24",
             "name": "Repairing threshold",
             "most_probable_duration": 32.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 5220.0,
+            "crash_cost": 7830.0,
+            "outsource_cost": 10760.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -420,9 +721,9 @@
             "id": "19_25",
             "name": "Install platforms",
             "most_probable_duration": 32.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 5480.0,
+            "crash_cost": 8220.0,
+            "outsource_cost": 11280.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -434,9 +735,9 @@
             "id": "19_26",
             "name": "Installing ladder",
             "most_probable_duration": 32.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 6480.0,
+            "crash_cost": 9720.0,
+            "outsource_cost": 13280.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -448,9 +749,9 @@
             "id": "19_27",
             "name": "Remove concrete blocks",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3460.0,
+            "crash_cost": 5190.0,
+            "outsource_cost": 7080.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -462,9 +763,9 @@
             "id": "19_28",
             "name": "Remove concrete and wooden partition",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 4560.0,
+            "crash_cost": 6840.0,
+            "outsource_cost": 9280.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -476,9 +777,9 @@
             "id": "19_29",
             "name": "Cleaning site",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 4560.0,
+            "crash_cost": 6840.0,
+            "outsource_cost": 9280.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -490,9 +791,9 @@
             "id": "19_3",
             "name": "preliminary works at gates (loosing hinges, disconnect hinges, hydraulics, anchorage points)",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 5460.0,
+            "crash_cost": 8190.0,
+            "outsource_cost": 11080.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -504,36 +805,36 @@
             "id": "19_30",
             "name": "End Of Preparation/Start Restoration of lock head",
             "most_probable_duration": 0.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 0.0,
+            "crash_cost": 0.0,
+            "outsource_cost": 0.0,
             "resources": []
         },
         {
             "id": "19_31",
             "name": "End Restoration of lock head/Start Installing new gates",
             "most_probable_duration": 0.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 0.0,
+            "crash_cost": 0.0,
+            "outsource_cost": 0.0,
             "resources": []
         },
         {
             "id": "19_32",
             "name": "End Installing new gates/ Start Termination",
             "most_probable_duration": 0.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 0.0,
+            "crash_cost": 0.0,
+            "outsource_cost": 0.0,
             "resources": []
         },
         {
             "id": "19_4",
             "name": "Sealing canal lock gates at other side and overflow sewers",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 2640.0,
+            "crash_cost": 3960.0,
+            "outsource_cost": 5440.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -545,9 +846,9 @@
             "id": "19_5",
             "name": "Placing of concrete partition + Placing of wooden partition",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 5760.0,
+            "crash_cost": 8640.0,
+            "outsource_cost": 11680.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -559,9 +860,9 @@
             "id": "19_6",
             "name": "Installing pumps",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 3140.0,
+            "crash_cost": 4710.0,
+            "outsource_cost": 6440.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -573,9 +874,9 @@
             "id": "19_7",
             "name": "Check safety wooden partition + Check safety concrete partition",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 2060.0,
+            "crash_cost": 3090.0,
+            "outsource_cost": 4280.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -587,9 +888,9 @@
             "id": "19_8",
             "name": "Remove gates",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 19940.0,
+            "crash_cost": 29910.0,
+            "outsource_cost": 40040.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -601,9 +902,9 @@
             "id": "19_9",
             "name": "Remove hinges",
             "most_probable_duration": 16.0,
-            "normal_cost": NaN,
-            "crash_cost": NaN,
-            "outsource_cost": NaN,
+            "normal_cost": 2960.0,
+            "crash_cost": 4440.0,
+            "outsource_cost": 6080.0,
             "resources": [
                 {
                     "resource_id": "223",
@@ -613,9 +914,9 @@
         }
     ],
     "monte_carlo": {
-        "mean_makespan": 418.77015423812907,
+        "mean_makespan": 420.30888237315975,
         "on_time_prob": 1.0,
-        "P90": 429.4728985387799,
+        "P90": 431.3509512037911,
         "criticality_indices": {
             "19_1": 1.0,
             "19_2": 0.0,
@@ -628,8 +929,8 @@
             "19_8": 1.0,
             "19_9": 0.0,
             "19_10": 1.0,
-            "19_11": 0.493,
-            "19_12": 0.507,
+            "19_11": 0.497,
+            "19_12": 0.503,
             "19_14": 0.0,
             "19_13": 1.0,
             "19_15": 1.0,
@@ -652,7 +953,7 @@
         }
     },
     "pareto_nsga2": {
-        "solutions_found": 14,
+        "solutions_found": 12,
         "selected": {
             "makespan": 344.0,
             "cost": 245882.0,
@@ -761,45 +1062,6 @@
                     0,
                     0,
                     1,
-                    1,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0
-                ]
-            },
-            {
-                "makespan": 348.79999999999995,
-                "cost": 245140.0,
-                "risk": 10.500000000000002,
-                "modes": [
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
                     0,
                     1,
                     0,
@@ -838,13 +1100,52 @@
                     0,
                     0,
                     0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "makespan": 348.8,
+                "cost": 243684.0,
+                "risk": 10.4,
+                "modes": [
                     0,
                     1,
                     1,
                     0,
                     0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
                     1,
                     0,
+                    0,
+                    0,
+                    1,
                     0,
                     0
                 ]
@@ -857,42 +1158,42 @@
         "schedule": {}
     },
     "ppo_schedule": {
-        "makespan": 137.04075622558594,
+        "makespan": 115.38220977783203,
         "tgc": 0.0,
-        "reward": 12.730260508166111,
+        "reward": -139.63431231667565,
         "modes": [
             1,
             0,
             1,
+            2,
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
             0,
-            1,
-            1,
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            0,
-            0,
+            2,
             0,
             1,
             0,
             0,
-            0,
-            1,
-            0,
             1,
             1,
+            1,
+            2,
+            2,
+            2,
             0,
-            0
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2
         ]
     },
     "project_state_evolution": {
@@ -964,9 +1265,9 @@
                     "percent_change": -6.43115942028986
                 },
                 "total_cost": {
-                    "before": NaN,
-                    "after": NaN,
-                    "delta": NaN,
+                    "before": 0.0,
+                    "after": 0.0,
+                    "delta": 0.0,
                     "percent_change": 0.0
                 },
                 "on_time_probability": {
@@ -975,38 +1276,38 @@
                     "delta": 0.0
                 },
                 "P90_makespan": {
-                    "before": 428.78447259016133,
-                    "after": 407.7181610250986,
-                    "delta": -21.066311565062733
+                    "before": 432.3749277003668,
+                    "after": 406.0524797687438,
+                    "delta": -26.322447931623003
                 }
             },
             "critical_path_evolution": {
                 "before_count": 0,
                 "after_count": 23,
                 "newly_critical_tasks": [
-                    "19_21",
-                    "19_24",
-                    "19_15",
-                    "19_1",
-                    "19_6",
-                    "19_11",
+                    "19_12",
+                    "19_4",
+                    "19_13",
+                    "19_20",
                     "19_7",
+                    "19_28",
+                    "19_31",
+                    "19_5",
+                    "19_27",
+                    "19_10",
                     "19_8",
                     "19_32",
-                    "19_17",
-                    "19_4",
-                    "19_5",
-                    "19_12",
-                    "19_31",
-                    "19_20",
-                    "19_28",
-                    "19_19",
                     "19_23",
-                    "19_27",
                     "19_30",
-                    "19_13",
-                    "19_10",
-                    "19_29"
+                    "19_17",
+                    "19_1",
+                    "19_24",
+                    "19_29",
+                    "19_21",
+                    "19_15",
+                    "19_19",
+                    "19_11",
+                    "19_6"
                 ],
                 "no_longer_critical_tasks": []
             },
@@ -1036,51 +1337,51 @@
             },
             "top_attention_shifts": [
                 {
-                    "task_id": "19_9",
-                    "score_before": 0.49500006437301636,
-                    "score_after": 0.4343644678592682,
-                    "delta": -0.06063559651374817
+                    "task_id": "19_11",
+                    "score_before": 0.6319258213043213,
+                    "score_after": 0.5382981300354004,
+                    "delta": -0.0936276912689209
                 },
                 {
-                    "task_id": "19_14",
-                    "score_before": 0.544231653213501,
-                    "score_after": 0.4855878949165344,
-                    "delta": -0.05864375829696655
+                    "task_id": "19_13",
+                    "score_before": 0.6613152027130127,
+                    "score_after": 0.5742287635803223,
+                    "delta": -0.08708643913269043
                 },
                 {
-                    "task_id": "19_15",
-                    "score_before": 0.5649181008338928,
-                    "score_after": 0.5168071985244751,
-                    "delta": -0.048110902309417725
+                    "task_id": "19_12",
+                    "score_before": 0.6223863363265991,
+                    "score_after": 0.5362979173660278,
+                    "delta": -0.08608841896057129
                 },
                 {
                     "task_id": "19_10",
-                    "score_before": 0.4761389493942261,
-                    "score_after": 0.4303818345069885,
-                    "delta": -0.04575711488723755
+                    "score_before": 0.6248341202735901,
+                    "score_after": 0.5417836904525757,
+                    "delta": -0.0830504298210144
                 },
                 {
-                    "task_id": "19_19",
-                    "score_before": 0.6119934320449829,
-                    "score_after": 0.5707224011421204,
-                    "delta": -0.04127103090286255
+                    "task_id": "19_8",
+                    "score_before": 0.6156996488571167,
+                    "score_after": 0.5521371960639954,
+                    "delta": -0.06356245279312134
                 }
             ]
         },
         "state_history": [
             {
                 "state_id": 0,
-                "timestamp": 1783751879.5831957,
+                "timestamp": 1783779530.9884574,
                 "action_applied": null,
                 "makespan": 368.0,
                 "critical_path": [],
-                "total_cost": NaN,
+                "total_cost": 0.0,
                 "direct_cost": 119120.0,
-                "indirect_cost": NaN,
+                "indirect_cost": 0.0,
                 "monte_carlo": {
-                    "mean_makespan": 418.43219395615876,
+                    "mean_makespan": 420.7492611613503,
                     "on_time_prob": 1.0,
-                    "P90": 428.78447259016133
+                    "P90": 432.3749277003668
                 },
                 "resource_metrics": {
                     "total_demand": {
@@ -1096,7 +1397,7 @@
             },
             {
                 "state_id": 1,
-                "timestamp": 1783751879.7528808,
+                "timestamp": 1783779531.1609,
                 "action_applied": {
                     "action_type": "Crash",
                     "affected_tasks": [
@@ -1179,13 +1480,13 @@
                     "19_7",
                     "19_8"
                 ],
-                "total_cost": NaN,
+                "total_cost": 0.0,
                 "direct_cost": 122240.0,
-                "indirect_cost": NaN,
+                "indirect_cost": 0.0,
                 "monte_carlo": {
-                    "mean_makespan": 396.64938548034416,
+                    "mean_makespan": 395.01425185656234,
                     "on_time_prob": 1.0,
-                    "P90": 407.7181610250986
+                    "P90": 406.0524797687438
                 },
                 "resource_metrics": {
                     "total_demand": {
