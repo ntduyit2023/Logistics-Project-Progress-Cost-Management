@@ -433,7 +433,9 @@ const Workspace = () => {
                   {projectData?.status === 'Simulating' ? (
                     <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
-                      <p className="text-sm font-medium text-center">AI đang tiến hành phân tích dự án...</p>
+                      <p className="text-sm font-medium text-center">
+                        {projectData?.metadata_json?.simulation_progress || 'AI đang tiến hành phân tích dự án...'}
+                      </p>
                       <p className="text-xs text-center mt-1">Quá trình này có thể mất vài phút.</p>
                     </div>
                   ) : simulationResults?.recommendations && simulationResults.recommendations.length > 0 ? (

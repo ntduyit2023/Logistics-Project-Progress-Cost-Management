@@ -1,0 +1,1102 @@
+{
+    "project_id": "18",
+    "cpm_static_makespan": 3392.0,
+    "deadline": 4409.6,
+    "budget": 442851.0,
+    "dependencies": [
+        [
+            "18_3",
+            "18_4"
+        ],
+        [
+            "18_4",
+            "18_5"
+        ],
+        [
+            "18_5",
+            "18_6"
+        ],
+        [
+            "18_5",
+            "18_7"
+        ],
+        [
+            "18_5",
+            "18_8"
+        ],
+        [
+            "18_6",
+            "18_9"
+        ],
+        [
+            "18_8",
+            "18_9"
+        ],
+        [
+            "18_7",
+            "18_9"
+        ],
+        [
+            "18_9",
+            "18_10"
+        ],
+        [
+            "18_10",
+            "18_11"
+        ],
+        [
+            "18_11",
+            "18_13"
+        ],
+        [
+            "18_13",
+            "18_14"
+        ],
+        [
+            "18_13",
+            "18_15"
+        ],
+        [
+            "18_14",
+            "18_16"
+        ],
+        [
+            "18_16",
+            "18_17"
+        ],
+        [
+            "18_13",
+            "18_19"
+        ],
+        [
+            "18_19",
+            "18_20"
+        ],
+        [
+            "18_20",
+            "18_21"
+        ],
+        [
+            "18_21",
+            "18_22"
+        ],
+        [
+            "18_21",
+            "18_23"
+        ],
+        [
+            "18_15",
+            "18_25"
+        ],
+        [
+            "18_17",
+            "18_27"
+        ],
+        [
+            "18_27",
+            "18_28"
+        ],
+        [
+            "18_28",
+            "18_29"
+        ],
+        [
+            "18_28",
+            "18_30"
+        ],
+        [
+            "18_28",
+            "18_31"
+        ],
+        [
+            "18_29",
+            "18_32"
+        ],
+        [
+            "18_32",
+            "18_34"
+        ],
+        [
+            "18_30",
+            "18_34"
+        ],
+        [
+            "18_31",
+            "18_34"
+        ],
+        [
+            "18_15",
+            "18_34"
+        ],
+        [
+            "18_34",
+            "18_36"
+        ],
+        [
+            "18_36",
+            "18_37"
+        ],
+        [
+            "18_37",
+            "18_39"
+        ],
+        [
+            "18_23",
+            "18_41"
+        ],
+        [
+            "18_22",
+            "18_41"
+        ],
+        [
+            "18_28",
+            "18_42"
+        ],
+        [
+            "18_29",
+            "18_43"
+        ],
+        [
+            "18_30",
+            "18_44"
+        ],
+        [
+            "18_31",
+            "18_44"
+        ],
+        [
+            "18_27",
+            "18_45"
+        ],
+        [
+            "18_34",
+            "18_46"
+        ],
+        [
+            "18_41",
+            "18_48"
+        ],
+        [
+            "18_42",
+            "18_48"
+        ],
+        [
+            "18_43",
+            "18_48"
+        ],
+        [
+            "18_44",
+            "18_48"
+        ],
+        [
+            "18_45",
+            "18_48"
+        ],
+        [
+            "18_46",
+            "18_48"
+        ]
+    ],
+    "tasks_metadata": [
+        {
+            "id": "18_45",
+            "name": "35. Payment of the construction firm",
+            "most_probable_duration": 16.0,
+            "normal_cost": 240.0,
+            "crash_cost": 360.0,
+            "outsource_cost": 640.0,
+            "resources": [
+                {
+                    "resource_id": "222",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_10",
+            "name": "8. Feasibility study",
+            "most_probable_duration": 112.0,
+            "normal_cost": 2800.0,
+            "crash_cost": 4200.0,
+            "outsource_cost": 6720.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_11",
+            "name": "9. Search for funding (VC, Business angels, bankloan)",
+            "most_probable_duration": 192.0,
+            "normal_cost": 2880.0,
+            "crash_cost": 4320.0,
+            "outsource_cost": 7680.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_13",
+            "name": "10. Contact city to get the approval",
+            "most_probable_duration": 320.0,
+            "normal_cost": 4800.0,
+            "crash_cost": 7200.0,
+            "outsource_cost": 12800.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_14",
+            "name": "11. Asking city for blue prints power network",
+            "most_probable_duration": 320.0,
+            "normal_cost": 4800.0,
+            "crash_cost": 7200.0,
+            "outsource_cost": 12800.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_15",
+            "name": "12. Meeting with car leasers + quotation",
+            "most_probable_duration": 400.0,
+            "normal_cost": 6000.0,
+            "crash_cost": 9000.0,
+            "outsource_cost": 16000.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_16",
+            "name": "13. Meeting with docking station suppliers",
+            "most_probable_duration": 400.0,
+            "normal_cost": 6000.0,
+            "crash_cost": 9000.0,
+            "outsource_cost": 16000.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_17",
+            "name": "14. Meeting with possible contractors",
+            "most_probable_duration": 160.0,
+            "normal_cost": 2400.0,
+            "crash_cost": 3600.0,
+            "outsource_cost": 6400.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_19",
+            "name": "15. Web/app developer search",
+            "most_probable_duration": 80.0,
+            "normal_cost": 1200.0,
+            "crash_cost": 1800.0,
+            "outsource_cost": 3200.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_20",
+            "name": "16. Developing website/app",
+            "most_probable_duration": 1120.0,
+            "normal_cost": 90000.0,
+            "crash_cost": 135000.0,
+            "outsource_cost": 191200.0,
+            "resources": []
+        },
+        {
+            "id": "18_21",
+            "name": "17. Developing payment system",
+            "most_probable_duration": 880.0,
+            "normal_cost": 20000.0,
+            "crash_cost": 30000.0,
+            "outsource_cost": 48800.0,
+            "resources": []
+        },
+        {
+            "id": "18_22",
+            "name": "18. Testing & approving app",
+            "most_probable_duration": 240.0,
+            "normal_cost": 4500.0,
+            "crash_cost": 6750.0,
+            "outsource_cost": 11400.0,
+            "resources": []
+        },
+        {
+            "id": "18_23",
+            "name": "19. Testing & approving payment system",
+            "most_probable_duration": 240.0,
+            "normal_cost": 1500.0,
+            "crash_cost": 2250.0,
+            "outsource_cost": 5400.0,
+            "resources": []
+        },
+        {
+            "id": "18_25",
+            "name": "20. Negotiate maintenance contract with possible partners",
+            "most_probable_duration": 320.0,
+            "normal_cost": 4800.0,
+            "crash_cost": 7200.0,
+            "outsource_cost": 12800.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_27",
+            "name": "21. Drilling the holes where the charging blocks will be put by Eandis and where the traffic signs will be put",
+            "most_probable_duration": 192.0,
+            "normal_cost": 10599.0,
+            "crash_cost": 15898.5,
+            "outsource_cost": 23118.0,
+            "resources": []
+        },
+        {
+            "id": "18_28",
+            "name": "22. Delivery and placing of the charging blocks (UwLaadpunt)",
+            "most_probable_duration": 192.0,
+            "normal_cost": 78715.0,
+            "crash_cost": 118072.5,
+            "outsource_cost": 159350.0,
+            "resources": []
+        },
+        {
+            "id": "18_29",
+            "name": "23. Access power network: connecting charging blocks to power grid (Eandis)",
+            "most_probable_duration": 192.0,
+            "normal_cost": 19500.0,
+            "crash_cost": 29250.0,
+            "outsource_cost": 40920.0,
+            "resources": []
+        },
+        {
+            "id": "18_3",
+            "name": "1. Analysis of car usage in general, link to car sharing, environment, cost of parking",
+            "most_probable_duration": 160.0,
+            "normal_cost": 2400.0,
+            "crash_cost": 3600.0,
+            "outsource_cost": 6400.0,
+            "resources": [
+                {
+                    "resource_id": "218",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_30",
+            "name": "24. Installation of visibility marks (Trafiroad)",
+            "most_probable_duration": 96.0,
+            "normal_cost": 2480.0,
+            "crash_cost": 3720.0,
+            "outsource_cost": 5920.0,
+            "resources": []
+        },
+        {
+            "id": "18_31",
+            "name": "25. Installation of trafic signs (Trafiroad)",
+            "most_probable_duration": 96.0,
+            "normal_cost": 8500.0,
+            "crash_cost": 12750.0,
+            "outsource_cost": 17960.0,
+            "resources": []
+        },
+        {
+            "id": "18_32",
+            "name": "26. Testing of the charging blocks",
+            "most_probable_duration": 96.0,
+            "normal_cost": 0.0,
+            "crash_cost": 0.0,
+            "outsource_cost": 960.0,
+            "resources": []
+        },
+        {
+            "id": "18_34",
+            "name": "27. Delivery cars",
+            "most_probable_duration": 96.0,
+            "normal_cost": 0.0,
+            "crash_cost": 0.0,
+            "outsource_cost": 960.0,
+            "resources": []
+        },
+        {
+            "id": "18_36",
+            "name": "28. Placing cars",
+            "most_probable_duration": 80.0,
+            "normal_cost": 960.0,
+            "crash_cost": 1440.0,
+            "outsource_cost": 2720.0,
+            "resources": [
+                {
+                    "resource_id": "220",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_37",
+            "name": "29. Final testing of the finished system",
+            "most_probable_duration": 320.0,
+            "normal_cost": 8000.0,
+            "crash_cost": 12000.0,
+            "outsource_cost": 19200.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_39",
+            "name": "30. Publicity campaign for our company",
+            "most_probable_duration": 240.0,
+            "normal_cost": 3360.0,
+            "crash_cost": 5040.0,
+            "outsource_cost": 9120.0,
+            "resources": [
+                {
+                    "resource_id": "221",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_4",
+            "name": "2. Type of cars",
+            "most_probable_duration": 96.0,
+            "normal_cost": 2400.0,
+            "crash_cost": 3600.0,
+            "outsource_cost": 5760.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_41",
+            "name": "31. Payment of Web/app developers",
+            "most_probable_duration": 16.0,
+            "normal_cost": 240.0,
+            "crash_cost": 360.0,
+            "outsource_cost": 640.0,
+            "resources": [
+                {
+                    "resource_id": "222",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_42",
+            "name": "32. Payment 'UwLaadpunt'",
+            "most_probable_duration": 16.0,
+            "normal_cost": 240.0,
+            "crash_cost": 360.0,
+            "outsource_cost": 640.0,
+            "resources": [
+                {
+                    "resource_id": "222",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_43",
+            "name": "33. Payment 'Eandis'",
+            "most_probable_duration": 16.0,
+            "normal_cost": 240.0,
+            "crash_cost": 360.0,
+            "outsource_cost": 640.0,
+            "resources": [
+                {
+                    "resource_id": "222",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_44",
+            "name": "34. Payment 'Traffiroad'",
+            "most_probable_duration": 16.0,
+            "normal_cost": 240.0,
+            "crash_cost": 360.0,
+            "outsource_cost": 640.0,
+            "resources": [
+                {
+                    "resource_id": "222",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_46",
+            "name": "36. Payment carleasing",
+            "most_probable_duration": 16.0,
+            "normal_cost": 240.0,
+            "crash_cost": 360.0,
+            "outsource_cost": 640.0,
+            "resources": [
+                {
+                    "resource_id": "222",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_48",
+            "name": "37. Launch",
+            "most_probable_duration": 0.0,
+            "normal_cost": 0.0,
+            "crash_cost": 0.0,
+            "outsource_cost": 0.0,
+            "resources": []
+        },
+        {
+            "id": "18_5",
+            "name": "3. Determine amount of ars needed and parking place",
+            "most_probable_duration": 96.0,
+            "normal_cost": 2400.0,
+            "crash_cost": 3600.0,
+            "outsource_cost": 5760.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_6",
+            "name": "4. Research for charging stations (suppliers)",
+            "most_probable_duration": 32.0,
+            "normal_cost": 800.0,
+            "crash_cost": 1200.0,
+            "outsource_cost": 1920.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_7",
+            "name": "5. Research use of exsisting charging stations",
+            "most_probable_duration": 16.0,
+            "normal_cost": 400.0,
+            "crash_cost": 600.0,
+            "outsource_cost": 960.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_8",
+            "name": "6. Research for traffic sign supplier (Trafiroad)",
+            "most_probable_duration": 16.0,
+            "normal_cost": 400.0,
+            "crash_cost": 600.0,
+            "outsource_cost": 960.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        },
+        {
+            "id": "18_9",
+            "name": "7. Research amount of staff needed (extra contractors)",
+            "most_probable_duration": 48.0,
+            "normal_cost": 1200.0,
+            "crash_cost": 1800.0,
+            "outsource_cost": 2880.0,
+            "resources": [
+                {
+                    "resource_id": "219",
+                    "quantity": 1.0
+                }
+            ]
+        }
+    ],
+    "monte_carlo": {
+        "mean_makespan": 3426.615215337972,
+        "on_time_prob": 1.0,
+        "P90": 3435.165971250836,
+        "criticality_indices": {
+            "18_3": 1.0,
+            "18_4": 1.0,
+            "18_5": 1.0,
+            "18_6": 1.0,
+            "18_7": 0.0,
+            "18_8": 0.0,
+            "18_9": 1.0,
+            "18_10": 1.0,
+            "18_11": 1.0,
+            "18_13": 1.0,
+            "18_14": 0.0,
+            "18_15": 0.0,
+            "18_19": 1.0,
+            "18_16": 0.0,
+            "18_25": 0.0,
+            "18_20": 1.0,
+            "18_17": 0.0,
+            "18_21": 1.0,
+            "18_27": 0.0,
+            "18_22": 0.496,
+            "18_23": 0.504,
+            "18_28": 0.0,
+            "18_45": 0.0,
+            "18_41": 1.0,
+            "18_29": 0.0,
+            "18_30": 0.0,
+            "18_31": 0.0,
+            "18_42": 0.0,
+            "18_32": 0.0,
+            "18_43": 0.0,
+            "18_44": 0.0,
+            "18_34": 0.0,
+            "18_36": 0.0,
+            "18_46": 0.0,
+            "18_37": 0.0,
+            "18_48": 1.0,
+            "18_39": 0.0
+        }
+    },
+    "pareto_nsga2": {
+        "solutions_found": 0,
+        "selected": null,
+        "options": []
+    },
+    "cp_sat_schedule": {
+        "status": "OPTIMAL",
+        "makespan": 3456,
+        "schedule": {
+            "18_45": {
+                "start": 2240,
+                "end": 2256,
+                "duration": 16
+            },
+            "18_10": {
+                "start": 464,
+                "end": 576,
+                "duration": 112
+            },
+            "18_11": {
+                "start": 576,
+                "end": 768,
+                "duration": 192
+            },
+            "18_13": {
+                "start": 768,
+                "end": 1088,
+                "duration": 320
+            },
+            "18_14": {
+                "start": 1168,
+                "end": 1488,
+                "duration": 320
+            },
+            "18_15": {
+                "start": 2048,
+                "end": 2448,
+                "duration": 400
+            },
+            "18_16": {
+                "start": 1488,
+                "end": 1888,
+                "duration": 400
+            },
+            "18_17": {
+                "start": 1888,
+                "end": 2048,
+                "duration": 160
+            },
+            "18_19": {
+                "start": 1088,
+                "end": 1168,
+                "duration": 80
+            },
+            "18_20": {
+                "start": 1168,
+                "end": 2288,
+                "duration": 1120
+            },
+            "18_21": {
+                "start": 2288,
+                "end": 3168,
+                "duration": 880
+            },
+            "18_22": {
+                "start": 3168,
+                "end": 3408,
+                "duration": 240
+            },
+            "18_23": {
+                "start": 3168,
+                "end": 3408,
+                "duration": 240
+            },
+            "18_25": {
+                "start": 2448,
+                "end": 2768,
+                "duration": 320
+            },
+            "18_27": {
+                "start": 2048,
+                "end": 2240,
+                "duration": 192
+            },
+            "18_28": {
+                "start": 2240,
+                "end": 2432,
+                "duration": 192
+            },
+            "18_29": {
+                "start": 2432,
+                "end": 2624,
+                "duration": 192
+            },
+            "18_3": {
+                "start": 0,
+                "end": 160,
+                "duration": 160
+            },
+            "18_30": {
+                "start": 2432,
+                "end": 2528,
+                "duration": 96
+            },
+            "18_31": {
+                "start": 2432,
+                "end": 2528,
+                "duration": 96
+            },
+            "18_32": {
+                "start": 2624,
+                "end": 2720,
+                "duration": 96
+            },
+            "18_34": {
+                "start": 2720,
+                "end": 2816,
+                "duration": 96
+            },
+            "18_36": {
+                "start": 2816,
+                "end": 2896,
+                "duration": 80
+            },
+            "18_37": {
+                "start": 2896,
+                "end": 3216,
+                "duration": 320
+            },
+            "18_39": {
+                "start": 3216,
+                "end": 3456,
+                "duration": 240
+            },
+            "18_4": {
+                "start": 160,
+                "end": 256,
+                "duration": 96
+            },
+            "18_41": {
+                "start": 3408,
+                "end": 3424,
+                "duration": 16
+            },
+            "18_42": {
+                "start": 2432,
+                "end": 2448,
+                "duration": 16
+            },
+            "18_43": {
+                "start": 2624,
+                "end": 2640,
+                "duration": 16
+            },
+            "18_44": {
+                "start": 2528,
+                "end": 2544,
+                "duration": 16
+            },
+            "18_46": {
+                "start": 2816,
+                "end": 2832,
+                "duration": 16
+            },
+            "18_48": {
+                "start": 3424,
+                "end": 3425,
+                "duration": 1
+            },
+            "18_5": {
+                "start": 256,
+                "end": 352,
+                "duration": 96
+            },
+            "18_6": {
+                "start": 352,
+                "end": 384,
+                "duration": 32
+            },
+            "18_7": {
+                "start": 384,
+                "end": 400,
+                "duration": 16
+            },
+            "18_8": {
+                "start": 400,
+                "end": 416,
+                "duration": 16
+            },
+            "18_9": {
+                "start": 416,
+                "end": 464,
+                "duration": 48
+            }
+        }
+    },
+    "ppo_schedule": {
+        "makespan": 436.6837463378906,
+        "tgc": 0.0,
+        "reward": -291.18794391835206,
+        "modes": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "project_state_evolution": {
+        "current_state_id": 0,
+        "before_after_comparison": {
+            "before_state_id": 0,
+            "after_state_id": 0,
+            "action_applied": null,
+            "metrics_comparison": {
+                "makespan": {
+                    "before": 3392.0,
+                    "after": 3392.0,
+                    "delta": 0.0,
+                    "percent_change": 0.0
+                },
+                "total_cost": {
+                    "before": NaN,
+                    "after": NaN,
+                    "delta": NaN,
+                    "percent_change": 0.0
+                },
+                "on_time_probability": {
+                    "before": 1.0,
+                    "after": 1.0,
+                    "delta": 0.0
+                },
+                "P90_makespan": {
+                    "before": 3434.1079954050797,
+                    "after": 3434.1079954050797,
+                    "delta": 0.0
+                }
+            },
+            "critical_path_evolution": {
+                "before_count": 0,
+                "after_count": 0,
+                "newly_critical_tasks": [],
+                "no_longer_critical_tasks": []
+            },
+            "resource_utilization_evolution": {
+                "before": {
+                    "total_demand": {
+                        "222": 6.0,
+                        "219": 8.0,
+                        "218": 9.0,
+                        "220": 1.0,
+                        "221": 1.0
+                    },
+                    "capacities": {
+                        "218": 1,
+                        "219": 1,
+                        "220": 1,
+                        "221": 1,
+                        "222": 1
+                    },
+                    "utilization_rate": {
+                        "218": 9.0,
+                        "219": 8.0,
+                        "220": 1.0,
+                        "221": 1.0,
+                        "222": 6.0
+                    }
+                },
+                "after": {
+                    "total_demand": {
+                        "222": 6.0,
+                        "219": 8.0,
+                        "218": 9.0,
+                        "220": 1.0,
+                        "221": 1.0
+                    },
+                    "capacities": {
+                        "218": 1,
+                        "219": 1,
+                        "220": 1,
+                        "221": 1,
+                        "222": 1
+                    },
+                    "utilization_rate": {
+                        "218": 9.0,
+                        "219": 8.0,
+                        "220": 1.0,
+                        "221": 1.0,
+                        "222": 6.0
+                    }
+                }
+            },
+            "top_attention_shifts": [
+                {
+                    "task_id": "18_45",
+                    "score_before": 0.48955273628234863,
+                    "score_after": 0.48955273628234863,
+                    "delta": 0.0
+                },
+                {
+                    "task_id": "18_10",
+                    "score_before": 0.5014954209327698,
+                    "score_after": 0.5014954209327698,
+                    "delta": 0.0
+                },
+                {
+                    "task_id": "18_11",
+                    "score_before": 0.5036321878433228,
+                    "score_after": 0.5036321878433228,
+                    "delta": 0.0
+                },
+                {
+                    "task_id": "18_13",
+                    "score_before": 0.5041553378105164,
+                    "score_after": 0.5041553378105164,
+                    "delta": 0.0
+                },
+                {
+                    "task_id": "18_14",
+                    "score_before": 0.503893256187439,
+                    "score_after": 0.503893256187439,
+                    "delta": 0.0
+                }
+            ]
+        },
+        "state_history": [
+            {
+                "state_id": 0,
+                "timestamp": 1783752682.9727483,
+                "action_applied": null,
+                "makespan": 3392.0,
+                "critical_path": [],
+                "total_cost": NaN,
+                "direct_cost": 169440.0,
+                "indirect_cost": NaN,
+                "monte_carlo": {
+                    "mean_makespan": 3426.0989847253736,
+                    "on_time_prob": 1.0,
+                    "P90": 3434.1079954050797
+                },
+                "resource_metrics": {
+                    "total_demand": {
+                        "222": 6.0,
+                        "219": 8.0,
+                        "218": 9.0,
+                        "220": 1.0,
+                        "221": 1.0
+                    },
+                    "capacities": {
+                        "218": 1,
+                        "219": 1,
+                        "220": 1,
+                        "221": 1,
+                        "222": 1
+                    },
+                    "utilization_rate": {
+                        "218": 9.0,
+                        "219": 8.0,
+                        "220": 1.0,
+                        "221": 1.0,
+                        "222": 6.0
+                    }
+                }
+            }
+        ]
+    }
+}

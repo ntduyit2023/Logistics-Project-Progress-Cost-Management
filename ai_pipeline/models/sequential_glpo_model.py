@@ -174,6 +174,7 @@ class SequentialGLPOModel(nn.Module):
     def forward(
         self,
         data,
+        encoded_input: bool = False
     ) -> Dict[str, torch.Tensor]:
         """
         Mô tả (Description):

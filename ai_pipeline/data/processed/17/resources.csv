@@ -1,0 +1,28 @@
+ID,resource_name,resource_type,unit_cost,capacity
+191,Skipper,Renewable,60.00,4.00
+192,Welder,Renewable,60.00,8.00
+193,Engineer,Renewable,160.00,18.00
+194,Special team,Renewable,800.00,2.00
+195,Disconnecting team,Renewable,800.00,1.00
+196,Commissioning team,Renewable,800.00,1.00
+197,Testing team,Renewable,800.00,1.00
+198,Diving team,Renewable,900.00,1.00
+199,Crane,Renewable,200.00,3.00
+200,Vessel Pompei,Renewable,3320.00,1.00
+201,Vessel Neptune,Renewable,3750.00,1.00
+202,Vessel Vagant,Renewable,3180.00,1.00
+203,Vessel Sternat Spirit,Renewable,3250.00,1.00
+204,Vessel Souverreign,Renewable,3250.00,1.00
+205,Vessel Rambiz,Renewable,3620.00,1.00
+206,Vessel Buzzard,Renewable,3200.00,1.00
+207,Vessel Breydel,Renewable,3200.00,2.00
+208,Vessel Breughel,Renewable,3200.00,1.00
+209,Vessel Pearl River,Renewable,3250.00,1.00
+210,Vessel Maersk,Renewable,800.00,1.00
+211,Vessel Innovator,Renewable,3250.00,1.00
+212,Pre-piling template,Renewable,200.00,1.00
+213,Towning tugs,Renewable,450.00,2.00
+214,Transport barges,Renewable,400.00,2.00
+215,Drilling machine,Renewable,1200.00,2.00
+216,Pulling machine,Renewable,1300.00,1.00
+217,Laborer,Renewable,40.00,60.00

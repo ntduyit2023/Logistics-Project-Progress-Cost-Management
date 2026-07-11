@@ -53,13 +53,9 @@ def main():
     
     # ── BƯỚC 1: DATA INGESTION & TĨNH CPM ──────────────────────────────────────
     print("\n📥 [BƯỚC 1] Data Ingestion & CPM Analysis...")
-    dataset = GlPoDataset(processed_dir)
-    project_graph = None
-    for pg in dataset.graphs:
-        if pg.project_id == project_id:
-            project_graph = pg
-            break
-            
+    from ai_pipeline.models.data_loader import GlPoProjectGraph
+    project_graph = GlPoProjectGraph(project_dir)
+    print(f"[DataLoader] Built Graph for {project_graph.project_id}: {project_graph.data.num_nodes} Nodes, {project_graph.data.num_edges} Edges")        
     if project_graph is None:
         print(f"❌ Project ID {project_id} not found in dataset.")
         sys.exit(1)
@@ -96,6 +92,27 @@ def main():
     overtime_multiplier = agenda['overtime_multiplier']
     print(f"   • Agenda: {hours_per_day}h/ngày, {days_per_week} ngày/tuần, OT x{overtime_multiplier}")
     
+    import math
+    def safe_float(v):
+        try:
+            val = float(v)
+            return 0.0 if math.isnan(val) or math.isinf(val) else val
+        except (ValueError, TypeError):
+            return 0.0
+
+    # Tính toán trước duration thực tế và lưu lại vào tasks (để xuất JSON không bị 0.0)
+    for t in tasks:
+        if 'most_probable_duration' not in t and 'duration' not in t:
+            d_m = safe_float(t.get('duration_months', 0.0))
+            d_w = safe_float(t.get('duration_weeks', 0.0))
+            d_d = safe_float(t.get('duration_days', 0.0))
+            d_h = safe_float(t.get('duration_hours', 0.0))
+            cal_type = str(t.get('calendar_type', 'Agenda'))
+            dur_calc = calculate_duration_hours(d_m, d_w, d_d, d_h, hours_per_day, days_per_week, cal_type)
+            t['most_probable_duration'] = dur_calc
+            if G.has_node(t['id']):
+                G.nodes[t['id']]['most_probable_duration'] = dur_calc
+                
     G_cpm, static_makespan = calculate_cpm(G, hours_per_day=hours_per_day, days_per_week=days_per_week)
     print(f"   • Số lượng công việc: {len(tasks)} tasks")
     print(f"   • Số cạnh phụ thuộc: {len(dependencies)}")
@@ -353,7 +370,7 @@ def main():
         
         agent = ActorCritic(obs_dim=obs_dim, action_dim=action_dim, hidden_dims=hidden_dims, use_pretrained=use_pretrained)
         agent.use_pretrained = use_pretrained
-        agent.project_pyg_data = [pg.data for pg in dataset.graphs]
+        agent.project_pyg_data = [project_graph.data]
         if agent.use_pretrained:
             agent.setup_pretrained_encoder(torch.device('cpu'))
             
@@ -380,10 +397,6 @@ def main():
             
         # Tìm project_idx
         project_idx = 0
-        for idx, pg in enumerate(dataset.graphs):
-            if pg.project_id == project_id:
-                project_idx = idx
-                break
             
         # Run episode with PPO Agent
         obs_dict, info = env.reset(options={'domain_randomization': False})
@@ -453,7 +466,7 @@ def main():
     tasks_metadata = []
     for idx, t in enumerate(tasks):
         # Calculate normal cost
-        c_norm = sum(float(t.get(k, 0.0)) for k in cost_keys)
+        c_norm = sum(safe_float(t.get(k, 0.0)) for k in cost_keys)
         tasks_metadata.append({
             'id': t['id'],
             'name': str(t.get('task_name', '')),
@@ -504,8 +517,19 @@ def main():
     if not out_path:
         out_path = os.path.join(project_root, 'ai_pipeline', 'data', f"output_{project_id}_main.json")
         
+    def sanitize_dict(d):
+        if isinstance(d, dict):
+            return {k: sanitize_dict(v) for k, v in d.items()}
+        elif isinstance(d, list):
+            return [sanitize_dict(v) for v in d]
+        elif isinstance(d, float):
+            return 0.0 if math.isnan(d) or math.isinf(d) else d
+        return d
+        
+    sanitized_output = sanitize_dict(output_data)
+        
     with open(out_path, 'w', encoding='utf-8') as f:
-        json.dump(output_data, f, indent=4, ensure_ascii=False)
+        json.dump(sanitized_output, f, indent=4, ensure_ascii=False)
     print(f"\n💾 Đã xuất kết quả lịch trình chi tiết về: {out_path}")
     print(f"================================================================================")
 

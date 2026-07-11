@@ -67,7 +67,29 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
-        stdout, stderr = await process.communicate()
+        
+        stderr_chunks = []
+        async def read_stderr():
+            async for chunk in process.stderr:
+                stderr_chunks.append(chunk.decode('utf-8', errors='replace'))
+                
+        stderr_task = asyncio.create_task(read_stderr())
+        
+        async for line in process.stdout:
+            line_str = line.decode('utf-8', errors='replace').strip()
+            print(line_str)
+            if "[BƯỚC" in line_str:
+                project = await db_session.get(AppProject, int(project_id))
+                if project:
+                    current_metadata = project.metadata_json or {}
+                    new_metadata = dict(current_metadata)
+                    new_metadata['simulation_progress'] = line_str
+                    project.metadata_json = new_metadata
+                    await db_session.commit()
+                    
+        await process.wait()
+        await stderr_task
+        stderr_text = "".join(stderr_chunks)
         
         if os.path.exists(output_file):
             with open(output_file, 'r', encoding='utf-8') as f:
@@ -85,12 +107,16 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
                 print(f"✅ AI Simulation completed for Project {project_id}.")
         else:
             print(f"⚠️ AI Simulation finished but output file not found: {output_file}")
-            print(f"STDERR: {stderr.decode('utf-8')}")
+            print(f"STDERR: {stderr_text}")
             await _restore_project_status(project_id, db_session, "Planning")
 
     except Exception as e:
         print(f"❌ Unexpected Error in AI Simulation: {e}")
-        await _restore_project_status(project_id, db_session, "Error")
+        await db_session.rollback()
+        try:
+            await _restore_project_status(project_id, db_session, "Error")
+        except Exception as e2:
+            print(f"❌ Could not restore status: {e2}")
 
 async def _restore_project_status(project_id: str, db_session: AsyncSession, status: str):
     project = await db_session.get(AppProject, int(project_id))
