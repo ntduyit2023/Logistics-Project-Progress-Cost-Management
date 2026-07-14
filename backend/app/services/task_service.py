@@ -16,6 +16,24 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
     task = await task_repo.get_by_id(db, task_id)
     if not task: return
 
+    # Tính toán tổng số giờ thực tế dựa trên các thành phần thời gian (ngày, tuần, tháng, giờ)
+    d_m = float(task.duration_months or 0.0)
+    d_w = float(task.duration_weeks or 0.0)
+    d_d = float(task.duration_days or 0.0)
+    # Nếu không có ngày/tuần/tháng thì giữ nguyên giờ, ngược lại sẽ được quy đổi từ ngày/tuần/tháng
+    d_h = float(task.duration_hours or 0.0) if (d_m == 0.0 and d_w == 0.0 and d_d == 0.0) else 0.0
+
+    hours_per_day = 8.0
+    days_per_week = 5.0
+    
+    cal_type = str(task.calendar_type or 'Standard').lower()
+    if '24/7' in cal_type or 'continuous' in cal_type:
+        total_h = d_m * 30.0 * 24.0 + d_w * 7.0 * 24.0 + d_d * 24.0 + d_h
+    else:
+        total_h = d_m * 4.0 * days_per_week * hours_per_day + d_w * days_per_week * hours_per_day + d_d * hours_per_day + d_h
+        
+    task.duration_hours = max(0.0, total_h)
+
     stmt = select(TaskResource, ProjectConstraintResource).join(
         ProjectConstraintResource, TaskResource.resource_id == ProjectConstraintResource.id
     ).where(TaskResource.task_id == task_id)
@@ -79,6 +97,7 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
     total_cost = float(base_cost) * risk_factor
 
     await task_repo.update(db, db_obj=task, obj_in={
+        "duration_hours": task.duration_hours,
         "internal_labor_cost": g1_labor,
         "overtime_cost": g1_ot,
         "base_cost": base_cost,

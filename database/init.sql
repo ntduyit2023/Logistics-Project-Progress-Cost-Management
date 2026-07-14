@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 5N81jXheozMCPBQV7LMkOjedHsN2V8V4mS6OcrXRssUWN4nHeg4aVQzldZeznOK
+-- \restrict 5N81jXheozMCPBQV7LMkOjedHsN2V8V4mS6OcrXRssUWN4nHeg4aVQzldZeznOK
 
 -- Dumped from database version 15.18
 -- Dumped by pg_dump version 15.18
@@ -3975,5 +3975,5 @@ ALTER TABLE ONLY public.tasks
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 5N81jXheozMCPBQV7LMkOjedHsN2V8V4mS6OcrXRssUWN4nHeg4aVQzldZeznOK
+-- \unrestrict 5N81jXheozMCPBQV7LMkOjedHsN2V8V4mS6OcrXRssUWN4nHeg4aVQzldZeznOK
 

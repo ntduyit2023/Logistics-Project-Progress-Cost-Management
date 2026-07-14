@@ -6,7 +6,7 @@ class FeatureNormalizer(nn.Module):
     Module chuẩn hóa dữ liệu 72-Dimension cho mạng GNN, 
     áp dụng các chiến lược Scale khác nhau dựa trên kiểu phân phối (Range).
     """
-    def __init__(self, feature_dim=72):
+    def __init__(self, feature_dim=36):
         super(FeatureNormalizer, self).__init__()
         self.feature_dim = feature_dim
         
@@ -19,7 +19,8 @@ class FeatureNormalizer(nn.Module):
             19, 20, 21,  # Risk Cost
             22, 23, 24, 25, 26,  # Logistics Cost
             27, 28,  # Time & Schedule
-            29, 30, 32, 33  # Topology (demands, res, preds, succs)
+            29, 30, 32, 33,  # Topology (demands, res, preds, succs)
+            34, 35  # G8 Resources (demand, cost_estimate)
         ]
         
         # 2. Nhóm Pass-through: Đã chuẩn [0, 1] hoặc Boolean (Không đổi)

@@ -67,6 +67,8 @@ FEATURE_INDEX = {
     31: "is_critical",
     32: "total_float",
     33: "path_length",
+    34: "total_resource_demand",
+    35: "resource_cost_estimate",
 }
 
 # ============================================================================
@@ -82,6 +84,8 @@ INTERACTIONS = [
     (5, 6, 0.5, "Internal 🤝 Overtime"),
     (10, 6, -0.5, "Outsourcing ⚔️ Overtime (Thuê ngoài thì ít OT)"),
     (9, 23, 1.0, "Material 📈 Freight (Mua vật liệu cần vận chuyển)"),
+    (35, 5, 0.5, "Resource Cost 🤝 Internal Labor"),
+    (35, 10, 0.5, "Resource Cost 🤝 Outsourcing"),
     
     # Indirect / Contractual
     (12, 14, 0.5, "Facility 🤝 Utilities"),
@@ -107,7 +111,7 @@ INTERACTIONS = [
     (18, 8, 0.8, "Complexity 📈 QA/QC (Phức tạp cần test nhiều)"),
 ]
 
-def build_sparse_matrix(interactions, size=34):
+def build_sparse_matrix(interactions, size=36):
     matrix = np.zeros((size, size), dtype=np.float32)
     np.fill_diagonal(matrix, 1.0)
     for src, tgt, val, _ in interactions:
@@ -137,10 +141,10 @@ def get_interactions(project_type: str = "Logistics") -> list:
     return base
 
 def get_feature_group_map(project_type: str = "Logistics") -> dict:
-    """Ánh xạ 34 features thành 8 nhóm"""
+    """Ánh xạ 36 features thành 8 nhóm"""
     return {
         0: list(range(0, 5)),    # Hub
-        1: list(range(5, 11)),   # G1: Direct
+        1: list(range(5, 11)) + [34, 35],   # G1: Direct (thêm 34, 35)
         2: list(range(11, 15)),  # G2: Indirect
         3: list(range(15, 18)),  # G3: Contractual
         4: list(range(18, 22)),  # G4: Risk

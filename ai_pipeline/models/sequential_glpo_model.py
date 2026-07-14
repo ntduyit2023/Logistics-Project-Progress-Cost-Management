@@ -199,8 +199,11 @@ class SequentialGLPOModel(nn.Module):
         """
         # Chống rò rỉ dữ liệu (Data Leakage) bằng cách xóa sạch đặc trưng CPM gán sẵn trong x
         x = data.x.clone()
-        if not encoded_input and x.shape[1] >= 68: # Safe check
-            x[:, [65, 66, 67]] = 0.0
+        if not encoded_input:
+            if x.shape[1] >= 34:
+                x[:, [29, 30, 31, 32, 33]] = 0.0
+            elif x.shape[1] >= 68:
+                x[:, [65, 66, 67]] = 0.0
         edge_index = data.edge_index
 
         # ── TẦNG 1 & 2: Project-Specific Encoder (Latent Projection)

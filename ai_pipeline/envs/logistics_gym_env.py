@@ -520,7 +520,8 @@ class LogisticsGymEnv(gym.Env):
 
         reward = float(reward_info['reward']) / self.reward_scale
 
-        # Update environmental impact if available
+        # Update environmental impact and cumulative TGC if available
+        state['cumulative_tgc'] += float(reward_info.get('tgc', 0.0))
         # In 34D schema, index for environmental impact is absent, so we just add 0
         state['cumulative_env_impact'] += 0.0
 

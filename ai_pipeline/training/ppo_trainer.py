@@ -50,7 +50,7 @@ if project_root not in sys.path:
 # ============================================================================
 DEFAULT_PPO_CONFIG = {
     # ── Kiến trúc mạng ──
-    'obs_dim': 48,              # 34 (task_features) + 6 (task_context) + 8 (project_state)
+    'obs_dim': 50,              # 36 (task_features) + 6 (task_context) + 8 (project_state)
     'action_dim': 3,            # Normal / Crash / Outsource
     'hidden_dims': [256, 128],  # Kích thước các tầng ẩn
 
@@ -109,7 +109,7 @@ class ActorCritic(nn.Module):
 
     def __init__(
         self,
-        obs_dim: int = 48,
+        obs_dim: int = 50,
         action_dim: int = 3,
         hidden_dims: List[int] = None,
         use_pretrained: bool = False,
@@ -521,11 +521,15 @@ class PPOTrainer:
         # ── Khởi tạo các thành phần ──
         self.device = torch.device('cpu')
 
+        if self.config.get('use_pretrained', False):
+            self.config['obs_dim'] += 2
+
         # Actor-Critic
         self.agent = ActorCritic(
             obs_dim=self.config['obs_dim'],
             action_dim=self.config['action_dim'],
             hidden_dims=self.config['hidden_dims'],
+            use_pretrained=self.config.get('use_pretrained', False),
         ).to(self.device)
 
         # Optimizer
@@ -597,7 +601,10 @@ class PPOTrainer:
         # Tạo danh sách environments
         self.envs = []
         self.project_ids = []
+        target_pids = self.config.get('project_ids', None)
         for pg in self.dataset.graphs:
+            if target_pids is not None and str(pg.project_id) not in [str(p) for p in target_pids]:
+                continue
             env = create_env_from_project_graph(
                 pg,
                 penalty_weight=self.config.get('penalty_weight', 1000.0),
@@ -703,8 +710,8 @@ class PPOTrainer:
                 obs_norm = self.obs_normalizer.normalize(obs_flat)
                 if use_pretrained:
                     # Ghi đè chỉ số không chuẩn hóa
-                    obs_norm[32] = float(pidx)
-                    obs_norm[33] = float(tidx)
+                    obs_norm[-2] = float(pidx)
+                    obs_norm[-1] = float(tidx)
 
                 obs_tensor = torch.tensor(obs_norm, dtype=torch.float32).unsqueeze(0)
 
@@ -826,8 +833,8 @@ class PPOTrainer:
             if not done:
                 obs_norm = self.obs_normalizer.normalize(obs_flat)
                 if use_pretrained:
-                    obs_norm[32] = float(pidx)
-                    obs_norm[33] = float(tidx)
+                    obs_norm[-2] = float(pidx)
+                    obs_norm[-1] = float(tidx)
                 obs_tensor = torch.tensor(obs_norm, dtype=torch.float32).unsqueeze(0)
                 with torch.no_grad():
                     _, _, _, last_value = self.agent.get_action_and_value(obs_tensor)
@@ -1094,8 +1101,8 @@ class PPOTrainer:
                 while not done:
                     obs_norm = self.obs_normalizer.normalize(obs_flat)
                     if use_pretrained:
-                        obs_norm[32] = float(env_idx)
-                        obs_norm[33] = float(tidx)
+                        obs_norm[-2] = float(env_idx)
+                        obs_norm[-1] = float(tidx)
 
                     obs_tensor = torch.tensor(
                         obs_norm, dtype=torch.float32
@@ -1197,7 +1204,7 @@ if __name__ == "__main__":
     # Cấu hình đã tinh chỉnh cho dataset 5 dự án nhỏ
     config = {
         # ── Kiến trúc ──
-        'obs_dim': 86,
+        'obs_dim': 50,
         'action_dim': 3,
         'hidden_dims': [256, 128],
 

@@ -119,8 +119,52 @@ const Workspace = () => {
       if (editingTask) {
         await api.updateTask(Number(projectId), editingTask.id, taskData);
       } else {
-        newTaskId = "T-" + Math.random().toString(36).substr(2, 6);
+        const randStr = Math.random().toString(36).substr(2, 6);
+        newTaskId = `${projectId}_T-${randStr}`;
         await api.createTask(Number(projectId), { id: newTaskId, ...taskData });
+      }
+
+      // Sync resources assigned to the task
+      if (stagedResources && Array.isArray(stagedResources)) {
+        if (editingTask) {
+          // Editing mode: sync resources
+          try {
+            const existingResRes = await api.getTaskResources(Number(projectId), newTaskId);
+            const existingRes = existingResRes.data || [];
+            
+            // 1. Remove resources that are no longer assigned
+            for (const ext of existingRes) {
+              if (!stagedResources.some(sr => sr.resource_id === ext.resource_id)) {
+                await api.removeTaskResource(Number(projectId), newTaskId, ext.resource_id);
+              }
+            }
+            
+            // 2. Assign new or updated resources
+            for (const sr of stagedResources) {
+              const ext = existingRes.find(x => x.resource_id === sr.resource_id);
+              if (!ext || ext.request_quantity !== sr.request_quantity) {
+                await api.assignTaskResource(Number(projectId), newTaskId, {
+                  resource_id: sr.resource_id,
+                  request_quantity: sr.request_quantity
+                });
+              }
+            }
+          } catch (resErr) {
+            console.error("Failed to sync resources for task", resErr);
+          }
+        } else {
+          // Creating mode: simply assign all staged resources
+          for (const sr of stagedResources) {
+            try {
+              await api.assignTaskResource(Number(projectId), newTaskId, {
+                resource_id: sr.resource_id,
+                request_quantity: sr.request_quantity
+              });
+            } catch (resErr) {
+              console.error("Failed to assign resource to new task", resErr);
+            }
+          }
+        }
       }
 
       if (newTaskId) {
@@ -287,14 +331,29 @@ const Workspace = () => {
     tasks.forEach((task: any, idx: number) => {
       const mode = selectedOptionModes[idx] || 0;
       const agendaHours = projectData?.constraint_time?.working_hours_per_day || projectData?.metadata_json?.agenda_working_hours || 8;
-      const baseTaskDuration = task.most_probable_duration || task.duration || ((task.duration_days || 0) * agendaHours + (task.duration_hours || 0)) || 10;
+      const daysPerWeek = 5;
+      let baseTaskDuration = 10;
+      if (task.duration_hours !== undefined && task.duration_hours !== null && parseFloat(task.duration_hours) > 0) {
+        baseTaskDuration = parseFloat(task.duration_hours);
+      } else if (task.most_probable_duration) {
+        baseTaskDuration = task.most_probable_duration;
+      } else {
+        const d_m = parseFloat(task.duration_months) || 0;
+        const d_w = parseFloat(task.duration_weeks) || 0;
+        const d_d = parseFloat(task.duration_days) || 0;
+        const d_h = parseFloat(task.duration_hours) || 0;
+        baseTaskDuration = d_m * 4 * daysPerWeek * agendaHours + d_w * daysPerWeek * agendaHours + d_d * agendaHours + d_h;
+        if (baseTaskDuration <= 0) baseTaskDuration = 10;
+      }
       const duration = mode === 1 
         ? Math.round(baseTaskDuration / 1.5) 
         : mode === 2 
           ? Math.round(baseTaskDuration / 2.0) 
           : baseTaskDuration;
       
-      const baseTaskCost = task.normal_cost || task.total_cost || task.internal_labor_cost || 1000;
+      const baseTaskCost = (task.total_cost !== undefined && task.total_cost !== null)
+        ? parseFloat(task.total_cost)
+        : task.normal_cost || task.internal_labor_cost || 0;
       const cost = mode === 1 
         ? (task.crash_cost || baseTaskCost * 1.25)
         : mode === 2 
@@ -360,7 +419,21 @@ const Workspace = () => {
     const gantt = displayGanttTasks.map((t: any) => {
       const sched = cpSatSchedule[t.id];
       let start = 0;
-      let duration = t.most_probable_duration || t.duration_days || 10;
+      let duration = 10;
+      if (t.duration_hours !== undefined && t.duration_hours !== null && parseFloat(t.duration_hours) > 0) {
+        duration = parseFloat(t.duration_hours);
+      } else if (t.most_probable_duration) {
+        duration = t.most_probable_duration;
+      } else {
+        const agendaHours = projectData?.constraint_time?.working_hours_per_day || projectData?.metadata_json?.agenda_working_hours || 8;
+        const daysPerWeek = 5;
+        const d_m = parseFloat(t.duration_months) || 0;
+        const d_w = parseFloat(t.duration_weeks) || 0;
+        const d_d = parseFloat(t.duration_days) || 0;
+        const d_h = parseFloat(t.duration_hours) || 0;
+        duration = d_m * 4 * daysPerWeek * agendaHours + d_w * daysPerWeek * agendaHours + d_d * agendaHours + d_h;
+        if (duration <= 0) duration = 10;
+      }
       
       // If we are in Baseline or Recommendations, we simulate a simple waterfall start for visualization
       // Ideally we should use CPM early_start, but for now we stack them if no schedule exists

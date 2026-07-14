@@ -188,7 +188,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
     // Convert all numeric string values back to numbers if needed
     for (const k of Object.keys(payload)) {
       if (payload[k] === '') payload[k] = null;
-      else if (k !== 'task_name' && k !== 'task_type' && k !== 'status' && k !== 'calendar_type' && k !== 'baseline_start' && k !== 'id' && k !== 'metadata_json') {
+      else if (typeof payload[k] === 'string' && k !== 'task_name' && k !== 'task_type' && k !== 'status' && k !== 'calendar_type' && k !== 'baseline_start' && k !== 'id' && k !== 'metadata_json' && k !== 'type') {
         const num = Number(payload[k]);
         if (!isNaN(num)) payload[k] = num;
       }
