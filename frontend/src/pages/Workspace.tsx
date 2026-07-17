@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AirflowGraph from './AirflowGraph';
 import { 
-  Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown, Cpu, Database, Sliders, DollarSign
+  Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown, Cpu, Database, Sliders, DollarSign, ArrowLeft
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Bar, Legend, Line, ReferenceLine } from 'recharts';
 import { api } from '../services/api';
@@ -90,7 +90,7 @@ const Workspace = () => {
   }, [projectId, navigate]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (projectData?.status === 'Simulating') {
       interval = setInterval(async () => {
         try {
@@ -469,14 +469,23 @@ const Workspace = () => {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-80px)] overflow-y-auto bg-slate-50 p-6 custom-scrollbar">
+    <div className="w-full h-screen overflow-y-auto bg-slate-50 p-6 custom-scrollbar">
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl font-black text-slate-800 tracking-tight flex items-center">
-            <Columns className="mr-2 text-blue-600 animate-pulse" size={22} />
-            {projectData.project_name || "Digital Twin Workspace"}
-          </h1>
-          <p className="text-xs text-slate-500 mt-0.5">Merged UI: Live Backend API + Mocks Presentation</p>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate('/projects')}
+            className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+            title="Back to Projects"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="text-xl font-black text-slate-800 tracking-tight flex items-center">
+              <Columns className="mr-2 text-blue-600 animate-pulse" size={22} />
+              {projectData.project_name || "Digital Twin Workspace"}
+            </h1>
+            <p className="text-xs text-slate-500 mt-0.5">Merged UI: Live Backend API + Mocks Presentation</p>
+          </div>
         </div>
 
         <div className="flex gap-3">
@@ -745,7 +754,7 @@ const Workspace = () => {
                   <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={() => ''} />
                   <Tooltip 
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    formatter={(val: number): [string, string] => [`${val.toFixed(2)}%`, 'Xác suất']}
+                    formatter={(val: any) => [`${Number(val).toFixed(2)}%`, 'Xác suất']}
                     labelFormatter={(val) => `${val}h`}
                   />
                   <Area type="monotone" dataKey="probability" stroke="#8b5cf6" strokeWidth={2} fillOpacity={1} fill="url(#colorBell)" />

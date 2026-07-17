@@ -17,10 +17,9 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="projects" element={<ProjectList />} />
-          <Route path="projects/:projectId/workspace" element={<Workspace />} />
-          <Route path="tasks" element={<TaskTable />} />
           <Route path="settings" element={<Navigate to="/" replace />} />
         </Route>
+        <Route path="/projects/:projectId/workspace" element={<Workspace />} />
       </Routes>
     </BrowserRouter>
   );
