@@ -13,6 +13,9 @@ from sqlalchemy import text
 
 async def _export_project_data(project_id: str, db_session: AsyncSession, base_dir: str):
     processed_dir = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id))
+    # Safety: if a file (not directory) exists at this path, remove it to prevent FileExistsError
+    if os.path.exists(processed_dir) and not os.path.isdir(processed_dir):
+        os.remove(processed_dir)
     os.makedirs(processed_dir, exist_ok=True)
     
     tasks_query = text(f"SELECT * FROM tasks WHERE project_id = {project_id}")
