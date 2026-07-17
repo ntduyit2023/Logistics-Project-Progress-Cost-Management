@@ -6,195 +6,531 @@
     "dependencies": [
         [
             "18_3",
-            "18_4"
+            "18_4",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_4",
-            "18_5"
+            "18_5",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_5",
-            "18_6"
+            "18_6",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_5",
-            "18_7"
+            "18_7",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_5",
-            "18_8"
+            "18_8",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_6",
-            "18_9"
+            "18_9",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_8",
-            "18_9"
+            "18_9",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_7",
-            "18_9"
+            "18_9",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_9",
-            "18_10"
+            "18_10",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_10",
-            "18_11"
+            "18_11",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_11",
-            "18_13"
+            "18_13",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_13",
-            "18_14"
+            "18_14",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_13",
-            "18_15"
+            "18_15",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_14",
-            "18_16"
+            "18_16",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_16",
-            "18_17"
+            "18_17",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_13",
-            "18_19"
+            "18_19",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_19",
-            "18_20"
+            "18_20",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_20",
-            "18_21"
+            "18_21",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_21",
-            "18_22"
+            "18_22",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_21",
-            "18_23"
+            "18_23",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_15",
-            "18_25"
+            "18_25",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_17",
-            "18_27"
+            "18_27",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_27",
-            "18_28"
+            "18_28",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_28",
-            "18_29"
+            "18_29",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_28",
-            "18_30"
+            "18_30",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_28",
-            "18_31"
+            "18_31",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_29",
-            "18_32"
+            "18_32",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_32",
-            "18_34"
+            "18_34",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_30",
-            "18_34"
+            "18_34",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_31",
-            "18_34"
+            "18_34",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_15",
-            "18_34"
+            "18_34",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_34",
-            "18_36"
+            "18_36",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_36",
-            "18_37"
+            "18_37",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_37",
-            "18_39"
+            "18_39",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_23",
-            "18_41"
+            "18_41",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_22",
-            "18_41"
+            "18_41",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_28",
-            "18_42"
+            "18_42",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_29",
-            "18_43"
+            "18_43",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_30",
-            "18_44"
+            "18_44",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_31",
-            "18_44"
+            "18_44",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_27",
-            "18_45"
+            "18_45",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_34",
-            "18_46"
+            "18_46",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_41",
-            "18_48"
+            "18_48",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_42",
-            "18_48"
+            "18_48",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_43",
-            "18_48"
+            "18_48",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_44",
-            "18_48"
+            "18_48",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_45",
-            "18_48"
+            "18_48",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ],
         [
             "18_46",
-            "18_48"
+            "18_48",
+            {
+                "dependency_type": "FS",
+                "lag_months": 0.0,
+                "lag_weeks": 0.0,
+                "lag_days": 0.0,
+                "lag_hours": 0.0
+            }
         ]
     ],
     "tasks_metadata": [
@@ -658,9 +994,9 @@
         }
     ],
     "monte_carlo": {
-        "mean_makespan": 3426.615215337972,
+        "mean_makespan": 3426.92410233658,
         "on_time_prob": 1.0,
-        "P90": 3435.165971250836,
+        "P90": 3435.6938070853594,
         "criticality_indices": {
             "18_3": 1.0,
             "18_4": 1.0,
@@ -681,8 +1017,8 @@
             "18_17": 0.0,
             "18_21": 1.0,
             "18_27": 0.0,
-            "18_22": 0.496,
-            "18_23": 0.504,
+            "18_22": 0.492,
+            "18_23": 0.508,
             "18_28": 0.0,
             "18_45": 0.0,
             "18_41": 1.0,
@@ -898,9 +1234,9 @@
         }
     },
     "ppo_schedule": {
-        "makespan": 436.6837463378906,
+        "makespan": 399.04229736328125,
         "tgc": 0.0,
-        "reward": -291.18794391835206,
+        "reward": -759.3905443152945,
         "modes": [
             0,
             0,
@@ -911,17 +1247,17 @@
             0,
             0,
             0,
-            0,
-            0,
+            1,
+            1,
             2,
             2,
             0,
+            2,
+            2,
+            2,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            2,
+            2,
             0,
             0,
             0,
@@ -955,9 +1291,9 @@
                     "percent_change": 0.0
                 },
                 "total_cost": {
-                    "before": NaN,
-                    "after": NaN,
-                    "delta": NaN,
+                    "before": 0.0,
+                    "after": 0.0,
+                    "delta": 0.0,
                     "percent_change": 0.0
                 },
                 "on_time_probability": {
@@ -966,8 +1302,8 @@
                     "delta": 0.0
                 },
                 "P90_makespan": {
-                    "before": 3434.1079954050797,
-                    "after": 3434.1079954050797,
+                    "before": 3434.7372811001856,
+                    "after": 3434.7372811001856,
                     "delta": 0.0
                 }
             },
@@ -1028,32 +1364,32 @@
             "top_attention_shifts": [
                 {
                     "task_id": "18_45",
-                    "score_before": 0.48955273628234863,
-                    "score_after": 0.48955273628234863,
+                    "score_before": 0.5300530791282654,
+                    "score_after": 0.5300530791282654,
                     "delta": 0.0
                 },
                 {
                     "task_id": "18_10",
-                    "score_before": 0.5014954209327698,
-                    "score_after": 0.5014954209327698,
+                    "score_before": 0.5299193859100342,
+                    "score_after": 0.5299193859100342,
                     "delta": 0.0
                 },
                 {
                     "task_id": "18_11",
-                    "score_before": 0.5036321878433228,
-                    "score_after": 0.5036321878433228,
+                    "score_before": 0.5259209871292114,
+                    "score_after": 0.5259209871292114,
                     "delta": 0.0
                 },
                 {
                     "task_id": "18_13",
-                    "score_before": 0.5041553378105164,
-                    "score_after": 0.5041553378105164,
+                    "score_before": 0.5200738906860352,
+                    "score_after": 0.5200738906860352,
                     "delta": 0.0
                 },
                 {
                     "task_id": "18_14",
-                    "score_before": 0.503893256187439,
-                    "score_after": 0.503893256187439,
+                    "score_before": 0.5177450180053711,
+                    "score_after": 0.5177450180053711,
                     "delta": 0.0
                 }
             ]
@@ -1061,17 +1397,17 @@
         "state_history": [
             {
                 "state_id": 0,
-                "timestamp": 1783752682.9727483,
+                "timestamp": 1783826790.2739997,
                 "action_applied": null,
                 "makespan": 3392.0,
                 "critical_path": [],
-                "total_cost": NaN,
+                "total_cost": 0.0,
                 "direct_cost": 169440.0,
-                "indirect_cost": NaN,
+                "indirect_cost": 0.0,
                 "monte_carlo": {
-                    "mean_makespan": 3426.0989847253736,
+                    "mean_makespan": 3426.3892820342485,
                     "on_time_prob": 1.0,
-                    "P90": 3434.1079954050797
+                    "P90": 3434.7372811001856
                 },
                 "resource_metrics": {
                     "total_demand": {

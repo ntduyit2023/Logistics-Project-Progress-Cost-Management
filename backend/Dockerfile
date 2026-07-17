@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y gcc libpq-dev && rm -rf /var/lib/apt/li
 
 COPY requirements.txt .
 
-# Đóng gói toàn bộ thư viện Python thành file .whl (Bỏ lại các file rác)
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+# Đóng gói toàn bộ thư viện Python thành file .whl (Bao gồm cả các dependencies)
+RUN pip wheel --no-cache-dir --wheel-dir /app/wheels -r requirements.txt
 
 # ==========================================
 # STAGE 2: RUNTIME
@@ -33,7 +33,7 @@ COPY --from=builder /app/wheels /wheels
 COPY --from=builder /app/requirements.txt .
 
 # Cài đặt từ file wheel nội bộ cực nhanh
-RUN pip install --no-cache-dir --find-links=/wheels -r requirements.txt
+RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt
 
 # Copy mã nguồn
 COPY . .
