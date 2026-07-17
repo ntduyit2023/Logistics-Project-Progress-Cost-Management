@@ -1,6 +1,6 @@
-ID,resource_name,resource_type,unit_cost,capacity
-168,Project Coordinator,Renewable,31.28,1.00
-169,Headnurses,Renewable,31.28,65.00
-170,ICT committee,Renewable,27.62,5.00
-171,Board of directors,Renewable,62.10,7.00
-172,Stretcher-bearer/logisticians,Renewable,22.31,24.00
+ID,Name,Type,Availability,Cost/Use,Cost/Unit
+1,Project Coordinator,Renewable,1.0,0.0,31.28
+2,Headnurses,Renewable,65.0,0.0,31.28
+3,ICT committee,Renewable,5.0,0.0,27.62
+4,Board of directors,Renewable,7.0,0.0,62.1
+5,Stretcher-bearer/logisticians,Renewable,24.0,0.0,22.31
