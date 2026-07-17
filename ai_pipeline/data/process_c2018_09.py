@@ -187,9 +187,12 @@ def process_project():
         preds = str(row['Relations']) if pd.notna(row['Relations']) else ""
         succs = str(row['Unnamed: 4']) if pd.notna(row['Unnamed: 4']) else ""
         
+        baseline_start = str(row['Baseline']) if 'Baseline' in row and pd.notna(row['Baseline']) else ""
+        
         output_tasks.append({
             "task_id": task_id,
             "task_name": task_name,
+            "baseline_start": baseline_start,
             "g1_labor": g1["chi_phi_nhan_cong_noi_bo"],
             "g1_material": g1["chi_phi_vat_lieu"],
             "g1_subcontract": g1["chi_phi_thue_ngoai"],
@@ -219,8 +222,8 @@ def process_project():
         
         schedules.append({
             "task_id": task_id,
-            "baseline_start": str(row['Baseline']),
-            "baseline_end": str(row['Unnamed: 6']),
+            "baseline_start": baseline_start,
+            "baseline_end": "",
             "predecessors": preds,
             "successors": succs
         })

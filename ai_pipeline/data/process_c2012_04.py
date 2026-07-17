@@ -269,9 +269,12 @@ def main():
             "baseline_start": str(row['Baseline'])
         }
         
+        baseline_start = str(row['Baseline']) if 'Baseline' in row and pd.notna(row['Baseline']) else ""
+        
         output_tasks.append({
             "task_id": task_id,
             "task_name": task_name,
+            "baseline_start": baseline_start,
             "g1_direct_cost": g1,
             "g2_indirect_cost": g2,
             "g3_hr_parameters": g3,
@@ -293,6 +296,7 @@ def main():
         row = {
             "task_id": t["task_id"],
             "task_name": t["task_name"],
+            "baseline_start": t.get("baseline_start", ""),
             "g1_labor": t["g1_direct_cost"]["chi_phi_nhan_cong_noi_bo"],
             "g1_ot": t["g1_direct_cost"]["chi_phi_lam_them_gio"],
             "g1_fuel": t["g1_direct_cost"]["chi_phi_nhien_lieu"],

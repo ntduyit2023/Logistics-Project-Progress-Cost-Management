@@ -1,1213 +1,1213 @@
-task_id,resource_name,quantity,hourly_rate,ot_rate
-3,Laborer,5.0,40.0,60.0
-3,Skipper,1.0,60.0,90.0
-3,Engineer,3.0,160.0,240.0
-3,Vessel Buzzard,1.0,3200.0,4800.0
-6,Laborer,5.0,40.0,60.0
-6,Skipper,1.0,60.0,90.0
-6,Vessel Pompei,1.0,3320.0,4980.0
-7,Laborer,22.0,40.0,60.0
-7,Skipper,1.0,60.0,90.0
-7,Engineer,6.0,160.0,240.0
-7,Vessel Pompei,1.0,3320.0,4980.0
-526,Laborer,5.0,40.0,60.0
-526,Skipper,0.5,60.0,90.0
-526,Vessel Maersk,0.5,800.0,1200.0
-526,Crane,1.0,200.0,300.0
-527,Laborer,5.0,40.0,60.0
-527,Skipper,0.5,60.0,90.0
-527,Vessel Maersk,0.5,800.0,1200.0
-527,Crane,1.0,200.0,300.0
-528,Laborer,5.0,40.0,60.0
-528,Skipper,0.5,60.0,90.0
-528,Vessel Maersk,0.5,800.0,1200.0
-528,Crane,1.0,200.0,300.0
-529,Laborer,5.0,40.0,60.0
-529,Skipper,0.5,60.0,90.0
-529,Vessel Maersk,0.5,800.0,1200.0
-529,Crane,1.0,200.0,300.0
-530,Laborer,5.0,40.0,60.0
-530,Skipper,0.5,60.0,90.0
-530,Vessel Maersk,0.5,800.0,1200.0
-530,Crane,1.0,200.0,300.0
-531,Laborer,5.0,40.0,60.0
-531,Skipper,0.5,60.0,90.0
-531,Vessel Maersk,0.5,800.0,1200.0
-531,Crane,1.0,200.0,300.0
-532,Laborer,5.0,40.0,60.0
-532,Skipper,0.5,60.0,90.0
-532,Vessel Maersk,0.5,800.0,1200.0
-532,Crane,1.0,200.0,300.0
-533,Laborer,5.0,40.0,60.0
-533,Skipper,0.5,60.0,90.0
-533,Vessel Maersk,0.5,800.0,1200.0
-533,Crane,1.0,200.0,300.0
-534,Laborer,5.0,40.0,60.0
-534,Skipper,0.5,60.0,90.0
-534,Vessel Maersk,0.5,800.0,1200.0
-534,Crane,1.0,200.0,300.0
-535,Laborer,5.0,40.0,60.0
-535,Skipper,0.5,60.0,90.0
-535,Vessel Maersk,0.5,800.0,1200.0
-535,Crane,1.0,200.0,300.0
-536,Laborer,5.0,40.0,60.0
-536,Skipper,0.5,60.0,90.0
-536,Vessel Maersk,0.5,800.0,1200.0
-536,Crane,1.0,200.0,300.0
-537,Laborer,5.0,40.0,60.0
-537,Skipper,0.5,60.0,90.0
-537,Vessel Maersk,0.5,800.0,1200.0
-537,Crane,1.0,200.0,300.0
-538,Laborer,5.0,40.0,60.0
-538,Skipper,0.5,60.0,90.0
-538,Vessel Maersk,0.5,800.0,1200.0
-538,Crane,1.0,200.0,300.0
-539,Laborer,5.0,40.0,60.0
-539,Skipper,0.5,60.0,90.0
-539,Vessel Maersk,0.5,800.0,1200.0
-539,Crane,1.0,200.0,300.0
-540,Laborer,5.0,40.0,60.0
-540,Skipper,0.5,60.0,90.0
-540,Vessel Maersk,0.5,800.0,1200.0
-540,Crane,1.0,200.0,300.0
-541,Laborer,5.0,40.0,60.0
-541,Skipper,0.5,60.0,90.0
-541,Vessel Maersk,0.5,800.0,1200.0
-541,Crane,1.0,200.0,300.0
-542,Laborer,5.0,40.0,60.0
-542,Skipper,0.5,60.0,90.0
-542,Vessel Maersk,0.5,800.0,1200.0
-542,Crane,1.0,200.0,300.0
-543,Laborer,5.0,40.0,60.0
-543,Skipper,0.5,60.0,90.0
-543,Vessel Maersk,0.5,800.0,1200.0
-543,Crane,1.0,200.0,300.0
-544,Laborer,5.0,40.0,60.0
-544,Skipper,0.5,60.0,90.0
-544,Vessel Maersk,0.5,800.0,1200.0
-544,Crane,1.0,200.0,300.0
-545,Laborer,5.0,40.0,60.0
-545,Skipper,0.5,60.0,90.0
-545,Vessel Maersk,0.5,800.0,1200.0
-545,Crane,1.0,200.0,300.0
-546,Laborer,5.0,40.0,60.0
-546,Skipper,0.5,60.0,90.0
-546,Vessel Maersk,0.5,800.0,1200.0
-546,Crane,1.0,200.0,300.0
-547,Laborer,5.0,40.0,60.0
-547,Skipper,0.5,60.0,90.0
-547,Vessel Maersk,0.5,800.0,1200.0
-547,Crane,1.0,200.0,300.0
-548,Laborer,5.0,40.0,60.0
-548,Skipper,0.5,60.0,90.0
-548,Vessel Maersk,0.5,800.0,1200.0
-548,Crane,1.0,200.0,300.0
-549,Laborer,5.0,40.0,60.0
-549,Skipper,0.5,60.0,90.0
-549,Vessel Maersk,0.5,800.0,1200.0
-549,Crane,1.0,200.0,300.0
-550,Laborer,5.0,40.0,60.0
-550,Skipper,0.5,60.0,90.0
-550,Vessel Maersk,0.5,800.0,1200.0
-550,Crane,1.0,200.0,300.0
-12,Laborer,22.0,40.0,60.0
-12,Skipper,1.0,60.0,90.0
-12,Engineer,6.0,160.0,240.0
-12,Vessel Buzzard,1.0,3200.0,4800.0
-13,Laborer,22.0,40.0,60.0
-13,Skipper,1.0,60.0,90.0
-13,Engineer,6.0,160.0,240.0
-13,Vessel Buzzard,1.0,3200.0,4800.0
-14,Laborer,22.0,40.0,60.0
-14,Skipper,1.0,60.0,90.0
-14,Engineer,6.0,160.0,240.0
-14,Vessel Buzzard,1.0,3200.0,4800.0
-196,Laborer,22.0,40.0,60.0
-196,Skipper,1.0,60.0,90.0
-196,Engineer,6.0,160.0,240.0
-196,Vessel Buzzard,1.0,3200.0,4800.0
-197,Laborer,22.0,40.0,60.0
-197,Skipper,1.0,60.0,90.0
-197,Engineer,6.0,160.0,240.0
-197,Vessel Buzzard,1.0,3200.0,4800.0
-198,Laborer,22.0,40.0,60.0
-198,Skipper,1.0,60.0,90.0
-198,Engineer,6.0,160.0,240.0
-198,Vessel Buzzard,1.0,3200.0,4800.0
-199,Laborer,22.0,40.0,60.0
-199,Skipper,1.0,60.0,90.0
-199,Engineer,6.0,160.0,240.0
-199,Vessel Buzzard,1.0,3200.0,4800.0
-200,Laborer,22.0,40.0,60.0
-200,Skipper,1.0,60.0,90.0
-200,Engineer,6.0,160.0,240.0
-200,Vessel Buzzard,1.0,3200.0,4800.0
-201,Laborer,22.0,40.0,60.0
-201,Skipper,1.0,60.0,90.0
-201,Engineer,6.0,160.0,240.0
-201,Vessel Buzzard,1.0,3200.0,4800.0
-202,Laborer,22.0,40.0,60.0
-202,Skipper,1.0,60.0,90.0
-202,Engineer,6.0,160.0,240.0
-202,Vessel Buzzard,1.0,3200.0,4800.0
-203,Laborer,22.0,40.0,60.0
-203,Skipper,1.0,60.0,90.0
-203,Engineer,6.0,160.0,240.0
-203,Vessel Buzzard,1.0,3200.0,4800.0
-204,Laborer,22.0,40.0,60.0
-204,Skipper,1.0,60.0,90.0
-204,Engineer,6.0,160.0,240.0
-204,Vessel Buzzard,1.0,3200.0,4800.0
-205,Laborer,22.0,40.0,60.0
-205,Skipper,1.0,60.0,90.0
-205,Engineer,6.0,160.0,240.0
-205,Vessel Buzzard,1.0,3200.0,4800.0
-206,Laborer,22.0,40.0,60.0
-206,Skipper,1.0,60.0,90.0
-206,Engineer,6.0,160.0,240.0
-206,Vessel Buzzard,1.0,3200.0,4800.0
-207,Laborer,22.0,40.0,60.0
-207,Skipper,1.0,60.0,90.0
-207,Engineer,6.0,160.0,240.0
-207,Vessel Buzzard,1.0,3200.0,4800.0
-208,Laborer,22.0,40.0,60.0
-208,Skipper,1.0,60.0,90.0
-208,Engineer,6.0,160.0,240.0
-208,Vessel Buzzard,1.0,3200.0,4800.0
-209,Laborer,22.0,40.0,60.0
-209,Skipper,1.0,60.0,90.0
-209,Engineer,6.0,160.0,240.0
-209,Vessel Buzzard,1.0,3200.0,4800.0
-210,Laborer,22.0,40.0,60.0
-210,Skipper,1.0,60.0,90.0
-210,Engineer,6.0,160.0,240.0
-210,Vessel Buzzard,1.0,3200.0,4800.0
-211,Laborer,22.0,40.0,60.0
-211,Skipper,1.0,60.0,90.0
-211,Engineer,6.0,160.0,240.0
-211,Vessel Buzzard,1.0,3200.0,4800.0
-212,Laborer,22.0,40.0,60.0
-212,Skipper,1.0,60.0,90.0
-212,Engineer,6.0,160.0,240.0
-212,Vessel Buzzard,1.0,3200.0,4800.0
-213,Laborer,22.0,40.0,60.0
-213,Skipper,1.0,60.0,90.0
-213,Engineer,6.0,160.0,240.0
-213,Vessel Buzzard,1.0,3200.0,4800.0
-214,Laborer,22.0,40.0,60.0
-214,Skipper,1.0,60.0,90.0
-214,Engineer,6.0,160.0,240.0
-214,Vessel Buzzard,1.0,3200.0,4800.0
-215,Laborer,22.0,40.0,60.0
-215,Skipper,1.0,60.0,90.0
-215,Engineer,6.0,160.0,240.0
-215,Vessel Buzzard,1.0,3200.0,4800.0
-216,Laborer,22.0,40.0,60.0
-216,Skipper,1.0,60.0,90.0
-216,Engineer,6.0,160.0,240.0
-216,Vessel Buzzard,1.0,3200.0,4800.0
-217,Laborer,22.0,40.0,60.0
-217,Skipper,1.0,60.0,90.0
-217,Engineer,6.0,160.0,240.0
-217,Vessel Buzzard,1.0,3200.0,4800.0
-16,Laborer,18.0,40.0,60.0
-16,Skipper,1.0,60.0,90.0
-16,Engineer,6.0,160.0,240.0
-16,Vessel Pompei,1.0,3320.0,4980.0
-17,Laborer,20.0,40.0,60.0
-17,Skipper,1.0,60.0,90.0
-17,Engineer,6.0,160.0,240.0
-17,Vessel Buzzard,1.0,3200.0,4800.0
-162,Laborer,18.0,40.0,60.0
-162,Skipper,1.0,60.0,90.0
-162,Engineer,6.0,160.0,240.0
-162,Vessel Pompei,1.0,3320.0,4980.0
-218,Laborer,18.0,40.0,60.0
-218,Skipper,1.0,60.0,90.0
-218,Engineer,6.0,160.0,240.0
-218,Vessel Pompei,1.0,3320.0,4980.0
-219,Laborer,18.0,40.0,60.0
-219,Skipper,1.0,60.0,90.0
-219,Engineer,6.0,160.0,240.0
-219,Vessel Pompei,1.0,3320.0,4980.0
-220,Laborer,18.0,40.0,60.0
-220,Skipper,1.0,60.0,90.0
-220,Engineer,6.0,160.0,240.0
-220,Vessel Pompei,1.0,3320.0,4980.0
-221,Laborer,18.0,40.0,60.0
-221,Skipper,1.0,60.0,90.0
-221,Engineer,6.0,160.0,240.0
-221,Vessel Pompei,1.0,3320.0,4980.0
-222,Laborer,18.0,40.0,60.0
-222,Skipper,1.0,60.0,90.0
-222,Engineer,6.0,160.0,240.0
-222,Vessel Pompei,1.0,3320.0,4980.0
-223,Laborer,18.0,40.0,60.0
-223,Skipper,1.0,60.0,90.0
-223,Engineer,6.0,160.0,240.0
-223,Vessel Pompei,1.0,3320.0,4980.0
-224,Laborer,18.0,40.0,60.0
-224,Skipper,1.0,60.0,90.0
-224,Engineer,6.0,160.0,240.0
-224,Vessel Pompei,1.0,3320.0,4980.0
-225,Laborer,18.0,40.0,60.0
-225,Skipper,1.0,60.0,90.0
-225,Engineer,6.0,160.0,240.0
-225,Vessel Pompei,1.0,3320.0,4980.0
-226,Laborer,18.0,40.0,60.0
-226,Skipper,1.0,60.0,90.0
-226,Engineer,6.0,160.0,240.0
-226,Vessel Pompei,1.0,3320.0,4980.0
-227,Laborer,18.0,40.0,60.0
-227,Skipper,1.0,60.0,90.0
-227,Engineer,6.0,160.0,240.0
-227,Vessel Pompei,1.0,3320.0,4980.0
-228,Laborer,18.0,40.0,60.0
-228,Skipper,1.0,60.0,90.0
-228,Engineer,6.0,160.0,240.0
-228,Vessel Pompei,1.0,3320.0,4980.0
-229,Laborer,18.0,40.0,60.0
-229,Skipper,1.0,60.0,90.0
-229,Engineer,6.0,160.0,240.0
-229,Vessel Pompei,1.0,3320.0,4980.0
-230,Laborer,18.0,40.0,60.0
-230,Skipper,1.0,60.0,90.0
-230,Engineer,6.0,160.0,240.0
-230,Vessel Pompei,1.0,3320.0,4980.0
-231,Laborer,18.0,40.0,60.0
-231,Skipper,1.0,60.0,90.0
-231,Engineer,6.0,160.0,240.0
-231,Vessel Pompei,1.0,3320.0,4980.0
-232,Laborer,18.0,40.0,60.0
-232,Skipper,1.0,60.0,90.0
-232,Engineer,6.0,160.0,240.0
-232,Vessel Pompei,1.0,3320.0,4980.0
-233,Laborer,18.0,40.0,60.0
-233,Skipper,1.0,60.0,90.0
-233,Engineer,6.0,160.0,240.0
-233,Vessel Pompei,1.0,3320.0,4980.0
-234,Laborer,18.0,40.0,60.0
-234,Skipper,1.0,60.0,90.0
-234,Engineer,6.0,160.0,240.0
-234,Vessel Pompei,1.0,3320.0,4980.0
-235,Laborer,18.0,40.0,60.0
-235,Skipper,1.0,60.0,90.0
-235,Engineer,6.0,160.0,240.0
-235,Vessel Pompei,1.0,3320.0,4980.0
-236,Laborer,18.0,40.0,60.0
-236,Skipper,1.0,60.0,90.0
-236,Engineer,6.0,160.0,240.0
-236,Vessel Pompei,1.0,3320.0,4980.0
-237,Laborer,18.0,40.0,60.0
-237,Skipper,1.0,60.0,90.0
-237,Engineer,6.0,160.0,240.0
-237,Vessel Pompei,1.0,3320.0,4980.0
-238,Laborer,18.0,40.0,60.0
-238,Skipper,1.0,60.0,90.0
-238,Engineer,6.0,160.0,240.0
-238,Vessel Pompei,1.0,3320.0,4980.0
-239,Laborer,18.0,40.0,60.0
-239,Skipper,1.0,60.0,90.0
-239,Engineer,6.0,160.0,240.0
-239,Vessel Pompei,1.0,3320.0,4980.0
-240,Laborer,18.0,40.0,60.0
-240,Skipper,1.0,60.0,90.0
-240,Engineer,6.0,160.0,240.0
-240,Vessel Pompei,1.0,3320.0,4980.0
-241,Laborer,20.0,40.0,60.0
-241,Skipper,1.0,60.0,90.0
-241,Engineer,6.0,160.0,240.0
-241,Vessel Buzzard,1.0,3200.0,4800.0
-242,Laborer,20.0,40.0,60.0
-242,Skipper,1.0,60.0,90.0
-242,Engineer,6.0,160.0,240.0
-242,Vessel Buzzard,1.0,3200.0,4800.0
-243,Laborer,20.0,40.0,60.0
-243,Skipper,1.0,60.0,90.0
-243,Engineer,6.0,160.0,240.0
-243,Vessel Buzzard,1.0,3200.0,4800.0
-244,Laborer,20.0,40.0,60.0
-244,Skipper,1.0,60.0,90.0
-244,Engineer,6.0,160.0,240.0
-244,Vessel Buzzard,1.0,3200.0,4800.0
-245,Laborer,20.0,40.0,60.0
-245,Skipper,1.0,60.0,90.0
-245,Engineer,6.0,160.0,240.0
-245,Vessel Buzzard,1.0,3200.0,4800.0
-246,Laborer,20.0,40.0,60.0
-246,Skipper,1.0,60.0,90.0
-246,Engineer,6.0,160.0,240.0
-246,Vessel Buzzard,1.0,3200.0,4800.0
-247,Laborer,20.0,40.0,60.0
-247,Skipper,1.0,60.0,90.0
-247,Engineer,6.0,160.0,240.0
-247,Vessel Buzzard,1.0,3200.0,4800.0
-248,Laborer,20.0,40.0,60.0
-248,Skipper,1.0,60.0,90.0
-248,Engineer,6.0,160.0,240.0
-248,Vessel Buzzard,1.0,3200.0,4800.0
-249,Laborer,20.0,40.0,60.0
-249,Skipper,1.0,60.0,90.0
-249,Engineer,6.0,160.0,240.0
-249,Vessel Buzzard,1.0,3200.0,4800.0
-250,Laborer,20.0,40.0,60.0
-250,Skipper,1.0,60.0,90.0
-250,Engineer,6.0,160.0,240.0
-250,Vessel Buzzard,1.0,3200.0,4800.0
-251,Laborer,20.0,40.0,60.0
-251,Skipper,1.0,60.0,90.0
-251,Engineer,6.0,160.0,240.0
-251,Vessel Buzzard,1.0,3200.0,4800.0
-252,Laborer,20.0,40.0,60.0
-252,Skipper,1.0,60.0,90.0
-252,Engineer,6.0,160.0,240.0
-252,Vessel Buzzard,1.0,3200.0,4800.0
-253,Laborer,20.0,40.0,60.0
-253,Skipper,1.0,60.0,90.0
-253,Engineer,6.0,160.0,240.0
-253,Vessel Buzzard,1.0,3200.0,4800.0
-254,Laborer,20.0,40.0,60.0
-254,Skipper,1.0,60.0,90.0
-254,Engineer,6.0,160.0,240.0
-254,Vessel Buzzard,1.0,3200.0,4800.0
-255,Laborer,20.0,40.0,60.0
-255,Skipper,1.0,60.0,90.0
-255,Engineer,6.0,160.0,240.0
-255,Vessel Buzzard,1.0,3200.0,4800.0
-256,Laborer,20.0,40.0,60.0
-256,Skipper,1.0,60.0,90.0
-256,Engineer,6.0,160.0,240.0
-256,Vessel Buzzard,1.0,3200.0,4800.0
-257,Laborer,20.0,40.0,60.0
-257,Skipper,1.0,60.0,90.0
-257,Engineer,6.0,160.0,240.0
-257,Vessel Buzzard,1.0,3200.0,4800.0
-258,Laborer,20.0,40.0,60.0
-258,Skipper,1.0,60.0,90.0
-258,Engineer,6.0,160.0,240.0
-258,Vessel Buzzard,1.0,3200.0,4800.0
-259,Laborer,20.0,40.0,60.0
-259,Skipper,1.0,60.0,90.0
-259,Engineer,6.0,160.0,240.0
-259,Vessel Buzzard,1.0,3200.0,4800.0
-260,Laborer,20.0,40.0,60.0
-260,Skipper,1.0,60.0,90.0
-260,Engineer,6.0,160.0,240.0
-260,Vessel Buzzard,1.0,3200.0,4800.0
-261,Laborer,20.0,40.0,60.0
-261,Skipper,1.0,60.0,90.0
-261,Engineer,6.0,160.0,240.0
-261,Vessel Buzzard,1.0,3200.0,4800.0
-262,Laborer,20.0,40.0,60.0
-262,Skipper,1.0,60.0,90.0
-262,Engineer,6.0,160.0,240.0
-262,Vessel Buzzard,1.0,3200.0,4800.0
-263,Laborer,20.0,40.0,60.0
-263,Skipper,1.0,60.0,90.0
-263,Engineer,6.0,160.0,240.0
-263,Vessel Buzzard,1.0,3200.0,4800.0
-264,Laborer,20.0,40.0,60.0
-264,Skipper,1.0,60.0,90.0
-264,Engineer,6.0,160.0,240.0
-264,Vessel Buzzard,1.0,3200.0,4800.0
-313,Laborer,6.0,40.0,60.0
-313,Skipper,1.0,60.0,90.0
-313,Towning tugs,1.0,450.0,675.0
-313,Transport barges,1.0,400.0,600.0
-313,Crane,2.0,200.0,300.0
-314,Laborer,6.0,40.0,60.0
-314,Skipper,1.0,60.0,90.0
-314,Towning tugs,1.0,450.0,675.0
-314,Transport barges,1.0,400.0,600.0
-314,Crane,2.0,200.0,300.0
-315,Laborer,6.0,40.0,60.0
-315,Skipper,1.0,60.0,90.0
-315,Towning tugs,1.0,450.0,675.0
-315,Transport barges,1.0,400.0,600.0
-315,Crane,2.0,200.0,300.0
-316,Laborer,6.0,40.0,60.0
-316,Skipper,1.0,60.0,90.0
-316,Towning tugs,1.0,450.0,675.0
-316,Transport barges,1.0,400.0,600.0
-316,Crane,2.0,200.0,300.0
-317,Laborer,6.0,40.0,60.0
-317,Skipper,1.0,60.0,90.0
-317,Towning tugs,1.0,450.0,675.0
-317,Transport barges,1.0,400.0,600.0
-317,Crane,2.0,200.0,300.0
-318,Laborer,6.0,40.0,60.0
-318,Skipper,1.0,60.0,90.0
-318,Towning tugs,1.0,450.0,675.0
-318,Transport barges,1.0,400.0,600.0
-318,Crane,2.0,200.0,300.0
-319,Laborer,6.0,40.0,60.0
-319,Skipper,1.0,60.0,90.0
-319,Towning tugs,1.0,450.0,675.0
-319,Transport barges,1.0,400.0,600.0
-319,Crane,2.0,200.0,300.0
-320,Laborer,6.0,40.0,60.0
-320,Skipper,1.0,60.0,90.0
-320,Towning tugs,1.0,450.0,675.0
-320,Transport barges,1.0,400.0,600.0
-320,Crane,2.0,200.0,300.0
-321,Laborer,6.0,40.0,60.0
-321,Skipper,1.0,60.0,90.0
-321,Towning tugs,1.0,450.0,675.0
-321,Transport barges,1.0,400.0,600.0
-321,Crane,2.0,200.0,300.0
-322,Laborer,6.0,40.0,60.0
-322,Skipper,1.0,60.0,90.0
-322,Towning tugs,1.0,450.0,675.0
-322,Transport barges,1.0,400.0,600.0
-322,Crane,2.0,200.0,300.0
-323,Laborer,6.0,40.0,60.0
-323,Skipper,1.0,60.0,90.0
-323,Towning tugs,1.0,450.0,675.0
-323,Transport barges,1.0,400.0,600.0
-323,Crane,2.0,200.0,300.0
-324,Laborer,6.0,40.0,60.0
-324,Skipper,1.0,60.0,90.0
-324,Towning tugs,1.0,450.0,675.0
-324,Transport barges,1.0,400.0,600.0
-324,Crane,2.0,200.0,300.0
-325,Laborer,6.0,40.0,60.0
-325,Skipper,1.0,60.0,90.0
-325,Towning tugs,1.0,450.0,675.0
-325,Transport barges,1.0,400.0,600.0
-325,Crane,2.0,200.0,300.0
-326,Laborer,6.0,40.0,60.0
-326,Skipper,1.0,60.0,90.0
-326,Towning tugs,1.0,450.0,675.0
-326,Transport barges,1.0,400.0,600.0
-326,Crane,2.0,200.0,300.0
-327,Laborer,6.0,40.0,60.0
-327,Skipper,1.0,60.0,90.0
-327,Towning tugs,1.0,450.0,675.0
-327,Transport barges,1.0,400.0,600.0
-327,Crane,2.0,200.0,300.0
-328,Laborer,6.0,40.0,60.0
-328,Skipper,1.0,60.0,90.0
-328,Towning tugs,1.0,450.0,675.0
-328,Transport barges,1.0,400.0,600.0
-328,Crane,2.0,200.0,300.0
-329,Laborer,6.0,40.0,60.0
-329,Skipper,1.0,60.0,90.0
-329,Towning tugs,1.0,450.0,675.0
-329,Transport barges,1.0,400.0,600.0
-329,Crane,2.0,200.0,300.0
-330,Laborer,6.0,40.0,60.0
-330,Skipper,1.0,60.0,90.0
-330,Towning tugs,1.0,450.0,675.0
-330,Transport barges,1.0,400.0,600.0
-330,Crane,2.0,200.0,300.0
-331,Laborer,6.0,40.0,60.0
-331,Skipper,1.0,60.0,90.0
-331,Towning tugs,1.0,450.0,675.0
-331,Transport barges,1.0,400.0,600.0
-331,Crane,2.0,200.0,300.0
-332,Laborer,6.0,40.0,60.0
-332,Skipper,1.0,60.0,90.0
-332,Towning tugs,1.0,450.0,675.0
-332,Transport barges,1.0,400.0,600.0
-332,Crane,2.0,200.0,300.0
-333,Laborer,6.0,40.0,60.0
-333,Skipper,1.0,60.0,90.0
-333,Towning tugs,1.0,450.0,675.0
-333,Transport barges,1.0,400.0,600.0
-333,Crane,2.0,200.0,300.0
-334,Laborer,6.0,40.0,60.0
-334,Skipper,1.0,60.0,90.0
-334,Towning tugs,1.0,450.0,675.0
-334,Transport barges,1.0,400.0,600.0
-334,Crane,2.0,200.0,300.0
-335,Laborer,6.0,40.0,60.0
-335,Skipper,1.0,60.0,90.0
-335,Towning tugs,1.0,450.0,675.0
-335,Transport barges,1.0,400.0,600.0
-335,Crane,2.0,200.0,300.0
-336,Laborer,6.0,40.0,60.0
-336,Skipper,1.0,60.0,90.0
-336,Towning tugs,1.0,450.0,675.0
-336,Transport barges,1.0,400.0,600.0
-336,Crane,2.0,200.0,300.0
-289,Laborer,22.0,40.0,60.0
-289,Skipper,1.0,60.0,90.0
-289,Engineer,6.0,160.0,240.0
-289,Vessel Rambiz,1.0,3620.0,5430.0
-290,Laborer,22.0,40.0,60.0
-290,Skipper,1.0,60.0,90.0
-290,Engineer,6.0,160.0,240.0
-290,Vessel Rambiz,1.0,3620.0,5430.0
-291,Laborer,22.0,40.0,60.0
-291,Skipper,1.0,60.0,90.0
-291,Engineer,6.0,160.0,240.0
-291,Vessel Rambiz,1.0,3620.0,5430.0
-292,Laborer,22.0,40.0,60.0
-292,Skipper,1.0,60.0,90.0
-292,Engineer,6.0,160.0,240.0
-292,Vessel Rambiz,1.0,3620.0,5430.0
-293,Laborer,22.0,40.0,60.0
-293,Skipper,1.0,60.0,90.0
-293,Engineer,6.0,160.0,240.0
-293,Vessel Rambiz,1.0,3620.0,5430.0
-294,Laborer,22.0,40.0,60.0
-294,Skipper,1.0,60.0,90.0
-294,Engineer,6.0,160.0,240.0
-294,Vessel Rambiz,1.0,3620.0,5430.0
-295,Laborer,22.0,40.0,60.0
-295,Skipper,1.0,60.0,90.0
-295,Engineer,6.0,160.0,240.0
-295,Vessel Rambiz,1.0,3620.0,5430.0
-296,Laborer,22.0,40.0,60.0
-296,Skipper,1.0,60.0,90.0
-296,Engineer,6.0,160.0,240.0
-296,Vessel Rambiz,1.0,3620.0,5430.0
-297,Laborer,22.0,40.0,60.0
-297,Skipper,1.0,60.0,90.0
-297,Engineer,6.0,160.0,240.0
-297,Vessel Rambiz,1.0,3620.0,5430.0
-298,Laborer,22.0,40.0,60.0
-298,Skipper,1.0,60.0,90.0
-298,Engineer,6.0,160.0,240.0
-298,Vessel Rambiz,1.0,3620.0,5430.0
-299,Laborer,22.0,40.0,60.0
-299,Skipper,1.0,60.0,90.0
-299,Engineer,6.0,160.0,240.0
-299,Vessel Rambiz,1.0,3620.0,5430.0
-300,Laborer,22.0,40.0,60.0
-300,Skipper,1.0,60.0,90.0
-300,Engineer,6.0,160.0,240.0
-300,Vessel Rambiz,1.0,3620.0,5430.0
-301,Laborer,22.0,40.0,60.0
-301,Skipper,1.0,60.0,90.0
-301,Engineer,6.0,160.0,240.0
-301,Vessel Rambiz,1.0,3620.0,5430.0
-302,Laborer,22.0,40.0,60.0
-302,Skipper,1.0,60.0,90.0
-302,Engineer,6.0,160.0,240.0
-302,Vessel Rambiz,1.0,3620.0,5430.0
-303,Laborer,22.0,40.0,60.0
-303,Skipper,1.0,60.0,90.0
-303,Engineer,6.0,160.0,240.0
-303,Vessel Rambiz,1.0,3620.0,5430.0
-304,Laborer,22.0,40.0,60.0
-304,Skipper,1.0,60.0,90.0
-304,Engineer,6.0,160.0,240.0
-304,Vessel Rambiz,1.0,3620.0,5430.0
-305,Laborer,22.0,40.0,60.0
-305,Skipper,1.0,60.0,90.0
-305,Engineer,6.0,160.0,240.0
-305,Vessel Rambiz,1.0,3620.0,5430.0
-306,Laborer,22.0,40.0,60.0
-306,Skipper,1.0,60.0,90.0
-306,Engineer,6.0,160.0,240.0
-306,Vessel Rambiz,1.0,3620.0,5430.0
-307,Laborer,22.0,40.0,60.0
-307,Skipper,1.0,60.0,90.0
-307,Engineer,6.0,160.0,240.0
-307,Vessel Rambiz,1.0,3620.0,5430.0
-308,Laborer,22.0,40.0,60.0
-308,Skipper,1.0,60.0,90.0
-308,Engineer,6.0,160.0,240.0
-308,Vessel Rambiz,1.0,3620.0,5430.0
-309,Laborer,22.0,40.0,60.0
-309,Skipper,1.0,60.0,90.0
-309,Engineer,6.0,160.0,240.0
-309,Vessel Rambiz,1.0,3620.0,5430.0
-310,Laborer,22.0,40.0,60.0
-310,Skipper,1.0,60.0,90.0
-310,Engineer,6.0,160.0,240.0
-310,Vessel Rambiz,1.0,3620.0,5430.0
-311,Laborer,22.0,40.0,60.0
-311,Skipper,1.0,60.0,90.0
-311,Engineer,6.0,160.0,240.0
-311,Vessel Rambiz,1.0,3620.0,5430.0
-312,Laborer,22.0,40.0,60.0
-312,Skipper,1.0,60.0,90.0
-312,Engineer,6.0,160.0,240.0
-312,Vessel Rambiz,1.0,3620.0,5430.0
-265,Laborer,12.0,40.0,60.0
-265,Skipper,1.0,60.0,90.0
-265,Engineer,6.0,160.0,240.0
-265,Diving team,1.0,900.0,1350.0
-265,Vessel Rambiz,1.0,3620.0,5430.0
-266,Laborer,12.0,40.0,60.0
-266,Skipper,1.0,60.0,90.0
-266,Engineer,6.0,160.0,240.0
-266,Diving team,1.0,900.0,1350.0
-266,Vessel Rambiz,1.0,3620.0,5430.0
-267,Laborer,12.0,40.0,60.0
-267,Skipper,1.0,60.0,90.0
-267,Engineer,6.0,160.0,240.0
-267,Diving team,1.0,900.0,1350.0
-267,Vessel Rambiz,1.0,3620.0,5430.0
-268,Laborer,12.0,40.0,60.0
-268,Skipper,1.0,60.0,90.0
-268,Engineer,6.0,160.0,240.0
-268,Diving team,1.0,900.0,1350.0
-268,Vessel Rambiz,1.0,3620.0,5430.0
-269,Laborer,12.0,40.0,60.0
-269,Skipper,1.0,60.0,90.0
-269,Engineer,6.0,160.0,240.0
-269,Diving team,1.0,900.0,1350.0
-269,Vessel Rambiz,1.0,3620.0,5430.0
-270,Laborer,12.0,40.0,60.0
-270,Skipper,1.0,60.0,90.0
-270,Engineer,6.0,160.0,240.0
-270,Diving team,1.0,900.0,1350.0
-270,Vessel Rambiz,1.0,3620.0,5430.0
-271,Laborer,12.0,40.0,60.0
-271,Skipper,1.0,60.0,90.0
-271,Engineer,6.0,160.0,240.0
-271,Diving team,1.0,900.0,1350.0
-271,Vessel Rambiz,1.0,3620.0,5430.0
-272,Laborer,12.0,40.0,60.0
-272,Skipper,1.0,60.0,90.0
-272,Engineer,6.0,160.0,240.0
-272,Diving team,1.0,900.0,1350.0
-272,Vessel Rambiz,1.0,3620.0,5430.0
-273,Laborer,12.0,40.0,60.0
-273,Skipper,1.0,60.0,90.0
-273,Engineer,6.0,160.0,240.0
-273,Diving team,1.0,900.0,1350.0
-273,Vessel Rambiz,1.0,3620.0,5430.0
-274,Laborer,12.0,40.0,60.0
-274,Skipper,1.0,60.0,90.0
-274,Engineer,6.0,160.0,240.0
-274,Diving team,1.0,900.0,1350.0
-274,Vessel Rambiz,1.0,3620.0,5430.0
-275,Laborer,12.0,40.0,60.0
-275,Skipper,1.0,60.0,90.0
-275,Engineer,6.0,160.0,240.0
-275,Diving team,1.0,900.0,1350.0
-275,Vessel Rambiz,1.0,3620.0,5430.0
-276,Laborer,12.0,40.0,60.0
-276,Skipper,1.0,60.0,90.0
-276,Engineer,6.0,160.0,240.0
-276,Diving team,1.0,900.0,1350.0
-276,Vessel Rambiz,1.0,3620.0,5430.0
-277,Laborer,12.0,40.0,60.0
-277,Skipper,1.0,60.0,90.0
-277,Engineer,6.0,160.0,240.0
-277,Diving team,1.0,900.0,1350.0
-277,Vessel Rambiz,1.0,3620.0,5430.0
-278,Laborer,12.0,40.0,60.0
-278,Skipper,1.0,60.0,90.0
-278,Engineer,6.0,160.0,240.0
-278,Diving team,1.0,900.0,1350.0
-278,Vessel Rambiz,1.0,3620.0,5430.0
-279,Laborer,12.0,40.0,60.0
-279,Skipper,1.0,60.0,90.0
-279,Engineer,6.0,160.0,240.0
-279,Diving team,1.0,900.0,1350.0
-279,Vessel Rambiz,1.0,3620.0,5430.0
-280,Laborer,12.0,40.0,60.0
-280,Skipper,1.0,60.0,90.0
-280,Engineer,6.0,160.0,240.0
-280,Diving team,1.0,900.0,1350.0
-280,Vessel Rambiz,1.0,3620.0,5430.0
-281,Laborer,12.0,40.0,60.0
-281,Skipper,1.0,60.0,90.0
-281,Engineer,6.0,160.0,240.0
-281,Diving team,1.0,900.0,1350.0
-281,Vessel Rambiz,1.0,3620.0,5430.0
-282,Laborer,12.0,40.0,60.0
-282,Skipper,1.0,60.0,90.0
-282,Engineer,6.0,160.0,240.0
-282,Diving team,1.0,900.0,1350.0
-282,Vessel Rambiz,1.0,3620.0,5430.0
-283,Laborer,12.0,40.0,60.0
-283,Skipper,1.0,60.0,90.0
-283,Engineer,6.0,160.0,240.0
-283,Diving team,1.0,900.0,1350.0
-283,Vessel Rambiz,1.0,3620.0,5430.0
-284,Laborer,12.0,40.0,60.0
-284,Skipper,1.0,60.0,90.0
-284,Engineer,6.0,160.0,240.0
-284,Diving team,1.0,900.0,1350.0
-284,Vessel Rambiz,1.0,3620.0,5430.0
-285,Laborer,12.0,40.0,60.0
-285,Skipper,1.0,60.0,90.0
-285,Engineer,6.0,160.0,240.0
-285,Diving team,1.0,900.0,1350.0
-285,Vessel Rambiz,1.0,3620.0,5430.0
-286,Laborer,12.0,40.0,60.0
-286,Skipper,1.0,60.0,90.0
-286,Engineer,6.0,160.0,240.0
-286,Diving team,1.0,900.0,1350.0
-286,Vessel Rambiz,1.0,3620.0,5430.0
-287,Laborer,12.0,40.0,60.0
-287,Skipper,1.0,60.0,90.0
-287,Engineer,6.0,160.0,240.0
-287,Diving team,1.0,900.0,1350.0
-287,Vessel Rambiz,1.0,3620.0,5430.0
-288,Laborer,12.0,40.0,60.0
-288,Skipper,1.0,60.0,90.0
-288,Engineer,6.0,160.0,240.0
-288,Diving team,1.0,900.0,1350.0
-288,Vessel Rambiz,1.0,3620.0,5430.0
-56,Laborer,32.0,40.0,60.0
-56,Engineer,6.0,160.0,240.0
-56,Crane,3.0,200.0,300.0
-57,Laborer,16.0,40.0,60.0
-57,Welder,1.0,60.0,90.0
-57,Engineer,3.0,160.0,240.0
-57,Crane,1.0,200.0,300.0
-58,Laborer,19.0,40.0,60.0
-58,Welder,1.0,60.0,90.0
-58,Engineer,3.0,160.0,240.0
-58,Crane,1.0,200.0,300.0
-502,Laborer,16.0,40.0,60.0
-502,Skipper,2.0,60.0,90.0
-502,Engineer,8.0,160.0,240.0
-502,Vessel Neptune,1.0,3750.0,5625.0
-502,Vessel Vagant,1.0,3180.0,4770.0
-502,Crane,1.0,200.0,300.0
-503,Laborer,16.0,40.0,60.0
-503,Skipper,2.0,60.0,90.0
-503,Engineer,8.0,160.0,240.0
-503,Vessel Neptune,1.0,3750.0,5625.0
-503,Vessel Vagant,1.0,3180.0,4770.0
-503,Crane,1.0,200.0,300.0
-504,Laborer,16.0,40.0,60.0
-504,Skipper,2.0,60.0,90.0
-504,Engineer,8.0,160.0,240.0
-504,Vessel Neptune,1.0,3750.0,5625.0
-504,Vessel Vagant,1.0,3180.0,4770.0
-504,Crane,1.0,200.0,300.0
-505,Laborer,16.0,40.0,60.0
-505,Skipper,2.0,60.0,90.0
-505,Engineer,8.0,160.0,240.0
-505,Vessel Neptune,1.0,3750.0,5625.0
-505,Vessel Vagant,1.0,3180.0,4770.0
-505,Crane,1.0,200.0,300.0
-506,Laborer,16.0,40.0,60.0
-506,Skipper,2.0,60.0,90.0
-506,Engineer,8.0,160.0,240.0
-506,Vessel Neptune,1.0,3750.0,5625.0
-506,Vessel Vagant,1.0,3180.0,4770.0
-506,Crane,1.0,200.0,300.0
-507,Laborer,16.0,40.0,60.0
-507,Skipper,2.0,60.0,90.0
-507,Engineer,8.0,160.0,240.0
-507,Vessel Neptune,1.0,3750.0,5625.0
-507,Vessel Vagant,1.0,3180.0,4770.0
-507,Crane,1.0,200.0,300.0
-508,Laborer,16.0,40.0,60.0
-508,Skipper,2.0,60.0,90.0
-508,Engineer,8.0,160.0,240.0
-508,Vessel Neptune,1.0,3750.0,5625.0
-508,Vessel Vagant,1.0,3180.0,4770.0
-508,Crane,1.0,200.0,300.0
-509,Laborer,16.0,40.0,60.0
-509,Skipper,2.0,60.0,90.0
-509,Engineer,8.0,160.0,240.0
-509,Vessel Neptune,1.0,3750.0,5625.0
-509,Vessel Vagant,1.0,3180.0,4770.0
-509,Crane,1.0,200.0,300.0
-510,Laborer,16.0,40.0,60.0
-510,Skipper,2.0,60.0,90.0
-510,Engineer,8.0,160.0,240.0
-510,Vessel Neptune,1.0,3750.0,5625.0
-510,Vessel Vagant,1.0,3180.0,4770.0
-510,Crane,1.0,200.0,300.0
-511,Laborer,16.0,40.0,60.0
-511,Skipper,2.0,60.0,90.0
-511,Engineer,8.0,160.0,240.0
-511,Vessel Neptune,1.0,3750.0,5625.0
-511,Vessel Vagant,1.0,3180.0,4770.0
-511,Crane,1.0,200.0,300.0
-512,Laborer,16.0,40.0,60.0
-512,Skipper,2.0,60.0,90.0
-512,Engineer,8.0,160.0,240.0
-512,Vessel Neptune,1.0,3750.0,5625.0
-512,Vessel Vagant,1.0,3180.0,4770.0
-512,Crane,1.0,200.0,300.0
-513,Laborer,16.0,40.0,60.0
-513,Skipper,2.0,60.0,90.0
-513,Engineer,8.0,160.0,240.0
-513,Vessel Neptune,1.0,3750.0,5625.0
-513,Vessel Vagant,1.0,3180.0,4770.0
-513,Crane,1.0,200.0,300.0
-514,Laborer,16.0,40.0,60.0
-514,Skipper,2.0,60.0,90.0
-514,Engineer,8.0,160.0,240.0
-514,Vessel Neptune,1.0,3750.0,5625.0
-514,Vessel Vagant,1.0,3180.0,4770.0
-514,Crane,1.0,200.0,300.0
-515,Laborer,16.0,40.0,60.0
-515,Skipper,2.0,60.0,90.0
-515,Engineer,8.0,160.0,240.0
-515,Vessel Neptune,1.0,3750.0,5625.0
-515,Vessel Vagant,1.0,3180.0,4770.0
-515,Crane,1.0,200.0,300.0
-516,Laborer,16.0,40.0,60.0
-516,Skipper,2.0,60.0,90.0
-516,Engineer,8.0,160.0,240.0
-516,Vessel Neptune,1.0,3750.0,5625.0
-516,Vessel Vagant,1.0,3180.0,4770.0
-516,Crane,1.0,200.0,300.0
-517,Laborer,16.0,40.0,60.0
-517,Skipper,2.0,60.0,90.0
-517,Engineer,8.0,160.0,240.0
-517,Vessel Neptune,1.0,3750.0,5625.0
-517,Vessel Vagant,1.0,3180.0,4770.0
-517,Crane,1.0,200.0,300.0
-518,Laborer,16.0,40.0,60.0
-518,Skipper,2.0,60.0,90.0
-518,Engineer,8.0,160.0,240.0
-518,Vessel Neptune,1.0,3750.0,5625.0
-518,Vessel Vagant,1.0,3180.0,4770.0
-518,Crane,1.0,200.0,300.0
-519,Laborer,16.0,40.0,60.0
-519,Skipper,2.0,60.0,90.0
-519,Engineer,8.0,160.0,240.0
-519,Vessel Neptune,1.0,3750.0,5625.0
-519,Vessel Vagant,1.0,3180.0,4770.0
-519,Crane,1.0,200.0,300.0
-520,Laborer,16.0,40.0,60.0
-520,Skipper,2.0,60.0,90.0
-520,Engineer,8.0,160.0,240.0
-520,Vessel Neptune,1.0,3750.0,5625.0
-520,Vessel Vagant,1.0,3180.0,4770.0
-520,Crane,1.0,200.0,300.0
-521,Laborer,16.0,40.0,60.0
-521,Skipper,2.0,60.0,90.0
-521,Engineer,8.0,160.0,240.0
-521,Vessel Neptune,1.0,3750.0,5625.0
-521,Vessel Vagant,1.0,3180.0,4770.0
-521,Crane,1.0,200.0,300.0
-522,Laborer,16.0,40.0,60.0
-522,Skipper,2.0,60.0,90.0
-522,Engineer,8.0,160.0,240.0
-522,Vessel Neptune,1.0,3750.0,5625.0
-522,Vessel Vagant,1.0,3180.0,4770.0
-522,Crane,1.0,200.0,300.0
-523,Laborer,16.0,40.0,60.0
-523,Skipper,2.0,60.0,90.0
-523,Engineer,8.0,160.0,240.0
-523,Vessel Neptune,1.0,3750.0,5625.0
-523,Vessel Vagant,1.0,3180.0,4770.0
-523,Crane,1.0,200.0,300.0
-524,Laborer,16.0,40.0,60.0
-524,Skipper,2.0,60.0,90.0
-524,Engineer,8.0,160.0,240.0
-524,Vessel Neptune,1.0,3750.0,5625.0
-524,Vessel Vagant,1.0,3180.0,4770.0
-524,Crane,1.0,200.0,300.0
-525,Laborer,16.0,40.0,60.0
-525,Skipper,2.0,60.0,90.0
-525,Engineer,8.0,160.0,240.0
-525,Vessel Neptune,1.0,3750.0,5625.0
-525,Vessel Vagant,1.0,3180.0,4770.0
-525,Crane,1.0,200.0,300.0
-478,Laborer,16.0,40.0,60.0
-478,Skipper,2.0,60.0,90.0
-478,Engineer,8.0,160.0,240.0
-478,Vessel Neptune,1.0,3750.0,5625.0
-478,Vessel Vagant,1.0,3180.0,4770.0
-479,Laborer,16.0,40.0,60.0
-479,Skipper,2.0,60.0,90.0
-479,Engineer,8.0,160.0,240.0
-479,Vessel Neptune,1.0,3750.0,5625.0
-479,Vessel Vagant,1.0,3180.0,4770.0
-480,Laborer,16.0,40.0,60.0
-480,Skipper,2.0,60.0,90.0
-480,Engineer,8.0,160.0,240.0
-480,Vessel Neptune,1.0,3750.0,5625.0
-480,Vessel Vagant,1.0,3180.0,4770.0
-481,Laborer,16.0,40.0,60.0
-481,Skipper,2.0,60.0,90.0
-481,Engineer,8.0,160.0,240.0
-481,Vessel Neptune,1.0,3750.0,5625.0
-481,Vessel Vagant,1.0,3180.0,4770.0
-482,Laborer,16.0,40.0,60.0
-482,Skipper,2.0,60.0,90.0
-482,Engineer,8.0,160.0,240.0
-482,Vessel Neptune,1.0,3750.0,5625.0
-482,Vessel Vagant,1.0,3180.0,4770.0
-483,Laborer,16.0,40.0,60.0
-483,Skipper,2.0,60.0,90.0
-483,Engineer,8.0,160.0,240.0
-483,Vessel Neptune,1.0,3750.0,5625.0
-483,Vessel Vagant,1.0,3180.0,4770.0
-484,Laborer,16.0,40.0,60.0
-484,Skipper,2.0,60.0,90.0
-484,Engineer,8.0,160.0,240.0
-484,Vessel Neptune,1.0,3750.0,5625.0
-484,Vessel Vagant,1.0,3180.0,4770.0
-485,Laborer,16.0,40.0,60.0
-485,Skipper,2.0,60.0,90.0
-485,Engineer,8.0,160.0,240.0
-485,Vessel Neptune,1.0,3750.0,5625.0
-485,Vessel Vagant,1.0,3180.0,4770.0
-486,Laborer,16.0,40.0,60.0
-486,Skipper,2.0,60.0,90.0
-486,Engineer,8.0,160.0,240.0
-486,Vessel Neptune,1.0,3750.0,5625.0
-486,Vessel Vagant,1.0,3180.0,4770.0
-487,Laborer,16.0,40.0,60.0
-487,Skipper,2.0,60.0,90.0
-487,Engineer,8.0,160.0,240.0
-487,Vessel Neptune,1.0,3750.0,5625.0
-487,Vessel Vagant,1.0,3180.0,4770.0
-488,Laborer,16.0,40.0,60.0
-488,Skipper,2.0,60.0,90.0
-488,Engineer,8.0,160.0,240.0
-488,Vessel Neptune,1.0,3750.0,5625.0
-488,Vessel Vagant,1.0,3180.0,4770.0
-489,Laborer,16.0,40.0,60.0
-489,Skipper,2.0,60.0,90.0
-489,Engineer,8.0,160.0,240.0
-489,Vessel Neptune,1.0,3750.0,5625.0
-489,Vessel Vagant,1.0,3180.0,4770.0
-490,Laborer,16.0,40.0,60.0
-490,Skipper,2.0,60.0,90.0
-490,Engineer,8.0,160.0,240.0
-490,Vessel Neptune,1.0,3750.0,5625.0
-490,Vessel Vagant,1.0,3180.0,4770.0
-491,Laborer,16.0,40.0,60.0
-491,Skipper,2.0,60.0,90.0
-491,Engineer,8.0,160.0,240.0
-491,Vessel Neptune,1.0,3750.0,5625.0
-491,Vessel Vagant,1.0,3180.0,4770.0
-492,Laborer,16.0,40.0,60.0
-492,Skipper,2.0,60.0,90.0
-492,Engineer,8.0,160.0,240.0
-492,Vessel Neptune,1.0,3750.0,5625.0
-492,Vessel Vagant,1.0,3180.0,4770.0
-493,Laborer,16.0,40.0,60.0
-493,Skipper,2.0,60.0,90.0
-493,Engineer,8.0,160.0,240.0
-493,Vessel Neptune,1.0,3750.0,5625.0
-493,Vessel Vagant,1.0,3180.0,4770.0
-494,Laborer,16.0,40.0,60.0
-494,Skipper,2.0,60.0,90.0
-494,Engineer,8.0,160.0,240.0
-494,Vessel Neptune,1.0,3750.0,5625.0
-494,Vessel Vagant,1.0,3180.0,4770.0
-495,Laborer,16.0,40.0,60.0
-495,Skipper,2.0,60.0,90.0
-495,Engineer,8.0,160.0,240.0
-495,Vessel Neptune,1.0,3750.0,5625.0
-495,Vessel Vagant,1.0,3180.0,4770.0
-496,Laborer,16.0,40.0,60.0
-496,Skipper,2.0,60.0,90.0
-496,Engineer,8.0,160.0,240.0
-496,Vessel Neptune,1.0,3750.0,5625.0
-496,Vessel Vagant,1.0,3180.0,4770.0
-497,Laborer,16.0,40.0,60.0
-497,Skipper,2.0,60.0,90.0
-497,Engineer,8.0,160.0,240.0
-497,Vessel Neptune,1.0,3750.0,5625.0
-497,Vessel Vagant,1.0,3180.0,4770.0
-498,Laborer,16.0,40.0,60.0
-498,Skipper,2.0,60.0,90.0
-498,Engineer,8.0,160.0,240.0
-498,Vessel Neptune,1.0,3750.0,5625.0
-498,Vessel Vagant,1.0,3180.0,4770.0
-499,Laborer,16.0,40.0,60.0
-499,Skipper,2.0,60.0,90.0
-499,Engineer,8.0,160.0,240.0
-499,Vessel Neptune,1.0,3750.0,5625.0
-499,Vessel Vagant,1.0,3180.0,4770.0
-500,Laborer,16.0,40.0,60.0
-500,Skipper,2.0,60.0,90.0
-500,Engineer,8.0,160.0,240.0
-500,Vessel Neptune,1.0,3750.0,5625.0
-500,Vessel Vagant,1.0,3180.0,4770.0
-501,Laborer,16.0,40.0,60.0
-501,Skipper,2.0,60.0,90.0
-501,Engineer,8.0,160.0,240.0
-501,Vessel Neptune,1.0,3750.0,5625.0
-501,Vessel Vagant,1.0,3180.0,4770.0
-454,Special team,1.0,800.0,1200.0
-455,Special team,1.0,800.0,1200.0
-456,Special team,1.0,800.0,1200.0
-457,Special team,1.0,800.0,1200.0
-458,Special team,1.0,800.0,1200.0
-459,Special team,1.0,800.0,1200.0
-460,Special team,1.0,800.0,1200.0
-461,Special team,1.0,800.0,1200.0
-462,Special team,1.0,800.0,1200.0
-463,Special team,1.0,800.0,1200.0
-464,Special team,1.0,800.0,1200.0
-465,Special team,1.0,800.0,1200.0
-466,Special team,1.0,800.0,1200.0
-467,Special team,1.0,800.0,1200.0
-468,Special team,1.0,800.0,1200.0
-469,Special team,1.0,800.0,1200.0
-470,Special team,1.0,800.0,1200.0
-471,Special team,1.0,800.0,1200.0
-472,Special team,1.0,800.0,1200.0
-473,Special team,1.0,800.0,1200.0
-474,Special team,1.0,800.0,1200.0
-475,Special team,1.0,800.0,1200.0
-476,Special team,1.0,800.0,1200.0
-477,Special team,1.0,800.0,1200.0
-430,Commissioning team,1.0,800.0,1200.0
-431,Commissioning team,1.0,800.0,1200.0
-432,Commissioning team,1.0,800.0,1200.0
-433,Commissioning team,1.0,800.0,1200.0
-434,Commissioning team,1.0,800.0,1200.0
-435,Commissioning team,1.0,800.0,1200.0
-436,Commissioning team,1.0,800.0,1200.0
-437,Commissioning team,1.0,800.0,1200.0
-438,Commissioning team,1.0,800.0,1200.0
-439,Commissioning team,1.0,800.0,1200.0
-440,Commissioning team,1.0,800.0,1200.0
-441,Commissioning team,1.0,800.0,1200.0
-442,Commissioning team,1.0,800.0,1200.0
-443,Commissioning team,1.0,800.0,1200.0
-444,Commissioning team,1.0,800.0,1200.0
-445,Commissioning team,1.0,800.0,1200.0
-446,Commissioning team,1.0,800.0,1200.0
-447,Commissioning team,1.0,800.0,1200.0
-448,Commissioning team,1.0,800.0,1200.0
-449,Commissioning team,1.0,800.0,1200.0
-450,Commissioning team,1.0,800.0,1200.0
-451,Commissioning team,1.0,800.0,1200.0
-452,Commissioning team,1.0,800.0,1200.0
-453,Commissioning team,1.0,800.0,1200.0
-406,Testing team,0.2,800.0,1200.0
-407,Testing team,0.2,800.0,1200.0
-408,Testing team,0.2,800.0,1200.0
-409,Testing team,0.2,800.0,1200.0
-410,Testing team,0.2,800.0,1200.0
-411,Testing team,0.2,800.0,1200.0
-412,Testing team,0.2,800.0,1200.0
-413,Testing team,0.2,800.0,1200.0
-414,Testing team,0.2,800.0,1200.0
-415,Testing team,0.2,800.0,1200.0
-416,Testing team,0.2,800.0,1200.0
-417,Testing team,0.2,800.0,1200.0
-418,Testing team,0.2,800.0,1200.0
-419,Testing team,0.2,800.0,1200.0
-421,Testing team,0.2,800.0,1200.0
-420,Testing team,0.2,800.0,1200.0
-422,Testing team,0.2,800.0,1200.0
-423,Testing team,0.2,800.0,1200.0
-424,Testing team,0.2,800.0,1200.0
-425,Testing team,0.2,800.0,1200.0
-426,Testing team,0.2,800.0,1200.0
-427,Testing team,0.2,800.0,1200.0
-428,Testing team,0.2,800.0,1200.0
-429,Testing team,0.2,800.0,1200.0
-77,Laborer,8.0,40.0,60.0
-77,Skipper,1.0,60.0,90.0
-77,Towning tugs,1.0,450.0,675.0
-77,Transport barges,1.0,400.0,600.0
-77,Crane,1.0,200.0,300.0
-82,Laborer,8.0,40.0,60.0
-82,Skipper,1.0,60.0,90.0
-82,Engineer,4.0,160.0,240.0
-82,Towning tugs,1.0,450.0,675.0
-82,Transport barges,1.0,400.0,600.0
-82,Crane,1.0,200.0,300.0
-81,Laborer,18.0,40.0,60.0
-81,Skipper,1.0,60.0,90.0
-81,Engineer,6.0,160.0,240.0
-81,Vessel Rambiz,1.0,3620.0,5430.0
-94,Laborer,4.0,40.0,60.0
-94,Skipper,1.0,60.0,90.0
-94,Engineer,1.0,160.0,240.0
-94,Towning tugs,1.0,450.0,675.0
-94,Transport barges,1.0,400.0,600.0
-94,Crane,1.0,200.0,300.0
-95,Laborer,18.0,40.0,60.0
-95,Skipper,1.0,60.0,90.0
-95,Engineer,6.0,160.0,240.0
-95,Vessel Rambiz,1.0,3620.0,5430.0
-100,Laborer,5.0,40.0,60.0
-100,Skipper,1.0,60.0,90.0
-100,Engineer,4.0,160.0,240.0
-100,Vessel Pompei,1.0,3320.0,4980.0
-101,Laborer,5.0,40.0,60.0
-101,Skipper,1.0,60.0,90.0
-101,Engineer,4.0,160.0,240.0
-101,Vessel Pompei,1.0,3320.0,4980.0
-102,Laborer,5.0,40.0,60.0
-102,Skipper,1.0,60.0,90.0
-102,Engineer,3.0,160.0,240.0
-102,Vessel Pompei,1.0,3320.0,4980.0
-105,Laborer,10.0,40.0,60.0
-105,Skipper,1.0,60.0,90.0
-105,Vessel Souverreign,1.0,3250.0,4875.0
-105,Crane,1.0,200.0,300.0
-106,Laborer,18.0,40.0,60.0
-106,Skipper,1.0,60.0,90.0
-106,Engineer,3.0,160.0,240.0
-106,Vessel Pompei,1.0,3320.0,4980.0
-107,Laborer,12.0,40.0,60.0
-107,Testing team,1.0,800.0,1200.0
-108,Laborer,22.0,40.0,60.0
-108,Skipper,1.0,60.0,90.0
-108,Vessel Innovator,1.0,3250.0,4875.0
-109,Special team,2.0,800.0,1200.0
-110,Laborer,22.0,40.0,60.0
-110,Skipper,1.0,60.0,90.0
-110,Engineer,4.0,160.0,240.0
-110,Vessel Innovator,1.0,3250.0,4875.0
-111,Engineer,4.0,160.0,240.0
-112,Laborer,22.0,40.0,60.0
-112,Skipper,1.0,60.0,90.0
-112,Engineer,4.0,160.0,240.0
-112,Vessel Innovator,1.0,3250.0,4875.0
-126,Laborer,5.0,40.0,60.0
-126,Skipper,1.0,60.0,90.0
-126,Engineer,3.0,160.0,240.0
-126,Vessel Pompei,1.0,3320.0,4980.0
-130,Laborer,6.0,40.0,60.0
-130,Skipper,1.0,60.0,90.0
-130,Vessel Sternat Spirit,1.0,3250.0,4875.0
-131,Laborer,6.0,40.0,60.0
-131,Skipper,1.0,60.0,90.0
-131,Vessel Sternat Spirit,1.0,3250.0,4875.0
-131,Crane,2.0,200.0,300.0
-133,Laborer,18.0,40.0,60.0
-133,Skipper,1.0,60.0,90.0
-133,Engineer,4.0,160.0,240.0
-133,Vessel Breughel,1.0,3200.0,4800.0
-134,Laborer,18.0,40.0,60.0
-134,Skipper,1.0,60.0,90.0
-134,Engineer,4.0,160.0,240.0
-134,Vessel Breughel,1.0,3200.0,4800.0
-193,Laborer,12.0,40.0,60.0
-193,Welder,8.0,60.0,90.0
-193,Crane,1.0,200.0,300.0
-193,Engineer,1.0,160.0,240.0
-137,Laborer,16.0,40.0,60.0
-137,Engineer,4.0,160.0,240.0
-137,Drilling machine,2.0,1200.0,1800.0
-138,Laborer,14.0,40.0,60.0
-138,Engineer,4.0,160.0,240.0
-138,Pulling machine,1.0,1300.0,1950.0
-139,Testing team,1.0,800.0,1200.0
-140,Laborer,13.0,40.0,60.0
-140,Engineer,4.0,160.0,240.0
-140,Pulling machine,1.0,1300.0,1950.0
-140,Crane,1.0,200.0,300.0
-141,Disconnecting team,1.0,800.0,1200.0
-194,Testing team,1.0,800.0,1200.0
-149,Laborer,17.0,40.0,60.0
-149,Skipper,1.0,60.0,90.0
-149,Engineer,4.0,160.0,240.0
-149,Vessel Breydel,1.0,3200.0,4800.0
-150,Laborer,13.0,40.0,60.0
-150,Engineer,3.0,160.0,240.0
-150,Pulling machine,1.0,1300.0,1950.0
-195,Disconnecting team,1.0,800.0,1200.0
-151,Laborer,12.0,40.0,60.0
-151,Skipper,1.0,60.0,90.0
-151,Engineer,6.0,160.0,240.0
-151,Vessel Pearl River,1.0,3250.0,4875.0
-152,Laborer,20.0,40.0,60.0
-152,Engineer,6.0,160.0,240.0
-153,Disconnecting team,1.0,800.0,1200.0
-154,Testing team,1.0,800.0,1200.0
-157,Laborer,5.0,40.0,60.0
-157,Skipper,1.0,60.0,90.0
-157,Vessel Pompei,1.0,3320.0,4980.0
-158,Laborer,5.0,40.0,60.0
-158,Skipper,1.0,60.0,90.0
-158,Vessel Pompei,1.0,3320.0,4980.0
+task_id,role,quantity,hourly_rate,type
+3,Laborer,5.0,40.0,Renewable
+3,Skipper,1.0,60.0,Renewable
+3,Engineer,3.0,160.0,Renewable
+3,Vessel Buzzard,1.0,3200.0,Renewable
+6,Laborer,5.0,40.0,Renewable
+6,Skipper,1.0,60.0,Renewable
+6,Vessel Pompei,1.0,3320.0,Renewable
+7,Laborer,22.0,40.0,Renewable
+7,Skipper,1.0,60.0,Renewable
+7,Engineer,6.0,160.0,Renewable
+7,Vessel Pompei,1.0,3320.0,Renewable
+526,Laborer,5.0,40.0,Renewable
+526,Skipper,0.5,60.0,Renewable
+526,Vessel Maersk,0.5,800.0,Renewable
+526,Crane,1.0,200.0,Renewable
+527,Laborer,5.0,40.0,Renewable
+527,Skipper,0.5,60.0,Renewable
+527,Vessel Maersk,0.5,800.0,Renewable
+527,Crane,1.0,200.0,Renewable
+528,Laborer,5.0,40.0,Renewable
+528,Skipper,0.5,60.0,Renewable
+528,Vessel Maersk,0.5,800.0,Renewable
+528,Crane,1.0,200.0,Renewable
+529,Laborer,5.0,40.0,Renewable
+529,Skipper,0.5,60.0,Renewable
+529,Vessel Maersk,0.5,800.0,Renewable
+529,Crane,1.0,200.0,Renewable
+530,Laborer,5.0,40.0,Renewable
+530,Skipper,0.5,60.0,Renewable
+530,Vessel Maersk,0.5,800.0,Renewable
+530,Crane,1.0,200.0,Renewable
+531,Laborer,5.0,40.0,Renewable
+531,Skipper,0.5,60.0,Renewable
+531,Vessel Maersk,0.5,800.0,Renewable
+531,Crane,1.0,200.0,Renewable
+532,Laborer,5.0,40.0,Renewable
+532,Skipper,0.5,60.0,Renewable
+532,Vessel Maersk,0.5,800.0,Renewable
+532,Crane,1.0,200.0,Renewable
+533,Laborer,5.0,40.0,Renewable
+533,Skipper,0.5,60.0,Renewable
+533,Vessel Maersk,0.5,800.0,Renewable
+533,Crane,1.0,200.0,Renewable
+534,Laborer,5.0,40.0,Renewable
+534,Skipper,0.5,60.0,Renewable
+534,Vessel Maersk,0.5,800.0,Renewable
+534,Crane,1.0,200.0,Renewable
+535,Laborer,5.0,40.0,Renewable
+535,Skipper,0.5,60.0,Renewable
+535,Vessel Maersk,0.5,800.0,Renewable
+535,Crane,1.0,200.0,Renewable
+536,Laborer,5.0,40.0,Renewable
+536,Skipper,0.5,60.0,Renewable
+536,Vessel Maersk,0.5,800.0,Renewable
+536,Crane,1.0,200.0,Renewable
+537,Laborer,5.0,40.0,Renewable
+537,Skipper,0.5,60.0,Renewable
+537,Vessel Maersk,0.5,800.0,Renewable
+537,Crane,1.0,200.0,Renewable
+538,Laborer,5.0,40.0,Renewable
+538,Skipper,0.5,60.0,Renewable
+538,Vessel Maersk,0.5,800.0,Renewable
+538,Crane,1.0,200.0,Renewable
+539,Laborer,5.0,40.0,Renewable
+539,Skipper,0.5,60.0,Renewable
+539,Vessel Maersk,0.5,800.0,Renewable
+539,Crane,1.0,200.0,Renewable
+540,Laborer,5.0,40.0,Renewable
+540,Skipper,0.5,60.0,Renewable
+540,Vessel Maersk,0.5,800.0,Renewable
+540,Crane,1.0,200.0,Renewable
+541,Laborer,5.0,40.0,Renewable
+541,Skipper,0.5,60.0,Renewable
+541,Vessel Maersk,0.5,800.0,Renewable
+541,Crane,1.0,200.0,Renewable
+542,Laborer,5.0,40.0,Renewable
+542,Skipper,0.5,60.0,Renewable
+542,Vessel Maersk,0.5,800.0,Renewable
+542,Crane,1.0,200.0,Renewable
+543,Laborer,5.0,40.0,Renewable
+543,Skipper,0.5,60.0,Renewable
+543,Vessel Maersk,0.5,800.0,Renewable
+543,Crane,1.0,200.0,Renewable
+544,Laborer,5.0,40.0,Renewable
+544,Skipper,0.5,60.0,Renewable
+544,Vessel Maersk,0.5,800.0,Renewable
+544,Crane,1.0,200.0,Renewable
+545,Laborer,5.0,40.0,Renewable
+545,Skipper,0.5,60.0,Renewable
+545,Vessel Maersk,0.5,800.0,Renewable
+545,Crane,1.0,200.0,Renewable
+546,Laborer,5.0,40.0,Renewable
+546,Skipper,0.5,60.0,Renewable
+546,Vessel Maersk,0.5,800.0,Renewable
+546,Crane,1.0,200.0,Renewable
+547,Laborer,5.0,40.0,Renewable
+547,Skipper,0.5,60.0,Renewable
+547,Vessel Maersk,0.5,800.0,Renewable
+547,Crane,1.0,200.0,Renewable
+548,Laborer,5.0,40.0,Renewable
+548,Skipper,0.5,60.0,Renewable
+548,Vessel Maersk,0.5,800.0,Renewable
+548,Crane,1.0,200.0,Renewable
+549,Laborer,5.0,40.0,Renewable
+549,Skipper,0.5,60.0,Renewable
+549,Vessel Maersk,0.5,800.0,Renewable
+549,Crane,1.0,200.0,Renewable
+550,Laborer,5.0,40.0,Renewable
+550,Skipper,0.5,60.0,Renewable
+550,Vessel Maersk,0.5,800.0,Renewable
+550,Crane,1.0,200.0,Renewable
+12,Laborer,22.0,40.0,Renewable
+12,Skipper,1.0,60.0,Renewable
+12,Engineer,6.0,160.0,Renewable
+12,Vessel Buzzard,1.0,3200.0,Renewable
+13,Laborer,22.0,40.0,Renewable
+13,Skipper,1.0,60.0,Renewable
+13,Engineer,6.0,160.0,Renewable
+13,Vessel Buzzard,1.0,3200.0,Renewable
+14,Laborer,22.0,40.0,Renewable
+14,Skipper,1.0,60.0,Renewable
+14,Engineer,6.0,160.0,Renewable
+14,Vessel Buzzard,1.0,3200.0,Renewable
+196,Laborer,22.0,40.0,Renewable
+196,Skipper,1.0,60.0,Renewable
+196,Engineer,6.0,160.0,Renewable
+196,Vessel Buzzard,1.0,3200.0,Renewable
+197,Laborer,22.0,40.0,Renewable
+197,Skipper,1.0,60.0,Renewable
+197,Engineer,6.0,160.0,Renewable
+197,Vessel Buzzard,1.0,3200.0,Renewable
+198,Laborer,22.0,40.0,Renewable
+198,Skipper,1.0,60.0,Renewable
+198,Engineer,6.0,160.0,Renewable
+198,Vessel Buzzard,1.0,3200.0,Renewable
+199,Laborer,22.0,40.0,Renewable
+199,Skipper,1.0,60.0,Renewable
+199,Engineer,6.0,160.0,Renewable
+199,Vessel Buzzard,1.0,3200.0,Renewable
+200,Laborer,22.0,40.0,Renewable
+200,Skipper,1.0,60.0,Renewable
+200,Engineer,6.0,160.0,Renewable
+200,Vessel Buzzard,1.0,3200.0,Renewable
+201,Laborer,22.0,40.0,Renewable
+201,Skipper,1.0,60.0,Renewable
+201,Engineer,6.0,160.0,Renewable
+201,Vessel Buzzard,1.0,3200.0,Renewable
+202,Laborer,22.0,40.0,Renewable
+202,Skipper,1.0,60.0,Renewable
+202,Engineer,6.0,160.0,Renewable
+202,Vessel Buzzard,1.0,3200.0,Renewable
+203,Laborer,22.0,40.0,Renewable
+203,Skipper,1.0,60.0,Renewable
+203,Engineer,6.0,160.0,Renewable
+203,Vessel Buzzard,1.0,3200.0,Renewable
+204,Laborer,22.0,40.0,Renewable
+204,Skipper,1.0,60.0,Renewable
+204,Engineer,6.0,160.0,Renewable
+204,Vessel Buzzard,1.0,3200.0,Renewable
+205,Laborer,22.0,40.0,Renewable
+205,Skipper,1.0,60.0,Renewable
+205,Engineer,6.0,160.0,Renewable
+205,Vessel Buzzard,1.0,3200.0,Renewable
+206,Laborer,22.0,40.0,Renewable
+206,Skipper,1.0,60.0,Renewable
+206,Engineer,6.0,160.0,Renewable
+206,Vessel Buzzard,1.0,3200.0,Renewable
+207,Laborer,22.0,40.0,Renewable
+207,Skipper,1.0,60.0,Renewable
+207,Engineer,6.0,160.0,Renewable
+207,Vessel Buzzard,1.0,3200.0,Renewable
+208,Laborer,22.0,40.0,Renewable
+208,Skipper,1.0,60.0,Renewable
+208,Engineer,6.0,160.0,Renewable
+208,Vessel Buzzard,1.0,3200.0,Renewable
+209,Laborer,22.0,40.0,Renewable
+209,Skipper,1.0,60.0,Renewable
+209,Engineer,6.0,160.0,Renewable
+209,Vessel Buzzard,1.0,3200.0,Renewable
+210,Laborer,22.0,40.0,Renewable
+210,Skipper,1.0,60.0,Renewable
+210,Engineer,6.0,160.0,Renewable
+210,Vessel Buzzard,1.0,3200.0,Renewable
+211,Laborer,22.0,40.0,Renewable
+211,Skipper,1.0,60.0,Renewable
+211,Engineer,6.0,160.0,Renewable
+211,Vessel Buzzard,1.0,3200.0,Renewable
+212,Laborer,22.0,40.0,Renewable
+212,Skipper,1.0,60.0,Renewable
+212,Engineer,6.0,160.0,Renewable
+212,Vessel Buzzard,1.0,3200.0,Renewable
+213,Laborer,22.0,40.0,Renewable
+213,Skipper,1.0,60.0,Renewable
+213,Engineer,6.0,160.0,Renewable
+213,Vessel Buzzard,1.0,3200.0,Renewable
+214,Laborer,22.0,40.0,Renewable
+214,Skipper,1.0,60.0,Renewable
+214,Engineer,6.0,160.0,Renewable
+214,Vessel Buzzard,1.0,3200.0,Renewable
+215,Laborer,22.0,40.0,Renewable
+215,Skipper,1.0,60.0,Renewable
+215,Engineer,6.0,160.0,Renewable
+215,Vessel Buzzard,1.0,3200.0,Renewable
+216,Laborer,22.0,40.0,Renewable
+216,Skipper,1.0,60.0,Renewable
+216,Engineer,6.0,160.0,Renewable
+216,Vessel Buzzard,1.0,3200.0,Renewable
+217,Laborer,22.0,40.0,Renewable
+217,Skipper,1.0,60.0,Renewable
+217,Engineer,6.0,160.0,Renewable
+217,Vessel Buzzard,1.0,3200.0,Renewable
+16,Laborer,18.0,40.0,Renewable
+16,Skipper,1.0,60.0,Renewable
+16,Engineer,6.0,160.0,Renewable
+16,Vessel Pompei,1.0,3320.0,Renewable
+17,Laborer,20.0,40.0,Renewable
+17,Skipper,1.0,60.0,Renewable
+17,Engineer,6.0,160.0,Renewable
+17,Vessel Buzzard,1.0,3200.0,Renewable
+162,Laborer,18.0,40.0,Renewable
+162,Skipper,1.0,60.0,Renewable
+162,Engineer,6.0,160.0,Renewable
+162,Vessel Pompei,1.0,3320.0,Renewable
+218,Laborer,18.0,40.0,Renewable
+218,Skipper,1.0,60.0,Renewable
+218,Engineer,6.0,160.0,Renewable
+218,Vessel Pompei,1.0,3320.0,Renewable
+219,Laborer,18.0,40.0,Renewable
+219,Skipper,1.0,60.0,Renewable
+219,Engineer,6.0,160.0,Renewable
+219,Vessel Pompei,1.0,3320.0,Renewable
+220,Laborer,18.0,40.0,Renewable
+220,Skipper,1.0,60.0,Renewable
+220,Engineer,6.0,160.0,Renewable
+220,Vessel Pompei,1.0,3320.0,Renewable
+221,Laborer,18.0,40.0,Renewable
+221,Skipper,1.0,60.0,Renewable
+221,Engineer,6.0,160.0,Renewable
+221,Vessel Pompei,1.0,3320.0,Renewable
+222,Laborer,18.0,40.0,Renewable
+222,Skipper,1.0,60.0,Renewable
+222,Engineer,6.0,160.0,Renewable
+222,Vessel Pompei,1.0,3320.0,Renewable
+223,Laborer,18.0,40.0,Renewable
+223,Skipper,1.0,60.0,Renewable
+223,Engineer,6.0,160.0,Renewable
+223,Vessel Pompei,1.0,3320.0,Renewable
+224,Laborer,18.0,40.0,Renewable
+224,Skipper,1.0,60.0,Renewable
+224,Engineer,6.0,160.0,Renewable
+224,Vessel Pompei,1.0,3320.0,Renewable
+225,Laborer,18.0,40.0,Renewable
+225,Skipper,1.0,60.0,Renewable
+225,Engineer,6.0,160.0,Renewable
+225,Vessel Pompei,1.0,3320.0,Renewable
+226,Laborer,18.0,40.0,Renewable
+226,Skipper,1.0,60.0,Renewable
+226,Engineer,6.0,160.0,Renewable
+226,Vessel Pompei,1.0,3320.0,Renewable
+227,Laborer,18.0,40.0,Renewable
+227,Skipper,1.0,60.0,Renewable
+227,Engineer,6.0,160.0,Renewable
+227,Vessel Pompei,1.0,3320.0,Renewable
+228,Laborer,18.0,40.0,Renewable
+228,Skipper,1.0,60.0,Renewable
+228,Engineer,6.0,160.0,Renewable
+228,Vessel Pompei,1.0,3320.0,Renewable
+229,Laborer,18.0,40.0,Renewable
+229,Skipper,1.0,60.0,Renewable
+229,Engineer,6.0,160.0,Renewable
+229,Vessel Pompei,1.0,3320.0,Renewable
+230,Laborer,18.0,40.0,Renewable
+230,Skipper,1.0,60.0,Renewable
+230,Engineer,6.0,160.0,Renewable
+230,Vessel Pompei,1.0,3320.0,Renewable
+231,Laborer,18.0,40.0,Renewable
+231,Skipper,1.0,60.0,Renewable
+231,Engineer,6.0,160.0,Renewable
+231,Vessel Pompei,1.0,3320.0,Renewable
+232,Laborer,18.0,40.0,Renewable
+232,Skipper,1.0,60.0,Renewable
+232,Engineer,6.0,160.0,Renewable
+232,Vessel Pompei,1.0,3320.0,Renewable
+233,Laborer,18.0,40.0,Renewable
+233,Skipper,1.0,60.0,Renewable
+233,Engineer,6.0,160.0,Renewable
+233,Vessel Pompei,1.0,3320.0,Renewable
+234,Laborer,18.0,40.0,Renewable
+234,Skipper,1.0,60.0,Renewable
+234,Engineer,6.0,160.0,Renewable
+234,Vessel Pompei,1.0,3320.0,Renewable
+235,Laborer,18.0,40.0,Renewable
+235,Skipper,1.0,60.0,Renewable
+235,Engineer,6.0,160.0,Renewable
+235,Vessel Pompei,1.0,3320.0,Renewable
+236,Laborer,18.0,40.0,Renewable
+236,Skipper,1.0,60.0,Renewable
+236,Engineer,6.0,160.0,Renewable
+236,Vessel Pompei,1.0,3320.0,Renewable
+237,Laborer,18.0,40.0,Renewable
+237,Skipper,1.0,60.0,Renewable
+237,Engineer,6.0,160.0,Renewable
+237,Vessel Pompei,1.0,3320.0,Renewable
+238,Laborer,18.0,40.0,Renewable
+238,Skipper,1.0,60.0,Renewable
+238,Engineer,6.0,160.0,Renewable
+238,Vessel Pompei,1.0,3320.0,Renewable
+239,Laborer,18.0,40.0,Renewable
+239,Skipper,1.0,60.0,Renewable
+239,Engineer,6.0,160.0,Renewable
+239,Vessel Pompei,1.0,3320.0,Renewable
+240,Laborer,18.0,40.0,Renewable
+240,Skipper,1.0,60.0,Renewable
+240,Engineer,6.0,160.0,Renewable
+240,Vessel Pompei,1.0,3320.0,Renewable
+241,Laborer,20.0,40.0,Renewable
+241,Skipper,1.0,60.0,Renewable
+241,Engineer,6.0,160.0,Renewable
+241,Vessel Buzzard,1.0,3200.0,Renewable
+242,Laborer,20.0,40.0,Renewable
+242,Skipper,1.0,60.0,Renewable
+242,Engineer,6.0,160.0,Renewable
+242,Vessel Buzzard,1.0,3200.0,Renewable
+243,Laborer,20.0,40.0,Renewable
+243,Skipper,1.0,60.0,Renewable
+243,Engineer,6.0,160.0,Renewable
+243,Vessel Buzzard,1.0,3200.0,Renewable
+244,Laborer,20.0,40.0,Renewable
+244,Skipper,1.0,60.0,Renewable
+244,Engineer,6.0,160.0,Renewable
+244,Vessel Buzzard,1.0,3200.0,Renewable
+245,Laborer,20.0,40.0,Renewable
+245,Skipper,1.0,60.0,Renewable
+245,Engineer,6.0,160.0,Renewable
+245,Vessel Buzzard,1.0,3200.0,Renewable
+246,Laborer,20.0,40.0,Renewable
+246,Skipper,1.0,60.0,Renewable
+246,Engineer,6.0,160.0,Renewable
+246,Vessel Buzzard,1.0,3200.0,Renewable
+247,Laborer,20.0,40.0,Renewable
+247,Skipper,1.0,60.0,Renewable
+247,Engineer,6.0,160.0,Renewable
+247,Vessel Buzzard,1.0,3200.0,Renewable
+248,Laborer,20.0,40.0,Renewable
+248,Skipper,1.0,60.0,Renewable
+248,Engineer,6.0,160.0,Renewable
+248,Vessel Buzzard,1.0,3200.0,Renewable
+249,Laborer,20.0,40.0,Renewable
+249,Skipper,1.0,60.0,Renewable
+249,Engineer,6.0,160.0,Renewable
+249,Vessel Buzzard,1.0,3200.0,Renewable
+250,Laborer,20.0,40.0,Renewable
+250,Skipper,1.0,60.0,Renewable
+250,Engineer,6.0,160.0,Renewable
+250,Vessel Buzzard,1.0,3200.0,Renewable
+251,Laborer,20.0,40.0,Renewable
+251,Skipper,1.0,60.0,Renewable
+251,Engineer,6.0,160.0,Renewable
+251,Vessel Buzzard,1.0,3200.0,Renewable
+252,Laborer,20.0,40.0,Renewable
+252,Skipper,1.0,60.0,Renewable
+252,Engineer,6.0,160.0,Renewable
+252,Vessel Buzzard,1.0,3200.0,Renewable
+253,Laborer,20.0,40.0,Renewable
+253,Skipper,1.0,60.0,Renewable
+253,Engineer,6.0,160.0,Renewable
+253,Vessel Buzzard,1.0,3200.0,Renewable
+254,Laborer,20.0,40.0,Renewable
+254,Skipper,1.0,60.0,Renewable
+254,Engineer,6.0,160.0,Renewable
+254,Vessel Buzzard,1.0,3200.0,Renewable
+255,Laborer,20.0,40.0,Renewable
+255,Skipper,1.0,60.0,Renewable
+255,Engineer,6.0,160.0,Renewable
+255,Vessel Buzzard,1.0,3200.0,Renewable
+256,Laborer,20.0,40.0,Renewable
+256,Skipper,1.0,60.0,Renewable
+256,Engineer,6.0,160.0,Renewable
+256,Vessel Buzzard,1.0,3200.0,Renewable
+257,Laborer,20.0,40.0,Renewable
+257,Skipper,1.0,60.0,Renewable
+257,Engineer,6.0,160.0,Renewable
+257,Vessel Buzzard,1.0,3200.0,Renewable
+258,Laborer,20.0,40.0,Renewable
+258,Skipper,1.0,60.0,Renewable
+258,Engineer,6.0,160.0,Renewable
+258,Vessel Buzzard,1.0,3200.0,Renewable
+259,Laborer,20.0,40.0,Renewable
+259,Skipper,1.0,60.0,Renewable
+259,Engineer,6.0,160.0,Renewable
+259,Vessel Buzzard,1.0,3200.0,Renewable
+260,Laborer,20.0,40.0,Renewable
+260,Skipper,1.0,60.0,Renewable
+260,Engineer,6.0,160.0,Renewable
+260,Vessel Buzzard,1.0,3200.0,Renewable
+261,Laborer,20.0,40.0,Renewable
+261,Skipper,1.0,60.0,Renewable
+261,Engineer,6.0,160.0,Renewable
+261,Vessel Buzzard,1.0,3200.0,Renewable
+262,Laborer,20.0,40.0,Renewable
+262,Skipper,1.0,60.0,Renewable
+262,Engineer,6.0,160.0,Renewable
+262,Vessel Buzzard,1.0,3200.0,Renewable
+263,Laborer,20.0,40.0,Renewable
+263,Skipper,1.0,60.0,Renewable
+263,Engineer,6.0,160.0,Renewable
+263,Vessel Buzzard,1.0,3200.0,Renewable
+264,Laborer,20.0,40.0,Renewable
+264,Skipper,1.0,60.0,Renewable
+264,Engineer,6.0,160.0,Renewable
+264,Vessel Buzzard,1.0,3200.0,Renewable
+313,Laborer,6.0,40.0,Renewable
+313,Skipper,1.0,60.0,Renewable
+313,Towning tugs,1.0,450.0,Renewable
+313,Transport barges,1.0,400.0,Renewable
+313,Crane,2.0,200.0,Renewable
+314,Laborer,6.0,40.0,Renewable
+314,Skipper,1.0,60.0,Renewable
+314,Towning tugs,1.0,450.0,Renewable
+314,Transport barges,1.0,400.0,Renewable
+314,Crane,2.0,200.0,Renewable
+315,Laborer,6.0,40.0,Renewable
+315,Skipper,1.0,60.0,Renewable
+315,Towning tugs,1.0,450.0,Renewable
+315,Transport barges,1.0,400.0,Renewable
+315,Crane,2.0,200.0,Renewable
+316,Laborer,6.0,40.0,Renewable
+316,Skipper,1.0,60.0,Renewable
+316,Towning tugs,1.0,450.0,Renewable
+316,Transport barges,1.0,400.0,Renewable
+316,Crane,2.0,200.0,Renewable
+317,Laborer,6.0,40.0,Renewable
+317,Skipper,1.0,60.0,Renewable
+317,Towning tugs,1.0,450.0,Renewable
+317,Transport barges,1.0,400.0,Renewable
+317,Crane,2.0,200.0,Renewable
+318,Laborer,6.0,40.0,Renewable
+318,Skipper,1.0,60.0,Renewable
+318,Towning tugs,1.0,450.0,Renewable
+318,Transport barges,1.0,400.0,Renewable
+318,Crane,2.0,200.0,Renewable
+319,Laborer,6.0,40.0,Renewable
+319,Skipper,1.0,60.0,Renewable
+319,Towning tugs,1.0,450.0,Renewable
+319,Transport barges,1.0,400.0,Renewable
+319,Crane,2.0,200.0,Renewable
+320,Laborer,6.0,40.0,Renewable
+320,Skipper,1.0,60.0,Renewable
+320,Towning tugs,1.0,450.0,Renewable
+320,Transport barges,1.0,400.0,Renewable
+320,Crane,2.0,200.0,Renewable
+321,Laborer,6.0,40.0,Renewable
+321,Skipper,1.0,60.0,Renewable
+321,Towning tugs,1.0,450.0,Renewable
+321,Transport barges,1.0,400.0,Renewable
+321,Crane,2.0,200.0,Renewable
+322,Laborer,6.0,40.0,Renewable
+322,Skipper,1.0,60.0,Renewable
+322,Towning tugs,1.0,450.0,Renewable
+322,Transport barges,1.0,400.0,Renewable
+322,Crane,2.0,200.0,Renewable
+323,Laborer,6.0,40.0,Renewable
+323,Skipper,1.0,60.0,Renewable
+323,Towning tugs,1.0,450.0,Renewable
+323,Transport barges,1.0,400.0,Renewable
+323,Crane,2.0,200.0,Renewable
+324,Laborer,6.0,40.0,Renewable
+324,Skipper,1.0,60.0,Renewable
+324,Towning tugs,1.0,450.0,Renewable
+324,Transport barges,1.0,400.0,Renewable
+324,Crane,2.0,200.0,Renewable
+325,Laborer,6.0,40.0,Renewable
+325,Skipper,1.0,60.0,Renewable
+325,Towning tugs,1.0,450.0,Renewable
+325,Transport barges,1.0,400.0,Renewable
+325,Crane,2.0,200.0,Renewable
+326,Laborer,6.0,40.0,Renewable
+326,Skipper,1.0,60.0,Renewable
+326,Towning tugs,1.0,450.0,Renewable
+326,Transport barges,1.0,400.0,Renewable
+326,Crane,2.0,200.0,Renewable
+327,Laborer,6.0,40.0,Renewable
+327,Skipper,1.0,60.0,Renewable
+327,Towning tugs,1.0,450.0,Renewable
+327,Transport barges,1.0,400.0,Renewable
+327,Crane,2.0,200.0,Renewable
+328,Laborer,6.0,40.0,Renewable
+328,Skipper,1.0,60.0,Renewable
+328,Towning tugs,1.0,450.0,Renewable
+328,Transport barges,1.0,400.0,Renewable
+328,Crane,2.0,200.0,Renewable
+329,Laborer,6.0,40.0,Renewable
+329,Skipper,1.0,60.0,Renewable
+329,Towning tugs,1.0,450.0,Renewable
+329,Transport barges,1.0,400.0,Renewable
+329,Crane,2.0,200.0,Renewable
+330,Laborer,6.0,40.0,Renewable
+330,Skipper,1.0,60.0,Renewable
+330,Towning tugs,1.0,450.0,Renewable
+330,Transport barges,1.0,400.0,Renewable
+330,Crane,2.0,200.0,Renewable
+331,Laborer,6.0,40.0,Renewable
+331,Skipper,1.0,60.0,Renewable
+331,Towning tugs,1.0,450.0,Renewable
+331,Transport barges,1.0,400.0,Renewable
+331,Crane,2.0,200.0,Renewable
+332,Laborer,6.0,40.0,Renewable
+332,Skipper,1.0,60.0,Renewable
+332,Towning tugs,1.0,450.0,Renewable
+332,Transport barges,1.0,400.0,Renewable
+332,Crane,2.0,200.0,Renewable
+333,Laborer,6.0,40.0,Renewable
+333,Skipper,1.0,60.0,Renewable
+333,Towning tugs,1.0,450.0,Renewable
+333,Transport barges,1.0,400.0,Renewable
+333,Crane,2.0,200.0,Renewable
+334,Laborer,6.0,40.0,Renewable
+334,Skipper,1.0,60.0,Renewable
+334,Towning tugs,1.0,450.0,Renewable
+334,Transport barges,1.0,400.0,Renewable
+334,Crane,2.0,200.0,Renewable
+335,Laborer,6.0,40.0,Renewable
+335,Skipper,1.0,60.0,Renewable
+335,Towning tugs,1.0,450.0,Renewable
+335,Transport barges,1.0,400.0,Renewable
+335,Crane,2.0,200.0,Renewable
+336,Laborer,6.0,40.0,Renewable
+336,Skipper,1.0,60.0,Renewable
+336,Towning tugs,1.0,450.0,Renewable
+336,Transport barges,1.0,400.0,Renewable
+336,Crane,2.0,200.0,Renewable
+289,Laborer,22.0,40.0,Renewable
+289,Skipper,1.0,60.0,Renewable
+289,Engineer,6.0,160.0,Renewable
+289,Vessel Rambiz,1.0,3620.0,Renewable
+290,Laborer,22.0,40.0,Renewable
+290,Skipper,1.0,60.0,Renewable
+290,Engineer,6.0,160.0,Renewable
+290,Vessel Rambiz,1.0,3620.0,Renewable
+291,Laborer,22.0,40.0,Renewable
+291,Skipper,1.0,60.0,Renewable
+291,Engineer,6.0,160.0,Renewable
+291,Vessel Rambiz,1.0,3620.0,Renewable
+292,Laborer,22.0,40.0,Renewable
+292,Skipper,1.0,60.0,Renewable
+292,Engineer,6.0,160.0,Renewable
+292,Vessel Rambiz,1.0,3620.0,Renewable
+293,Laborer,22.0,40.0,Renewable
+293,Skipper,1.0,60.0,Renewable
+293,Engineer,6.0,160.0,Renewable
+293,Vessel Rambiz,1.0,3620.0,Renewable
+294,Laborer,22.0,40.0,Renewable
+294,Skipper,1.0,60.0,Renewable
+294,Engineer,6.0,160.0,Renewable
+294,Vessel Rambiz,1.0,3620.0,Renewable
+295,Laborer,22.0,40.0,Renewable
+295,Skipper,1.0,60.0,Renewable
+295,Engineer,6.0,160.0,Renewable
+295,Vessel Rambiz,1.0,3620.0,Renewable
+296,Laborer,22.0,40.0,Renewable
+296,Skipper,1.0,60.0,Renewable
+296,Engineer,6.0,160.0,Renewable
+296,Vessel Rambiz,1.0,3620.0,Renewable
+297,Laborer,22.0,40.0,Renewable
+297,Skipper,1.0,60.0,Renewable
+297,Engineer,6.0,160.0,Renewable
+297,Vessel Rambiz,1.0,3620.0,Renewable
+298,Laborer,22.0,40.0,Renewable
+298,Skipper,1.0,60.0,Renewable
+298,Engineer,6.0,160.0,Renewable
+298,Vessel Rambiz,1.0,3620.0,Renewable
+299,Laborer,22.0,40.0,Renewable
+299,Skipper,1.0,60.0,Renewable
+299,Engineer,6.0,160.0,Renewable
+299,Vessel Rambiz,1.0,3620.0,Renewable
+300,Laborer,22.0,40.0,Renewable
+300,Skipper,1.0,60.0,Renewable
+300,Engineer,6.0,160.0,Renewable
+300,Vessel Rambiz,1.0,3620.0,Renewable
+301,Laborer,22.0,40.0,Renewable
+301,Skipper,1.0,60.0,Renewable
+301,Engineer,6.0,160.0,Renewable
+301,Vessel Rambiz,1.0,3620.0,Renewable
+302,Laborer,22.0,40.0,Renewable
+302,Skipper,1.0,60.0,Renewable
+302,Engineer,6.0,160.0,Renewable
+302,Vessel Rambiz,1.0,3620.0,Renewable
+303,Laborer,22.0,40.0,Renewable
+303,Skipper,1.0,60.0,Renewable
+303,Engineer,6.0,160.0,Renewable
+303,Vessel Rambiz,1.0,3620.0,Renewable
+304,Laborer,22.0,40.0,Renewable
+304,Skipper,1.0,60.0,Renewable
+304,Engineer,6.0,160.0,Renewable
+304,Vessel Rambiz,1.0,3620.0,Renewable
+305,Laborer,22.0,40.0,Renewable
+305,Skipper,1.0,60.0,Renewable
+305,Engineer,6.0,160.0,Renewable
+305,Vessel Rambiz,1.0,3620.0,Renewable
+306,Laborer,22.0,40.0,Renewable
+306,Skipper,1.0,60.0,Renewable
+306,Engineer,6.0,160.0,Renewable
+306,Vessel Rambiz,1.0,3620.0,Renewable
+307,Laborer,22.0,40.0,Renewable
+307,Skipper,1.0,60.0,Renewable
+307,Engineer,6.0,160.0,Renewable
+307,Vessel Rambiz,1.0,3620.0,Renewable
+308,Laborer,22.0,40.0,Renewable
+308,Skipper,1.0,60.0,Renewable
+308,Engineer,6.0,160.0,Renewable
+308,Vessel Rambiz,1.0,3620.0,Renewable
+309,Laborer,22.0,40.0,Renewable
+309,Skipper,1.0,60.0,Renewable
+309,Engineer,6.0,160.0,Renewable
+309,Vessel Rambiz,1.0,3620.0,Renewable
+310,Laborer,22.0,40.0,Renewable
+310,Skipper,1.0,60.0,Renewable
+310,Engineer,6.0,160.0,Renewable
+310,Vessel Rambiz,1.0,3620.0,Renewable
+311,Laborer,22.0,40.0,Renewable
+311,Skipper,1.0,60.0,Renewable
+311,Engineer,6.0,160.0,Renewable
+311,Vessel Rambiz,1.0,3620.0,Renewable
+312,Laborer,22.0,40.0,Renewable
+312,Skipper,1.0,60.0,Renewable
+312,Engineer,6.0,160.0,Renewable
+312,Vessel Rambiz,1.0,3620.0,Renewable
+265,Laborer,12.0,40.0,Renewable
+265,Skipper,1.0,60.0,Renewable
+265,Engineer,6.0,160.0,Renewable
+265,Diving team,1.0,900.0,Renewable
+265,Vessel Rambiz,1.0,3620.0,Renewable
+266,Laborer,12.0,40.0,Renewable
+266,Skipper,1.0,60.0,Renewable
+266,Engineer,6.0,160.0,Renewable
+266,Diving team,1.0,900.0,Renewable
+266,Vessel Rambiz,1.0,3620.0,Renewable
+267,Laborer,12.0,40.0,Renewable
+267,Skipper,1.0,60.0,Renewable
+267,Engineer,6.0,160.0,Renewable
+267,Diving team,1.0,900.0,Renewable
+267,Vessel Rambiz,1.0,3620.0,Renewable
+268,Laborer,12.0,40.0,Renewable
+268,Skipper,1.0,60.0,Renewable
+268,Engineer,6.0,160.0,Renewable
+268,Diving team,1.0,900.0,Renewable
+268,Vessel Rambiz,1.0,3620.0,Renewable
+269,Laborer,12.0,40.0,Renewable
+269,Skipper,1.0,60.0,Renewable
+269,Engineer,6.0,160.0,Renewable
+269,Diving team,1.0,900.0,Renewable
+269,Vessel Rambiz,1.0,3620.0,Renewable
+270,Laborer,12.0,40.0,Renewable
+270,Skipper,1.0,60.0,Renewable
+270,Engineer,6.0,160.0,Renewable
+270,Diving team,1.0,900.0,Renewable
+270,Vessel Rambiz,1.0,3620.0,Renewable
+271,Laborer,12.0,40.0,Renewable
+271,Skipper,1.0,60.0,Renewable
+271,Engineer,6.0,160.0,Renewable
+271,Diving team,1.0,900.0,Renewable
+271,Vessel Rambiz,1.0,3620.0,Renewable
+272,Laborer,12.0,40.0,Renewable
+272,Skipper,1.0,60.0,Renewable
+272,Engineer,6.0,160.0,Renewable
+272,Diving team,1.0,900.0,Renewable
+272,Vessel Rambiz,1.0,3620.0,Renewable
+273,Laborer,12.0,40.0,Renewable
+273,Skipper,1.0,60.0,Renewable
+273,Engineer,6.0,160.0,Renewable
+273,Diving team,1.0,900.0,Renewable
+273,Vessel Rambiz,1.0,3620.0,Renewable
+274,Laborer,12.0,40.0,Renewable
+274,Skipper,1.0,60.0,Renewable
+274,Engineer,6.0,160.0,Renewable
+274,Diving team,1.0,900.0,Renewable
+274,Vessel Rambiz,1.0,3620.0,Renewable
+275,Laborer,12.0,40.0,Renewable
+275,Skipper,1.0,60.0,Renewable
+275,Engineer,6.0,160.0,Renewable
+275,Diving team,1.0,900.0,Renewable
+275,Vessel Rambiz,1.0,3620.0,Renewable
+276,Laborer,12.0,40.0,Renewable
+276,Skipper,1.0,60.0,Renewable
+276,Engineer,6.0,160.0,Renewable
+276,Diving team,1.0,900.0,Renewable
+276,Vessel Rambiz,1.0,3620.0,Renewable
+277,Laborer,12.0,40.0,Renewable
+277,Skipper,1.0,60.0,Renewable
+277,Engineer,6.0,160.0,Renewable
+277,Diving team,1.0,900.0,Renewable
+277,Vessel Rambiz,1.0,3620.0,Renewable
+278,Laborer,12.0,40.0,Renewable
+278,Skipper,1.0,60.0,Renewable
+278,Engineer,6.0,160.0,Renewable
+278,Diving team,1.0,900.0,Renewable
+278,Vessel Rambiz,1.0,3620.0,Renewable
+279,Laborer,12.0,40.0,Renewable
+279,Skipper,1.0,60.0,Renewable
+279,Engineer,6.0,160.0,Renewable
+279,Diving team,1.0,900.0,Renewable
+279,Vessel Rambiz,1.0,3620.0,Renewable
+280,Laborer,12.0,40.0,Renewable
+280,Skipper,1.0,60.0,Renewable
+280,Engineer,6.0,160.0,Renewable
+280,Diving team,1.0,900.0,Renewable
+280,Vessel Rambiz,1.0,3620.0,Renewable
+281,Laborer,12.0,40.0,Renewable
+281,Skipper,1.0,60.0,Renewable
+281,Engineer,6.0,160.0,Renewable
+281,Diving team,1.0,900.0,Renewable
+281,Vessel Rambiz,1.0,3620.0,Renewable
+282,Laborer,12.0,40.0,Renewable
+282,Skipper,1.0,60.0,Renewable
+282,Engineer,6.0,160.0,Renewable
+282,Diving team,1.0,900.0,Renewable
+282,Vessel Rambiz,1.0,3620.0,Renewable
+283,Laborer,12.0,40.0,Renewable
+283,Skipper,1.0,60.0,Renewable
+283,Engineer,6.0,160.0,Renewable
+283,Diving team,1.0,900.0,Renewable
+283,Vessel Rambiz,1.0,3620.0,Renewable
+284,Laborer,12.0,40.0,Renewable
+284,Skipper,1.0,60.0,Renewable
+284,Engineer,6.0,160.0,Renewable
+284,Diving team,1.0,900.0,Renewable
+284,Vessel Rambiz,1.0,3620.0,Renewable
+285,Laborer,12.0,40.0,Renewable
+285,Skipper,1.0,60.0,Renewable
+285,Engineer,6.0,160.0,Renewable
+285,Diving team,1.0,900.0,Renewable
+285,Vessel Rambiz,1.0,3620.0,Renewable
+286,Laborer,12.0,40.0,Renewable
+286,Skipper,1.0,60.0,Renewable
+286,Engineer,6.0,160.0,Renewable
+286,Diving team,1.0,900.0,Renewable
+286,Vessel Rambiz,1.0,3620.0,Renewable
+287,Laborer,12.0,40.0,Renewable
+287,Skipper,1.0,60.0,Renewable
+287,Engineer,6.0,160.0,Renewable
+287,Diving team,1.0,900.0,Renewable
+287,Vessel Rambiz,1.0,3620.0,Renewable
+288,Laborer,12.0,40.0,Renewable
+288,Skipper,1.0,60.0,Renewable
+288,Engineer,6.0,160.0,Renewable
+288,Diving team,1.0,900.0,Renewable
+288,Vessel Rambiz,1.0,3620.0,Renewable
+56,Laborer,32.0,40.0,Renewable
+56,Engineer,6.0,160.0,Renewable
+56,Crane,3.0,200.0,Renewable
+57,Laborer,16.0,40.0,Renewable
+57,Welder,1.0,60.0,Renewable
+57,Engineer,3.0,160.0,Renewable
+57,Crane,1.0,200.0,Renewable
+58,Laborer,19.0,40.0,Renewable
+58,Welder,1.0,60.0,Renewable
+58,Engineer,3.0,160.0,Renewable
+58,Crane,1.0,200.0,Renewable
+502,Laborer,16.0,40.0,Renewable
+502,Skipper,2.0,60.0,Renewable
+502,Engineer,8.0,160.0,Renewable
+502,Vessel Neptune,1.0,3750.0,Renewable
+502,Vessel Vagant,1.0,3180.0,Renewable
+502,Crane,1.0,200.0,Renewable
+503,Laborer,16.0,40.0,Renewable
+503,Skipper,2.0,60.0,Renewable
+503,Engineer,8.0,160.0,Renewable
+503,Vessel Neptune,1.0,3750.0,Renewable
+503,Vessel Vagant,1.0,3180.0,Renewable
+503,Crane,1.0,200.0,Renewable
+504,Laborer,16.0,40.0,Renewable
+504,Skipper,2.0,60.0,Renewable
+504,Engineer,8.0,160.0,Renewable
+504,Vessel Neptune,1.0,3750.0,Renewable
+504,Vessel Vagant,1.0,3180.0,Renewable
+504,Crane,1.0,200.0,Renewable
+505,Laborer,16.0,40.0,Renewable
+505,Skipper,2.0,60.0,Renewable
+505,Engineer,8.0,160.0,Renewable
+505,Vessel Neptune,1.0,3750.0,Renewable
+505,Vessel Vagant,1.0,3180.0,Renewable
+505,Crane,1.0,200.0,Renewable
+506,Laborer,16.0,40.0,Renewable
+506,Skipper,2.0,60.0,Renewable
+506,Engineer,8.0,160.0,Renewable
+506,Vessel Neptune,1.0,3750.0,Renewable
+506,Vessel Vagant,1.0,3180.0,Renewable
+506,Crane,1.0,200.0,Renewable
+507,Laborer,16.0,40.0,Renewable
+507,Skipper,2.0,60.0,Renewable
+507,Engineer,8.0,160.0,Renewable
+507,Vessel Neptune,1.0,3750.0,Renewable
+507,Vessel Vagant,1.0,3180.0,Renewable
+507,Crane,1.0,200.0,Renewable
+508,Laborer,16.0,40.0,Renewable
+508,Skipper,2.0,60.0,Renewable
+508,Engineer,8.0,160.0,Renewable
+508,Vessel Neptune,1.0,3750.0,Renewable
+508,Vessel Vagant,1.0,3180.0,Renewable
+508,Crane,1.0,200.0,Renewable
+509,Laborer,16.0,40.0,Renewable
+509,Skipper,2.0,60.0,Renewable
+509,Engineer,8.0,160.0,Renewable
+509,Vessel Neptune,1.0,3750.0,Renewable
+509,Vessel Vagant,1.0,3180.0,Renewable
+509,Crane,1.0,200.0,Renewable
+510,Laborer,16.0,40.0,Renewable
+510,Skipper,2.0,60.0,Renewable
+510,Engineer,8.0,160.0,Renewable
+510,Vessel Neptune,1.0,3750.0,Renewable
+510,Vessel Vagant,1.0,3180.0,Renewable
+510,Crane,1.0,200.0,Renewable
+511,Laborer,16.0,40.0,Renewable
+511,Skipper,2.0,60.0,Renewable
+511,Engineer,8.0,160.0,Renewable
+511,Vessel Neptune,1.0,3750.0,Renewable
+511,Vessel Vagant,1.0,3180.0,Renewable
+511,Crane,1.0,200.0,Renewable
+512,Laborer,16.0,40.0,Renewable
+512,Skipper,2.0,60.0,Renewable
+512,Engineer,8.0,160.0,Renewable
+512,Vessel Neptune,1.0,3750.0,Renewable
+512,Vessel Vagant,1.0,3180.0,Renewable
+512,Crane,1.0,200.0,Renewable
+513,Laborer,16.0,40.0,Renewable
+513,Skipper,2.0,60.0,Renewable
+513,Engineer,8.0,160.0,Renewable
+513,Vessel Neptune,1.0,3750.0,Renewable
+513,Vessel Vagant,1.0,3180.0,Renewable
+513,Crane,1.0,200.0,Renewable
+514,Laborer,16.0,40.0,Renewable
+514,Skipper,2.0,60.0,Renewable
+514,Engineer,8.0,160.0,Renewable
+514,Vessel Neptune,1.0,3750.0,Renewable
+514,Vessel Vagant,1.0,3180.0,Renewable
+514,Crane,1.0,200.0,Renewable
+515,Laborer,16.0,40.0,Renewable
+515,Skipper,2.0,60.0,Renewable
+515,Engineer,8.0,160.0,Renewable
+515,Vessel Neptune,1.0,3750.0,Renewable
+515,Vessel Vagant,1.0,3180.0,Renewable
+515,Crane,1.0,200.0,Renewable
+516,Laborer,16.0,40.0,Renewable
+516,Skipper,2.0,60.0,Renewable
+516,Engineer,8.0,160.0,Renewable
+516,Vessel Neptune,1.0,3750.0,Renewable
+516,Vessel Vagant,1.0,3180.0,Renewable
+516,Crane,1.0,200.0,Renewable
+517,Laborer,16.0,40.0,Renewable
+517,Skipper,2.0,60.0,Renewable
+517,Engineer,8.0,160.0,Renewable
+517,Vessel Neptune,1.0,3750.0,Renewable
+517,Vessel Vagant,1.0,3180.0,Renewable
+517,Crane,1.0,200.0,Renewable
+518,Laborer,16.0,40.0,Renewable
+518,Skipper,2.0,60.0,Renewable
+518,Engineer,8.0,160.0,Renewable
+518,Vessel Neptune,1.0,3750.0,Renewable
+518,Vessel Vagant,1.0,3180.0,Renewable
+518,Crane,1.0,200.0,Renewable
+519,Laborer,16.0,40.0,Renewable
+519,Skipper,2.0,60.0,Renewable
+519,Engineer,8.0,160.0,Renewable
+519,Vessel Neptune,1.0,3750.0,Renewable
+519,Vessel Vagant,1.0,3180.0,Renewable
+519,Crane,1.0,200.0,Renewable
+520,Laborer,16.0,40.0,Renewable
+520,Skipper,2.0,60.0,Renewable
+520,Engineer,8.0,160.0,Renewable
+520,Vessel Neptune,1.0,3750.0,Renewable
+520,Vessel Vagant,1.0,3180.0,Renewable
+520,Crane,1.0,200.0,Renewable
+521,Laborer,16.0,40.0,Renewable
+521,Skipper,2.0,60.0,Renewable
+521,Engineer,8.0,160.0,Renewable
+521,Vessel Neptune,1.0,3750.0,Renewable
+521,Vessel Vagant,1.0,3180.0,Renewable
+521,Crane,1.0,200.0,Renewable
+522,Laborer,16.0,40.0,Renewable
+522,Skipper,2.0,60.0,Renewable
+522,Engineer,8.0,160.0,Renewable
+522,Vessel Neptune,1.0,3750.0,Renewable
+522,Vessel Vagant,1.0,3180.0,Renewable
+522,Crane,1.0,200.0,Renewable
+523,Laborer,16.0,40.0,Renewable
+523,Skipper,2.0,60.0,Renewable
+523,Engineer,8.0,160.0,Renewable
+523,Vessel Neptune,1.0,3750.0,Renewable
+523,Vessel Vagant,1.0,3180.0,Renewable
+523,Crane,1.0,200.0,Renewable
+524,Laborer,16.0,40.0,Renewable
+524,Skipper,2.0,60.0,Renewable
+524,Engineer,8.0,160.0,Renewable
+524,Vessel Neptune,1.0,3750.0,Renewable
+524,Vessel Vagant,1.0,3180.0,Renewable
+524,Crane,1.0,200.0,Renewable
+525,Laborer,16.0,40.0,Renewable
+525,Skipper,2.0,60.0,Renewable
+525,Engineer,8.0,160.0,Renewable
+525,Vessel Neptune,1.0,3750.0,Renewable
+525,Vessel Vagant,1.0,3180.0,Renewable
+525,Crane,1.0,200.0,Renewable
+478,Laborer,16.0,40.0,Renewable
+478,Skipper,2.0,60.0,Renewable
+478,Engineer,8.0,160.0,Renewable
+478,Vessel Neptune,1.0,3750.0,Renewable
+478,Vessel Vagant,1.0,3180.0,Renewable
+479,Laborer,16.0,40.0,Renewable
+479,Skipper,2.0,60.0,Renewable
+479,Engineer,8.0,160.0,Renewable
+479,Vessel Neptune,1.0,3750.0,Renewable
+479,Vessel Vagant,1.0,3180.0,Renewable
+480,Laborer,16.0,40.0,Renewable
+480,Skipper,2.0,60.0,Renewable
+480,Engineer,8.0,160.0,Renewable
+480,Vessel Neptune,1.0,3750.0,Renewable
+480,Vessel Vagant,1.0,3180.0,Renewable
+481,Laborer,16.0,40.0,Renewable
+481,Skipper,2.0,60.0,Renewable
+481,Engineer,8.0,160.0,Renewable
+481,Vessel Neptune,1.0,3750.0,Renewable
+481,Vessel Vagant,1.0,3180.0,Renewable
+482,Laborer,16.0,40.0,Renewable
+482,Skipper,2.0,60.0,Renewable
+482,Engineer,8.0,160.0,Renewable
+482,Vessel Neptune,1.0,3750.0,Renewable
+482,Vessel Vagant,1.0,3180.0,Renewable
+483,Laborer,16.0,40.0,Renewable
+483,Skipper,2.0,60.0,Renewable
+483,Engineer,8.0,160.0,Renewable
+483,Vessel Neptune,1.0,3750.0,Renewable
+483,Vessel Vagant,1.0,3180.0,Renewable
+484,Laborer,16.0,40.0,Renewable
+484,Skipper,2.0,60.0,Renewable
+484,Engineer,8.0,160.0,Renewable
+484,Vessel Neptune,1.0,3750.0,Renewable
+484,Vessel Vagant,1.0,3180.0,Renewable
+485,Laborer,16.0,40.0,Renewable
+485,Skipper,2.0,60.0,Renewable
+485,Engineer,8.0,160.0,Renewable
+485,Vessel Neptune,1.0,3750.0,Renewable
+485,Vessel Vagant,1.0,3180.0,Renewable
+486,Laborer,16.0,40.0,Renewable
+486,Skipper,2.0,60.0,Renewable
+486,Engineer,8.0,160.0,Renewable
+486,Vessel Neptune,1.0,3750.0,Renewable
+486,Vessel Vagant,1.0,3180.0,Renewable
+487,Laborer,16.0,40.0,Renewable
+487,Skipper,2.0,60.0,Renewable
+487,Engineer,8.0,160.0,Renewable
+487,Vessel Neptune,1.0,3750.0,Renewable
+487,Vessel Vagant,1.0,3180.0,Renewable
+488,Laborer,16.0,40.0,Renewable
+488,Skipper,2.0,60.0,Renewable
+488,Engineer,8.0,160.0,Renewable
+488,Vessel Neptune,1.0,3750.0,Renewable
+488,Vessel Vagant,1.0,3180.0,Renewable
+489,Laborer,16.0,40.0,Renewable
+489,Skipper,2.0,60.0,Renewable
+489,Engineer,8.0,160.0,Renewable
+489,Vessel Neptune,1.0,3750.0,Renewable
+489,Vessel Vagant,1.0,3180.0,Renewable
+490,Laborer,16.0,40.0,Renewable
+490,Skipper,2.0,60.0,Renewable
+490,Engineer,8.0,160.0,Renewable
+490,Vessel Neptune,1.0,3750.0,Renewable
+490,Vessel Vagant,1.0,3180.0,Renewable
+491,Laborer,16.0,40.0,Renewable
+491,Skipper,2.0,60.0,Renewable
+491,Engineer,8.0,160.0,Renewable
+491,Vessel Neptune,1.0,3750.0,Renewable
+491,Vessel Vagant,1.0,3180.0,Renewable
+492,Laborer,16.0,40.0,Renewable
+492,Skipper,2.0,60.0,Renewable
+492,Engineer,8.0,160.0,Renewable
+492,Vessel Neptune,1.0,3750.0,Renewable
+492,Vessel Vagant,1.0,3180.0,Renewable
+493,Laborer,16.0,40.0,Renewable
+493,Skipper,2.0,60.0,Renewable
+493,Engineer,8.0,160.0,Renewable
+493,Vessel Neptune,1.0,3750.0,Renewable
+493,Vessel Vagant,1.0,3180.0,Renewable
+494,Laborer,16.0,40.0,Renewable
+494,Skipper,2.0,60.0,Renewable
+494,Engineer,8.0,160.0,Renewable
+494,Vessel Neptune,1.0,3750.0,Renewable
+494,Vessel Vagant,1.0,3180.0,Renewable
+495,Laborer,16.0,40.0,Renewable
+495,Skipper,2.0,60.0,Renewable
+495,Engineer,8.0,160.0,Renewable
+495,Vessel Neptune,1.0,3750.0,Renewable
+495,Vessel Vagant,1.0,3180.0,Renewable
+496,Laborer,16.0,40.0,Renewable
+496,Skipper,2.0,60.0,Renewable
+496,Engineer,8.0,160.0,Renewable
+496,Vessel Neptune,1.0,3750.0,Renewable
+496,Vessel Vagant,1.0,3180.0,Renewable
+497,Laborer,16.0,40.0,Renewable
+497,Skipper,2.0,60.0,Renewable
+497,Engineer,8.0,160.0,Renewable
+497,Vessel Neptune,1.0,3750.0,Renewable
+497,Vessel Vagant,1.0,3180.0,Renewable
+498,Laborer,16.0,40.0,Renewable
+498,Skipper,2.0,60.0,Renewable
+498,Engineer,8.0,160.0,Renewable
+498,Vessel Neptune,1.0,3750.0,Renewable
+498,Vessel Vagant,1.0,3180.0,Renewable
+499,Laborer,16.0,40.0,Renewable
+499,Skipper,2.0,60.0,Renewable
+499,Engineer,8.0,160.0,Renewable
+499,Vessel Neptune,1.0,3750.0,Renewable
+499,Vessel Vagant,1.0,3180.0,Renewable
+500,Laborer,16.0,40.0,Renewable
+500,Skipper,2.0,60.0,Renewable
+500,Engineer,8.0,160.0,Renewable
+500,Vessel Neptune,1.0,3750.0,Renewable
+500,Vessel Vagant,1.0,3180.0,Renewable
+501,Laborer,16.0,40.0,Renewable
+501,Skipper,2.0,60.0,Renewable
+501,Engineer,8.0,160.0,Renewable
+501,Vessel Neptune,1.0,3750.0,Renewable
+501,Vessel Vagant,1.0,3180.0,Renewable
+454,Special team,1.0,800.0,Renewable
+455,Special team,1.0,800.0,Renewable
+456,Special team,1.0,800.0,Renewable
+457,Special team,1.0,800.0,Renewable
+458,Special team,1.0,800.0,Renewable
+459,Special team,1.0,800.0,Renewable
+460,Special team,1.0,800.0,Renewable
+461,Special team,1.0,800.0,Renewable
+462,Special team,1.0,800.0,Renewable
+463,Special team,1.0,800.0,Renewable
+464,Special team,1.0,800.0,Renewable
+465,Special team,1.0,800.0,Renewable
+466,Special team,1.0,800.0,Renewable
+467,Special team,1.0,800.0,Renewable
+468,Special team,1.0,800.0,Renewable
+469,Special team,1.0,800.0,Renewable
+470,Special team,1.0,800.0,Renewable
+471,Special team,1.0,800.0,Renewable
+472,Special team,1.0,800.0,Renewable
+473,Special team,1.0,800.0,Renewable
+474,Special team,1.0,800.0,Renewable
+475,Special team,1.0,800.0,Renewable
+476,Special team,1.0,800.0,Renewable
+477,Special team,1.0,800.0,Renewable
+430,Commissioning team,1.0,800.0,Renewable
+431,Commissioning team,1.0,800.0,Renewable
+432,Commissioning team,1.0,800.0,Renewable
+433,Commissioning team,1.0,800.0,Renewable
+434,Commissioning team,1.0,800.0,Renewable
+435,Commissioning team,1.0,800.0,Renewable
+436,Commissioning team,1.0,800.0,Renewable
+437,Commissioning team,1.0,800.0,Renewable
+438,Commissioning team,1.0,800.0,Renewable
+439,Commissioning team,1.0,800.0,Renewable
+440,Commissioning team,1.0,800.0,Renewable
+441,Commissioning team,1.0,800.0,Renewable
+442,Commissioning team,1.0,800.0,Renewable
+443,Commissioning team,1.0,800.0,Renewable
+444,Commissioning team,1.0,800.0,Renewable
+445,Commissioning team,1.0,800.0,Renewable
+446,Commissioning team,1.0,800.0,Renewable
+447,Commissioning team,1.0,800.0,Renewable
+448,Commissioning team,1.0,800.0,Renewable
+449,Commissioning team,1.0,800.0,Renewable
+450,Commissioning team,1.0,800.0,Renewable
+451,Commissioning team,1.0,800.0,Renewable
+452,Commissioning team,1.0,800.0,Renewable
+453,Commissioning team,1.0,800.0,Renewable
+406,Testing team,0.2,800.0,Renewable
+407,Testing team,0.2,800.0,Renewable
+408,Testing team,0.2,800.0,Renewable
+409,Testing team,0.2,800.0,Renewable
+410,Testing team,0.2,800.0,Renewable
+411,Testing team,0.2,800.0,Renewable
+412,Testing team,0.2,800.0,Renewable
+413,Testing team,0.2,800.0,Renewable
+414,Testing team,0.2,800.0,Renewable
+415,Testing team,0.2,800.0,Renewable
+416,Testing team,0.2,800.0,Renewable
+417,Testing team,0.2,800.0,Renewable
+418,Testing team,0.2,800.0,Renewable
+419,Testing team,0.2,800.0,Renewable
+421,Testing team,0.2,800.0,Renewable
+420,Testing team,0.2,800.0,Renewable
+422,Testing team,0.2,800.0,Renewable
+423,Testing team,0.2,800.0,Renewable
+424,Testing team,0.2,800.0,Renewable
+425,Testing team,0.2,800.0,Renewable
+426,Testing team,0.2,800.0,Renewable
+427,Testing team,0.2,800.0,Renewable
+428,Testing team,0.2,800.0,Renewable
+429,Testing team,0.2,800.0,Renewable
+77,Laborer,8.0,40.0,Renewable
+77,Skipper,1.0,60.0,Renewable
+77,Towning tugs,1.0,450.0,Renewable
+77,Transport barges,1.0,400.0,Renewable
+77,Crane,1.0,200.0,Renewable
+82,Laborer,8.0,40.0,Renewable
+82,Skipper,1.0,60.0,Renewable
+82,Engineer,4.0,160.0,Renewable
+82,Towning tugs,1.0,450.0,Renewable
+82,Transport barges,1.0,400.0,Renewable
+82,Crane,1.0,200.0,Renewable
+81,Laborer,18.0,40.0,Renewable
+81,Skipper,1.0,60.0,Renewable
+81,Engineer,6.0,160.0,Renewable
+81,Vessel Rambiz,1.0,3620.0,Renewable
+94,Laborer,4.0,40.0,Renewable
+94,Skipper,1.0,60.0,Renewable
+94,Engineer,1.0,160.0,Renewable
+94,Towning tugs,1.0,450.0,Renewable
+94,Transport barges,1.0,400.0,Renewable
+94,Crane,1.0,200.0,Renewable
+95,Laborer,18.0,40.0,Renewable
+95,Skipper,1.0,60.0,Renewable
+95,Engineer,6.0,160.0,Renewable
+95,Vessel Rambiz,1.0,3620.0,Renewable
+100,Laborer,5.0,40.0,Renewable
+100,Skipper,1.0,60.0,Renewable
+100,Engineer,4.0,160.0,Renewable
+100,Vessel Pompei,1.0,3320.0,Renewable
+101,Laborer,5.0,40.0,Renewable
+101,Skipper,1.0,60.0,Renewable
+101,Engineer,4.0,160.0,Renewable
+101,Vessel Pompei,1.0,3320.0,Renewable
+102,Laborer,5.0,40.0,Renewable
+102,Skipper,1.0,60.0,Renewable
+102,Engineer,3.0,160.0,Renewable
+102,Vessel Pompei,1.0,3320.0,Renewable
+105,Laborer,10.0,40.0,Renewable
+105,Skipper,1.0,60.0,Renewable
+105,Vessel Souverreign,1.0,3250.0,Renewable
+105,Crane,1.0,200.0,Renewable
+106,Laborer,18.0,40.0,Renewable
+106,Skipper,1.0,60.0,Renewable
+106,Engineer,3.0,160.0,Renewable
+106,Vessel Pompei,1.0,3320.0,Renewable
+107,Laborer,12.0,40.0,Renewable
+107,Testing team,1.0,800.0,Renewable
+108,Laborer,22.0,40.0,Renewable
+108,Skipper,1.0,60.0,Renewable
+108,Vessel Innovator,1.0,3250.0,Renewable
+109,Special team,2.0,800.0,Renewable
+110,Laborer,22.0,40.0,Renewable
+110,Skipper,1.0,60.0,Renewable
+110,Engineer,4.0,160.0,Renewable
+110,Vessel Innovator,1.0,3250.0,Renewable
+111,Engineer,4.0,160.0,Renewable
+112,Laborer,22.0,40.0,Renewable
+112,Skipper,1.0,60.0,Renewable
+112,Engineer,4.0,160.0,Renewable
+112,Vessel Innovator,1.0,3250.0,Renewable
+126,Laborer,5.0,40.0,Renewable
+126,Skipper,1.0,60.0,Renewable
+126,Engineer,3.0,160.0,Renewable
+126,Vessel Pompei,1.0,3320.0,Renewable
+130,Laborer,6.0,40.0,Renewable
+130,Skipper,1.0,60.0,Renewable
+130,Vessel Sternat Spirit,1.0,3250.0,Renewable
+131,Laborer,6.0,40.0,Renewable
+131,Skipper,1.0,60.0,Renewable
+131,Vessel Sternat Spirit,1.0,3250.0,Renewable
+131,Crane,2.0,200.0,Renewable
+133,Laborer,18.0,40.0,Renewable
+133,Skipper,1.0,60.0,Renewable
+133,Engineer,4.0,160.0,Renewable
+133,Vessel Breughel,1.0,3200.0,Renewable
+134,Laborer,18.0,40.0,Renewable
+134,Skipper,1.0,60.0,Renewable
+134,Engineer,4.0,160.0,Renewable
+134,Vessel Breughel,1.0,3200.0,Renewable
+193,Laborer,12.0,40.0,Renewable
+193,Welder,8.0,60.0,Renewable
+193,Crane,1.0,200.0,Renewable
+193,Engineer,1.0,160.0,Renewable
+137,Laborer,16.0,40.0,Renewable
+137,Engineer,4.0,160.0,Renewable
+137,Drilling machine,2.0,1200.0,Renewable
+138,Laborer,14.0,40.0,Renewable
+138,Engineer,4.0,160.0,Renewable
+138,Pulling machine,1.0,1300.0,Renewable
+139,Testing team,1.0,800.0,Renewable
+140,Laborer,13.0,40.0,Renewable
+140,Engineer,4.0,160.0,Renewable
+140,Pulling machine,1.0,1300.0,Renewable
+140,Crane,1.0,200.0,Renewable
+141,Disconnecting team,1.0,800.0,Renewable
+194,Testing team,1.0,800.0,Renewable
+149,Laborer,17.0,40.0,Renewable
+149,Skipper,1.0,60.0,Renewable
+149,Engineer,4.0,160.0,Renewable
+149,Vessel Breydel,1.0,3200.0,Renewable
+150,Laborer,13.0,40.0,Renewable
+150,Engineer,3.0,160.0,Renewable
+150,Pulling machine,1.0,1300.0,Renewable
+195,Disconnecting team,1.0,800.0,Renewable
+151,Laborer,12.0,40.0,Renewable
+151,Skipper,1.0,60.0,Renewable
+151,Engineer,6.0,160.0,Renewable
+151,Vessel Pearl River,1.0,3250.0,Renewable
+152,Laborer,20.0,40.0,Renewable
+152,Engineer,6.0,160.0,Renewable
+153,Disconnecting team,1.0,800.0,Renewable
+154,Testing team,1.0,800.0,Renewable
+157,Laborer,5.0,40.0,Renewable
+157,Skipper,1.0,60.0,Renewable
+157,Vessel Pompei,1.0,3320.0,Renewable
+158,Laborer,5.0,40.0,Renewable
+158,Skipper,1.0,60.0,Renewable
+158,Vessel Pompei,1.0,3320.0,Renewable
