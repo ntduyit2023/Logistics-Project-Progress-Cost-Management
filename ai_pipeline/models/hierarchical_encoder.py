@@ -22,7 +22,7 @@ class HierarchicalAttentionEncoder(nn.Module):
         interaction_matrix (nn.Parameter): Ma trận Tương tác (Domain Knowledge) 72x72 không huấn luyện.
         group_indices (dict): Từ điển lưu trữ ranh giới (chỉ số) của từng nhóm trong mảng 72.
     """
-    def __init__(self, feature_dim=34, num_groups=8, project_type="Logistics"):
+    def __init__(self, feature_dim=36, num_groups=8, project_type="Logistics"):
         super(HierarchicalAttentionEncoder, self).__init__()
         self.feature_dim = feature_dim
         self.num_groups = num_groups

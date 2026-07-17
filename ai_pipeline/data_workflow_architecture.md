@@ -11,20 +11,20 @@ Tài liệu này đặc tả chi tiết luồng dữ liệu (Data Workflow) ch�
 ```mermaid
 flowchart TD
     subgraph RawData["📥 TẦNG DỮ LIỆU ĐẦU VÀO (Data Ingestion)"]
-        CSV["Tệp CSV Dự Án (tasks.csv, predecessors.csv, resources.csv)"]
+        CSV["Tệp CSV Dự Án (tasks.csv, predecessors.csv, resources.csv, task_resources.csv)"]
         DataLoader["data_loader.py (GlPoProjectGraph)"]
-        GraphData["Biểu đồ Dự án PyG Data G(V, E) & Ma trận Kề"]
+        GraphData["Biểu đồ Dự án PyG Data G(V, E) & Ma trận Kề (36-D đặc trưng đỉnh)"]
     end
 
     subgraph Phase1["🔒 PHA 1: TIỀN HUẤN LUYỆN KHÔNG GIÁM SÁT OFFLINE (Offline SSL Pre-training)"]
         direction TB
-        subgraph GAT_SSL["GAT Encoder Pre-training"]
+        subgraph GAT_SSL["GAT Encoder Pre-training (300 Epochs)"]
             GAE["GAE Reconstruction Loss: GAT phục dựng Ma trận kề Z * Z^T"]
             DGI["DGI Loss: Tối đa hóa lượng tin tương hỗ giữa nút và Biểu đồ toàn cục"]
             CPNT["CPNT Triplet Loss: Đẩy cụm không gian của nút găng sát nhau"]
         end
         
-        subgraph DAGNN_SSL["DAGNN Temporal Encoder Pre-training"]
+        subgraph DAGNN_SSL["DAGNN Temporal Encoder Pre-training (500 Epochs)"]
             SelfSupervised["CPM Self-Supervised Loss: Dự đoán 7 chỉ số CPM (ES, EF, LS, LF, TF, IsCritical, Path Length)"]
             MaskedDuration["Masked Duration Loss: Khôi phục thời lượng qua Adaptive Masking"]
             PCR["PCR Loss: Dự đoán khoảng cách thời gian găng logic (Predecessor Chain Reconstruction)"]
@@ -38,8 +38,8 @@ flowchart TD
         
         subgraph Layer1["🛠️ TẦNG 1: BIỂU DIỄN AI & XỬ LÝ ĐẶC TRƯNG"]
             LoadChk["Load Pretrained GAT & DAGNN Weights"]
-            FIM["Ma trận Tương tác 72x72 (feature_interaction_matrix.py)"]
-            HAE["Hierarchical Encoder (hierarchical_encoder.py): 72 -> 13 nhóm đặc trưng S'_g"]
+            FIM["Ma trận Tương tác 36x36 (feature_interaction_matrix.py)"]
+            HAE["Hierarchical Encoder (hierarchical_encoder.py): 36 -> 8 nhóm đặc trưng S'_g"]
             ForwardPass["GAT & DAGNN Forward Pass"]
             FeatAI["Vector Đặc trưng AI (Attention, Delay Pred, Sigma Pred)"]
         end
@@ -56,7 +56,7 @@ flowchart TD
             ActObj["Chuyển đổi thành ActionObject (Crash, Outsource, FastTrack, Leveling)"]
             AEE["ActionEffectEngine: Mô phỏng hệ quả đa chiều (Thời lượng, Chi phí, Nhân công, Rủi ro)"]
             GraphEvol["Tiến hóa Đồ thị: Tính toán lại CPM, Float & Lead Lags (Negative Lags)"]
-            UpdateX["Cập nhật PyG Feature Tensor 72-D (Dynamic Features on data.x)"]
+            UpdateX["Cập nhật PyG Feature Tensor 36-D (Dynamic Features on data.x)"]
             ReInfer["Tái suy diễn Embeddings: Re-inference GAT & DAGNN Forward Pass (NO Retraining)"]
             StateHistory["State History Stack (State 0 -> State 1 -> State N): Undo / Redo / Replay"]
         end
@@ -64,7 +64,7 @@ flowchart TD
         subgraph Layer3["🤖 TẦNG 3: ĐIỀU KHIỂN ĐỘNG & PPO SCHEDULING AGENT"]
             CPSAT["CP-SAT Solver: Giải bài toán lập lịch ràng buộc tài nguyên thực tế (RCPSP)"]
             Env["Gymnasium Environment (LogisticsGymEnv)\n- Relative State Encoding (Remaining duration ratio)\n- Domain Randomization (Deadline, Capacity, Cost Multipliers)"]
-            PPO["PPO Scheduling Agent (Progressive Fine-tuning)\n- Giai đoạn 1: Freeze Encoder (0..N updates)\n- Giai đoạn 2: Unfreeze & Fine-tune toàn mạng"]
+            PPO["PPO Scheduling Agent (Progressive Fine-tuning)\n- Giai đoạn 1: Freeze Encoder\n- Giai đoạn 2: Unfreeze & Fine-tune toàn mạng"]
         end
     end
 

@@ -25,7 +25,7 @@ class LogisticsStandardEncoder(BaseProjectEncoder):
     """
     Encoder for the Standard Logistics Project Type (34-D input schema).
     """
-    def __init__(self, input_dim: int = 34, latent_dim: int = 64):
+    def __init__(self, input_dim: int = 36, latent_dim: int = 64):
         super().__init__(latent_dim)
         self.input_dim = input_dim
         

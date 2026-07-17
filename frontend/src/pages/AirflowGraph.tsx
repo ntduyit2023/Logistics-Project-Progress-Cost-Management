@@ -211,19 +211,33 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       const wbs = task.wbs || task.id.split("_")[1] || task.id;
       const isCritical = (criticalityIndices && criticalityIndices[task.id] > 0.75) || task.duration_days > 50;
 
-      const baseTaskDuration = task.most_probable_duration || ((task.duration_days || 0) * 8 + (task.duration_hours || 0)) || 10;
+      let baseTaskDuration = 10;
+      if (task.duration_hours !== undefined && task.duration_hours !== null && parseFloat(task.duration_hours) > 0) {
+        baseTaskDuration = parseFloat(task.duration_hours);
+      } else if (task.most_probable_duration) {
+        baseTaskDuration = task.most_probable_duration;
+      } else {
+        const d_m = parseFloat(task.duration_months) || 0;
+        const d_w = parseFloat(task.duration_weeks) || 0;
+        const d_d = parseFloat(task.duration_days) || 0;
+        const d_h = parseFloat(task.duration_hours) || 0;
+        baseTaskDuration = d_m * 160 + d_w * 40 + d_d * 8 + d_h;
+        if (baseTaskDuration <= 0) baseTaskDuration = 10;
+      }
       const duration = mode === 1
         ? Math.round(baseTaskDuration / 1.5)
         : mode === 2
           ? Math.round(baseTaskDuration / 2.0)
           : baseTaskDuration;
 
-      const baseTaskCost = task.total_cost || (
-        (task.internal_labor_cost || 0) +
-        (task.equipment_fuel_cost || 0) +
-        (task.material_cost || 0) +
-        (task.outsourcing_cost || 0)
-      ) || task.normal_cost || 1000;
+      const baseTaskCost = (task.total_cost !== undefined && task.total_cost !== null)
+        ? parseFloat(task.total_cost)
+        : (
+          (task.internal_labor_cost || 0) +
+          (task.equipment_fuel_cost || 0) +
+          (task.material_cost || 0) +
+          (task.outsourcing_cost || 0)
+        ) || task.normal_cost || 0;
 
       const cost = mode === 1
         ? (task.crash_cost || baseTaskCost * 1.25)

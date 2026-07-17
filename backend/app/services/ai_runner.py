@@ -117,6 +117,15 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
             await _restore_project_status(project_id, db_session, "Error")
         except Exception as e2:
             print(f"❌ Could not restore status: {e2}")
+    finally:
+        import shutil
+        temp_dir = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id))
+        if os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir)
+                print(f"🧹 Cleaned up temporary directory: {temp_dir}")
+            except Exception as cleanup_error:
+                print(f"⚠️ Error cleaning up temporary directory {temp_dir}: {cleanup_error}")
 
 async def _restore_project_status(project_id: str, db_session: AsyncSession, status: str):
     project = await db_session.get(AppProject, int(project_id))

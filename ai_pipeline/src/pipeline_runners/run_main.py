@@ -29,7 +29,7 @@ from ai_pipeline.src.utils.agenda_calculator import load_agenda_from_db, calcula
 
 def main():
     parser = argparse.ArgumentParser(description="GLPO Main Pipeline Orchestrator (AI + OR + RL)")
-    parser.add_argument("--project_id", type=str, default="C2019-16", help="Project ID to run schedule (e.g. C2019-16)")
+    parser.add_argument("--project_id", type=str, default="19", help="Project ID to run schedule (e.g. 19)")
     parser.add_argument("--deadline", type=float, default=None, help="Custom deadline (hours)")
     parser.add_argument("--budget", type=float, default=None, help="Custom budget threshold")
     parser.add_argument("--pretrain_epochs", type=int, default=-1, help="Epochs for unsupervised pre-training (-1 for optimal defaults: GAT=300, DAGNN=500)")
@@ -172,7 +172,9 @@ def main():
                 return 0.0 if math.isnan(val) else val
             except (ValueError, TypeError):
                 return 0.0
-        total_normal_cost = sum(sum(safe_float(t.get(k, 0.0)) for k in cost_keys) for t in tasks)
+        total_normal_cost = sum(safe_float(t.get('total_cost', 0.0)) for t in tasks)
+        if total_normal_cost == 0.0:
+            total_normal_cost = sum(sum(safe_float(t.get(k, 0.0)) for k in cost_keys) for t in tasks)
         budget = total_normal_cost * 1.5
         # Fallback if cost columns are all 0
         if budget == 0.0:

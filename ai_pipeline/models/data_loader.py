@@ -45,6 +45,11 @@ class GlPoProjectGraph:
             task_resources_df = pd.DataFrame(columns=['task_id', 'resource_id', 'request_quantity'])
             
         try:
+            resources_df = pd.read_csv(os.path.join(self.project_dir, 'resources.csv'))
+        except FileNotFoundError:
+            resources_df = pd.DataFrame(columns=['ID', 'resource_name', 'resource_type', 'unit_cost', 'capacity'])
+            
+        try:
             agenda_df = pd.read_csv(os.path.join(self.project_dir, 'agenda_working_hours.csv'))
         except FileNotFoundError:
             agenda_df = pd.DataFrame(columns=['Time Range', 'Working'])
@@ -74,16 +79,38 @@ class GlPoProjectGraph:
             self.node_to_idx[t_id] = idx
             self.idx_to_node[idx] = t_id
             
-        # 3. Resource Aggregation
+        # 3. Resource Cost Mapping
+        res_cost_map = {}
+        if not resources_df.empty:
+            id_col = 'ID' if 'ID' in resources_df.columns else ('id' if 'id' in resources_df.columns else resources_df.columns[0])
+            cost_col = 'unit_cost' if 'unit_cost' in resources_df.columns else ('Cost/Unit' if 'Cost/Unit' in resources_df.columns else 'cost')
+            for _, row in resources_df.iterrows():
+                try:
+                    res_id = str(row[id_col])
+                    res_cost_map[res_id] = float(row.get(cost_col, 0.0) or 0.0)
+                except Exception:
+                    pass
+
+        # 3.5 Resource Aggregation
         res_agg = {}
         if not task_resources_df.empty:
             grouped = task_resources_df.groupby('task_id')
             req_col = 'request_quantity' if 'request_quantity' in task_resources_df.columns else task_resources_df.columns[-1]
             res_col = 'resource_id' if 'resource_id' in task_resources_df.columns else task_resources_df.columns[1]
             for t_id, group in grouped:
+                total_demand = group[req_col].sum() if req_col in group else 0.0
+                
+                cost_estimate = 0.0
+                if req_col in group and res_col in group:
+                    for _, tr_row in group.iterrows():
+                        r_id = str(tr_row[res_col])
+                        qty = float(tr_row[req_col] or 0.0)
+                        u_cost = res_cost_map.get(r_id, 0.0)
+                        cost_estimate += qty * u_cost
+                        
                 res_agg[str(t_id)] = {
-                    'total_demand': group[req_col].sum() if req_col in group else 0,
-                    'unique_res': group[res_col].nunique() if res_col in group else 0
+                    'total_demand': total_demand,
+                    'cost_estimate': cost_estimate
                 }
                 
         # 3.5 Parse Agenda for CPM & Global Constraints
@@ -184,8 +211,8 @@ class GlPoProjectGraph:
         for idx, row in tasks_df.iterrows():
             t_id = str(row.get('id', row.get('task_id', row.get('ID', ''))))
             
-            # Initialize 34-dim feature vector explicitly
-            x_row = [0.0] * 34
+            # Initialize 36-dim feature vector explicitly
+            x_row = [0.0] * 36
             
             # === Hub Time (0-4) ===
             x_row[0] = float(row.get('duration_months', 0))
@@ -238,22 +265,27 @@ class GlPoProjectGraph:
             x_row[32] = float(total_float[idx])
             x_row[33] = float(path_length[idx])
             
+            # === G8: Resources & Demands (34-35) ===
+            t_res_info = res_agg.get(t_id, {'total_demand': 0.0, 'cost_estimate': 0.0})
+            x_row[34] = float(t_res_info.get('total_demand', 0.0))
+            x_row[35] = float(t_res_info.get('cost_estimate', 0.0))
+            
             node_features.append(x_row)
             
-        # 5.5 Optimal Feature Group Normalization Layer (34-D Matrix)
+        # 5.5 Optimal Feature Group Normalization Layer (36-D Matrix)
         node_features_mat = np.array(node_features, dtype=np.float32)
         node_features_mat = np.nan_to_num(node_features_mat, nan=0.0, posinf=0.0, neginf=0.0)
         
-        # 1. Log Transform for Costs (G1, G2, G3, G4, G5: 5-26) -> Maps [0, 5e8] to [0, 20.03]
-        cost_indices = list(range(5, 27))
+        # 1. Log Transform for Costs (G1, G2, G3, G4, G5 + G8 Cost: 5-26, 35) -> Maps [0, 5e8] to [0, 20.03]
+        cost_indices = list(range(5, 27)) + [35]
         node_features_mat[:, cost_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, cost_indices]))
 
         # 2. Log Scaling for Durations (Hub 0-3, G6 27-28, G7 topology 32) -> Maps [0, 1500h] to [0, 7.31]
         dur_indices = [0, 1, 2, 3, 27, 28, 32]
         node_features_mat[:, dur_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, dur_indices]))
 
-        # 3. Min-Max Graph Scaling for Topology & Resource Demands (G7: 29-30, 32-33) -> Maps to [0, 1]
-        topo_res_indices = [29, 30, 32, 33]
+        # 3. Min-Max Graph Scaling for Topology & Resource Demands (G7: 29-30, 32-33 + G8 Demand: 34) -> Maps to [0, 1]
+        topo_res_indices = [29, 30, 32, 33, 34]
         for c in topo_res_indices:
             max_v = float(np.max(np.abs(node_features_mat[:, c])))
             if max_v > 1e-6:

@@ -669,15 +669,15 @@
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">GAT Link Pred AUC</span>
-                    <span class="stat-value cyan">0.7980</span>
+                    <span class="stat-value cyan">0.9165</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">DAGNN Critical Path Acc</span>
-                    <span class="stat-value purple">94.60%</span>
+                    <span class="stat-value purple">99.52%</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-label">Độ chính xác tiến độ R²</span>
-                    <span class="stat-value purple">0.5530</span>
+                    <span class="stat-value purple">0.9712</span>
                 </div>
             </section>
 
@@ -698,7 +698,7 @@
                 <div class="content-card gat-theme">
                     <div class="card-header">
                         <h3 class="card-title">Biểu đồ 1: Tiến trình Hội tụ GAT & Trọng số Attention</h3>
-                        <p class="card-subtitle">Theo dõi sự biến thiên của GAE Loss, DGI Loss, ROC-AUC, AP, LR và phân bổ trọng số chú ý qua 100 Epochs.</p>
+                        <p class="card-subtitle">Theo dõi sự biến thiên của GAE Loss, DGI Loss, CPNT Loss (Critical Path Node Triplet), ROC-AUC, AP, LR và phân bổ trọng số chú ý qua 155 Epochs.</p>
                     </div>
                     
                     <div class="dashboard-grid-2">
@@ -721,8 +721,8 @@
                                     <span>[Biểu đồ 1a] GAE & DGI Loss Progress</span>
                                     <span class="metric-badge">gae_loss & dgi_loss</span>
                                 </div>
-                                <p class="metric-desc">Đường màu xanh <em>royalblue (GAE Loss)</em> đo lường sai số tái tạo ma trận kề cục bộ, giảm từ 1.68 xuống 1.19. Đường màu cam <em>dgi_loss</em> đo lượng tin tương hỗ nút-toàn cục, ổn định quanh mức 1.33.</p>
-                                <p class="metric-read"><strong>Cách đọc:</strong> GAE Loss giảm đều đặn phản ánh GAT học chuẩn liên kết cạnh. DGI Loss đi ngang chứng tỏ biểu diễn nút có tính khái quát hóa ngữ cảnh toàn dự án.</p>
+                                <p class="metric-desc">Đường màu xanh <em>royalblue (GAE Loss)</em> đo lường sai số tái tạo ma trận kề cục bộ, giảm từ 8.23 xuống 1.05. Đường màu cam <em>DGI Loss</em> đo lượng tin tương hỗ nút-toàn cục, giảm từ 2.40 về 0.68. Đường xanh lá <em>CPNT Loss</em> đo khoảng cách triplet giữa các nút găng/không găng, giảm từ 0.58 về 0.07.</p>
+                                <p class="metric-read"><strong>Cách đọc:</strong> GAE Loss giảm đều đặn phản ánh GAT học chuẩn liên kết cạnh. DGI Loss giảm sâu chứng tỏ biểu diễn nút có tính khái quát hóa ngữ cảnh toàn dự án. CPNT Loss giảm cực mạnh chứng tỏ không gian nhúng phân tách rõ ràng nút găng và không găng.</p>
                             </div>
 
                             <div class="explanation-item">
@@ -730,8 +730,8 @@
                                     <span>[Biểu đồ 1b] Tổng Loss GAT</span>
                                     <span class="metric-badge">total_loss</span>
                                 </div>
-                                <p class="metric-desc">Đường màu crimson biểu diễn hàm mất mát tích hợp: L_GAT = 0.7 * L_GAE + 0.3 * L_DGI.</p>
-                                <p class="metric-read"><strong>Cách đọc:</strong> Sự đi xuống của loss tổng xuống mức 1.23 tại Epoch 100 chứng tỏ hai tác vụ bổ trợ lẫn nhau, mô hình hội tụ tốt mà không có sự cạnh tranh gradient.</p>
+                                <p class="metric-desc">Đường màu crimson biểu diễn hàm mất mát tích hợp: L_GAT = 0.60 × L_GAE + 0.25 × L_DGI + 0.15 × L_CPNT.</p>
+                                <p class="metric-read"><strong>Cách đọc:</strong> Sự đi xuống của loss tổng xuống mức 0.81 tại Epoch 155 chứng tỏ ba tác vụ bổ trợ lẫn nhau, mô hình hội tụ tốt mà không có sự cạnh tranh gradient. Đặc biệt, CPNT Triplet Loss đóng vai trò điều phối không gian nhúng phân tách găng/không găng.</p>
                             </div>
 
                             <div class="explanation-item">
@@ -740,7 +740,7 @@
                                     <span class="metric-badge">auc & ap</span>
                                 </div>
                                 <p class="metric-desc">Độ chính xác phân loại cạnh thực tế so với cạnh ảo ngẫu nhiên. Gồm đường xanh lá (ROC-AUC) và đường tím (Average Precision - AP).</p>
-                                <p class="metric-read"><strong>Cách đọc:</strong> Đi lên rõ rệt từ mức 0.54 và hội tụ ở <strong>ROC-AUC = 0.7980</strong> và <strong>AP = 0.7731</strong>. Khẳng định GAT học thực chất hình học đồ thị sau khi triệt tiêu các đặc trưng rò rỉ dữ liệu.</p>
+                                <p class="metric-read"><strong>Cách đọc:</strong> Đi lên rõ rệt từ mức 0.84 và hội tụ ở <strong>ROC-AUC = 0.9165</strong> và <strong>AP = 0.8997</strong>. Khẳng định GAT học thực chất hình học đồ thị nhờ sự phối hợp của 3 nhiệm vụ tự giám sát GAE + DGI + CPNT.</p>
                             </div>
 
                             <div class="explanation-item">
@@ -860,17 +860,17 @@
                                     <span>[Biểu đồ 3a] Tiến trình Mất mát (DAGNN & CPM Loss)</span>
                                     <span class="metric-badge">total_loss & cpm_loss</span>
                                 </div>
-                                <p class="metric-desc">Đường màu crimson biểu diễn <em>Total Loss</em> đa nhiệm giảm sâu về mức 0.3240. Đường màu cam là <em>CPM Loss (được nhân 10)</em> để cân bằng dải hiển thị, giảm sâu về mức 0.3000.</p>
-                                <p class="metric-read"><strong>Cách đọc:</strong> Sự suy giảm mượt mà của CPM Loss chứng tỏ mô hình học chuẩn các thông số thời gian phân phối CPM tĩnh dọc theo thứ tự tô-pô có hướng.</p>
+                                <p class="metric-desc">Đường màu crimson biểu diễn <em>Total Loss</em> đa nhiệm giảm sâu về mức 0.1072. Đường màu cam là <em>CPM Loss</em>, giảm sâu về mức 0.1243.</p>
+                                <p class="metric-read"><strong>Cách đọc:</strong> Sự suy giảm mượt mà của CPM Loss chứng tỏ mô hình học chuẩn các thông số thời gian phân phối CPM tĩnh dọc theo thứ tự tô-pô có hướng. Loss tổng ổn định ở mức rất thấp nhờ cơ chế Curriculum Learning 3 pha.</p>
                             </div>
 
                             <div class="explanation-item">
                                 <div class="metric-title">
-                                    <span>[Biểu đồ 3b] Khôi phục thuộc tính & Khoảng cách Đồ thị</span>
-                                    <span class="metric-badge">masked_duration & topological_distance</span>
+                                    <span>[Biểu đồ 3b] Khôi phục thuộc tính & Chuỗi Tiền nhiệm (PCR)</span>
+                                    <span class="metric-badge">masked_duration & pcr_loss</span>
                                 </div>
-                                <p class="metric-desc">Đường xanh dương (trục trái) đại diện cho sai số phục dựng 15% thời lượng bị ẩn ngẫu nhiên. Đường màu teal (trục phải) là Topological Distance Loss.</p>
-                                <p class="metric-read"><strong>Cách đọc:</strong> Masked Duration Loss giảm mạnh về 44.46 chứng tỏ mô hình biết suy luận thời lượng từ tiến độ xung quanh (BERT-style). Topo Distance loss ổn định ở mức thấp 0.095 cho thấy khoảng cách BFS được bảo toàn.</p>
+                                <p class="metric-desc">Đường xanh dương (trục trái) đại diện cho sai số phục dựng 15% thời lượng bị ẩn ngẫu nhiên (Masked Duration Loss). Đường màu teal (trục phải) là Predecessor Chain Reconstruction (PCR) Loss — đo sai số tái tạo chuỗi tiền nhiệm trên đường găng.</p>
+                                <p class="metric-read"><strong>Cách đọc:</strong> Masked Duration Loss giảm từ 421.4 về 42.7 (nhờ hệ số giãn cách 0.002) chứng tỏ mô hình biết suy luận thời lượng từ tiến độ xung quanh (BERT-style). PCR Loss giảm sâu từ 0.45 về 0.11, cho thấy mô hình khôi phục chuẩn xác chuỗi tiền nhiệm trên đường dẫn tới hạn.</p>
                             </div>
 
                             <div class="explanation-item">
@@ -879,7 +879,7 @@
                                     <span class="metric-badge">mae_es & mae_tf</span>
                                 </div>
                                 <p class="metric-desc">Sai số MAE chuẩn hóa của thời điểm bắt đầu sớm (đường xanh lá) và thời gian dự trữ (đường tím) qua các epochs.</p>
-                                <p class="metric-read"><strong>Cách đọc:</strong> MAE Early Start giảm mạnh từ 0.42 về **0.1387** (lệch dưới 13.87% tiến độ tổng). Đảm bảo sai số thời gian khởi công dự toán là cực kỳ nhỏ.</p>
+                                <p class="metric-read"><strong>Cách đọc:</strong> MAE Early Start giảm mạnh từ 0.76 về <strong>0.0773</strong> (lệch dưới 7.73% tiến độ tổng). MAE Total Float giảm từ 0.50 về <strong>0.0262</strong>. Đảm bảo sai số thời gian khởi công dự toán là cực kỳ nhỏ.</p>
                             </div>
 
                             <div class="explanation-item">
@@ -1084,41 +1084,41 @@
                                 <tr>
                                     <td><span class="table-badge">C2019-16</span></td>
                                     <td>32</td>
-                                    <td>150.7 giờ</td>
-                                    <td>69.83</td>
-                                    <td><span class="tag tag-green">-53.17</span></td>
+                                    <td>161.43 giờ</td>
+                                    <td>56.48</td>
+                                    <td><span class="tag tag-green">-39.81</span></td>
                                     <td><span class="tag tag-green">Đạt an toàn</span></td>
                                 </tr>
                                 <tr>
                                     <td><span class="table-badge">C2018-09</span></td>
                                     <td>37</td>
-                                    <td>427.1 giờ</td>
-                                    <td>533.13</td>
-                                    <td><span class="tag tag-green">-5385.08</span></td>
+                                    <td>436.68 giờ</td>
+                                    <td>348.41</td>
+                                    <td><span class="tag tag-green">-6864.28</span></td>
                                     <td><span class="tag tag-green">Đạt an toàn</span></td>
                                 </tr>
                                 <tr>
                                     <td><span class="table-badge">C2011-07</span></td>
                                     <td>49</td>
-                                    <td>262.1 giờ</td>
-                                    <td>159.61</td>
-                                    <td><span class="tag tag-green">-1760.88</span></td>
+                                    <td>262.14 giờ</td>
+                                    <td>123.40</td>
+                                    <td><span class="tag tag-green">-4851.02</span></td>
                                     <td><span class="tag tag-green">Đạt an toàn</span></td>
                                 </tr>
                                 <tr>
                                     <td><span class="table-badge">C2012-04</span></td>
                                     <td>67</td>
-                                    <td>701.5 giờ</td>
-                                    <td>332.08</td>
-                                    <td><span class="tag tag-green">-315.42</span></td>
+                                    <td>525.18 giờ</td>
+                                    <td>232.40</td>
+                                    <td><span class="tag tag-green">-215.73</span></td>
                                     <td><span class="tag tag-green">Đạt an toàn</span></td>
                                 </tr>
                                 <tr>
                                     <td><span class="table-badge">C2012-08</span></td>
                                     <td>437</td>
-                                    <td>1339.0 giờ</td>
-                                    <td>48715.01</td>
-                                    <td><span class="tag tag-green">-569174.33</span></td>
+                                    <td>762.27 giờ</td>
+                                    <td>23323.25</td>
+                                    <td><span class="tag tag-green">-304966.94</span></td>
                                     <td><span class="tag tag-green">Đạt an toàn</span></td>
                                 </tr>
                             </tbody>

@@ -33,6 +33,12 @@ async def process_project(db: AsyncSession, project_folder: Path):
     project_name = project_folder.name
     if project_name.startswith("~") or not project_folder.is_dir():
         return
+    
+    # Bỏ qua các thư mục đánh số thuần (15, 16, 17, 18, 19) vì chúng là bản sao
+    # của các thư mục có tên thật (C2011-07, C2012-04, ...) đã chứa project_info.csv
+    if project_name.isdigit():
+        print(f"  [SKIP] Bỏ qua thư mục số '{project_name}' (dùng thư mục có tên dự án thật).")
+        return
         
     print(f"\n=> Đang import dự án: {project_name}")
     
@@ -76,12 +82,16 @@ async def process_project(db: AsyncSession, project_folder: Path):
         tasks_to_insert = []
         valid_task_columns = {c.name for c in Task.__table__.columns}
         
-        for _, row in df_tasks.iterrows():
-            task_dict = row.to_dict()
+        for row_dict in df_tasks.to_dict(orient="records"):
+            task_dict = {k: (None if pd.isna(v) else v) for k, v in row_dict.items()}
             task_dict["project_id"] = project_id
             
-            if "task_id" in task_dict:
-                task_dict["id"] = f"{project_id}_{task_dict['task_id']}"
+            csv_id = str(task_dict.get("id", task_dict.get("task_id", "")))
+            if "_" in csv_id:
+                original_task_id = csv_id.split("_", 1)[1]
+            else:
+                original_task_id = csv_id
+            task_dict["id"] = f"{project_id}_{original_task_id}"
             
             # Baseline start handling
             if "baseline_start" in task_dict:
@@ -161,20 +171,23 @@ async def process_project(db: AsyncSession, project_folder: Path):
         df_res = pd.read_csv(res_file)
         df_res = df_res.where(pd.notnull(df_res), None)
         
-        for _, row in df_res.iterrows():
-            # CSV: 'ID', 'Name', 'Type', 'Availability', 'Cost/Use', 'Cost/Unit'
+        for row_dict in df_res.to_dict(orient="records"):
+            row = {k: (None if pd.isna(v) else v) for k, v in row_dict.items()}
+            # CSV: 'ID', 'Name'/'resource_name', 'Type'/'resource_type', 'Availability'/'capacity', 'Cost/Use'/'cost_per_use', 'Cost/Unit'/'unit_cost'
             res = ProjectConstraintResource(
                 project_id=project_id,
-                resource_name=row["Name"],
-                resource_type=row.get("Type", "Renewable"),
-                max_availability=row.get("Availability", 1.0) or 1.0,
-                cost_per_use=row.get("Cost/Use", 0) or 0.0,
-                cost_per_unit=row.get("Cost/Unit", 0) or 0.0
+                resource_name=row.get("resource_name", row.get("Name", "")),
+                resource_type=row.get("resource_type", row.get("Type", "Renewable")),
+                max_availability=row.get("capacity", row.get("Availability", 1.0)) or 1.0,
+                cost_per_use=row.get("cost_per_use", row.get("Cost/Use", 0)) or 0.0,
+                cost_per_unit=row.get("unit_cost", row.get("Cost/Unit", 0)) or 0.0
             )
             db.add(res)
             await db.commit() # Cần commit để lấy ID
             await db.refresh(res)
-            res_mapping[res.resource_name] = res.id
+            
+            original_res_id = str(row.get("ID", row.get("id", "")))
+            res_mapping[original_res_id] = res.id
             
         print(f"  - Import {len(df_res)} Resources thành công.")
 
@@ -185,12 +198,21 @@ async def process_project(db: AsyncSession, project_folder: Path):
         df_tr = df_tr.where(pd.notnull(df_tr), None)
         
         tr_to_insert = []
-        for _, row in df_tr.iterrows():
-            res_name = str(row.get("resource_name", row.get("resource_id", "")))
-            if res_name in res_mapping:
-                actual_res_id = res_mapping[res_name]
+        for row_dict in df_tr.to_dict(orient="records"):
+            row = {k: (None if pd.isna(v) else v) for k, v in row_dict.items()}
+            csv_task_id = str(row['task_id'])
+            if "_" in csv_task_id:
+                original_task_id = csv_task_id.split("_", 1)[1]
+            else:
+                original_task_id = csv_task_id
+                
+            task_id = f"{project_id}_{original_task_id}"
+            
+            original_res_id = str(row.get("resource_id", ""))
+            if original_res_id in res_mapping:
+                actual_res_id = res_mapping[original_res_id]
                 tr = TaskResource(
-                    task_id=f"{project_id}_{row['task_id']}",
+                    task_id=task_id,
                     resource_id=actual_res_id,
                     request_quantity=row.get("quantity", row.get("request_quantity", 1.0))
                 )
@@ -212,15 +234,26 @@ async def process_project(db: AsyncSession, project_folder: Path):
         valid_task_ids = {row[0] for row in result.all()}
         
         edges_to_insert = []
-        for _, row in df_pred.iterrows():
+        for row_dict in df_pred.to_dict(orient="records"):
+            row = {k: (None if pd.isna(v) else v) for k, v in row_dict.items()}
             predecessor_id = str(row.get("predecessor_task_id", row.get("source_id")))
             successor_id = str(row.get("successor_task_id", row.get("target_id")))
             
             if predecessor_id in ("None", "nan") or successor_id in ("None", "nan"):
                 continue
                 
-            pred_full_id = f"{project_id}_{predecessor_id}"
-            succ_full_id = f"{project_id}_{successor_id}"
+            if "_" in predecessor_id:
+                pred_orig = predecessor_id.split("_", 1)[1]
+            else:
+                pred_orig = predecessor_id
+                
+            if "_" in successor_id:
+                succ_orig = successor_id.split("_", 1)[1]
+            else:
+                succ_orig = successor_id
+                
+            pred_full_id = f"{project_id}_{pred_orig}"
+            succ_full_id = f"{project_id}_{succ_orig}"
             
             if pred_full_id not in valid_task_ids or succ_full_id not in valid_task_ids:
                 print(f"    [!] Warning: Skipping edge {pred_full_id} -> {succ_full_id} (Node not found)")

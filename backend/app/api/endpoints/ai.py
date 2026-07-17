@@ -10,12 +10,10 @@ from app.db.database import get_db
 from app.models import AppProject, Task, TaskResource
 from app.schemas.common import APIResponse
 
-# Add ai_pipeline dir to sys.path for cost_model
+# Add project root directory to sys.path so that 'ai_pipeline' is discoverable as a package
 backend_dir = FilePath(__file__).resolve().parent.parent.parent.parent
-ai_pipeline_data_dir = backend_dir.parent / "ai_pipeline" / "data"
-sys.path.append(str(ai_pipeline_data_dir))
-import cost_model
-
+sys.path.append(str(backend_dir.parent))
+from ai_pipeline.data import cost_model
 router = APIRouter()
 
 @router.post("/{project_id}/simulate", response_model=APIResponse[dict])

@@ -125,7 +125,6 @@ class _GATEncoderWrapper(nn.Module):
     def __init__(self, model):
         super(_GATEncoderWrapper, self).__init__()
         self.encoder = model.encoder
-        self.node_proj = model.node_proj
         self.gat1 = model.gat1
         self.gat2 = model.gat2
         self.dropout = model.dropout
@@ -133,14 +132,16 @@ class _GATEncoderWrapper(nn.Module):
     def forward(self, x, edge_index):
         # Chống rò rỉ dữ liệu (Data Leakage)
         x_clean = x.clone()
-        if x_clean.shape[1] >= 68:
+        if x_clean.shape[1] >= 34:
+            x_clean[:, [29, 30, 31, 32, 33]] = 0.0
+        elif x_clean.shape[1] >= 68:
             x_clean[:, [65, 66, 67]] = 0.0
 
         # Tầng 1 & 2: Encoder
-        S_prime_g, _ = self.encoder(x_clean)
+        latent_emb = self.encoder(x_clean)
 
         # Tầng 3a: GAT
-        h = F.leaky_relu(self.node_proj(S_prime_g))
+        h = latent_emb
         h = self.gat1(h, edge_index)
         h = F.elu(h)
         h = F.dropout(h, p=self.dropout, training=self.training)
@@ -298,7 +299,16 @@ class UnsupervisedPretrainer:
             'dgi_losses': [], 
             'cpnt_losses': [], 
             'auc_scores': [], 
-            'ap_scores': [], 
+            'ap_scores': [],
+            'precision_scores': [],
+            'recall_scores': [],
+            'f1_scores': [],
+            'recon_acc_scores': [],
+            'emb_norm_scores': [],
+            'emb_shift_scores': [],
+            'cosine_sim_scores': [],
+            'grad_norm_scores': [],
+            'learning_rates': [],
             'time_taken': 0.0
         }
 
@@ -315,6 +325,7 @@ class UnsupervisedPretrainer:
         gat_encoder.train()
         discriminator.train()
         actual_epochs = 0
+        prev_z = None
         for epoch in range(1, epochs + 1):
             actual_epochs = epoch
             optimizer.zero_grad()
@@ -333,8 +344,9 @@ class UnsupervisedPretrainer:
             corrupted_x = corrupt_features_shuffling(data_copy.x)
             z = gat_encoder(data_copy.x, pos_edge_index)
             z_corrupted = gat_encoder(corrupted_x, pos_edge_index)
-            summary = compute_graph_summary(z, pooling='mean')
+            summary = torch.sigmoid(z.mean(dim=0))
 
+            # Lấy mẫu ngẫu nhiên cạnh âm cho GAE
             neg_edge_index = negative_sampling(
                 edge_index=pos_edge_index,
                 num_nodes=num_nodes,
@@ -361,10 +373,19 @@ class UnsupervisedPretrainer:
             total_loss.backward()
             optimizer.step()
 
+            # Tính toán grad_norm
+            grad_norm = 0.0
+            for p in gat_params:
+                if p.grad is not None:
+                    grad_norm += p.grad.data.norm(2).item() ** 2
+            grad_norm = grad_norm ** 0.5
+
             history['losses'].append(total_loss.item())
             history['gae_losses'].append(gae_loss.item())
             history['dgi_losses'].append(dgi_loss.item())
             history['cpnt_losses'].append(cpnt_loss.item())
+            history['grad_norm_scores'].append(grad_norm)
+            history['learning_rates'].append(curr_lr)
 
             # Early Stopping check và lưu snapshot tốt nhất
             if total_loss.item() < best_loss - min_improvement:
@@ -375,42 +396,72 @@ class UnsupervisedPretrainer:
             else:
                 patience_counter += 1
 
-            if epoch % max(1, epochs // 10) == 0 or epoch == epochs or patience_counter >= patience:
-                gat_encoder.eval()
-                with torch.no_grad():
-                    z_eval = gat_encoder(data_copy.x, pos_edge_index)
-                    pos_scores = (z_eval[pos_edge_index[0]] * z_eval[pos_edge_index[1]]).sum(dim=1)
-                    neg_scores = (z_eval[neg_edge_index[0]] * z_eval[neg_edge_index[1]]).sum(dim=1)
+            # Đánh giá tất cả các chỉ số trên từng epoch
+            gat_encoder.eval()
+            with torch.no_grad():
+                z_eval = gat_encoder(data_copy.x, pos_edge_index)
+                pos_scores = (z_eval[pos_edge_index[0]] * z_eval[pos_edge_index[1]]).sum(dim=1)
+                neg_scores = (z_eval[neg_edge_index[0]] * z_eval[neg_edge_index[1]]).sum(dim=1)
 
-                    pos_scores_exp = pos_scores.unsqueeze(1)
-                    neg_scores_exp = neg_scores.unsqueeze(0)
+                pos_scores_exp = pos_scores.unsqueeze(1)
+                neg_scores_exp = neg_scores.unsqueeze(0)
 
-                    comparison = (pos_scores_exp > neg_scores_exp).float()
-                    ties = (pos_scores_exp == neg_scores_exp).float()
-                    auc = float((comparison + 0.5 * ties).mean())
+                comparison = (pos_scores_exp > neg_scores_exp).float()
+                ties = (pos_scores_exp == neg_scores_exp).float()
+                auc = float((comparison + 0.5 * ties).mean())
 
-                    pos_labels = torch.ones(pos_scores.shape[0], device=self.device)
-                    neg_labels = torch.zeros(neg_scores.shape[0], device=self.device)
-                    all_scores = torch.cat([pos_scores, neg_scores])
-                    all_labels = torch.cat([pos_labels, neg_labels])
+                pos_labels = torch.ones(pos_scores.shape[0], device=self.device)
+                neg_labels = torch.zeros(neg_scores.shape[0], device=self.device)
+                all_scores = torch.cat([pos_scores, neg_scores])
+                all_labels = torch.cat([pos_labels, neg_labels])
 
-                    sorted_indices = torch.argsort(all_scores, descending=True)
-                    sorted_labels = all_labels[sorted_indices]
-                    tp = torch.cumsum(sorted_labels, dim=0)
-                    fp = torch.cumsum(1 - sorted_labels, dim=0)
-                    precision = tp / (tp + fp + 1e-15)
-                    delta_recall = sorted_labels / max(float(pos_labels.sum()), 1.0)
-                    ap = float((precision * delta_recall).sum())
+                sorted_indices = torch.argsort(all_scores, descending=True)
+                sorted_labels = all_labels[sorted_indices]
+                tp = torch.cumsum(sorted_labels, dim=0)
+                fp = torch.cumsum(1 - sorted_labels, dim=0)
+                precision = tp / (tp + fp + 1e-15)
+                delta_recall = sorted_labels / max(float(pos_labels.sum()), 1.0)
+                ap = float((precision * delta_recall).sum())
 
-                gat_encoder.train()
+                # Các metric bổ trợ nhị phân
+                pred_pos_bin = (torch.sigmoid(pos_scores) > 0.5).float()
+                pred_neg_bin = (torch.sigmoid(neg_scores) > 0.5).float()
+                tp_bin = pred_pos_bin.sum().item()
+                fp_bin = pred_neg_bin.sum().item()
+                fn_bin = (1.0 - pred_pos_bin).sum().item()
+                tn_bin = (1.0 - pred_neg_bin).sum().item()
 
-                history['auc_scores'].append(auc)
-                history['ap_scores'].append(ap)
+                precision_bin = tp_bin / max(tp_bin + fp_bin, 1e-6)
+                recall_bin = tp_bin / max(tp_bin + fn_bin, 1e-6)
+                f1_bin = 2 * precision_bin * recall_bin / max(precision_bin + recall_bin, 1e-6)
+                recon_acc = (tp_bin + tn_bin) / max(tp_bin + tn_bin + fp_bin + fn_bin, 1.0)
 
-                if verbose:
-                    print(f"  Epoch {epoch:4d}/{epochs}: "
-                          f"Loss={total_loss.item():.4f} (GAE={gae_loss.item():.4f}, DGI={dgi_loss.item():.4f}, CPNT={cpnt_loss.item():.4f}) | "
-                          f"AUC={auc:.4f}, AP={ap:.4f} | LR={curr_lr:.6f}")
+                # Metric không gian nhúng
+                emb_norm = float(z_eval.norm(2, dim=-1).mean().item())
+                if prev_z is not None:
+                    emb_shift = float((z_eval - prev_z).norm(2, dim=-1).mean().item())
+                else:
+                    emb_shift = 0.0
+                prev_z = z_eval.clone()
+
+                cosine_sim = float(F.cosine_similarity(z_eval[pos_edge_index[0]], z_eval[pos_edge_index[1]]).mean().item())
+
+            gat_encoder.train()
+
+            history['auc_scores'].append(auc)
+            history['ap_scores'].append(ap)
+            history['precision_scores'].append(precision_bin)
+            history['recall_scores'].append(recall_bin)
+            history['f1_scores'].append(f1_bin)
+            history['recon_acc_scores'].append(recon_acc)
+            history['emb_norm_scores'].append(emb_norm)
+            history['emb_shift_scores'].append(emb_shift)
+            history['cosine_sim_scores'].append(cosine_sim)
+
+            if verbose and (epoch % max(1, epochs // 10) == 0 or epoch == epochs or patience_counter >= patience):
+                print(f"  Epoch {epoch:4d}/{epochs}: "
+                      f"Loss={total_loss.item():.4f} (GAE={gae_loss.item():.4f}, DGI={dgi_loss.item():.4f}, CPNT={cpnt_loss.item():.4f}) | "
+                      f"AUC={auc:.4f}, AP={ap:.4f} | LR={curr_lr:.6f}")
 
             if patience_counter >= patience:
                 if verbose:
@@ -421,7 +472,6 @@ class UnsupervisedPretrainer:
         gat_encoder.load_state_dict(best_gat_state)
         # Nạp lại trọng số tốt nhất vào mô hình chính
         self.model.encoder.load_state_dict(gat_encoder.encoder.state_dict())
-        self.model.node_proj.load_state_dict(gat_encoder.node_proj.state_dict())
         self.model.gat1.load_state_dict(gat_encoder.gat1.state_dict())
         self.model.gat2.load_state_dict(gat_encoder.gat2.state_dict())
 
@@ -451,14 +501,30 @@ class UnsupervisedPretrainer:
                 'gae_loss': history['gae_losses'][i],
                 'dgi_loss': history['dgi_losses'][i],
                 'cpnt_loss': history['cpnt_losses'][i],
-                'learning_rate': lr
+                'auc': history['auc_scores'][i],
+                'ap': history['ap_scores'][i],
+                'precision': history['precision_scores'][i],
+                'recall': history['recall_scores'][i],
+                'f1': history['f1_scores'][i],
+                'reconstruction_accuracy': history['recon_acc_scores'][i],
+                'embedding_norm': history['emb_norm_scores'][i],
+                'embedding_shift': history['emb_shift_scores'][i],
+                'cosine_similarity': history['cosine_sim_scores'][i],
+                'learning_rate': history['learning_rates'][i],
+                'grad_norm': history['grad_norm_scores'][i]
             })
         
-        # Lưu vào tệp gat_pretraining_metrics.json và ghi đè pretraining_metrics.json
+        # Lưu vào tệp gat_pretraining_metrics.json và CSV
         with open(os.path.join(logs_dir, 'gat_pretraining_metrics.json'), 'w', encoding='utf-8') as f:
             json.dump(metrics_data, f, indent=2, ensure_ascii=False)
         with open(os.path.join(logs_dir, 'pretraining_metrics.json'), 'w', encoding='utf-8') as f:
             json.dump(metrics_data, f, indent=2, ensure_ascii=False)
+            
+        import csv
+        with open(os.path.join(logs_dir, 'gat_pretraining_metrics.csv'), 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=metrics_data[0].keys())
+            writer.writeheader()
+            writer.writerows(metrics_data)
 
         if verbose:
             print(f"  [SUCCESS] GAT Pre-training hoan tat. | Time: {history['time_taken']:.2f}s")
@@ -509,10 +575,28 @@ class UnsupervisedPretrainer:
         # Thời lượng từ đặc trưng
         features = data.x.cpu().numpy()
         durations = np.zeros(num_nodes, dtype=np.float32)
-        for i in range(num_nodes):
-            d_d = float(features[i, 3])
-            d_h = float(features[i, 4])
-            durations[i] = d_d * 8.0 + d_h
+        if features.shape[1] >= 34:
+            for i in range(num_nodes):
+                d_m = float(features[i, 0])
+                d_w = float(features[i, 1])
+                d_d = float(features[i, 2])
+                d_h = float(features[i, 3])
+                is_24_7 = float(features[i, 4])
+                
+                if is_24_7 > 0.5:
+                    total_h = d_m * 30 * 24 + d_w * 7 * 24 + d_d * 24 + d_h
+                else:
+                    # Giả định mặc định: 8h/ngày và 5 ngày/tuần
+                    total_h = (d_m * 4 * 5 * 8
+                               + d_w * 5 * 8
+                               + d_d * 8 + d_h)
+                durations[i] = total_h
+        else:
+            # Fallback cho schema cũ 72-D
+            for i in range(num_nodes):
+                d_d = float(features[i, 3])
+                d_h = float(features[i, 4])
+                durations[i] = d_d * 8.0 + d_h
 
         # Forward Pass (ES, EF)
         ES = np.zeros(num_nodes, dtype=np.float32)
@@ -615,7 +699,6 @@ class UnsupervisedPretrainer:
         # Đưa toàn bộ tham số cần cập nhật vào optimizer
         params_to_train = (
             list(self.model.encoder.parameters())
-            + list(self.model.node_proj.parameters())
             + list(self.model.gat1.parameters())
             + list(self.model.gat2.parameters())
             + list(self.model.dagnn.parameters())
@@ -633,6 +716,19 @@ class UnsupervisedPretrainer:
             'cpm_losses': [],
             'mask_losses': [],
             'topo_losses': [],
+            'learning_rates': [],
+            'grad_norms': [],
+            'mae_es': [],
+            'mae_ef': [],
+            'mae_ls': [],
+            'mae_lf': [],
+            'mae_tf': [],
+            'mae_pl': [],
+            'mae_mask': [],
+            'critical_path_accuracy': [],
+            'rmse': [],
+            'r2': [],
+            'pearson': [],
             'mae_per_target': {},
             'is_critical_metrics': {},
             'time_taken': 0.0
@@ -656,6 +752,7 @@ class UnsupervisedPretrainer:
         topo_head.train()
 
         actual_epochs = 0
+        current_phase = 1
         for epoch in range(1, epochs + 1):
             actual_epochs = epoch
             optimizer.zero_grad()
@@ -671,33 +768,44 @@ class UnsupervisedPretrainer:
             for param_group in optimizer.param_groups:
                 param_group['lr'] = curr_lr
 
-            # Progressive Curriculum: 3 chặng học
-            phase1_end = epochs // 3
-            phase2_end = (2 * epochs) // 3
-            if epoch <= phase1_end:
-                # Chặng 1: Chỉ học CPM
+            # --- Curriculum Learning: Cấu hình động trọng số loss đa nhiệm ---
+            if epoch <= epochs // 3:
+                new_phase = 1
                 curr_l_cpm = l_cpm
                 curr_l_mask = 0.0
                 curr_l_topo = 0.0
-            elif epoch <= phase2_end:
-                # Chặng 2: Học CPM + Mask
+            elif epoch <= (2 * epochs) // 3:
+                new_phase = 2
                 curr_l_cpm = l_cpm
                 curr_l_mask = l_mask
                 curr_l_topo = 0.0
             else:
-                # Chặng 3: Học đầy đủ cả 3 nhiệm vụ (CPM + Mask + PCR)
+                new_phase = 3
                 curr_l_cpm = l_cpm
                 curr_l_mask = l_mask
                 curr_l_topo = l_topo
 
+            if new_phase != current_phase:
+                if verbose:
+                    print(f"\n  [CURRICULUM] Chuyen sang Phase {new_phase} tai epoch {epoch}. Reset Early Stopping.")
+                current_phase = new_phase
+                best_loss = float('inf')
+                patience_counter = 0
+
             multitask_loss_fn.lambda_cpm = curr_l_cpm
-            multitask_loss_fn.lambda_mask = curr_l_mask
+            multitask_loss_fn.lambda_mask = curr_l_mask * 0.002
             multitask_loss_fn.lambda_topo = curr_l_topo
 
             # --- NHIỆM VỤ 1: CPM Prediction (đồ thị gốc) ---
-            # Forward pass đồ thị gốc
-            S_prime_g, _ = self.model.encoder(data_dev.x)
-            h = F.leaky_relu(self.model.node_proj(S_prime_g))
+            # Forward pass đồ thị gốc (Chống rò rỉ dữ liệu CPM)
+            x_clean = data_dev.x.clone()
+            if x_clean.shape[1] >= 34:
+                x_clean[:, [29, 30, 31, 32, 33]] = 0.0
+            elif x_clean.shape[1] >= 68:
+                x_clean[:, [65, 66, 67]] = 0.0
+
+            latent_emb = self.model.encoder(x_clean)
+            h = latent_emb
             h = self.model.gat1(h, data_dev.edge_index)
             h = F.elu(h)
             h = F.dropout(h, p=self.model.dropout, training=True)
@@ -710,9 +818,16 @@ class UnsupervisedPretrainer:
             # Tạo đặc trưng bị mask duration (mask_ratio=None kích hoạt adaptive)
             masked_x, duration_mask, true_durations = mask_node_duration(data_dev.x, mask_ratio=None)
             
+            # Khử rò rỉ đặc trưng CPM cho đồ thị bị mask
+            masked_x_clean = masked_x.clone()
+            if masked_x_clean.shape[1] >= 34:
+                masked_x_clean[:, [29, 30, 31, 32, 33]] = 0.0
+            elif masked_x_clean.shape[1] >= 68:
+                masked_x_clean[:, [65, 66, 67]] = 0.0
+
             # Forward pass đồ thị bị mask
-            S_prime_g_masked, _ = self.model.encoder(masked_x)
-            h_masked = F.leaky_relu(self.model.node_proj(S_prime_g_masked))
+            latent_emb_masked = self.model.encoder(masked_x_clean)
+            h_masked = latent_emb_masked
             h_masked = self.model.gat1(h_masked, data_dev.edge_index)
             h_masked = F.elu(h_masked)
             h_masked = F.dropout(h_masked, p=self.model.dropout, training=True)
@@ -745,10 +860,19 @@ class UnsupervisedPretrainer:
             total_loss.backward()
             optimizer.step()
 
+            # Tính toán grad_norm
+            grad_norm = 0.0
+            for p in params_to_train:
+                if p.grad is not None:
+                    grad_norm += p.grad.data.norm(2).item() ** 2
+            grad_norm = grad_norm ** 0.5
+
             history['losses'].append(total_loss.item())
             history['cpm_losses'].append(cpm_loss.item())
             history['mask_losses'].append(mask_loss.item())
             history['topo_losses'].append(topo_loss.item())
+            history['grad_norms'].append(grad_norm)
+            history['learning_rates'].append(curr_lr)
 
             # Early Stopping check và lưu snapshot tốt nhất
             if total_loss.item() < best_loss - min_improvement:
@@ -761,14 +885,55 @@ class UnsupervisedPretrainer:
             else:
                 patience_counter += 1
 
-            if epoch % max(1, epochs // 10) == 0 or epoch == epochs or patience_counter >= patience:
-                with torch.no_grad():
-                    # Đánh giá MAE trên CPM
-                    mae = torch.abs(cpm_preds - cpm_targets).mean(dim=0)
-                if verbose:
-                    print(f"  Epoch {epoch:4d}/{epochs}: Loss={total_loss.item():.4f} "
-                          f"(CPM={cpm_loss.item():.4f}, Mask={mask_loss.item():.4f}, Topo={topo_loss.item():.4f}) | "
-                          f"MAE ES={mae[0]:.4f}, TF={mae[4]:.4f} | LR={curr_lr:.6f}")
+            # Đánh giá toàn bộ metrics trên mỗi epoch
+            with torch.no_grad():
+                mae = torch.abs(cpm_preds - cpm_targets).mean(dim=0)
+                history['mae_es'].append(mae[0].item())
+                history['mae_ef'].append(mae[1].item())
+                history['mae_ls'].append(mae[2].item())
+                history['mae_lf'].append(mae[3].item())
+                history['mae_tf'].append(mae[4].item())
+                history['mae_pl'].append(mae[6].item())
+
+                # mae_mask
+                if duration_mask.any():
+                    mae_mask_val = float(torch.abs(duration_preds[duration_mask] - true_durations[duration_mask]).mean().item())
+                else:
+                    mae_mask_val = 0.0
+                history['mae_mask'].append(mae_mask_val)
+
+                # Accuracy cho nhãn critical
+                pred_probs = torch.sigmoid(cpm_preds[:, 5])
+                pred_labels = (pred_probs > 0.5).float()
+                true_labels = cpm_targets[:, 5]
+                tp = float(((pred_labels == 1) & (true_labels == 1)).sum())
+                fp = float(((pred_labels == 1) & (true_labels == 0)).sum())
+                fn = float(((pred_labels == 0) & (true_labels == 1)).sum())
+                tn = float(((pred_labels == 0) & (true_labels == 0)).sum())
+                accuracy = (tp + tn) / max(tp + tn + fp + fn, 1.0)
+                history['critical_path_accuracy'].append(accuracy)
+
+                # R2, RMSE, Pearson cho Early Start
+                es_pred = cpm_preds[:, 0].cpu().numpy()
+                es_true = cpm_targets[:, 0].cpu().numpy()
+                ss_res = np.sum((es_true - es_pred) ** 2)
+                ss_tot = np.sum((es_true - np.mean(es_true)) ** 2)
+                r2_es = 1.0 - (ss_res / max(ss_tot, 1e-6))
+                history['r2'].append(float(r2_es))
+
+                rmse_val = float(np.sqrt(np.mean((es_true - es_pred) ** 2)))
+                history['rmse'].append(rmse_val)
+
+                if np.std(es_true) > 1e-6 and np.std(es_pred) > 1e-6:
+                    pearson_val = float(np.corrcoef(es_true, es_pred)[0, 1])
+                else:
+                    pearson_val = 0.0
+                history['pearson'].append(pearson_val)
+
+            if verbose and (epoch % max(1, epochs // 10) == 0 or epoch == epochs or patience_counter >= patience):
+                print(f"  Epoch {epoch:4d}/{epochs}: Loss={total_loss.item():.4f} "
+                      f"(CPM={cpm_loss.item():.4f}, Mask={mask_loss.item():.4f}, Topo={topo_loss.item():.4f}) | "
+                      f"MAE ES={mae[0]:.4f}, TF={mae[4]:.4f} | LR={curr_lr:.6f}")
 
             if patience_counter >= patience:
                 if verbose:
@@ -786,8 +951,14 @@ class UnsupervisedPretrainer:
             self.model.eval()
             cpm_head.eval()
             
-            S_prime_g, _ = self.model.encoder(data_dev.x)
-            h = F.leaky_relu(self.model.node_proj(S_prime_g))
+            x_clean = data_dev.x.clone()
+            if x_clean.shape[1] >= 34:
+                x_clean[:, [29, 30, 31, 32, 33]] = 0.0
+            elif x_clean.shape[1] >= 68:
+                x_clean[:, [65, 66, 67]] = 0.0
+                
+            latent_emb = self.model.encoder(x_clean)
+            h = latent_emb
             h = self.model.gat1(h, data_dev.edge_index)
             h = F.elu(h)
             h = self.model.gat2(h, data_dev.edge_index)
@@ -859,7 +1030,7 @@ class UnsupervisedPretrainer:
         }
         torch.save(checkpoint, checkpoint_path)
 
-        # 2. Lưu metrics (.json)
+        # 2. Lưu metrics (.json và .csv)
         metrics_data = []
         for i in range(actual_epochs):
             metrics_data.append({
@@ -868,13 +1039,31 @@ class UnsupervisedPretrainer:
                 'cpm_loss': history['cpm_losses'][i],
                 'masked_duration_loss': history['mask_losses'][i],
                 'topological_distance_loss': history['topo_losses'][i],
-                'learning_rate': lr
+                'learning_rate': history['learning_rates'][i],
+                'grad_norm': history['grad_norms'][i],
+                'mae_es': history['mae_es'][i],
+                'mae_ef': history['mae_ef'][i],
+                'mae_ls': history['mae_ls'][i],
+                'mae_lf': history['mae_lf'][i],
+                'mae_tf': history['mae_tf'][i],
+                'mae_pl': history['mae_pl'][i],
+                'mae_mask': history['mae_mask'][i],
+                'critical_path_accuracy': history['critical_path_accuracy'][i],
+                'rmse': history['rmse'][i],
+                'r2': history['r2'][i],
+                'pearson': history['pearson'][i]
             })
             
         with open(os.path.join(logs_dir, 'dagnn_pretraining_metrics.json'), 'w', encoding='utf-8') as f:
             json.dump(metrics_data, f, indent=2, ensure_ascii=False)
         with open(os.path.join(logs_dir, 'pretraining_metrics.json'), 'w', encoding='utf-8') as f:
             json.dump(metrics_data, f, indent=2, ensure_ascii=False)
+            
+        import csv
+        with open(os.path.join(logs_dir, 'dagnn_pretraining_metrics.csv'), 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=metrics_data[0].keys())
+            writer.writeheader()
+            writer.writerows(metrics_data)
 
         if verbose:
             print(f"  [SUCCESS] DAGNN Pre-training hoan tat. | Time: {history['time_taken']:.2f}s")
@@ -1120,7 +1309,7 @@ if __name__ == "__main__":
     # 1. Tạo đồ thị dự án giả lập (15 tasks, DAG phức tạp)
     num_nodes = 15
     torch.manual_seed(42)
-    x = torch.rand(num_nodes, 72)
+    x = torch.rand(num_nodes, 36)
 
     # Đặt thời lượng hợp lý
     x[:, 3] = torch.tensor([2, 3, 1, 4, 2, 3, 1, 5, 2, 4, 3, 1, 2, 3, 4], dtype=torch.float)  # days
@@ -1142,7 +1331,7 @@ if __name__ == "__main__":
     data = Data(x=x, edge_index=edge_index, u=u)
 
     # 2. Khởi tạo mô hình
-    model = SequentialGLPOModel(feature_dim=72, gat_out_dim=32, dagnn_out_dim=32)
+    model = SequentialGLPOModel(project_type="logistics_standard", gat_out_dim=32, dagnn_out_dim=32)
 
     print(f"\n[1] Cấu hình:")
     print(f"    Mô hình: {sum(p.numel() for p in model.parameters()):,} tham số")
@@ -1185,7 +1374,7 @@ if __name__ == "__main__":
 
     # 7. Kiểm tra load_pretrained_dagnn
     print(f"\n[5] Kiểm tra load_pretrained_dagnn:")
-    fresh_model = SequentialGLPOModel(feature_dim=72, gat_out_dim=32, dagnn_out_dim=32)
+    fresh_model = SequentialGLPOModel(project_type="logistics_standard", gat_out_dim=32, dagnn_out_dim=32)
     success = load_pretrained_dagnn(fresh_model)
     print(f"    Nạp checkpoint DAGNN: {'[OK]' if success else '[FAIL]'}")
     

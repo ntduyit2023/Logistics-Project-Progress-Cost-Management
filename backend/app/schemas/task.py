@@ -78,13 +78,13 @@ class TaskCreate(TaskBase):
     
     Attributes:
         id (str): Khóa chính chuỗi do người dùng cung cấp.
-        project_id (int): Khóa ngoại liên kết tới project.
+        project_id (Optional[int]): Khóa ngoại liên kết tới project.
     """
     id: str = Field(...)
-    project_id: int = Field(...)
+    project_id: Optional[int] = Field(None)
 
 
-class TaskUpdate(BaseModel):
+class TaskUpdate(TaskBase):
     """
     Schema dùng để cập nhật Task (chỉ gửi các trường cần update).
     """
