@@ -58,8 +58,12 @@ class FeatureNormalizer(nn.Module):
         if len(self.log1p_indices) > 0:
             x_norm[:, self.log1p_indices] = torch.log1p(torch.clamp(x[:, self.log1p_indices], min=0.0))
             
-        # 2. Pass-through: Do nothing
-        pass
+        # 2. Graph-level MinMax Scaling cho Topology & Resource features (29, 30, 32, 33, 34)
+        graph_minmax_cols = [29, 30, 32, 33, 34]
+        for c in graph_minmax_cols:
+            max_v = torch.max(torch.abs(x_norm[:, c]))
+            if max_v > 1e-6:
+                x_norm[:, c] = x_norm[:, c] / max_v
         
         # 3. Div100: x' = x / 100
         if len(self.div100_indices) > 0:

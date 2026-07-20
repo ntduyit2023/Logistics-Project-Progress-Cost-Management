@@ -5,6 +5,60 @@ from collections import defaultdict, deque
 import torch
 from torch_geometric.data import Data, Dataset
 
+# ============================================================================
+# COLUMN ALIAS MAP: Hỗ trợ cả 2 convention tên cột (CSV gốc & DB-style)
+# Mỗi canonical name -> danh sách aliases ưu tiên từ trái sang phải
+# ============================================================================
+COLUMN_ALIASES = {
+    # Hub Time
+    'duration_months':      ['g7_dur_months', 'duration_months'],
+    'duration_weeks':       ['g7_dur_weeks', 'duration_weeks'],
+    'duration_days':        ['g7_dur_days', 'duration_days'],
+    'duration_hours':       ['g7_dur_hours', 'duration_hours'],
+    # G1: Direct Costs
+    'internal_labor_cost':  ['g1_labor', 'internal_labor_cost'],
+    'overtime_cost':        ['g1_ot', 'overtime_cost'],
+    'equipment_fuel_cost':  ['g1_fuel', 'equipment_fuel_cost'],
+    'qa_qc_cost':           ['g1_qa_qc', 'qa_qc_cost'],
+    'material_cost':        ['g1_material', 'material_cost'],
+    'outsourcing_cost':     ['g1_subcontract', 'outsourcing_cost'],
+    # G2: Indirect Costs
+    'training_cost':        ['g2_training', 'training_cost'],
+    'facility_rent':        ['g2_space', 'facility_rent'],
+    'communication_cost':   ['g2_communication', 'g2_comm', 'communication_cost'],
+    'utilities_cost':       ['g2_utility', 'utilities_cost'],
+    # G3: Contractual
+    'insurance_cost':       ['g4_insurance', 'insurance_cost'],
+    'licensing_cost':       ['g4_license', 'licensing_cost'],
+    'warranty_cost':        ['g4_warranty', 'warranty_cost'],
+    # G4: Risk
+    'complexity':           ['g5_complexity', 'complexity'],
+    'weather_contingency':  ['g5_weather', 'weather_contingency'],
+    'general_contingency':  ['g5_contingency', 'general_contingency'],
+    'rework_risk':          ['g5_rework', 'rework_risk'],
+    # G5: Logistics
+    'holding_cost':         ['g6_storage', 'holding_cost'],
+    'international_freight': ['g6_int_transport', 'international_freight'],
+    'handling_cost':        ['g6_handling', 'handling_cost'],
+    'reverse_logistics':    ['g6_recovery', 'reverse_logistics'],
+    'defect_cost':          ['g6_error', 'defect_cost'],
+    # G6: Time
+    'overtime_hours':       ['g7_ot_hours', 'overtime_hours'],
+}
+
+def _get_col(row, canonical_name, default=0.0):
+    """Tìm giá trị cột theo thứ tự ưu tiên aliases. Hỗ trợ cả CSV gốc và DB-style."""
+    aliases = COLUMN_ALIASES.get(canonical_name, [canonical_name])
+    for alias in aliases:
+        val = row.get(alias)
+        if val is not None and str(val).lower() != 'nan':
+            try:
+                return float(val)
+            except (ValueError, TypeError):
+                pass
+    return default
+
+
 class GlPoProjectGraph:
     """
     Mô tả (Description):
@@ -94,17 +148,42 @@ class GlPoProjectGraph:
         # 3.5 Resource Aggregation
         res_agg = {}
         if not task_resources_df.empty:
+            # Tìm cột quantity & resource ID từ danh sách ứng viên
+            req_col = None
+            for candidate in ['request_quantity', 'quantity', 'Quantity', 'req_qty', 'qty']:
+                if candidate in task_resources_df.columns:
+                    req_col = candidate
+                    break
+            if req_col is None:
+                # Fallback: chọn cột số đầu tiên không phải task_id
+                num_cols = task_resources_df.select_dtypes(include=[np.number]).columns
+                num_cols = [c for c in num_cols if c.lower() not in ['task_id', 'id']]
+                req_col = num_cols[0] if num_cols else task_resources_df.columns[-1]
+
+            res_col = None
+            for candidate in ['resource_id', 'resource_name', 'ID', 'id', 'ResourceID']:
+                if candidate in task_resources_df.columns:
+                    res_col = candidate
+                    break
+            if res_col is None:
+                res_col = task_resources_df.columns[1] if len(task_resources_df.columns) > 1 else task_resources_df.columns[0]
+
+            def _safe_qty(val):
+                try:
+                    v = float(val)
+                    return 0.0 if np.isnan(v) or np.isinf(v) else v
+                except (ValueError, TypeError):
+                    return 0.0
+
             grouped = task_resources_df.groupby('task_id')
-            req_col = 'request_quantity' if 'request_quantity' in task_resources_df.columns else task_resources_df.columns[-1]
-            res_col = 'resource_id' if 'resource_id' in task_resources_df.columns else task_resources_df.columns[1]
             for t_id, group in grouped:
-                total_demand = group[req_col].sum() if req_col in group else 0.0
+                total_demand = sum(_safe_qty(v) for v in group[req_col]) if req_col in group else 0.0
                 
                 cost_estimate = 0.0
                 if req_col in group and res_col in group:
                     for _, tr_row in group.iterrows():
                         r_id = str(tr_row[res_col])
-                        qty = float(tr_row[req_col] or 0.0)
+                        qty = _safe_qty(tr_row[req_col])
                         u_cost = res_cost_map.get(r_id, 0.0)
                         cost_estimate += qty * u_cost
                         
@@ -153,10 +232,10 @@ class GlPoProjectGraph:
         num_nodes = len(tasks_df)
         durations = np.zeros(num_nodes)
         for idx, row in tasks_df.iterrows():
-            d_m = float(row.get('duration_months', 0))
-            d_w = float(row.get('duration_weeks', 0))
-            d_d = float(row.get('duration_days', 0))
-            d_h = float(row.get('duration_hours', 0))
+            d_m = _get_col(row, 'duration_months')
+            d_w = _get_col(row, 'duration_weeks')
+            d_d = _get_col(row, 'duration_days')
+            d_h = _get_col(row, 'duration_hours')
             cal_type = str(row.get('calendar_type', 'Agenda')).lower()
             
             if '24/7' in cal_type:
@@ -215,47 +294,47 @@ class GlPoProjectGraph:
             x_row = [0.0] * 36
             
             # === Hub Time (0-4) ===
-            x_row[0] = float(row.get('duration_months', 0))
-            x_row[1] = float(row.get('duration_weeks', 0))
-            x_row[2] = float(row.get('duration_days', 0))
-            x_row[3] = float(row.get('duration_hours', 0))
+            x_row[0] = _get_col(row, 'duration_months')
+            x_row[1] = _get_col(row, 'duration_weeks')
+            x_row[2] = _get_col(row, 'duration_days')
+            x_row[3] = _get_col(row, 'duration_hours')
             cal_type = str(row.get('calendar_type', 'Agenda'))
             x_row[4] = 1.0 if '24/7' in cal_type else 0.0
             
             # === G1: Direct Costs (5-10) ===
-            x_row[5] = float(row.get('internal_labor_cost', 0))
-            x_row[6] = float(row.get('overtime_cost', 0))
-            x_row[7] = float(row.get('equipment_fuel_cost', 0))
-            x_row[8] = float(row.get('qa_qc_cost', 0))
-            x_row[9] = float(row.get('material_cost', 0))
-            x_row[10] = float(row.get('outsourcing_cost', 0))
+            x_row[5] = _get_col(row, 'internal_labor_cost')
+            x_row[6] = _get_col(row, 'overtime_cost')
+            x_row[7] = _get_col(row, 'equipment_fuel_cost')
+            x_row[8] = _get_col(row, 'qa_qc_cost')
+            x_row[9] = _get_col(row, 'material_cost')
+            x_row[10] = _get_col(row, 'outsourcing_cost')
             
             # === G2: Indirect Costs (11-14) ===
-            x_row[11] = float(row.get('training_cost', 0))
-            x_row[12] = float(row.get('facility_rent', 0))
-            x_row[13] = float(row.get('communication_cost', 0))
-            x_row[14] = float(row.get('utilities_cost', 0))
+            x_row[11] = _get_col(row, 'training_cost')
+            x_row[12] = _get_col(row, 'facility_rent')
+            x_row[13] = _get_col(row, 'communication_cost')
+            x_row[14] = _get_col(row, 'utilities_cost')
             
             # === G3: Contractual (15-17) ===
-            x_row[15] = float(row.get('insurance_cost', 0))
-            x_row[16] = float(row.get('licensing_cost', 0))
-            x_row[17] = float(row.get('warranty_cost', 0))
+            x_row[15] = _get_col(row, 'insurance_cost')
+            x_row[16] = _get_col(row, 'licensing_cost')
+            x_row[17] = _get_col(row, 'warranty_cost')
             
             # === G4: Risk (18-21) ===
-            x_row[18] = float(row.get('complexity', 0))
-            x_row[19] = float(row.get('weather_contingency', 0))
-            x_row[20] = float(row.get('general_contingency', 0))
-            x_row[21] = float(row.get('rework_risk', 0))
+            x_row[18] = _get_col(row, 'complexity')
+            x_row[19] = _get_col(row, 'weather_contingency')
+            x_row[20] = _get_col(row, 'general_contingency')
+            x_row[21] = _get_col(row, 'rework_risk')
             
             # === G5: Logistics (22-26) ===
-            x_row[22] = float(row.get('holding_cost', 0))
-            x_row[23] = float(row.get('international_freight', 0))
-            x_row[24] = float(row.get('handling_cost', 0))
-            x_row[25] = float(row.get('reverse_logistics', 0))
-            x_row[26] = float(row.get('defect_cost', 0))
+            x_row[22] = _get_col(row, 'holding_cost')
+            x_row[23] = _get_col(row, 'international_freight')
+            x_row[24] = _get_col(row, 'handling_cost')
+            x_row[25] = _get_col(row, 'reverse_logistics')
+            x_row[26] = _get_col(row, 'defect_cost')
             
             # === G6: Time (27-28) ===
-            x_row[27] = float(row.get('overtime_hours', 0))
+            x_row[27] = _get_col(row, 'overtime_hours')
             x_row[28] = float(row.get('lag_time', 0))
             
             # === G7: AI Topology (29-33) ===
@@ -272,24 +351,11 @@ class GlPoProjectGraph:
             
             node_features.append(x_row)
             
-        # 5.5 Optimal Feature Group Normalization Layer (36-D Matrix)
+        # 5.5 Raw Feature Matrix (Normalization deferred to FeatureNormalizer in model)
+        # NOTE: log1p + MinMax scaling đã được chuyển vào FeatureNormalizer (model-level)
+        # để tránh double normalization. Ở đây chỉ sanitize NaN/Inf.
         node_features_mat = np.array(node_features, dtype=np.float32)
         node_features_mat = np.nan_to_num(node_features_mat, nan=0.0, posinf=0.0, neginf=0.0)
-        
-        # 1. Log Transform for Costs (G1, G2, G3, G4, G5 + G8 Cost: 5-26, 35) -> Maps [0, 5e8] to [0, 20.03]
-        cost_indices = list(range(5, 27)) + [35]
-        node_features_mat[:, cost_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, cost_indices]))
-
-        # 2. Log Scaling for Durations (Hub 0-3, G6 27-28, G7 topology 32) -> Maps [0, 1500h] to [0, 7.31]
-        dur_indices = [0, 1, 2, 3, 27, 28, 32]
-        node_features_mat[:, dur_indices] = np.log1p(np.maximum(0.0, node_features_mat[:, dur_indices]))
-
-        # 3. Min-Max Graph Scaling for Topology & Resource Demands (G7: 29-30, 32-33 + G8 Demand: 34) -> Maps to [0, 1]
-        topo_res_indices = [29, 30, 32, 33, 34]
-        for c in topo_res_indices:
-            max_v = float(np.max(np.abs(node_features_mat[:, c])))
-            if max_v > 1e-6:
-                node_features_mat[:, c] /= max_v
                 
         x = torch.tensor(node_features_mat, dtype=torch.float)
         

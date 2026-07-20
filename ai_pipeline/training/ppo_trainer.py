@@ -436,9 +436,18 @@ class RunningMeanStd:
         self.count = epsilon
 
     def update(self, x: np.ndarray):
+        if x.ndim == 1:
+            x = x.reshape(1, -1)
+        dim = self.mean.shape[0]
+        if x.shape[1] > dim:
+            x = x[:, :dim]
+        elif x.shape[1] < dim:
+            pad = np.zeros((x.shape[0], dim - x.shape[1]), dtype=x.dtype)
+            x = np.hstack([x, pad])
+
         batch_mean = np.mean(x, axis=0)
         batch_var = np.var(x, axis=0)
-        batch_count = x.shape[0] if x.ndim > 1 else 1
+        batch_count = x.shape[0]
 
         delta = batch_mean - self.mean
         total_count = self.count + batch_count
@@ -522,7 +531,8 @@ class PPOTrainer:
         self.device = torch.device('cpu')
 
         if self.config.get('use_pretrained', False):
-            self.config['obs_dim'] += 2
+            if self.config['obs_dim'] in [48, 50]:
+                self.config['obs_dim'] = 52
 
         # Actor-Critic
         self.agent = ActorCritic(

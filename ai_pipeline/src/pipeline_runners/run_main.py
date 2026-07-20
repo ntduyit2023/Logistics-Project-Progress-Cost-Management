@@ -53,6 +53,21 @@ def main():
     
     # ── BƯỚC 1: DATA INGESTION & TĨNH CPM ──────────────────────────────────────
     print("\n📥 [BƯỚC 1] Data Ingestion & CPM Analysis...")
+    from ai_pipeline.models.data_validator import ProjectDataValidator
+    validator = ProjectDataValidator()
+    val_report = validator.validate(project_dir)
+    
+    if not val_report.is_valid:
+        print(f"❌ DATA VALIDATION FAILED cho dự án {project_id}:")
+        for err in val_report.errors:
+            print(f"   • ERROR: {err}")
+        sys.exit(1)
+        
+    if val_report.warnings:
+        print(f"   ⚠️ Data Validation phát hiện {len(val_report.warnings)} cảnh báo (đã làm sạch):")
+        for warn in val_report.warnings[:3]:
+            print(f"     - {warn}")
+
     from ai_pipeline.models.data_loader import GlPoProjectGraph
     project_graph = GlPoProjectGraph(project_dir)
     print(f"[DataLoader] Built Graph for {project_graph.project_id}: {project_graph.data.num_nodes} Nodes, {project_graph.data.num_edges} Edges")        
@@ -60,12 +75,17 @@ def main():
         print(f"❌ Project ID {project_id} not found in dataset.")
         sys.exit(1)
         
-    tasks_df = pd.read_csv(os.path.join(project_dir, 'tasks.csv'))
-    edges_df = pd.read_csv(os.path.join(project_dir, 'predecessors.csv'))
+    tasks_df = val_report.sanitized_tasks_df if val_report.sanitized_tasks_df is not None else pd.read_csv(os.path.join(project_dir, 'tasks.csv'))
+    edges_df = val_report.sanitized_edges_df if val_report.sanitized_edges_df is not None else pd.read_csv(os.path.join(project_dir, 'predecessors.csv'))
     res_df = pd.read_csv(os.path.join(project_dir, 'resources.csv'))
     task_res_df = pd.read_csv(os.path.join(project_dir, 'task_resources.csv'))
     
     tasks = tasks_df.to_dict(orient='records')
+    # Standardize 'id' and 'name' keys for all task dicts
+    for t in tasks:
+        t['id'] = str(t.get('id', t.get('task_id', t.get('ID', ''))))
+        t['name'] = str(t.get('name', t.get('task_name', t.get('TaskName', ''))))
+        
     dependencies = []
     for _, row in edges_df.iterrows():
         attrs = {
@@ -470,16 +490,17 @@ def main():
     # Save output json
     # Map task resources
     task_resources_map = {}
-    for _, row in task_res_df.iterrows():
-        tid = str(row['task_id'])
-        rid = str(row['resource_id'])
-        qty = float(row['request_quantity'])
-        if tid not in task_resources_map:
-            task_resources_map[tid] = []
-        task_resources_map[tid].append({
-            'resource_id': rid,
-            'quantity': qty
-        })
+    if task_res_df is not None and not task_res_df.empty:
+        for _, row in task_res_df.iterrows():
+            tid = str(row.get('task_id', row.get('id', row.get('TaskID', ''))))
+            rid = str(row.get('resource_id', row.get('id', row.get('ResourceID', row.get('ID', '')))))
+            qty = float(row.get('request_quantity', row.get('quantity', row.get('Quantity', 0.0))))
+            if tid not in task_resources_map:
+                task_resources_map[tid] = []
+            task_resources_map[tid].append({
+                'resource_id': rid,
+                'quantity': qty
+            })
 
     tasks_metadata = []
     for idx, t in enumerate(tasks):
