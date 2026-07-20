@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import AirflowGraph from './AirflowGraph';
 import { 
-  Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown, Cpu, Database, Sliders, DollarSign, ArrowLeft
+  Layers, Activity, GitCommit, Clock, Columns, Sparkles, Zap, ArrowRight, ShieldCheck, TrendingDown, Cpu, Database, Sliders, DollarSign, ArrowLeft, AlertTriangle
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Bar, Legend, Line, ReferenceLine } from 'recharts';
 import { api } from '../services/api';
@@ -67,6 +67,15 @@ const Workspace = () => {
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
 
+  // Custom Toast State
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [wasSimulating, setWasSimulating] = useState(false);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -89,24 +98,48 @@ const Workspace = () => {
     fetchProject();
   }, [projectId, navigate]);
 
+  // Real-Time SSE Stream Listener (Fast & Light Stream Push)
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    if (projectData?.status === 'Simulating') {
-      interval = setInterval(async () => {
+    let eventSource: EventSource | null = null;
+
+    if (projectData?.status === 'Simulating' && projectId && !isNaN(Number(projectId))) {
+      const hostname = window.location.hostname;
+      const streamUrl = `http://${hostname}:8000/api/v1/projects/${projectId}/simulation-stream`;
+      
+      eventSource = new EventSource(streamUrl);
+
+      eventSource.onmessage = async (event) => {
         try {
-          if (projectId && !isNaN(Number(projectId))) {
+          const data = JSON.parse(event.data);
+          
+          if (data.message) {
+            showToast(data.message, data.status === 'Error' ? 'error' : data.status === 'Planning' ? 'success' : 'info');
+          }
+
+          // When simulation finishes or errors out, fetch updated project details ONCE & close stream
+          if (data.status && data.status !== 'Simulating') {
             const res = await api.getProject(Number(projectId));
             setProjectData(res.data);
+            eventSource?.close();
           }
         } catch (err) {
-          console.error("Polling error", err);
+          console.error("Error parsing SSE event data", err);
         }
-      }, 3000);
+      };
+
+      eventSource.onerror = (err) => {
+        console.error("SSE Connection error", err);
+        eventSource?.close();
+      };
     }
+
     return () => {
-      if (interval) clearInterval(interval);
+      if (eventSource) {
+        eventSource.close();
+      }
     };
   }, [projectData?.status, projectId]);
+
   const handleSaveTask = async (data: any) => {
     try {
       if (!projectId || isNaN(Number(projectId))) {
@@ -203,10 +236,11 @@ const Workspace = () => {
   const handleRunAI = async () => {
     try {
       if (!projectId || isNaN(Number(projectId))) return;
+      showToast('Đang khởi chạy luồng giả lập AI...', 'info');
       await api.runAISimulation(Number(projectId));
-      window.location.reload();
+      setProjectData((prev: any) => ({ ...prev, status: 'Simulating' }));
     } catch (err) {
-      alert('Failed to run AI Simulation: ' + (err as Error).message);
+      showToast('Khởi chạy giả lập AI thất bại: ' + (err as Error).message, 'error');
     }
   };
 
@@ -522,6 +556,23 @@ const Workspace = () => {
       </div>
 
       <div className="flex flex-col gap-6">
+        {projectData?.status === 'Error' && (
+          <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start gap-3 shadow-sm animate-fadeIn">
+            <AlertTriangle className="text-rose-600 shrink-0 mt-0.5" size={20} />
+            <div className="flex-1">
+              <h4 className="font-bold text-rose-800 text-sm">Phát hiện lỗi trong quá trình chạy mô phỏng AI</h4>
+              <p className="text-xs text-rose-600 mt-1">
+                AI Pipeline đã dừng do lỗi tính toán hoặc cấu trúc đồ thị. Vui lòng kiểm tra lại ràng buộc logic và tài nguyên của dự án.
+              </p>
+              {projectData.metadata_json?.simulation_error && (
+                <div className="mt-3 bg-slate-950 text-rose-400 font-mono text-[10px] p-3 rounded-lg border border-slate-800 max-h-32 overflow-y-auto whitespace-pre-wrap">
+                  {projectData.metadata_json.simulation_error}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard title="Số lượng công việc" value={`${tasks.length} tasks`} icon={Layers} color="bg-blue-500" />
           <StatCard title="Số cạnh phụ thuộc" value={`${dependencies.length} edges`} icon={GitCommit} color="bg-emerald-500" />
@@ -848,6 +899,14 @@ const Workspace = () => {
           projectId={Number(projectId)}
           initialTimeConstraint={projectData.constraint_time || {}}
         />
+      )}
+
+      {toast && (
+        <div className={`fixed bottom-5 right-5 px-4 py-3 rounded-lg shadow-lg text-white font-bold text-sm transition-all duration-300 transform translate-y-0 z-[100] flex items-center gap-2 ${
+          toast.type === 'success' ? 'bg-emerald-600' : toast.type === 'error' ? 'bg-rose-600' : 'bg-blue-600'
+        }`}>
+          <span>{toast.message}</span>
+        </div>
       )}
     </div>
   );

@@ -22,10 +22,15 @@ class ProjectRepository(BaseRepository[AppProject, ProjectCreate, ProjectUpdate]
         query = select(self.model)
         
         if q:
-            formatted_query = ' & '.join(q.split())
-            query = query.filter(
-                self.model.search_vector.op('@@')(func.to_tsquery('simple', formatted_query))
-            )
+            # Clean and format query for PostgreSQL Full-Text Search with prefix matching (e.g. "proj" -> "proj:*")
+            words = [f"{w}:*" for w in q.split() if w]
+            if words:
+                formatted_query = ' & '.join(words)
+                query = query.filter(
+                    func.to_tsvector('simple', self.model.project_name).op('@@')(
+                        func.to_tsquery('simple', formatted_query)
+                    )
+                )
             
         # Sắp xếp mới nhất lên đầu
         query = query.order_by(self.model.created_at.desc())

@@ -2,8 +2,11 @@
 GLPO Backend - Projects API Endpoints
 Chứa các API xử lý vòng đời của một Dự án (Tạo, Sửa, Xóa, Lấy Graph).
 """
+import json
+import asyncio
 from typing import Optional
 from fastapi import APIRouter, Depends, Query, Path, HTTPException, BackgroundTasks
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.database import get_db
@@ -12,7 +15,7 @@ from app.schemas import (
     ProjectCreate, ProjectUpdate
 )
 from app.services import project_service
-from app.services.ai_runner import run_simulation_background
+from app.services.ai_runner import run_simulation_background, simulation_event_manager
 
 router = APIRouter()
 
@@ -86,6 +89,30 @@ async def get_project_summary_api(
     data = await project_service.get_project_summary(db, project_id)
     return APIResponse(success=True, message="Lấy tóm tắt dự án thành công.", data=data)
 
+
+@router.get("/{project_id}/simulation-stream", summary="Luồng sự kiện chạy mô phỏng AI (SSE Stream)")
+async def stream_simulation_events(
+    project_id: int = Path(..., description="ID dự án")
+):
+    """
+    Kết nối Server-Sent Events (SSE) để lắng nghe tiến trình chạy mô phỏng AI thời gian thực.
+    """
+    async def event_generator():
+        queue = simulation_event_manager.subscribe(project_id)
+        try:
+            yield f"data: {json.dumps({'status': 'Simulating', 'message': 'Đã kết nối luồng sự kiện thời gian thực (SSE)'})}\n\n"
+            while True:
+                try:
+                    event = await asyncio.wait_for(queue.get(), timeout=25.0)
+                    yield f"data: {json.dumps(event)}\n\n"
+                    if event.get("status") in ["Planning", "Error", "Closed", "Completed"]:
+                        break
+                except asyncio.TimeoutError:
+                    yield ": ping\n\n"
+        finally:
+            simulation_event_manager.unsubscribe(project_id, queue)
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
 @router.get("/{project_id}/graph", response_model=APIResponse[ProjectGraphResponse], summary="Đồ thị Dự án")

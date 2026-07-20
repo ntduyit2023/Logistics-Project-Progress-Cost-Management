@@ -18,6 +18,7 @@ const StatCard = ({ title, value, icon: Icon, color }: any) => (
 const Dashboard = () => {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [useLogScale, setUseLogScale] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -46,11 +47,27 @@ const Dashboard = () => {
   const totalCost = projects.reduce((sum, p) => sum + (p.total_cost || 0), 0);
 
   // Chart data
-  const costData = projects.map(p => ({
-    name: p.project_name.length > 15 ? p.project_name.substring(0, 15) + '...' : p.project_name,
-    baseCost: p.base_cost || 0,
-    totalCost: p.total_cost || 0
-  }));
+  const costData = projects.map(p => {
+    let base = p.base_cost || 0;
+    let total = p.total_cost || 0;
+    if (useLogScale) {
+      // Ensure positive values for log scale to avoid rendering crashes
+      if (base <= 0) base = 1;
+      if (total <= 0) total = 1;
+    }
+    return {
+      name: p.project_name.length > 15 ? p.project_name.substring(0, 15) + '...' : p.project_name,
+      baseCost: base,
+      totalCost: total
+    };
+  });
+
+  const formatYAxis = (val: number) => {
+    if (val <= 1) return '$0';
+    if (val >= 1000000) return `$${(val/1000000).toFixed(1)}M`;
+    if (val >= 1000) return `$${(val/1000).toFixed(0)}k`;
+    return `$${val}`;
+  };
 
   return (
     <div className="space-y-4 h-full flex flex-col">
@@ -89,9 +106,33 @@ const Dashboard = () => {
       </div>
 
       {/* Cost Chart */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-1 min-h-[350px] flex flex-col">
-        <div className="mb-4 shrink-0">
-          <h3 className="text-base font-bold text-slate-800">Project Cost Comparison (Base vs Total)</h3>
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-1 min-h-[350px] flex flex-col animate-fadeIn">
+        <div className="mb-4 shrink-0 flex justify-between items-center">
+          <div>
+            <h3 className="text-base font-bold text-slate-800">Project Cost Comparison (Base vs Total)</h3>
+          </div>
+          <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+            <button
+              onClick={() => setUseLogScale(false)}
+              className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                !useLogScale
+                  ? 'bg-white text-slate-800 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              Linear (Tuyến tính)
+            </button>
+            <button
+              onClick={() => setUseLogScale(true)}
+              className={`px-3 py-1 rounded-md text-xs font-semibold transition-all ${
+                useLogScale
+                  ? 'bg-white text-slate-800 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              Log Scale (Logarit)
+            </button>
+          </div>
         </div>
         
         <div className="w-full flex-1 min-h-0">
@@ -106,14 +147,16 @@ const Dashboard = () => {
                 textAnchor="end"
               />
               <YAxis 
-                tickFormatter={(val) => `$${(val/1000).toFixed(0)}k`} 
+                scale={useLogScale ? "log" : "auto"}
+                domain={useLogScale ? [1, 'auto'] : [0, 'auto']}
+                tickFormatter={formatYAxis} 
                 stroke="#94a3b8"
                 fontSize={11}
               />
               <Tooltip 
                 formatter={(value: any, name: any) => [
                   `$${Number(value).toLocaleString(undefined, {maximumFractionDigits:0})}`, 
-                  name === 'baseCost' ? 'Base Cost' : 'Total Cost'
+                  name
                 ]}
                 contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
               />

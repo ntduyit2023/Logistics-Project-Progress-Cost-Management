@@ -11,6 +11,38 @@ from app.db.database import async_session
 import pandas as pd
 from sqlalchemy import text
 
+from typing import Dict, Set, Any, Optional
+
+class SimulationEventManager:
+    """
+    Quản lý các kết nối SSE Stream (Pub/Sub Event Manager trong Bộ nhớ)
+    """
+    def __init__(self):
+        self.subscribers: Dict[int, Set[asyncio.Queue]] = {}
+
+    def subscribe(self, project_id: int) -> asyncio.Queue:
+        if project_id not in self.subscribers:
+            self.subscribers[project_id] = set()
+        queue = asyncio.Queue()
+        self.subscribers[project_id].add(queue)
+        return queue
+
+    def unsubscribe(self, project_id: int, queue: asyncio.Queue):
+        if project_id in self.subscribers:
+            self.subscribers[project_id].discard(queue)
+            if not self.subscribers[project_id]:
+                del self.subscribers[project_id]
+
+    def publish(self, project_id: int, event: Dict[str, Any]):
+        if project_id in self.subscribers:
+            for q in list(self.subscribers[project_id]):
+                try:
+                    q.put_nowait(event)
+                except Exception:
+                    pass
+
+simulation_event_manager = SimulationEventManager()
+
 async def _export_project_data(project_id: str, db_session: AsyncSession, base_dir: str):
     processed_dir = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id))
     # Safety: if a file (not directory) exists at this path, remove it to prevent FileExistsError
@@ -51,11 +83,15 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
     Hàm chạy ngầm quá trình giả lập AI (Optimal Simulation)
     Gọi script ai_pipeline/src/pipeline_runners/run_main.py
     """
+    p_id = int(project_id)
+    simulation_event_manager.publish(p_id, {"status": "Simulating", "message": "Đang chuẩn bị dữ liệu giả lập AI..."})
+    
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
     ai_script_path = os.path.join(base_dir, "ai_pipeline", "src", "pipeline_runners", "run_main.py")
     output_file = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id), f"output_{project_id}_main.json")
     
     await _export_project_data(project_id, db_session, base_dir)
+    simulation_event_manager.publish(p_id, {"status": "Simulating", "message": "Khởi tạo tiến trình Python AI..."})
     
     try:
         # Chạy subprocess không block event loop
@@ -82,7 +118,8 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
             line_str = line.decode('utf-8', errors='replace').strip()
             print(line_str)
             if "[BƯỚC" in line_str:
-                project = await db_session.get(AppProject, int(project_id))
+                simulation_event_manager.publish(p_id, {"status": "Simulating", "message": line_str, "progress": line_str})
+                project = await db_session.get(AppProject, p_id)
                 if project:
                     current_metadata = project.metadata_json or {}
                     new_metadata = dict(current_metadata)
@@ -98,7 +135,7 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
             with open(output_file, 'r', encoding='utf-8') as f:
                 simulation_results = json.load(f)
                 
-            project = await db_session.get(AppProject, int(project_id))
+            project = await db_session.get(AppProject, p_id)
             if project:
                 current_metadata = project.metadata_json or {}
                 new_metadata = dict(current_metadata)
@@ -108,16 +145,17 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
                 project.status = "Planning"
                 await db_session.commit()
                 print(f"✅ AI Simulation completed for Project {project_id}.")
+                simulation_event_manager.publish(p_id, {"status": "Planning", "message": "Chạy giả lập AI và tối ưu hóa thành công!"})
         else:
             print(f"⚠️ AI Simulation finished but output file not found: {output_file}")
             print(f"STDERR: {stderr_text}")
-            await _restore_project_status(project_id, db_session, "Planning")
+            await _restore_project_status(project_id, db_session, "Error", error_msg=stderr_text or "Output file not found")
 
     except Exception as e:
         print(f"❌ Unexpected Error in AI Simulation: {e}")
         await db_session.rollback()
         try:
-            await _restore_project_status(project_id, db_session, "Error")
+            await _restore_project_status(project_id, db_session, "Error", error_msg=str(e))
         except Exception as e2:
             print(f"❌ Could not restore status: {e2}")
     finally:
@@ -130,11 +168,18 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
             except Exception as cleanup_error:
                 print(f"⚠️ Error cleaning up temporary directory {temp_dir}: {cleanup_error}")
 
-async def _restore_project_status(project_id: str, db_session: AsyncSession, status: str):
-    project = await db_session.get(AppProject, int(project_id))
+async def _restore_project_status(project_id: str, db_session: AsyncSession, status: str, error_msg: str = None):
+    p_id = int(project_id)
+    project = await db_session.get(AppProject, p_id)
     if project:
         project.status = status
+        if error_msg:
+            current_metadata = project.metadata_json or {}
+            new_metadata = dict(current_metadata)
+            new_metadata['simulation_error'] = error_msg
+            project.metadata_json = new_metadata
         await db_session.commit()
+        simulation_event_manager.publish(p_id, {"status": status, "message": "Giả lập AI thất bại!", "error": error_msg})
 
 async def run_simulation_background(project_id: str, project_type: str):
     """

@@ -9,7 +9,7 @@ import ReactFlow, {
 } from 'reactflow';
 import dagre from '@dagrejs/dagre';
 import 'reactflow/dist/style.css';
-import { X, Clock, DollarSign, Calendar, Activity, AlertTriangle } from 'lucide-react';
+import { X, Clock, DollarSign, Calendar, Activity, AlertTriangle, Sliders } from 'lucide-react';
 import TaskNode from '../components/graph/TaskNode';
 
 const nodeTypes = {
@@ -19,17 +19,23 @@ const nodeTypes = {
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
+const getLayoutedElements = (
+  nodes: any[], 
+  edges: any[], 
+  direction = 'LR', 
+  horizontalSpacing = 300, 
+  verticalSpacing = 80
+) => {
   if (nodes.length === 0) return { nodes, edges };
 
   // Check if we have enough baseline_start data to do a time-based layout
   const nodesWithTime = nodes.filter(n => n.data && n.data.baseline_start);
   if (nodesWithTime.length > nodes.length * 0.2) {
     // TIME-BASED GANTT LAYOUT
-    const PIXELS_PER_DAY = 300; // Increased spacing to prevent edge/node overlap
+    const PIXELS_PER_DAY = horizontalSpacing; // Control horizontal spacing directly
     const NODE_WIDTH = 250;
     const NODE_HEIGHT = 80;
-    const LANE_SPACING = 30;
+    const LANE_SPACING = Math.max(10, Math.round(verticalSpacing * 0.4)); // Scaled lane spacing
 
     // Sort nodes topologically or by time to assign lanes properly
     const sortedNodes = [...nodes].sort((a, b) => {
@@ -91,8 +97,8 @@ const getLayoutedElements = (nodes: any[], edges: any[], direction = 'LR') => {
   const isHorizontal = direction === 'LR';
   dagreGraph.setGraph({
     rankdir: direction,
-    nodesep: 150,
-    ranksep: 450,
+    nodesep: Math.max(20, Math.round(verticalSpacing * 1.8)), // Scaled nodesep
+    ranksep: Math.max(50, Math.round(horizontalSpacing + 150)), // Scaled ranksep
     edgesep: 80,
     ranker: 'network-simplex'
   });
@@ -136,6 +142,8 @@ interface AirflowGraphProps {
 const AirflowGraph: React.FC<AirflowGraphProps> = ({
   projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, criticalityIndices
 }) => {
+  const [horizSpacing, setHorizSpacing] = useState(300);
+  const [vertSpacing, setVertSpacing] = useState(80);
   // Simple function to get Vietnamese name and WBS based on task WBS
   const getTaskNameByWbs = (wbs: string): string => {
     if (wbs.startsWith('1.1')) return `Khảo sát & Chuẩn bị mặt bằng`;
@@ -256,6 +264,8 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           task_name: task.name || task.task_name || getTaskNameByWbs(wbs),
           duration: duration,
           total_cost: cost,
+          base_duration: baseTaskDuration,
+          base_cost: baseTaskCost,
           is_critical: isCritical,
           mode,
           resources: task.resources || [],
@@ -290,9 +300,9 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
         },
       }));
 
-    const layouted = getLayoutedElements(rawNodes, rawEdges);
+    const layouted = getLayoutedElements(rawNodes, rawEdges, 'LR', horizSpacing, vertSpacing);
     return { initialNodesLayout: layouted.nodes, initialEdgesLayout: layouted.edges };
-  }, [tasks, dependencies, selectedOptionModes, criticalityIndices]);
+  }, [tasks, dependencies, selectedOptionModes, criticalityIndices, horizSpacing, vertSpacing]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesLayout);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdgesLayout);
@@ -356,6 +366,43 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
             <p className="text-[10px] text-slate-400 mt-3 italic border-t pt-1.5">
               * Hiển thị toàn bộ mạng lưới công việc của dự án
             </p>
+          </Panel>
+          
+          <Panel position="top-right" className="bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-md border border-slate-200 text-xs m-4 z-10 w-60 space-y-3">
+            <h4 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+              <Sliders size={14} className="text-blue-600" />
+              Cấu hình Giãn cách Node
+            </h4>
+            <div className="space-y-1">
+              <div className="flex justify-between text-slate-600 font-medium">
+                <span>Khoảng cách Ngang:</span>
+                <span className="font-bold font-mono text-blue-600">{horizSpacing}px</span>
+              </div>
+              <input 
+                type="range" 
+                min="100" 
+                max="600" 
+                step="20"
+                value={horizSpacing} 
+                onChange={(e) => setHorizSpacing(Number(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              />
+            </div>
+            <div className="space-y-1">
+              <div className="flex justify-between text-slate-600 font-medium">
+                <span>Khoảng cách Dọc:</span>
+                <span className="font-bold font-mono text-blue-600">{vertSpacing}px</span>
+              </div>
+              <input 
+                type="range" 
+                min="20" 
+                max="300" 
+                step="10"
+                value={vertSpacing} 
+                onChange={(e) => setVertSpacing(Number(e.target.value))}
+                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              />
+            </div>
           </Panel>
         </ReactFlow>
       </div>
