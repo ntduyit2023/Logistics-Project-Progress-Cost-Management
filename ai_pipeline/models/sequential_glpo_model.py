@@ -150,6 +150,12 @@ class SequentialGLPOModel(nn.Module):
         )
 
         # =========================================================
+        # MỤC 4: Residual Skip Connection & Feature Fusion
+        # =========================================================
+        self.res_proj = nn.Linear(gat_out_dim, dagnn_out_dim) if gat_out_dim != dagnn_out_dim else nn.Identity()
+        self.res_norm = nn.LayerNorm(dagnn_out_dim)
+
+        # =========================================================
         # TẦNG 3c: Decoder — Phóng chiếu ngược về không gian 13 nhóm
         # =========================================================
         # Kết hợp thông tin từ DAGNN embedding VÀ S'_g gốc (Residual Connection)
@@ -205,6 +211,7 @@ class SequentialGLPOModel(nn.Module):
             elif x.shape[1] >= 68:
                 x[:, [65, 66, 67]] = 0.0
         edge_index = data.edge_index
+        edge_attr = getattr(data, 'edge_attr', None)
 
         # ── TẦNG 1 & 2: Project-Specific Encoder (Latent Projection)
         if encoded_input:
@@ -217,12 +224,18 @@ class SequentialGLPOModel(nn.Module):
         # Không cần node_proj nữa, truyền thẳng latent_emb vào GAT
         h = latent_emb
 
-        # Message Passing qua đồ thị
-        h = self.gat1(h, edge_index)
-        h = F.elu(h)
-        h = F.dropout(h, p=self.dropout, training=self.training)
+        # Message Passing qua đồ thị (có nhận edge_attr nếu có)
+        if edge_attr is not None and hasattr(self.gat1, 'edge_dim') and self.gat1.edge_dim is not None:
+            h = self.gat1(h, edge_index, edge_attr=edge_attr)
+            h = F.elu(h)
+            h = F.dropout(h, p=self.dropout, training=self.training)
+            h = self.gat2(h, edge_index, edge_attr=edge_attr)
+        else:
+            h = self.gat1(h, edge_index)
+            h = F.elu(h)
+            h = F.dropout(h, p=self.dropout, training=self.training)
+            h = self.gat2(h, edge_index)
 
-        h = self.gat2(h, edge_index)
         node_embeddings = h  # (N, gat_out_dim)
 
         # Global Pooling (cho PPO State)
@@ -234,9 +247,12 @@ class SequentialGLPOModel(nn.Module):
         # ── TẦNG 3b: DAGNN ───────────────────────────────────────
         h_dagnn = self.dagnn(node_embeddings, edge_index)  # (N, dagnn_out_dim)
 
+        # ── MỤC 4: Residual Connection (h_fused) ─────────────────
+        h_fused = self.res_norm(h_dagnn + self.res_proj(node_embeddings))  # (N, dagnn_out_dim)
+
         # ── TẦNG 3c: Decoder (Phóng chiếu về num_groups) ─────────
-        # Kết hợp H_DAGNN với Latent Embedding gốc
-        decoder_input = torch.cat([h_dagnn, latent_emb], dim=1)  # (N, dagnn_out_dim + gat_hidden_dim)
+        # Kết hợp H_fused với Latent Embedding gốc
+        decoder_input = torch.cat([h_fused, latent_emb], dim=1)  # (N, dagnn_out_dim + gat_hidden_dim)
         S_prime_g_enhanced = self.decoder(decoder_input)  # (N, num_groups)
 
         # Trong Option B, chúng ta cho phép các nhóm hoạt động tự do (mask = 1.0)
@@ -270,6 +286,7 @@ class SequentialGLPOModel(nn.Module):
         if not encoded_input and x.shape[1] >= 68:
             x[:, [65, 66, 67]] = 0.0
         edge_index = data.edge_index
+        edge_attr = getattr(data, 'edge_attr', None)
 
         # Tầng 1 & 2: Project-Specific Encoder
         if encoded_input:
@@ -279,10 +296,17 @@ class SequentialGLPOModel(nn.Module):
 
         # Tầng 3a: GAT
         h = latent_emb
-        h = self.gat1(h, edge_index)
-        h = F.elu(h)
-        h = F.dropout(h, p=self.dropout, training=self.training)
-        h = self.gat2(h, edge_index)
+        if edge_attr is not None and hasattr(self.gat1, 'edge_dim') and self.gat1.edge_dim is not None:
+            h = self.gat1(h, edge_index, edge_attr=edge_attr)
+            h = F.elu(h)
+            h = F.dropout(h, p=self.dropout, training=self.training)
+            h = self.gat2(h, edge_index, edge_attr=edge_attr)
+        else:
+            h = self.gat1(h, edge_index)
+            h = F.elu(h)
+            h = F.dropout(h, p=self.dropout, training=self.training)
+            h = self.gat2(h, edge_index)
+
         node_embeddings = h
 
         batch = data.batch if hasattr(data, 'batch') and data.batch is not None \
@@ -293,8 +317,11 @@ class SequentialGLPOModel(nn.Module):
         # Tầng 3b: DAGNN (phiên bản chi tiết)
         h_dagnn, dagnn_info = self.dagnn.forward_with_attention(node_embeddings, edge_index)
 
+        # MỤC 4: Residual Connection (h_fused)
+        h_fused = self.res_norm(h_dagnn + self.res_proj(node_embeddings))
+
         # Tầng 3c: Decoder
-        decoder_input = torch.cat([h_dagnn, latent_emb], dim=1)
+        decoder_input = torch.cat([h_fused, latent_emb], dim=1)
         S_prime_g_enhanced = self.decoder(decoder_input)
         
         # Trong Option B, chúng ta cho phép các nhóm hoạt động tự do (mask = 1.0)

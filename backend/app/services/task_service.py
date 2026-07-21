@@ -16,23 +16,42 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
     task = await task_repo.get_by_id(db, task_id)
     if not task: return
 
-    # Tính toán tổng số giờ thực tế dựa trên các thành phần thời gian (ngày, tuần, tháng, giờ)
-    d_m = float(task.duration_months or 0.0)
-    d_w = float(task.duration_weeks or 0.0)
-    d_d = float(task.duration_days or 0.0)
-    # Nếu không có ngày/tuần/tháng thì giữ nguyên giờ, ngược lại sẽ được quy đổi từ ngày/tuần/tháng
-    d_h = float(task.duration_hours or 0.0) if (d_m == 0.0 and d_w == 0.0 and d_d == 0.0) else 0.0
+    # Query Project Time Constraint (Agenda)
+    stmt_time = select(ProjectConstraintTime).where(ProjectConstraintTime.project_id == project.id)
+    res_time = await db.execute(stmt_time)
+    time_constraint = res_time.scalars().first()
 
     hours_per_day = 8.0
     days_per_week = 5.0
-    
+    ot_multiplier = 1.4
+
+    if time_constraint:
+        if time_constraint.overtime_multiplier:
+            ot_multiplier = float(time_constraint.overtime_multiplier)
+        if time_constraint.weekly_schedule:
+            sched = time_constraint.weekly_schedule
+            if isinstance(sched, dict):
+                hours_per_day = float(sched.get('hours_per_day', 8.0) or 8.0)
+                days_per_week = float(sched.get('days_per_week', 5.0) or 5.0)
+
+    # Calculate task duration in working hours based on Agenda
+    d_m = float(task.duration_months or 0.0)
+    d_w = float(task.duration_weeks or 0.0)
+    d_d = float(task.duration_days or 0.0)
+    d_h = float(task.duration_hours or 0.0)
+
     cal_type = str(task.calendar_type or 'Standard').lower()
     if '24/7' in cal_type or 'continuous' in cal_type:
         total_h = d_m * 30.0 * 24.0 + d_w * 7.0 * 24.0 + d_d * 24.0 + d_h
     else:
-        total_h = d_m * 4.0 * days_per_week * hours_per_day + d_w * days_per_week * hours_per_day + d_d * hours_per_day + d_h
-        
-    task.duration_hours = max(0.0, total_h)
+        if d_d > 0 and d_h == 0:
+            total_h = d_m * 4.0 * days_per_week * hours_per_day + d_w * days_per_week * hours_per_day + d_d * hours_per_day
+        elif d_h > 0 and d_d == 0 and d_w == 0 and d_m == 0:
+            total_h = d_h
+        else:
+            total_h = d_m * 4.0 * days_per_week * hours_per_day + d_w * days_per_week * hours_per_day + (d_d * hours_per_day if d_d > 0 else hours_per_day)
+
+    task.duration_hours = max(1.0, total_h)
 
     stmt = select(TaskResource, ProjectConstraintResource).join(
         ProjectConstraintResource, TaskResource.resource_id == ProjectConstraintResource.id
@@ -42,12 +61,40 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
 
     g1_labor = 0.0
     g1_ot = 0.0
+    g1_fuel_res = 0.0
+    g1_mat_res = 0.0
+    g1_sub_res = 0.0
+    task_work_hours = float(task.duration_hours or hours_per_day)
+
     for tr, pcr in resources:
-        qty = tr.request_quantity or 0.0
+        qty = float(tr.request_quantity or 0.0)
         h_rate = float(pcr.cost_per_unit or 0.0)
-        ot_rate = h_rate * 1.5
-        g1_labor += float(qty) * float(task.duration_hours or 0.0) * h_rate
-        g1_ot += float(qty) * float(getattr(task, "overtime_hours", 0.0) or 0.0) * ot_rate
+        ot_rate = h_rate * ot_multiplier  # 1.4 multiplier
+        
+        r_type = str(pcr.resource_type or 'Human').lower()
+        r_name = str(pcr.resource_name or '').lower()
+
+        if 'equip' in r_type or 'fuel' in r_type or 'machine' in r_name or 'crane' in r_name or 'truck' in r_name:
+            g1_fuel_res += qty * task_work_hours * h_rate
+        elif 'mat' in r_type or 'consumable' in r_type or 'supply' in r_name:
+            g1_mat_res += qty * h_rate
+        elif 'subcontract' in r_type or 'outsourc' in r_type or 'vendor' in r_type:
+            g1_sub_res += qty * h_rate
+        else:
+            # Human / Labor / Personnel / Multi-resource Team
+            g1_labor += qty * task_work_hours * h_rate
+            g1_ot += qty * float(getattr(task, "overtime_hours", 0.0) or 0.0) * ot_rate
+
+    # If resources assigned, set task costs from accumulated resources
+    if len(resources) > 0:
+        task.internal_labor_cost = g1_labor
+        task.overtime_cost = g1_ot
+        if g1_fuel_res > 0: task.equipment_fuel_cost = g1_fuel_res
+        if g1_mat_res > 0: task.material_cost = g1_mat_res
+        if g1_sub_res > 0: task.outsourcing_cost = g1_sub_res
+    else:
+        g1_labor = float(task.internal_labor_cost or 0.0)
+        g1_ot = float(task.overtime_cost or 0.0)
 
     project_type = project.type
 

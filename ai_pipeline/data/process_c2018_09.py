@@ -216,7 +216,7 @@ def process_project():
             "g7_dur_months": duration_obj["months"],
             "g7_dur_weeks": duration_obj["weeks"],
             "g7_dur_days": duration_obj["days"],
-            "g7_dur_hours": total_hours,
+            "g7_dur_hours": duration_obj["hours"],
             "g7_ot_hours": 0.0
         })
         

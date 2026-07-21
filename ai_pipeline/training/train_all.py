@@ -16,6 +16,7 @@ import json
 import time
 import torch
 import numpy as np
+from torch_geometric.data import Batch
 
 # Reconfigure stdout for Windows console UTF-8 support
 sys.stdout.reconfigure(encoding='utf-8')
@@ -71,20 +72,23 @@ def run_multi_project_training(
 
     pretrainer = UnsupervisedPretrainer(model, device=device)
 
-    # Pretrain tuần tự từng dự án để cập nhật weights chung
-    for idx, pg in enumerate(dataset.graphs):
-        print(f"\nPretraining tren do thi du an [{idx + 1}/{len(dataset)}]: {pg.project_id}")
-        data_pyg = pg.data.to(device)
-        
-        # Áp dụng data augmentation (feature masking + edge drop) trong pretrainer
-        pretrainer.pretrain_all(
-            data_pyg,
-            gae_epochs=max(20, gae_epochs // len(dataset)),
-            cpm_epochs=max(20, cpm_epochs // len(dataset)),
-            verbose=False
-        )
+    # Gộp tất cả 6 đồ thị dự án thành 1 Batch Siêu Đồ Thị (Joint Multi-Graph Batching)
+    # Giúp loại bỏ hoàn toàn hiện tượng Catastrophic Forgetting (Quên lãng thảm khốc)
+    print(f"\n⚡ Dang gop {len(dataset)} do thi du an thanh 1 Joint Multi-Graph Batch cho GPU...")
+    data_list = [pg.data for pg in dataset.graphs]
+    batch_data = Batch.from_data_list(data_list).to(device)
 
-    print("\n[SUCCESS] Hoan tat Pretraining GNN Encoders tren toan bo du an!")
+    print(f"   • Tong so Nodes: {batch_data.num_nodes} | Tong so Edges: {batch_data.num_edges}")
+    print(f"   • Dang chay Pretraining dong thoi tren TAT CA du an (GAE={gae_epochs}, CPM={cpm_epochs} epochs)...")
+    
+    pretrainer.pretrain_all(
+        batch_data,
+        gae_epochs=gae_epochs,
+        cpm_epochs=cpm_epochs,
+        verbose=True
+    )
+
+    print("\n[SUCCESS] Hoan tat Joint Multi-Graph Pretraining tren tat ca du an!")
     print(f"Checkpoints da luu tai: {checkpoints_dir}")
 
     # ------------------------------------------------------------------

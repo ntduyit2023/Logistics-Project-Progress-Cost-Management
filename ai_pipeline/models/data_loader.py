@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 import numpy as np
 from collections import defaultdict, deque
@@ -83,6 +84,17 @@ class GlPoProjectGraph:
         self.project_dir = project_dir
         self.project_id = os.path.basename(os.path.normpath(project_dir))
         
+        # 0. Load project_meta.json if present
+        self.project_type = 'it_logistics'
+        meta_path = os.path.join(self.project_dir, 'project_meta.json')
+        if os.path.exists(meta_path):
+            try:
+                with open(meta_path, 'r', encoding='utf-8') as f:
+                    meta = json.load(f)
+                    self.project_type = meta.get('project_type', 'it_logistics')
+            except Exception:
+                pass
+
         # Bi-directional ID Dictionary
         self.node_to_idx = {}
         self.idx_to_node = {}
@@ -141,7 +153,11 @@ class GlPoProjectGraph:
             for _, row in resources_df.iterrows():
                 try:
                     res_id = str(row[id_col])
-                    res_cost_map[res_id] = float(row.get(cost_col, 0.0) or 0.0)
+                    res_cost_map[res_id] = {
+                        'unit_cost': float(row.get(cost_col, 0.0) or 0.0),
+                        'resource_type': str(row.get('resource_type', '') or '').lower(),
+                        'resource_name': str(row.get('resource_name', '') or '').lower()
+                    }
                 except Exception:
                     pass
 
@@ -180,16 +196,37 @@ class GlPoProjectGraph:
                 total_demand = sum(_safe_qty(v) for v in group[req_col]) if req_col in group else 0.0
                 
                 cost_estimate = 0.0
+                labor_cost = 0.0
+                equipment_cost = 0.0
+                material_cost = 0.0
                 if req_col in group and res_col in group:
                     for _, tr_row in group.iterrows():
                         r_id = str(tr_row[res_col])
                         qty = _safe_qty(tr_row[req_col])
-                        u_cost = res_cost_map.get(r_id, 0.0)
-                        cost_estimate += qty * u_cost
+                        info = res_cost_map.get(r_id, {'unit_cost': 0.0, 'resource_type': '', 'resource_name': ''})
+                        if isinstance(info, (int, float)):
+                            info = {'unit_cost': float(info), 'resource_type': '', 'resource_name': ''}
+                        u_cost = info['unit_cost']
+                        item_cost = qty * u_cost
+                        cost_estimate += item_cost
+                        
+                        r_type = info['resource_type']
+                        r_name = info['resource_name']
+                        if 'human' in r_type or 'labor' in r_type or 'renewable' in r_type or any(k in r_name for k in ['dev', 'engineer', 'specialist', 'lead', 'manager', 'worker', 'labor', 'staff', 'leader']):
+                            labor_cost += item_cost
+                        elif 'equipment' in r_type or 'machine' in r_type or any(k in r_name for k in ['server', 'cloud', 'machine', 'vehicle', 'hardware', 'fleet', 'tool', 'fuel']):
+                            equipment_cost += item_cost
+                        elif 'material' in r_type or any(k in r_name for k in ['material', 'steel', 'concrete', 'cement']):
+                            material_cost += item_cost
+                        else:
+                            labor_cost += item_cost
                         
                 res_agg[str(t_id)] = {
                     'total_demand': total_demand,
-                    'cost_estimate': cost_estimate
+                    'cost_estimate': cost_estimate,
+                    'labor_cost': labor_cost,
+                    'equipment_cost': equipment_cost,
+                    'material_cost': material_cost
                 }
                 
         # 3.5 Parse Agenda for CPM & Global Constraints
@@ -302,11 +339,27 @@ class GlPoProjectGraph:
             x_row[4] = 1.0 if '24/7' in cal_type else 0.0
             
             # === G1: Direct Costs (5-10) ===
-            x_row[5] = _get_col(row, 'internal_labor_cost')
-            x_row[6] = _get_col(row, 'overtime_cost')
-            x_row[7] = _get_col(row, 'equipment_fuel_cost')
+            t_res_info = res_agg.get(str(t_id), {'total_demand': 0.0, 'cost_estimate': 0.0, 'labor_cost': 0.0, 'equipment_cost': 0.0, 'material_cost': 0.0})
+            
+            raw_labor = _get_col(row, 'internal_labor_cost')
+            x_row[5] = float(t_res_info['labor_cost']) if (raw_labor <= 1e-6 and t_res_info.get('labor_cost', 0.0) > 0) else raw_labor
+
+            raw_ot_cost = _get_col(row, 'overtime_cost')
+            ot_hours = _get_col(row, 'overtime_hours')
+            if raw_ot_cost <= 1e-6 and ot_hours > 0:
+                hourly_rate = (x_row[5] / max(8.0, durations[idx])) if x_row[5] > 0 else 50.0
+                x_row[6] = float(ot_hours * hourly_rate * 1.5)
+            else:
+                x_row[6] = raw_ot_cost
+
+            raw_equip = _get_col(row, 'equipment_fuel_cost')
+            x_row[7] = float(t_res_info['equipment_cost']) if (raw_equip <= 1e-6 and t_res_info.get('equipment_cost', 0.0) > 0) else raw_equip
+
             x_row[8] = _get_col(row, 'qa_qc_cost')
-            x_row[9] = _get_col(row, 'material_cost')
+
+            raw_mat = _get_col(row, 'material_cost')
+            x_row[9] = float(t_res_info['material_cost']) if (raw_mat <= 1e-6 and t_res_info.get('material_cost', 0.0) > 0) else raw_mat
+
             x_row[10] = _get_col(row, 'outsourcing_cost')
             
             # === G2: Indirect Costs (11-14) ===

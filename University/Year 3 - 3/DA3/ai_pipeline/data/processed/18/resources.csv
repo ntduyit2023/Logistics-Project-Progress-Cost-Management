@@ -1,0 +1,6 @@
+ID,resource_name,resource_type,unit_cost,capacity
+778,Project Leader,Renewable,30.00,1.00
+779,Engineer,Renewable,50.00,3.00
+780,Worker,Renewable,24.00,2.00
+781,Marketeer,Renewable,28.00,1.00
+782,Administrator,Renewable,30.00,1.00

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.nn import GATConv, global_mean_pool
+from torch_geometric.nn import GATv2Conv, global_mean_pool
 
 try:
     from ai_pipeline.models.hierarchical_encoder import HierarchicalAttentionEncoder
@@ -28,20 +28,18 @@ class LogisticsGATModel(nn.Module):
         node_proj (nn.Linear): Lớp Linear phóng chiếu Vector 13-chiều lên không gian ẩn.
         gat1, gat2, gat3 (nn.Module): Các lớp chập đồ thị (Graph Convolutional Layers).
     """
-    def __init__(self, feature_dim=72, hidden_dim=64, num_groups=13, out_dim=32, heads=4):
+    def __init__(self, feature_dim=36, hidden_dim=64, num_groups=8, out_dim=32, heads=4, edge_dim=8):
         super(LogisticsGATModel, self).__init__()
         
-        # 1. Khối 1: Encoder 3 Tầng (Trích xuất 13 Group Features)
+        # 1. Khối 1: Encoder 3 Tầng (Trích xuất 8 Group Features)
         self.hierarchical_encoder = HierarchicalAttentionEncoder(feature_dim=feature_dim)
         
-        # 2. Linear projection từ 13 Group (S_g) sang hidden space của GNN
-        # S_g có shape (num_nodes, 13)
+        # 2. Linear projection từ 8 Group (S_g) sang hidden space của GNN
         self.node_proj = nn.Linear(num_groups, hidden_dim)
         
-        # 3. Các lớp GAT (Graph Attention Network)
-        # GAT cho phép node "chọn lọc" thông tin từ predecessors/successors
-        self.gat1 = GATConv(hidden_dim, hidden_dim, heads=heads, concat=True)
-        self.gat2 = GATConv(hidden_dim * heads, out_dim, heads=1, concat=False)
+        # 3. Các lớp GATv2 (Graph Attention Network v2) hỗ trợ 8-D edge attributes
+        self.gat1 = GATv2Conv(hidden_dim, hidden_dim, heads=heads, concat=True, edge_dim=edge_dim)
+        self.gat2 = GATv2Conv(hidden_dim * heads, out_dim, heads=1, concat=False, edge_dim=edge_dim)
         
         # 4. Đầu ra Global của toàn bộ Đồ thị (Dành cho PPO State)
         self.global_proj = nn.Linear(out_dim, out_dim)
@@ -59,20 +57,21 @@ class LogisticsGATModel(nn.Module):
             x (torch.Tensor): Node Embeddings - Vector tinh hoa 128-chiều của TỪNG Đỉnh (shape: [Số_Task, 128]).
             graph_emb (torch.Tensor): Graph Embedding - Vector tinh hoa của TOÀN BỘ Đồ thị (shape: [1, 128]).
         """
-        x, edge_index, u = data.x, data.edge_index, data.u       
+        x, edge_index = data.x, data.edge_index
+        edge_attr = getattr(data, 'edge_attr', None)
+        
         # Bước 1: Trích xuất S_g (Tầng 1 & 2 của Evaluation Architecture)
-        # S_g shape: (num_nodes, 13)
         S_g, group_masks = self.hierarchical_encoder(x)
         
         # Bước 2: Đưa S_g vào không gian ẩn
         h = F.leaky_relu(self.node_proj(S_g))
         
-        # Bước 3: Message Passing qua đồ thị (GAT)
-        h = self.gat1(h, edge_index)
+        # Bước 3: Message Passing qua đồ thị (GATv2 hỗ trợ 8-D edge attributes)
+        h = self.gat1(h, edge_index, edge_attr=edge_attr)
         h = F.elu(h)
         h = F.dropout(h, p=0.2, training=self.training)
         
-        h = self.gat2(h, edge_index)
+        h = self.gat2(h, edge_index, edge_attr=edge_attr)
         node_embeddings = h # Shape: (num_nodes, out_dim)
         
         # Bước 4: Global Pooling (Tạo Graph Embedding)

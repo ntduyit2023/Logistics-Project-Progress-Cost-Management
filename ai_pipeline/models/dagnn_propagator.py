@@ -65,6 +65,32 @@ from collections import defaultdict, deque
 from typing import Optional, Tuple
 
 
+class PredecessorAttention(nn.Module):
+    """
+    Cơ chế Attention Aggregation tập trung vào các task tiền nhiệm quan trọng/trễ hạn
+    thay vì cộng đơn thuần gây pha loãng tín hiệu rủi ro.
+    """
+    def __init__(self, hidden_dim: int, gat_dim: int):
+        super(PredecessorAttention, self).__init__()
+        self.attn_mlp = nn.Sequential(
+            nn.Linear(hidden_dim + gat_dim, hidden_dim // 2),
+            nn.Tanh(),
+            nn.Linear(hidden_dim // 2, 1)
+        )
+        
+    def forward(self, pred_states: torch.Tensor, h_self: torch.Tensor) -> torch.Tensor:
+        # pred_states: [num_preds, hidden_dim]
+        # h_self: [gat_dim]
+        if pred_states.shape[0] == 1:
+            return pred_states[0]
+            
+        h_self_expanded = h_self.unsqueeze(0).repeat(pred_states.shape[0], 1)
+        concat_feat = torch.cat([pred_states, h_self_expanded], dim=1)
+        scores = self.attn_mlp(concat_feat).squeeze(-1)
+        weights = F.softmax(scores, dim=0)
+        return torch.sum(weights.unsqueeze(1) * pred_states, dim=0)
+
+
 class DAGNNPropagator(nn.Module):
     """
     Mô tả (Description):
@@ -131,6 +157,9 @@ class DAGNNPropagator(nn.Module):
             nn.LayerNorm(out_dim),
             nn.LeakyReLU(0.2),
         )
+
+        # Lớp Attention Aggregation cho predecessors (Mục 3)
+        self.pred_attn = PredecessorAttention(hidden_dim=hidden_dim, gat_dim=gat_dim)
 
     def _topological_sort(
         self,
@@ -222,10 +251,10 @@ class DAGNNPropagator(nn.Module):
                 # Nút nguồn (Source): Không có predecessor → Dùng init_state
                 hidden_states[node_idx] = self.init_state(h_self)
             else:
-                # Nút trung gian/cuối: Tổng hợp trạng thái từ predecessors
-                # Sử dụng phép cộng (sum aggregation) — đơn giản và hiệu quả
+                # Nút trung gian/cuối: Tổng hợp trạng thái từ predecessors qua Attention Aggregation
                 pred_indices = torch.tensor(preds, dtype=torch.long, device=device)
-                agg_state = hidden_states[pred_indices].sum(dim=0)  # (hidden_dim,)
+                pred_states = hidden_states[pred_indices]  # (num_preds, hidden_dim)
+                agg_state = self.pred_attn(pred_states, h_self)  # (hidden_dim,)
 
                 # Nối [embedding GAT || trạng thái tổng hợp] → MLP → trạng thái mới
                 combined = torch.cat([h_self, agg_state])  # (gat_dim + hidden_dim,)

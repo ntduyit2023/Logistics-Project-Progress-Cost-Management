@@ -66,11 +66,68 @@ class SoftwareDevEncoder(BaseProjectEncoder):
         x = torch.nan_to_num(x, nan=0.0, posinf=1.0, neginf=-1.0)
         return self.encoder(x)
 
+class ITLogisticsEncoder(LogisticsStandardEncoder):
+    """Encoder chuyên biệt cho IT & Logistics (ITLG)."""
+    pass
+
+class CivilConstructionEncoder(BaseProjectEncoder):
+    """
+    Encoder chuyên biệt cho Xây dựng công trình (CON).
+    Ưu tiên các đặc trưng vật tư (material_cost), ca máy (equipment_fuel) & rủi ro thời tiết (weather_contingency).
+    """
+    def __init__(self, input_dim: int = 36, latent_dim: int = 64):
+        super().__init__(latent_dim)
+        self.input_dim = input_dim
+        
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.LeakyReLU(0.2),
+            nn.LayerNorm(128),
+            nn.Dropout(0.15),
+            nn.Linear(128, latent_dim),
+            nn.LeakyReLU(0.2),
+            nn.LayerNorm(latent_dim)
+        )
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = torch.nan_to_num(x, nan=0.0, posinf=1.0, neginf=-1.0)
+        return self.encoder(x)
+
+class ProfessionalServicesEncoder(BaseProjectEncoder):
+    """
+    Encoder chuyên biệt cho Dịch vụ Chuyên môn & Dự án Sản phẩm (PRO).
+    """
+    def __init__(self, input_dim: int = 36, latent_dim: int = 64):
+        super().__init__(latent_dim)
+        self.input_dim = input_dim
+        
+        self.encoder = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.GELU(),
+            nn.LayerNorm(128),
+            nn.Linear(128, latent_dim),
+            nn.GELU(),
+            nn.LayerNorm(latent_dim)
+        )
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = torch.nan_to_num(x, nan=0.0, posinf=1.0, neginf=-1.0)
+        return self.encoder(x)
+
 class EncoderRegistry:
     """Registry to dynamically fetch the correct encoder based on Project Type string."""
     _registry = {
+        # Tên loại hình tiêu chuẩn
+        "it_logistics": {"encoder": ITLogisticsEncoder, "num_groups": 8},
         "logistics_standard": {"encoder": LogisticsStandardEncoder, "num_groups": 8},
-        "software_dev": {"encoder": SoftwareDevEncoder, "num_groups": 5}
+        "civil_construction": {"encoder": CivilConstructionEncoder, "num_groups": 8},
+        "professional_services": {"encoder": ProfessionalServicesEncoder, "num_groups": 8},
+        "software_dev": {"encoder": SoftwareDevEncoder, "num_groups": 8},
+        
+        # Ánh xạ trực tiếp mã từ PostgreSQL Database
+        "itlg": {"encoder": ITLogisticsEncoder, "num_groups": 8},
+        "con": {"encoder": CivilConstructionEncoder, "num_groups": 8},
+        "pro": {"encoder": ProfessionalServicesEncoder, "num_groups": 8},
     }
     
     @classmethod

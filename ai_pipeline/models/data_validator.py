@@ -114,8 +114,12 @@ class ProjectDataValidator:
         if not report.is_valid:
             return report
             
+        # Dynamically find column names for IDs
+        id_col = self._get_task_id_col(tasks_df)
+        pred_col, succ_col = self._get_edge_cols(edges_df)
+            
         # Build task ID set for reference
-        task_ids = set(tasks_df['task_id'].astype(str).tolist())
+        task_ids = set(tasks_df[id_col].astype(str).tolist())
         report.stats['num_tasks'] = len(task_ids)
         report.stats['num_edges_original'] = len(edges_df)
         
@@ -136,6 +140,27 @@ class ProjectDataValidator:
         report.sanitized_edges_df = edges_df
         
         return report
+
+    def _get_task_id_col(self, tasks_df: pd.DataFrame) -> str:
+        for candidate in ['task_id', 'id', 'ID', 'TaskID']:
+            if candidate in tasks_df.columns:
+                return candidate
+        return tasks_df.columns[0] if not tasks_df.empty else 'task_id'
+
+    def _get_edge_cols(self, edges_df: pd.DataFrame) -> Tuple[str, str]:
+        pred_col = 'predecessor_task_id'
+        for candidate in ['predecessor_task_id', 'predecessor_id', 'source_id', 'source', 'pred']:
+            if candidate in edges_df.columns:
+                pred_col = candidate
+                break
+
+        succ_col = 'successor_task_id'
+        for candidate in ['successor_task_id', 'successor_id', 'target_id', 'target', 'succ']:
+            if candidate in edges_df.columns:
+                succ_col = candidate
+                break
+
+        return pred_col, succ_col
     
     def _check_required_columns(
         self, tasks_df: pd.DataFrame, edges_df: pd.DataFrame,
@@ -170,8 +195,7 @@ class ProjectDataValidator:
         self, edges_df: pd.DataFrame, report: ValidationReport, project_id: str
     ) -> pd.DataFrame:
         """Phát hiện và xóa self-loops (predecessor_id == successor_id)."""
-        pred_col = 'predecessor_task_id'
-        succ_col = 'successor_task_id'
+        pred_col, succ_col = self._get_edge_cols(edges_df)
         
         self_loops = edges_df[
             edges_df[pred_col].astype(str) == edges_df[succ_col].astype(str)
@@ -192,8 +216,7 @@ class ProjectDataValidator:
         self, edges_df: pd.DataFrame, report: ValidationReport, project_id: str
     ) -> pd.DataFrame:
         """Phát hiện và xóa cạnh trùng lặp (giữ bản đầu tiên)."""
-        pred_col = 'predecessor_task_id'
-        succ_col = 'successor_task_id'
+        pred_col, succ_col = self._get_edge_cols(edges_df)
         
         # Tạo key (pred, succ) để phát hiện duplicate
         edges_df['_edge_key'] = (
@@ -218,8 +241,7 @@ class ProjectDataValidator:
         report: ValidationReport, project_id: str
     ) -> pd.DataFrame:
         """Phát hiện cạnh tham chiếu task không tồn tại và xóa chúng."""
-        pred_col = 'predecessor_task_id'
-        succ_col = 'successor_task_id'
+        pred_col, succ_col = self._get_edge_cols(edges_df)
         
         orphan_preds = set(edges_df[pred_col].astype(str)) - task_ids
         orphan_succs = set(edges_df[succ_col].astype(str)) - task_ids
@@ -247,8 +269,7 @@ class ProjectDataValidator:
         report: ValidationReport, project_id: str
     ) -> pd.DataFrame:
         """Phát hiện và tự động gỡ chu trình bằng Kahn's algorithm."""
-        pred_col = 'predecessor_task_id'
-        succ_col = 'successor_task_id'
+        pred_col, succ_col = self._get_edge_cols(edges_df)
         
         # Build adjacency
         adj = defaultdict(list)

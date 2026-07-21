@@ -78,6 +78,30 @@ async def _export_project_data(project_id: str, db_session: AsyncSession, base_d
         df_tr = pd.DataFrame(columns=['task_id', 'resource_id', 'request_quantity'])
     df_tr.to_csv(os.path.join(processed_dir, 'task_resources.csv'), index=False)
 
+    # Export project_meta.json with DB type mapping (ITLG, CON, PRO)
+    try:
+        proj_query = text(f"SELECT type FROM projects WHERE id = {project_id}")
+        proj_res = await db_session.execute(proj_query)
+        proj_row = proj_res.fetchone()
+        db_type = (proj_row[0] if proj_row and proj_row[0] else 'ITLG').upper()
+        
+        type_map = {
+            'ITLG': 'it_logistics',
+            'CON': 'civil_construction',
+            'PRO': 'professional_services'
+        }
+        ai_project_type = type_map.get(db_type, 'it_logistics')
+        
+        meta_data = {
+            "project_id": str(project_id),
+            "db_type": db_type,
+            "project_type": ai_project_type
+        }
+        with open(os.path.join(processed_dir, 'project_meta.json'), 'w', encoding='utf-8') as f:
+            json.dump(meta_data, f, indent=2)
+    except Exception:
+        pass
+
 async def _run_ai_pipeline(project_id: str, project_type: str, db_session: AsyncSession):
     """
     Hàm chạy ngầm quá trình giả lập AI (Optimal Simulation)
