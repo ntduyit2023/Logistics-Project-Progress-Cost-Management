@@ -15,5 +15,3 @@ ID,Name,Type,Availability,Cost/Use,Cost/Unit
 14,Pruning Machine,Renewable,1.0,0.0,40.0
 15,Tank Truck,Renewable,1.0,0.0,78.0
 16,Line Striper Machine,Renewable,1.0,0.0,30.0
-17,Materials,Consumable,1.0,0.0,1.0
-18,Paving Material,Consumable,1.0,0.0,1.0

@@ -10,7 +10,7 @@ from sqlalchemy import select
 from app.repositories.task import task_repo
 from app.repositories.project import project_repo
 from app.schemas import TaskCreate, TaskUpdate
-from app.models import Task, TaskResource, ProjectConstraintResource
+from app.models import Task, TaskResource, ProjectConstraintResource, ProjectConstraintTime
 
 async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
     task = await task_repo.get_by_id(db, task_id)
@@ -74,8 +74,8 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
         r_type = str(pcr.resource_type or 'Human').lower()
         r_name = str(pcr.resource_name or '').lower()
 
-        if 'equip' in r_type or 'fuel' in r_type or 'machine' in r_name or 'crane' in r_name or 'truck' in r_name:
-            g1_fuel_res += qty * task_work_hours * h_rate
+        if 'equip' in r_type or any(k in r_name for k in ['truck', 'loader', 'roller', 'excavator', 'crane', 'drill', 'mixer', 'paver', 'milling', 'driver', 'pruning', 'machine', 'bulldozer', 'paler', 'vehicle', 'tank']):
+            g1_fuel_res += qty * h_rate
         elif 'mat' in r_type or 'consumable' in r_type or 'supply' in r_name:
             g1_mat_res += qty * h_rate
         elif 'subcontract' in r_type or 'outsourc' in r_type or 'vendor' in r_type:
@@ -187,6 +187,10 @@ async def create_task(db: AsyncSession, project_id: int, task_in: TaskCreate) ->
     task_dict = task_in.model_dump()
     task_dict["project_id"] = project_id
     
+    if not task_dict.get("id"):
+        import uuid
+        task_dict["id"] = f"TASK_{uuid.uuid4().hex[:8].upper()}"
+        
     new_task = Task(**task_dict)
     db.add(new_task)
     await db.commit()

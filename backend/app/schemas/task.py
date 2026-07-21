@@ -75,20 +75,67 @@ class TaskBase(BaseModel):
 class TaskCreate(TaskBase):
     """
     Schema dùng để tạo Task mới.
-    
-    Attributes:
-        id (str): Khóa chính chuỗi do người dùng cung cấp.
-        project_id (Optional[int]): Khóa ngoại liên kết tới project.
     """
-    id: str = Field(...)
+    id: Optional[str] = Field(None)
     project_id: Optional[int] = Field(None)
 
 
-class TaskUpdate(TaskBase):
+class TaskUpdate(BaseModel):
     """
     Schema dùng để cập nhật Task (chỉ gửi các trường cần update).
     """
     task_name: Optional[str] = Field(None, max_length=255)
+    task_type: Optional[str] = Field(None, max_length=100)
+    status: Optional[str] = Field(None, max_length=50)
+    base_cost: Optional[float] = None
+    total_cost: Optional[float] = None
+    risk_factor: Optional[float] = None
+    baseline_start: Optional[datetime] = None
+    type: Optional[str] = Field(None, max_length=255)
+    
+    # Hub Time Components
+    duration_months: Optional[float] = None
+    duration_weeks: Optional[float] = None
+    duration_days: Optional[float] = None
+    duration_hours: Optional[float] = None
+    calendar_type: Optional[str] = Field(None, max_length=50)
+    
+    # G1: Direct Costs
+    internal_labor_cost: Optional[float] = None
+    overtime_cost: Optional[float] = None
+    equipment_fuel_cost: Optional[float] = None
+    qa_qc_cost: Optional[float] = None
+    material_cost: Optional[float] = None
+    outsourcing_cost: Optional[float] = None
+    
+    # G2: Indirect Costs
+    training_cost: Optional[float] = None
+    facility_rent: Optional[float] = None
+    communication_cost: Optional[float] = None
+    utilities_cost: Optional[float] = None
+    
+    # G4: Contractual
+    insurance_cost: Optional[float] = None
+    licensing_cost: Optional[float] = None
+    warranty_cost: Optional[float] = None
+    
+    # G5: Risk Coefficients
+    complexity: Optional[float] = None
+    weather_contingency: Optional[float] = None
+    general_contingency: Optional[float] = None
+    rework_risk: Optional[float] = None
+    
+    # G6: Logistics
+    holding_cost: Optional[float] = None
+    international_freight: Optional[float] = None
+    handling_cost: Optional[float] = None
+    reverse_logistics: Optional[float] = None
+    defect_cost: Optional[float] = None
+    
+    # G7: Time Components
+    overtime_hours: Optional[float] = None
+    lag_time: Optional[float] = None
+    metadata_json: Optional[Dict[str, Any]] = None
 
 
 class TaskResponse(TaskBase):

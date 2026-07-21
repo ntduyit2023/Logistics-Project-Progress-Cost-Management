@@ -55,7 +55,7 @@ async def reload_docker_database_rigorous():
             print("[SUCCESS] Da truncate xoa sach toan bo du lieu trong tat ca cac bang Docker DB!")
 
     print("\n========================================================================")
-    print("2. IMPORT CHUAN DATASET: RESOURCES.CSV = HUMAN LABOR (HOURLY RATE), OTHER = MATERIAL (FLAT)")
+    print("2. IMPORT CHUAN DATASET G1-G7: LABOR, MATERIAL, FUEL/EQUIPMENT & RISK FACTORS")
     print("========================================================================")
     
     target_projects = ["C2011-07", "C2012-04", "C2012-08", "C2018-09", "C2019-16"]
@@ -151,11 +151,10 @@ async def reload_docker_database_rigorous():
                         except Exception:
                             schedule_map[t_id_str] = None
 
-            # Insert resources from resources.csv -> ALL ARE OFFICIAL HUMAN / LABOR RESOURCES
+            # Insert resources from resources.csv
             res_id_db_map = {}
             res_name_db_map = {}
             res_cost_map = {}
-            official_human_resources = set()
 
             if not df_res.empty:
                 r_id_col = 'ID' if 'ID' in df_res.columns else ('id' if 'id' in df_res.columns else df_res.columns[0])
@@ -167,7 +166,15 @@ async def reload_docker_database_rigorous():
                 for _, r_row in df_res.iterrows():
                     orig_r_id = str(r_row[r_id_col]).strip()
                     r_name = str(r_row.get(r_name_col, 'Resource')).strip()
-                    r_type = str(r_row.get(r_type_col, 'Human')).strip()
+                    r_type_raw = str(r_row.get(r_type_col, 'Human')).strip()
+                    r_name_lower = r_name.lower()
+                    if any(k in r_name_lower for k in ['truck', 'loader', 'roller', 'excavator', 'crane', 'drill', 'mixer', 'paver', 'milling', 'driver', 'pruning', 'machine', 'bulldozer', 'paler', 'vehicle', 'tank']):
+                        r_type = 'Equipment'
+                    elif any(k in r_name_lower for k in ['material', 'paving', 'concrete', 'steel', 'asphalt']):
+                        r_type = 'Material'
+                    else:
+                        r_type = r_type_raw if r_type_raw and r_type_raw.lower() != 'renewable' else 'Human'
+
                     r_cost = float(r_row.get(r_cost_col, 100.0) or 100.0)
                     r_cap = float(r_row.get(r_cap_col, 10.0) or 10.0)
                     
@@ -179,37 +186,9 @@ async def reload_docker_database_rigorous():
                     res_id_db_map[orig_r_id] = db_r_id
                     res_name_db_map[r_name.lower()] = db_r_id
                     res_cost_map[db_r_id] = r_cost
-                    official_human_resources.add(db_r_id)
-                print(f"     [OK] Chen {len(res_id_db_map)} official human resources tu resources.csv thanh cong!")
+                print(f"     [OK] Chen {len(res_id_db_map)} resources tu resources.csv thanh cong!")
 
-            # Map task resource assignments:
-            # - IF in resources.csv -> Human Labor (Hourly Rate * task_work_hours)
-            # - IF NOT in resources.csv -> Material Cost (Flat unit cost)
-            task_labor_burn_map = {}
-            task_material_flat_map = {}
-
-            if not df_tr.empty and res_id_db_map:
-                t_col = 'task_id' if 'task_id' in df_tr.columns else df_tr.columns[0]
-                r_col = 'resource_id' if 'resource_id' in df_tr.columns else ('resource_name' if 'resource_name' in df_tr.columns else df_tr.columns[1])
-                q_col = 'request_quantity' if 'request_quantity' in df_tr.columns else ('quantity' if 'quantity' in df_tr.columns else df_tr.columns[-1])
-                
-                for _, tr_row in df_tr.iterrows():
-                    orig_t = str(tr_row[t_col]).strip()
-                    orig_r = str(tr_row[r_col]).strip()
-                    qty = float(tr_row[q_col] or 1.0)
-                    
-                    db_r = res_id_db_map.get(orig_r) or res_name_db_map.get(orig_r.lower())
-                    
-                    if db_r and db_r in official_human_resources:
-                        # Resource is listed in resources.csv -> Human Labor Hourly Rate
-                        u_cost = res_cost_map.get(db_r, 40.0)
-                        task_labor_burn_map[orig_t] = task_labor_burn_map.get(orig_t, 0.0) + (qty * u_cost)
-                    else:
-                        # Resource is NOT in resources.csv -> Material Flat Cost
-                        u_cost = res_cost_map.get(db_r, 0.0) if db_r else float(tr_row.get('unit_cost', 0.0) or 0.0)
-                        task_material_flat_map[orig_t] = task_material_flat_map.get(orig_t, 0.0) + (qty * u_cost)
-
-            # Insert tasks & calculate exact costs
+            # Insert tasks & preserve accurate G1-G7 costs from tasks.csv
             task_id_db_map = {}
             calc_project_base = 0.0
             calc_project_total = 0.0
@@ -238,22 +217,12 @@ async def reload_docker_database_rigorous():
 
                 r_factor = 1.0 + g5_comp + g5_weat + g5_cont + g5_rewo
 
-                # Calculate total task working hours using project Agenda
-                task_work_hours = (dur_m * 4.0 * d_per_week * h_per_day) + \
-                                  (dur_w * d_per_week * h_per_day) + \
-                                  (dur_d * h_per_day) + \
-                                  dur_h
-                                  
-                if task_work_hours <= 1e-6:
-                    task_work_hours = h_per_day
-                    dur_d = 1.0
-
-                # Extract Costs (G1, G2, G4, G6)
+                # Extract Costs directly from G1, G2, G4, G6 columns in tasks.csv
                 labor_c = float(row.get('g1_labor', row.get('internal_labor_cost', 0.0)) or 0.0)
-                ot_c = float(row.get('overtime_cost', 0.0) or 0.0)
-                equip_c = float(row.get('g1_fuel', row.get('equipment_fuel_cost', 0.0)) or 0.0)
-                qa_c = float(row.get('g1_qa_qc', row.get('qa_qc_cost', 0.0)) or 0.0)
                 mat_c = float(row.get('g1_material', row.get('material_cost', 0.0)) or 0.0)
+                equip_c = float(row.get('g1_fuel', row.get('equipment_fuel_cost', 0.0)) or 0.0)
+                ot_c = float(row.get('overtime_cost', 0.0) or 0.0)
+                qa_c = float(row.get('g1_qa_qc', row.get('qa_qc_cost', 0.0)) or 0.0)
                 out_c = float(row.get('g1_subcontract', row.get('outsourcing_cost', 0.0)) or 0.0)
 
                 train_c = float(row.get('g2_training', row.get('training_cost', 0.0)) or 0.0)
@@ -272,22 +241,10 @@ async def reload_docker_database_rigorous():
 
                 b_start = schedule_map.get(raw_id) or schedule_map.get(db_t_id)
 
-                # Set Material cost if item was not in resources.csv
-                if raw_id in task_material_flat_map:
-                    mat_c += task_material_flat_map[raw_id]
-
-                # Set Labor cost from official resources.csv * task_work_hours
-                if raw_id in task_labor_burn_map:
-                    labor_c = task_labor_burn_map[raw_id] * task_work_hours
-
-                # Calculate overtime cost with 1.4x multiplier
-                if ot_h > 0 and ot_c <= 1e-6:
-                    hourly_rate = (labor_c / task_work_hours) if task_work_hours > 0 else 50.0
-                    ot_c = ot_h * hourly_rate * 1.4
-
+                # Base cost is sum of G1 + G2 + G4 + G6
                 task_base = float(row.get('base_cost', 0.0) or 0.0)
                 if task_base <= 1e-6:
-                    task_base = labor_c + equip_c + mat_c + out_c + train_c + space_c + comm_c + util_c + insur_c + lic_c + warr_c + hold_c + freight_c + handl_c + recov_c
+                    task_base = labor_c + mat_c + equip_c + out_c + train_c + space_c + comm_c + util_c + insur_c + lic_c + warr_c + hold_c + freight_c + handl_c + recov_c
 
                 task_total = float(row.get('total_cost', 0.0) or 0.0)
                 if task_total <= 1e-6:
@@ -328,12 +285,12 @@ async def reload_docker_database_rigorous():
 
             print(f"     [OK] Chen {len(df_tasks)} tasks thanh cong (Project Base Cost: ${final_p_base:,.2f}, Total Cost: ${final_p_total:,.2f})!")
 
-            # Insert task_resources ONLY for official human resources listed in resources.csv
+            # Insert task_resources
             if not df_tr.empty:
                 tr_inserted = 0
                 t_col = 'task_id' if 'task_id' in df_tr.columns else df_tr.columns[0]
-                r_col = 'resource_id' if 'resource_id' in df_tr.columns else ('resource_name' if 'resource_name' in df_tr.columns else df_tr.columns[1])
-                q_col = 'request_quantity' if 'request_quantity' in df_tr.columns else ('quantity' if 'quantity' in df_tr.columns else df_tr.columns[-1])
+                r_col = 'role' if 'role' in df_tr.columns else ('resource_id' if 'resource_id' in df_tr.columns else df_tr.columns[1])
+                q_col = 'quantity' if 'quantity' in df_tr.columns else df_tr.columns[-1]
                 
                 for _, tr_row in df_tr.iterrows():
                     orig_t = str(tr_row[t_col]).strip()
@@ -343,13 +300,13 @@ async def reload_docker_database_rigorous():
                     db_t = task_id_db_map.get(orig_t) or task_id_db_map.get(f"{proj_folder}_{orig_t}")
                     db_r = res_id_db_map.get(orig_r) or res_name_db_map.get(orig_r.lower())
                     
-                    if db_t and db_r and db_r in official_human_resources:
+                    if db_t and db_r:
                         await conn.execute(
                             text("INSERT INTO task_resources (task_id, resource_id, request_quantity) VALUES (:task_id, :resource_id, :request_quantity)"),
                             {"task_id": db_t, "resource_id": db_r, "request_quantity": qty}
                         )
                         tr_inserted += 1
-                print(f"     [OK] Chen {tr_inserted} phan bo task_resources (official human resources) thanh cong!")
+                print(f"     [OK] Chen {tr_inserted} phan bo task_resources thanh cong!")
 
             # Insert logic edges
             if not df_edges.empty:
@@ -380,7 +337,7 @@ async def reload_docker_database_rigorous():
     
     await engine.dispose()
     print("\n========================================================================")
-    print("[SUCCESS] RE-INITIALIZED ALL TABLES IN DOCKER POSTGRESQL ACCORDING TO OFFICIAL RESOURCES.CSV POOL!")
+    print("[SUCCESS] RE-INITIALIZED ALL TABLES IN DOCKER POSTGRESQL WITH EXACT G1-G7 COSTS FROM DATASET!")
     print("========================================================================")
 
 if __name__ == "__main__":
