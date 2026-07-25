@@ -1,0 +1,138 @@
+"""
+Monte Carlo CPM Simulation Engine
+=================================
+Thư mục: ai_pipeline/models/moi/monte_carlo_cpm.py
+
+Chức năng:
+    Mô phỏng xác suất tiến độ Beta-PERT kết hợp đường găng CPM.
+    Hỗ trợ:
+        - Tùy chỉnh linh hoạt số vòng mô phỏng (1,000 / 5,000 / 10,000 runs).
+        - Đóng góp từ trọng số dự báo của AI (Duration Factor & Expected Delay & Sigma).
+        - Tính toán chỉ số găng Criticality Index (CI%) cho từng task.
+        - Phân tích rủi ro thời gian P50, P80, P95.
+"""
+
+import numpy as np
+import networkx as nx
+from typing import Dict, List, Tuple, Any, Optional
+
+
+def sample_beta_pert(a: float, m: float, b: float) -> float:
+    """
+    Lấy mẫu giá trị từ phân phối Beta-PERT.
+    """
+    if a >= b:
+        return a
+    alpha = 1 + 4 * (m - a) / (b - a)
+    beta = 1 + 4 * (b - m) / (b - a)
+    sample = np.random.beta(alpha, beta)
+    return a + (b - a) * sample
+
+
+class MonteCarloCPMEngine:
+    """
+    Bộ mô phỏng Monte Carlo kết hợp CPM cho dự án.
+    """
+    def __init__(self, tasks: List[Dict[str, Any]], dependencies: List[Tuple[Any, Any, Dict[str, Any]]]):
+        self.tasks = tasks
+        self.dependencies = dependencies
+        
+        # Dựng đồ thị DAG
+        self.graph = nx.DiGraph()
+        for t in tasks:
+            self.graph.add_node(str(t['id']), **t)
+        for pred, succ, attr in dependencies:
+            if str(pred) in self.graph and str(succ) in self.graph:
+                self.graph.add_edge(str(pred), str(succ), **(attr or {}))
+
+    def run_simulation(
+        self,
+        num_iterations: int = 10000,
+        ai_preds: Optional[Dict[str, Dict[str, float]]] = None
+    ) -> Dict[str, Any]:
+        """
+        Chạy N vòng mô phỏng Monte Carlo.
+        """
+        num_iterations = max(100, int(num_iterations))
+        task_ids = list(self.graph.nodes())
+        
+        # Ma trận lưu kết quả mô phỏng
+        makespan_samples = np.zeros(num_iterations)
+        critical_counts = {t_id: 0 for t_id in task_ids}
+        
+        topo_order = list(nx.topological_sort(self.graph))
+        
+        for run in range(num_iterations):
+            # 1. Lấy mẫu thời lượng cho từng task
+            sampled_durations = {}
+            for t_id in task_ids:
+                node_data = self.graph.nodes[t_id]
+                base_dur = float(node_data.get('duration', 1.0))
+                
+                # Áp dụng dự báo AI nếu có
+                if ai_preds and t_id in ai_preds:
+                    pred = ai_preds[t_id]
+                    factor = pred.get('duration_factor', 1.0)
+                    delay = pred.get('expected_delay', 0.0)
+                    sigma = pred.get('uncertainty_sigma', 0.1)
+                else:
+                    factor, delay, sigma = 1.0, 0.0, 0.1
+                    
+                m = base_dur * factor + delay
+                a = max(0.5, m * (1.0 - 2.0 * sigma))
+                b = m * (1.0 + 3.0 * sigma)
+                
+                sampled_durations[t_id] = sample_beta_pert(a, m, b)
+                
+            # 2. Tính Forward Pass (Early Start/Finish)
+            es = {t_id: 0.0 for t_id in task_ids}
+            ef = {t_id: 0.0 for t_id in task_ids}
+            
+            for t_id in topo_order:
+                preds = list(self.graph.predecessors(t_id))
+                if not preds:
+                    es[t_id] = 0.0
+                else:
+                    max_pred = 0.0
+                    for p in preds:
+                        edge_data = self.graph.get_edge_data(p, t_id) or {}
+                        lag = float(edge_data.get('lag_hours', 0.0))
+                        max_pred = max(max_pred, ef[p] + lag)
+                    es[t_id] = max_pred
+                ef[t_id] = es[t_id] + sampled_durations[t_id]
+                
+            project_makespan = max(ef.values()) if ef else 0.0
+            makespan_samples[run] = project_makespan
+            
+            # 3. Tính Backward Pass tìm đường găng
+            ls = {t_id: project_makespan for t_id in task_ids}
+            lf = {t_id: project_makespan for t_id in task_ids}
+            
+            for t_id in reversed(topo_order):
+                succs = list(self.graph.successors(t_id))
+                if succs:
+                    min_succ = float('inf')
+                    for s in succs:
+                        edge_data = self.graph.get_edge_data(t_id, s) or {}
+                        lag = float(edge_data.get('lag_hours', 0.0))
+                        min_succ = min(min_succ, ls[s] - lag)
+                    lf[t_id] = min_succ
+                ls[t_id] = lf[t_id] - sampled_durations[t_id]
+                
+                # Slack = LS - ES
+                slack = ls[t_id] - es[t_id]
+                if abs(slack) < 1e-4:
+                    critical_counts[t_id] += 1
+                    
+        # 4. Tổng hợp chỉ số thống kê
+        criticality_index = {t_id: round(count / num_iterations * 100.0, 2) for t_id, count in critical_counts.items()}
+        
+        return {
+            'num_iterations': num_iterations,
+            'makespan_mean': float(np.mean(makespan_samples)),
+            'makespan_std': float(np.std(makespan_samples)),
+            'p50': float(np.percentile(makespan_samples, 50)),
+            'p80': float(np.percentile(makespan_samples, 80)),
+            'p95': float(np.percentile(makespan_samples, 95)),
+            'criticality_index': criticality_index
+        }

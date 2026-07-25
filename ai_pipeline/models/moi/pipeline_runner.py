@@ -1,0 +1,164 @@
+"""
+GLPO New Pipeline Runner (End-to-End Orchestrator)
+===================================================
+Thư mục: ai_pipeline/models/moi/pipeline_runner.py
+
+Chức năng:
+    Orchestrator nối toàn bộ 5 bước của kiến trúc mới:
+        Bước 1: Dựng đồ thị HeteroData 4 loại nút (Task, Resource, Time Agenda, Project)
+        Bước 2: Tải/Huấn luyện HGT Masked Autoencoder Pretrainer (Phase 0)
+        Bước 3: Suy luận HGT dự đoán Duration Factor, Expected Delay, Uncertainty Sigma
+        Bước 4: Chạy mô phỏng Monte Carlo CPM (Tùy chọn số vòng 1000/5000/10000)
+        Bước 5: Lập lịch tối ưu CP-SAT xuất tập phương án Pareto Frontier
+"""
+
+import os
+import sys
+import json
+import torch
+import argparse
+import pandas as pd
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
+# Path resolution
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from ai_pipeline.models.moi.hetero_graph_builder import HeteroGraphBuilder
+from ai_pipeline.models.moi.hgt_model import HGTTaskPredictor
+from ai_pipeline.models.moi.pretrainer import HGTPretrainer
+from ai_pipeline.models.moi.monte_carlo_cpm import MonteCarloCPMEngine
+from ai_pipeline.models.moi.cpsat_pareto_solver import CPSATParetoSolver
+
+
+def run_new_pipeline(
+    project_id: str = "C2011-07",
+    mc_iterations: int = 10000,
+    pareto_sort_by: str = "makespan_hours",
+    output_json: str = None
+) -> dict:
+    """
+    Chạy quy trình pipeline hoàn chỉnh từ đầu đến cuối.
+    """
+    print("================================================================================")
+    print(f"[START] KHOI DONG HE THONG PIPELINE MOI (AI + OR + MC-CPM) CHO DU AN: {project_id}")
+    print("================================================================================")
+    
+    project_dir = os.path.join(project_root, 'ai_pipeline', 'data', 'processed', project_id)
+    if not os.path.exists(project_dir):
+        raise FileNotFoundError(f"Thư mục dự án không tồn tại: {project_dir}")
+
+    # 1. Dựng Đồ thị HeteroData 4 loại nút
+    print("\n[BUOC 1] Dung Do thi HeteroData (4 Node Types)...")
+    builder = HeteroGraphBuilder(project_dir)
+    hetero_data = builder.build()
+    print(f"   * Da tao do thi nut task: {hetero_data['task'].x.size(0)} nut, "
+          f"tai nguyen: {hetero_data['resource'].x.size(0)} nut")
+
+    # 2. Khởi tạo mô hình HGT & Pretrainer (Phase 0)
+    print("\n[BUOC 2 & 3] Khoi chay HGT Pretrainer & Suy luan AI...")
+    in_dim_dict = {
+        'task': hetero_data['task'].x.size(1),
+        'resource': hetero_data['resource'].x.size(1),
+        'time_agenda': hetero_data['time_agenda'].x.size(1),
+        'project': hetero_data['project'].x.size(1)
+    }
+    model = HGTTaskPredictor(in_dim_dict, hidden_dim=64)
+    pretrainer = HGTPretrainer(model, checkpoint_dir=os.path.join(project_root, "checkpoints"))
+    pretrainer.train_or_load(hetero_data, epochs=20)
+
+    # 3. Suy luận dự báo AI
+    with torch.no_grad():
+        preds = model(hetero_data.x_dict, hetero_data.edge_index_dict)
+
+    decoded_preds = builder.normalizer.decode_predictions(preds)
+
+    ai_task_preds = {}
+    for t_id, idx in builder.task_id_map.items():
+        ai_task_preds[t_id] = {
+            'duration_factor': float(decoded_preds['duration_factor'][idx]),
+            'expected_delay': float(decoded_preds['expected_delay_hours'][idx]),
+            'uncertainty_sigma': float(decoded_preds['uncertainty_sigma'][idx])
+        }
+    print(f"   * AI suy luan & gia ma (Decoder) thanh cong du bao cho {len(ai_task_preds)} task.")
+
+
+    # 4. Mô phỏng Monte Carlo CPM
+    print(f"\n[BUOC 4] Mo phong Monte Carlo CPM voi {mc_iterations:,} vong chay...")
+    tasks_df = pd.read_csv(os.path.join(project_dir, 'tasks.csv'))
+    edges_df = pd.read_csv(os.path.join(project_dir, 'predecessors.csv'))
+    res_df = pd.read_csv(os.path.join(project_dir, 'resources.csv'))
+    task_res_df = pd.read_csv(os.path.join(project_dir, 'task_resources.csv'))
+
+    tasks = tasks_df.to_dict(orient='records')
+    for t in tasks:
+        t['id'] = str(t.get('id', t.get('task_id', '')))
+
+    dependencies = []
+    for _, row in edges_df.iterrows():
+        attr = {
+            'lag_hours': float(row.get('lag_hours', 0.0)) + float(row.get('lag_days', 0.0)) * 8.0
+        }
+        src = str(row.get('source_id', row.get('predecessor_task_id', '')))
+        tgt = str(row.get('target_id', row.get('successor_task_id', '')))
+        dependencies.append((src, tgt, attr))
+
+    mc_engine = MonteCarloCPMEngine(tasks, dependencies)
+    mc_results = mc_engine.run_simulation(num_iterations=mc_iterations, ai_preds=ai_task_preds)
+
+    print(f"   * Ky vong thoi gian du an (Mean Makespan): {mc_results['makespan_mean']:.2f} gio")
+    print(f"   * Moc rui ro P50: {mc_results['p50']:.2f}h | P80: {mc_results['p80']:.2f}h | P95: {mc_results['p95']:.2f}h")
+
+    # 5. Lập lịch tối ưu CP-SAT Pareto
+    print("\n[BUOC 5] Lap lich toi uu CP-SAT Pareto (5-Tier Constraints)...")
+    capacities = {}
+    for _, r in res_df.iterrows():
+        r_id = str(r.get('id', r.get('resource_id', '')))
+        capacities[r_id] = float(r.get('capacity', 1.0))
+
+    solver = CPSATParetoSolver(tasks, dependencies, resource_capacities=capacities, criticality_index=mc_results['criticality_index'])
+    pareto_options = solver.solve(time_limit_sec=15.0, pareto_count=5)
+
+    # Sắp xếp kết quả Pareto theo tiêu chí người dùng chọn
+    if pareto_sort_by in ['makespan_hours', 'total_cost', 'risk_score']:
+        pareto_options = sorted(pareto_options, key=lambda x: x.get(pareto_sort_by, 0))
+
+    print(f"   * Tim thay {len(pareto_options)} phuong an toi uu Pareto.")
+    for idx, opt in enumerate(pareto_options, 1):
+        print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Chi phi: {opt['total_cost']:,.0f}$ | Rui ro: {opt['risk_score']:.2f}")
+
+    final_output = {
+        'project_id': project_id,
+        'ai_predictions': ai_task_preds,
+        'monte_carlo_cpm': mc_results,
+        'pareto_options': pareto_options
+    }
+
+    if output_json:
+        os.makedirs(os.path.dirname(os.path.abspath(output_json)), exist_ok=True)
+        with open(output_json, 'w', encoding='utf-8') as f:
+            json.dump(final_output, f, indent=2, ensure_ascii=False)
+        print(f"\n[OUTPUT] Da luu ket qua dau ra JSON tai: {output_json}")
+
+    print("\n[DONE] PIPELINE MOI HOAN THANH XUAT SAC!")
+    return final_output
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="GLPO New Hybrid Pipeline Orchestrator")
+    parser.add_argument("--project_id", type=str, default="C2011-07", help="Mã dự án (ví dụ C2011-07)")
+    parser.add_argument("--mc_iterations", type=int, default=10000, help="Số vòng mô phỏng Monte Carlo (1000, 5000, 10000)")
+    parser.add_argument("--pareto_sort", type=str, default="makespan_hours", choices=["makespan_hours", "total_cost", "risk_score"], help="Tiêu chí sắp xếp tập Pareto")
+    parser.add_argument("--output_json", type=str, default=None, help="Đường dẫn lưu file JSON đầu ra")
+
+    args = parser.parse_args()
+    run_new_pipeline(
+        project_id=args.project_id,
+        mc_iterations=args.mc_iterations,
+        pareto_sort_by=args.pareto_sort,
+        output_json=args.output_json
+    )

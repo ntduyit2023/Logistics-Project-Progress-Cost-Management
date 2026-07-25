@@ -14,7 +14,38 @@ from app.schemas.common import APIResponse
 backend_dir = FilePath(__file__).resolve().parent.parent.parent.parent
 sys.path.append(str(backend_dir.parent))
 from ai_pipeline.data import cost_model
+from ai_pipeline.models.moi.pipeline_runner import run_new_pipeline
+
 router = APIRouter()
+
+@router.post("/{project_id}/glpo-optimize", response_model=APIResponse[dict])
+async def run_glpo_optimization(
+    project_code: str = Path(..., alias="project_id", description="Mã dự án (ví dụ C2011-07)"),
+    mc_iterations: int = 1000,
+    db: AsyncSession = Depends(get_db)
+) -> APIResponse[dict]:
+    """
+    Chạy Toàn bộ GLPO New AI + OR + MC-CPM Pipeline cho dự án.
+    Bao gồm:
+      1. HeteroData Graph Construction (Task, Resource, Time Agenda, Project)
+      2. HGT Pretrained Model & AI Duration/Delay Inference
+      3. Monte Carlo CPM Risk Simulation
+      4. CP-SAT Pareto Scheduler (5-Tier Constraints)
+    """
+    try:
+        results = run_new_pipeline(
+            project_id=project_code,
+            mc_iterations=mc_iterations,
+            output_json=False
+        )
+        return APIResponse(
+            success=True,
+            message="GLPO AI + OR + MC-CPM Pipeline completed successfully",
+            data=results
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Pipeline execution error: {str(e)}")
+
 
 @router.post("/{project_id}/simulate", response_model=APIResponse[dict])
 async def run_ai_simulation(
