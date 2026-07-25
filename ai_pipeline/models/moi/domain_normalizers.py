@@ -24,6 +24,29 @@ import pandas as pd
 from typing import Dict, Any, Tuple, Optional
 
 
+def calculate_task_total_hours(
+    task_data: Dict[str, Any],
+    hours_per_day: float = 8.0,
+    days_per_week: float = 5.0
+) -> float:
+    """
+    Quy đổi tổng số giờ thực hiện công việc dựa trên các thuộc tính duration_months, duration_weeks,
+    duration_days, duration_hours và cấu hình ca làm việc của Agenda.
+    """
+    h_per_day = max(1.0, float(hours_per_day))
+    d_per_week = max(1.0, float(days_per_week))
+    h_per_week = d_per_week * h_per_day
+    h_per_month = 4.0 * h_per_week
+    
+    d_m = float(task_data.get('duration_months', 0.0) or 0.0)
+    d_w = float(task_data.get('duration_weeks', 0.0) or 0.0)
+    d_d = float(task_data.get('duration_days', 0.0) or 0.0)
+    d_h = float(task_data.get('duration_hours', task_data.get('duration', 0.0)) or 0.0)
+    
+    total_hours = d_m * h_per_month + d_w * h_per_week + d_d * h_per_day + d_h
+    return max(0.1, total_hours)
+
+
 class BaseProjectNormalizer:
     """
     Lớp chuẩn hóa & giải mã cơ sở cho từng loại hình dự án.
@@ -52,13 +75,12 @@ class BaseProjectNormalizer:
             feat = [0.0] * 72
             
             # --- Group 0: Time & Schedule (Indices 0 - 3) ---
-            d_m = float(row.get('duration_months', 0.0) or 0.0)
             d_w = float(row.get('duration_weeks', 0.0) or 0.0)
             d_d = float(row.get('duration_days', 0.0) or 0.0)
             d_h = float(row.get('duration_hours', 0.0) or 0.0)
             
             # Quy đổi tổng giờ dựa trên Agenda
-            total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.hours_per_day + d_h
+            total_hours = calculate_task_total_hours(row.to_dict(), self.hours_per_day, self.days_per_week)
             feat[0] = np.log1p(max(0.0, total_hours))
             feat[1] = np.log1p(max(0.0, d_w))
             feat[2] = np.log1p(max(0.0, d_d))

@@ -192,7 +192,7 @@ class HGTPretrainer:
         if os.path.exists(self.checkpoint_path) and not force_retrain:
             print(f"[Pretrainer] Tai trong so Pretrained tu: {self.checkpoint_path}")
             try:
-                self.model.load_state_dict(torch.load(self.checkpoint_path, map_location='cpu'))
+                self.model.load_state_dict(torch.load(self.checkpoint_path, map_location='cpu', weights_only=True))
                 self.model.eval()
                 return True
             except Exception as e:

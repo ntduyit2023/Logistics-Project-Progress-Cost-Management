@@ -29,13 +29,24 @@ def sample_beta_pert(a: float, m: float, b: float) -> float:
     return a + (b - a) * sample
 
 
+from ai_pipeline.models.moi.domain_normalizers import calculate_task_total_hours
+
+
 class MonteCarloCPMEngine:
     """
     Bộ mô phỏng Monte Carlo kết hợp CPM cho dự án.
     """
-    def __init__(self, tasks: List[Dict[str, Any]], dependencies: List[Tuple[Any, Any, Dict[str, Any]]]):
+    def __init__(
+        self,
+        tasks: List[Dict[str, Any]],
+        dependencies: List[Tuple[Any, Any, Dict[str, Any]]],
+        hours_per_day: float = 8.0,
+        days_per_week: float = 5.0
+    ):
         self.tasks = tasks
         self.dependencies = dependencies
+        self.hours_per_day = hours_per_day
+        self.days_per_week = days_per_week
         
         # Dựng đồ thị DAG
         self.graph = nx.DiGraph()
@@ -67,7 +78,7 @@ class MonteCarloCPMEngine:
             sampled_durations = {}
             for t_id in task_ids:
                 node_data = self.graph.nodes[t_id]
-                base_dur = float(node_data.get('duration', 1.0))
+                base_dur = calculate_task_total_hours(node_data, self.hours_per_day, self.days_per_week)
                 
                 # Áp dụng dự báo AI nếu có
                 if ai_preds and t_id in ai_preds:

@@ -18,6 +18,7 @@ import json
 import torch
 import argparse
 import pandas as pd
+from typing import Dict, List, Tuple, Any, Optional
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -39,8 +40,12 @@ def run_new_pipeline(
     project_id: str = "C2011-07",
     mc_iterations: int = 10000,
     pareto_sort_by: str = "makespan_hours",
-    output_json: str = None
-) -> dict:
+    pareto_count: int = 5,
+    overtime_multiplier: float = 1.5,
+    output_json: Optional[str] = None
+) -> Dict[str, Any]:
+    # ...
+    # [Rest of function]
     """
     Chạy quy trình pipeline hoàn chỉnh từ đầu đến cuối.
     """
@@ -81,11 +86,10 @@ def run_new_pipeline(
     for t_id, idx in builder.task_id_map.items():
         ai_task_preds[t_id] = {
             'duration_factor': float(decoded_preds['duration_factor'][idx]),
-            'expected_delay': float(decoded_preds['expected_delay_hours'][idx]),
+            'expected_delay': min(24.0, float(decoded_preds['expected_delay_hours'][idx])),
             'uncertainty_sigma': float(decoded_preds['uncertainty_sigma'][idx])
         }
     print(f"   * AI suy luan & gia ma (Decoder) thanh cong du bao cho {len(ai_task_preds)} task.")
-
 
     # 4. Mô phỏng Monte Carlo CPM
     print(f"\n[BUOC 4] Mo phong Monte Carlo CPM voi {mc_iterations:,} vong chay...")
@@ -94,20 +98,37 @@ def run_new_pipeline(
     res_df = pd.read_csv(os.path.join(project_dir, 'resources.csv'))
     task_res_df = pd.read_csv(os.path.join(project_dir, 'task_resources.csv'))
 
+    hours_per_day = builder.normalizer.hours_per_day
+    days_per_week = builder.normalizer.days_per_week
+    hours_per_week = hours_per_day * days_per_week
+    hours_per_month = hours_per_week * 4.0
+
     tasks = tasks_df.to_dict(orient='records')
     for t in tasks:
         t['id'] = str(t.get('id', t.get('task_id', '')))
 
     dependencies = []
     for _, row in edges_df.iterrows():
-        attr = {
-            'lag_hours': float(row.get('lag_hours', 0.0)) + float(row.get('lag_days', 0.0)) * 8.0
-        }
+        l_m = float(row.get('lag_months', 0.0) or 0.0)
+        l_w = float(row.get('lag_weeks', 0.0) or 0.0)
+        l_d = float(row.get('lag_days', 0.0) or 0.0)
+        l_h = float(row.get('lag_hours', 0.0) or 0.0)
+        
+        tot_lag = l_m * hours_per_month + l_w * hours_per_week + l_d * hours_per_day + l_h
+        attr = {'lag_hours': tot_lag}
         src = str(row.get('source_id', row.get('predecessor_task_id', '')))
         tgt = str(row.get('target_id', row.get('successor_task_id', '')))
         dependencies.append((src, tgt, attr))
 
-    mc_engine = MonteCarloCPMEngine(tasks, dependencies)
+    hours_per_day = builder.normalizer.hours_per_day
+    days_per_week = builder.normalizer.days_per_week
+
+    mc_engine = MonteCarloCPMEngine(
+        tasks,
+        dependencies,
+        hours_per_day=hours_per_day,
+        days_per_week=days_per_week
+    )
     mc_results = mc_engine.run_simulation(num_iterations=mc_iterations, ai_preds=ai_task_preds)
 
     print(f"   * Ky vong thoi gian du an (Mean Makespan): {mc_results['makespan_mean']:.2f} gio")
@@ -118,10 +139,35 @@ def run_new_pipeline(
     capacities = {}
     for _, r in res_df.iterrows():
         r_id = str(r.get('id', r.get('resource_id', '')))
-        capacities[r_id] = float(r.get('capacity', 1.0))
+        r_name = str(r.get('Name', r.get('name', r_id)))
+        cap = float(r.get('Availability', r.get('capacity', 1.0)))
+        capacities[r_id] = cap
+        capacities[r_name] = cap
 
-    solver = CPSATParetoSolver(tasks, dependencies, resource_capacities=capacities, criticality_index=mc_results['criticality_index'])
-    pareto_options = solver.solve(time_limit_sec=15.0, pareto_count=5)
+    task_resource_reqs = {}
+    task_labor_rates = {}
+    for _, tr in task_res_df.iterrows():
+        t_id = str(tr.get('task_id', ''))
+        r_key = str(tr.get('role', tr.get('resource_id', '')))
+        qty = float(tr.get('quantity', tr.get('request_quantity', 1.0)))
+        rate = float(tr.get('hourly_rate', 0.0))
+        task_resource_reqs[(t_id, r_key)] = qty
+        task_labor_rates[t_id] = task_labor_rates.get(t_id, 0.0) + (qty * rate)
+
+    solver = CPSATParetoSolver(
+        tasks,
+        dependencies,
+        resource_capacities=capacities,
+        task_resource_requirements=task_resource_reqs,
+        criticality_index=mc_results['criticality_index'],
+        ai_task_preds=ai_task_preds,
+        task_labor_rates=task_labor_rates,
+        overtime_multiplier=overtime_multiplier,
+        mc_samples=mc_results.get('makespan_samples'),
+        hours_per_day=hours_per_day,
+        days_per_week=days_per_week
+    )
+    pareto_options = solver.solve(time_limit_sec=15.0, pareto_count=pareto_count)
 
     # Sắp xếp kết quả Pareto theo tiêu chí người dùng chọn
     if pareto_sort_by in ['makespan_hours', 'total_cost', 'risk_score']:
@@ -130,7 +176,8 @@ def run_new_pipeline(
     print(f"   * Tim thay {len(pareto_options)} phuong an toi uu Pareto.")
     for idx, opt in enumerate(pareto_options, 1):
         tot_c = opt.get('total_cost', 0.0)
-        print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Tong Chi Phi Thuc Te: ${tot_c:,.2f} | Chi so Rui ro: {opt['risk_score']:.2f}")
+        r_pct = opt.get('risk_pct', 100.0)
+        print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Chi Phi: ${tot_c:,.2f} | Rui ro Tre: {r_pct}%")
 
 
 
@@ -155,6 +202,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="GLPO New Hybrid Pipeline Orchestrator")
     parser.add_argument("--project_id", type=str, default="C2011-07", help="Mã dự án (ví dụ C2011-07)")
     parser.add_argument("--mc_iterations", type=int, default=10000, help="Số vòng mô phỏng Monte Carlo (1000, 5000, 10000)")
+    parser.add_argument("--pareto_count", type=int, default=5, help="Số lượng phương án Pareto xuất ra (ví dụ 3, 5, 10)")
+    parser.add_argument("--overtime_multiplier", type=float, default=1.5, help="Hệ số lương nhân công tăng ca (ví dụ 1.5, 2.0, 1.25)")
     parser.add_argument("--pareto_sort", type=str, default="makespan_hours", choices=["makespan_hours", "total_cost", "risk_score"], help="Tiêu chí sắp xếp tập Pareto")
     parser.add_argument("--output_json", type=str, default=None, help="Đường dẫn lưu file JSON đầu ra")
 
@@ -163,5 +212,7 @@ if __name__ == "__main__":
         project_id=args.project_id,
         mc_iterations=args.mc_iterations,
         pareto_sort_by=args.pareto_sort,
+        pareto_count=args.pareto_count,
+        overtime_multiplier=args.overtime_multiplier,
         output_json=args.output_json
     )
