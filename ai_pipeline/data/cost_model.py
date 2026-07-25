@@ -20,8 +20,8 @@ def calculate_task_base_cost(row, project_type, df_resources):
             ot_rate = res.get('ot_rate', h_rate * 1.5) # Default OT rate
             
             # Add to labor and OT
-            g1_labor += qty * row.get('g7_dur_hours', 0.0) * h_rate
-            g1_ot += qty * row.get('g7_ot_hours', 0.0) * ot_rate
+            g1_labor += qty * row.get('duration_hours', 0.0) * h_rate
+            g1_ot += qty * row.get('overtime_hours', 0.0) * ot_rate
             
     # Common Groups mapping
     g1_fuel = row.get("g1_fuel", 0.0)

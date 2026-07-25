@@ -26,8 +26,8 @@ def extract_project_info(excel_path, processed_dir, project_id, project_name, pr
     else:
         df_resources = pd.DataFrame()
     
-    # Calculate Total Effort Hours (Sum of g7_dur_hours)
-    total_effort_hours = df_tasks['g7_dur_hours'].sum()
+    # Calculate Total Effort Hours (Sum of duration_hours)
+    total_effort_hours = df_tasks['duration_hours'].sum()
     
     # 3. Extract Schedule data for Calendar Hours
     schedules_csv_path = os.path.join(processed_dir, 'task_schedules.csv')
