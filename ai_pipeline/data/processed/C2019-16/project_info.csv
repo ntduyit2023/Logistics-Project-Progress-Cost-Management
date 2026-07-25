@@ -1,2 +1,2 @@
 project_id,project_name,project_type,working_hours_per_day,working_days_per_week,project_start,total_effort_hours,project_calendar_days,project_working_hours,total_baseline_cost,total_final_cost
-C2019-16,Lock Ganzepoot Ypres,CON,8,5,2019-05-20 08:00:00,296.0,30.375,176.0,170000.0,238000.0
+C2019-16,Lock Ganzepoot Ypres,CON,8,5,,0,0.0,0.0,266117.019,266117.019

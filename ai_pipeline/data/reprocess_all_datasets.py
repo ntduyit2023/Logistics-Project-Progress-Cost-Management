@@ -1,7 +1,10 @@
-import pandas as pd
-import json
-import re
 import os
+import glob
+import re
+import json
+import pandas as pd
+
+# Master reprocessing script for all 5 datasets following Master Architecture
 
 def parse_duration(dur_str):
     if not isinstance(dur_str, str):
@@ -71,7 +74,7 @@ def compute_total_hours(dur_obj, hours_per_day, days_per_week):
     hours_per_month = hours_per_week * 4
     return (dur_obj['months'] * hours_per_month) + (dur_obj['weeks'] * hours_per_week) + (dur_obj['days'] * hours_per_day) + dur_obj['hours']
 
-def calculate_38_costs(labor_cost, equipment_cost, material_cost, overtime_cost, fixed_cost):
+def calculate_38_costs(project_type, labor_cost, equipment_cost, material_cost, overtime_cost, fixed_cost):
     costs = {k: 0.0 for k in [
         'labor', 'material', 'equipment', 'energy', 'testing_inspection',
         'project_management', 'facility', 'utilities', 'communication', 'training', 'quality_management',
@@ -81,42 +84,66 @@ def calculate_38_costs(labor_cost, equipment_cost, material_cost, overtime_cost,
         'opportunity_cost', 'capital_cost', 'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
     ]}
     
-    costs['labor'] = round(labor_cost, 3)
-    costs['equipment'] = round(equipment_cost, 3)
-    costs['material'] = round(material_cost + fixed_cost, 3)
-    costs['overtime'] = round(overtime_cost, 3)
+    costs['labor'] = labor_cost
+    costs['equipment'] = equipment_cost
+    costs['material'] = material_cost + fixed_cost
+    costs['overtime'] = overtime_cost
     
-    # CON Profile
-    energy_pct = 0.30 if equipment_cost > 0 else 0.02
-    testing_pct = 0.03
+    if project_type == 'CON':
+        energy_pct = 0.30 if equipment_cost > 0 else 0.02
+        testing_pct = 0.03
+    elif project_type == 'ITLG':
+        energy_pct = 0.20 if equipment_cost > 0 else 0.015
+        testing_pct = 0.05
+    else: # PRO
+        energy_pct = 0.05 if equipment_cost > 0 else 0.005
+        testing_pct = 0.02
         
-    costs['energy'] = round(equipment_cost * energy_pct if equipment_cost > 0 else (labor_cost + costs['material']) * energy_pct, 3)
-    costs['testing_inspection'] = round((costs['labor'] + costs['material'] + costs['equipment'] + costs['energy']) * testing_pct, 3)
+    costs['energy'] = equipment_cost * energy_pct if equipment_cost > 0 else (labor_cost + costs['material']) * energy_pct
+    costs['testing_inspection'] = (costs['labor'] + costs['material'] + costs['equipment'] + costs['energy']) * testing_pct
     
     direct_cost = costs['labor'] + costs['material'] + costs['equipment'] + costs['energy'] + costs['testing_inspection']
     
-    profile = {
-        'project_management': 0.03, 'facility': 0.02, 'utilities': 0.01, 'communication': 0.01, 'training': 0.005, 'quality_management': 0.015,
-        'delay_penalty': 0.02, 'inventory_holding': 0.02, 'waiting_cost': 0.01, 'idle_resource': 0.01, 'revenue_delay': 0.015, 'expediting': 0.01,
-        'insurance': 0.025, 'rework': 0.02, 'warranty': 0.015, 'litigation': 0.01, 'regulatory_compliance': 0.015, 'contingency_reserve': 0.025, 'management_reserve': 0.02,
-        'transportation': 0.025, 'ordering': 0.01, 'packaging': 0.005, 'reverse_logistics': 0.015, 'customs': 0.01, 'supplier_coordination': 0.02,
-        'capital_cost': 0.02, 'financing_cost': 0.02, 'opportunity_cost': 0.01, 'npv_loss': 0.015, 'esg_cost': 0.015, 'carbon_tax': 0.01, 'reputation_cost': 0.01
-    }
+    if project_type == 'CON':
+        profile = {
+            'project_management': 0.03, 'facility': 0.02, 'utilities': 0.01, 'communication': 0.01, 'training': 0.005, 'quality_management': 0.015,
+            'delay_penalty': 0.02, 'inventory_holding': 0.02, 'waiting_cost': 0.01, 'idle_resource': 0.01, 'revenue_delay': 0.015, 'expediting': 0.01,
+            'insurance': 0.025, 'rework': 0.02, 'warranty': 0.015, 'litigation': 0.01, 'regulatory_compliance': 0.015, 'contingency_reserve': 0.025, 'management_reserve': 0.02,
+            'transportation': 0.025, 'ordering': 0.01, 'packaging': 0.005, 'reverse_logistics': 0.015, 'customs': 0.01, 'supplier_coordination': 0.02,
+            'capital_cost': 0.02, 'financing_cost': 0.02, 'opportunity_cost': 0.01, 'npv_loss': 0.015, 'esg_cost': 0.015, 'carbon_tax': 0.01, 'reputation_cost': 0.01
+        }
+    elif project_type == 'ITLG':
+        profile = {
+            'project_management': 0.04, 'facility': 0.025, 'utilities': 0.015, 'communication': 0.04, 'training': 0.02, 'quality_management': 0.03,
+            'delay_penalty': 0.025, 'inventory_holding': 0.01, 'waiting_cost': 0.01, 'idle_resource': 0.015, 'revenue_delay': 0.03, 'expediting': 0.015,
+            'insurance': 0.02, 'rework': 0.03, 'warranty': 0.02, 'litigation': 0.015, 'regulatory_compliance': 0.02, 'contingency_reserve': 0.03, 'management_reserve': 0.025,
+            'transportation': 0.015, 'ordering': 0.01, 'packaging': 0.005, 'reverse_logistics': 0.01, 'customs': 0.01, 'supplier_coordination': 0.025,
+            'capital_cost': 0.02, 'financing_cost': 0.015, 'opportunity_cost': 0.025, 'npv_loss': 0.02, 'esg_cost': 0.015, 'carbon_tax': 0.01, 'reputation_cost': 0.03
+        }
+    else: # PRO
+        profile = {
+            'project_management': 0.04, 'facility': 0.015, 'utilities': 0.01, 'communication': 0.04, 'training': 0.03, 'quality_management': 0.025,
+            'delay_penalty': 0.015, 'inventory_holding': 0.005, 'waiting_cost': 0.01, 'idle_resource': 0.02, 'revenue_delay': 0.02, 'expediting': 0.025,
+            'insurance': 0.015, 'rework': 0.015, 'warranty': 0.015, 'litigation': 0.02, 'regulatory_compliance': 0.025, 'contingency_reserve': 0.025, 'management_reserve': 0.02,
+            'transportation': 0.01, 'ordering': 0.01, 'packaging': 0.005, 'reverse_logistics': 0.005, 'customs': 0.005, 'supplier_coordination': 0.02,
+            'capital_cost': 0.015, 'financing_cost': 0.015, 'opportunity_cost': 0.035, 'npv_loss': 0.02, 'esg_cost': 0.005, 'carbon_tax': 0.00, 'reputation_cost': 0.03
+        }
         
     for sub, pct in profile.items():
-        costs[sub] = round(direct_cost * pct, 3)
+        costs[sub] = direct_cost * pct
         
-    task_base = round(sum(costs.values()), 3)
-    task_total = task_base # Total Cost = Base Cost
+    task_base = sum(costs.values())
+    task_total = task_base # Total Cost = Base Cost!
     
     return costs, task_base, task_total
 
-def main():
-    proj_id = 'C2019-16'
+def process_single_dataset(proj_id, excel_filename, proj_type, weather_cont):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(script_dir, 'raw', 'DSLIB', 'Excel', 'C2019-16 Lock Ganzepoot Excel.xlsx')
+    file_path = os.path.join(script_dir, 'raw', 'DSLIB', 'Excel', excel_filename)
     out_dir = os.path.join(script_dir, 'processed', proj_id)
     os.makedirs(out_dir, exist_ok=True)
+    
+    print(f"--> Processing {proj_id} ({proj_type}) from {excel_filename}...")
     
     df_schedule = pd.read_excel(file_path, sheet_name='Baseline Schedule')
     df_resources = pd.read_excel(file_path, sheet_name='Resources')
@@ -128,6 +155,7 @@ def main():
     if hours_per_day == 0: hours_per_day = 8
     if days_per_week == 0: days_per_week = 5
     
+    # Process Resources Map
     res_map = {}
     for i in range(1, len(df_resources)):
         row = df_resources.iloc[i]
@@ -137,6 +165,7 @@ def main():
         if pd.isna(cost_unit): cost_unit = 0
         res_map[res_name] = {'cost': float(cost_unit), 'type': res_type}
         
+    # Process Risk Map
     risk_map = {}
     for i in range(1, len(df_risk)):
         row = df_risk.iloc[i]
@@ -212,8 +241,8 @@ def main():
                         resources_rows.append({
                             "task_id": f"{proj_id}_{task_id}",
                             "role": rname,
-                            "quantity": round(qty, 3),
-                            "hourly_rate": round(rate, 3),
+                            "quantity": qty,
+                            "hourly_rate": rate,
                             "type": r_info['type']
                         })
                         if cat == 'equipment':
@@ -224,7 +253,7 @@ def main():
         fixed_cost = float(row['Baseline Costs']) if not pd.isna(row['Baseline Costs']) else 0.0
         var_cost = float(row['Unnamed: 12']) if 'Unnamed: 12' in row and not pd.isna(row['Unnamed: 12']) else 0.0
         
-        costs, task_base, task_total = calculate_38_costs(labor_cost, equipment_cost, material_cost, 0.0, fixed_cost + var_cost)
+        costs, task_base, task_total = calculate_38_costs(proj_type, labor_cost, equipment_cost, material_cost, 0.0, fixed_cost + var_cost)
         
         task_risk = risk_map.get(task_id, {'optimistic': 100, 'most_probable': 100, 'pessimistic': 100})
         complexity = max(0, task_risk['pessimistic'] - 100) / 100.0
@@ -234,7 +263,7 @@ def main():
         rework = 0.15 if 'test' in task_name.lower() or 'inspect' in task_name.lower() else (0.10 if 'setup' in task_name.lower() or 'code' in task_name.lower() else 0.0)
         
         baseline_start = str(row['Baseline']) if 'Baseline' in row and pd.notna(row['Baseline']) else ""
-        r_factor = 1.0 + complexity + 0.20 + contingency + rework
+        r_factor = 1.0 + complexity + weather_cont + contingency + rework
         
         output_row = {
             "task_id": f"{proj_id}_{task_id}",
@@ -245,13 +274,13 @@ def main():
             "duration_days": duration_obj["days"],
             "duration_hours": duration_obj["hours"],
             "overtime_hours": 0.0,
-            "complexity": round(complexity, 3),
-            "weather_contingency": 0.20,
-            "general_contingency": round(contingency, 3),
-            "rework_risk": round(rework, 3),
-            "risk_factor": round(r_factor, 3),
-            "base_cost": round(task_base, 3),
-            "total_cost": round(task_total, 3)
+            "complexity": complexity,
+            "weather_contingency": weather_cont,
+            "general_contingency": contingency,
+            "rework_risk": rework,
+            "risk_factor": r_factor,
+            "base_cost": task_base,
+            "total_cost": task_total
         }
         output_row.update(costs)
         output_tasks.append(output_row)
@@ -280,7 +309,18 @@ def main():
     pd.DataFrame(resources_rows).to_csv(os.path.join(out_dir, 'task_resources.csv'), index=False, encoding='utf-8')
     pd.DataFrame(schedules).to_csv(os.path.join(out_dir, 'task_schedules.csv'), index=False, encoding='utf-8')
     
-    print(f"Successfully processed {len(output_tasks)} tasks for C2019-16.")
+    print(f"-> Finished {proj_id}: {len(output_tasks)} tasks processed.")
+
+def main():
+    datasets = [
+        ('C2011-07', 'C2011-07 Patient Transport System.xlsx', 'PRO', 0.0),
+        ('C2012-04', 'C2012-04 Asti-Cuneo Highway.xlsx', 'CON', 0.20),
+        ('C2012-08', 'C2012-08 Sea Electricity.xlsx', 'CON', 0.25),
+        ('C2018-09', 'C2018-09 CarSharing platform.xlsx', 'ITLG', 0.0),
+        ('C2019-16', 'C2019-16 Lock Ganzepoot Excel.xlsx', 'CON', 0.20)
+    ]
+    for proj_id, excel_file, ptype, w_cont in datasets:
+        process_single_dataset(proj_id, excel_file, ptype, w_cont)
 
 if __name__ == '__main__':
     main()

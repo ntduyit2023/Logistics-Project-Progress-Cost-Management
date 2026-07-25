@@ -19,7 +19,6 @@ C2012-04_7,Labourers,7.0,60.0,Renewable
 C2012-04_7,Truck IVECO Trakker,5.0,70.0,Renewable
 C2012-04_7,Wheel Loader,2.0,60.0,Renewable
 C2012-04_7,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_7,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_8,Labourers,4.0,60.0,Renewable
 C2012-04_8,Truck IVECO Trakker,2.0,70.0,Renewable
 C2012-04_8,Crawler Excavator,1.0,98.0,Renewable
@@ -33,13 +32,11 @@ C2012-04_14,Truck IVECO Trakker,1.0,70.0,Renewable
 C2012-04_14,Crane,1.0,105.0,Renewable
 C2012-04_11,Labourers,4.0,60.0,Renewable
 C2012-04_11,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_11,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_11,Crane,1.0,105.0,Renewable
 C2012-04_19,Labourers,10.0,60.0,Renewable
 C2012-04_19,Truck IVECO Trakker,6.0,70.0,Renewable
 C2012-04_19,Wheel Loader,2.0,60.0,Renewable
 C2012-04_19,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_19,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_20,Labourers,4.0,60.0,Renewable
 C2012-04_20,Truck IVECO Trakker,1.0,70.0,Renewable
 C2012-04_20,Crane,1.0,105.0,Renewable
@@ -59,25 +56,20 @@ C2012-04_25,Truck IVECO Trakker,1.0,70.0,Renewable
 C2012-04_25,Drilling Rid,1.0,75.0,Renewable
 C2012-04_25,Crane,1.0,105.0,Renewable
 C2012-04_25,Wheel Loader,1.0,60.0,Renewable
-C2012-04_25,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_27,Labourers,4.0,60.0,Renewable
 C2012-04_27,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_27,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_27,Crane,1.0,105.0,Renewable
 C2012-04_29,Labourers,4.0,60.0,Renewable
 C2012-04_29,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_29,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_29,Crane,1.0,105.0,Renewable
 C2012-04_31,Labourers,4.0,60.0,Renewable
 C2012-04_31,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_31,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_31,Crane,1.0,105.0,Renewable
 C2012-04_33,Labourers,4.0,60.0,Renewable
 C2012-04_33,Truck IVECO Trakker,1.0,70.0,Renewable
 C2012-04_33,Crane,1.0,105.0,Renewable
 C2012-04_34,Labourers,5.0,60.0,Renewable
 C2012-04_34,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_34,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_34,Crane,1.0,105.0,Renewable
 C2012-04_36,Labourers,5.0,60.0,Renewable
 C2012-04_36,Truck IVECO Trakker,3.0,70.0,Renewable
@@ -94,7 +86,6 @@ C2012-04_38,Labourers,10.0,60.0,Renewable
 C2012-04_38,Truck IVECO Trakker,6.0,70.0,Renewable
 C2012-04_38,Wheel Loader,2.0,60.0,Renewable
 C2012-04_38,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_38,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_39,Labourers,4.0,60.0,Renewable
 C2012-04_39,Truck IVECO Trakker,1.0,70.0,Renewable
 C2012-04_39,Crane,1.0,105.0,Renewable
@@ -108,7 +99,6 @@ C2012-04_62,Crane,1.0,105.0,Renewable
 C2012-04_66,Labourers,5.0,60.0,Renewable
 C2012-04_66,Crane,1.0,105.0,Renewable
 C2012-04_66,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_66,Concrete Mixer Truck,1.0,95.0,Renewable
 C2012-04_68,Labourers,4.0,60.0,Renewable
 C2012-04_68,Truck IVECO Trakker,1.0,70.0,Renewable
 C2012-04_68,Crane,1.0,105.0,Renewable

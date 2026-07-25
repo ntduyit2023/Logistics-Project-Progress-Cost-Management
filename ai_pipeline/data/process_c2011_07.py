@@ -2,7 +2,6 @@ import pandas as pd
 import json
 import re
 import os
-from datetime import datetime
 
 def parse_duration(dur_str):
     if not isinstance(dur_str, str):
@@ -51,80 +50,93 @@ def parse_edges(edge_str):
             })
     return edges
 
-def analyze_nlp_keywords(task_name):
-    name_lower = str(task_name).lower()
+def classify_resource(rname):
+    r_lower = str(rname).lower()
+    equipment_keywords = [
+        'truck', 'bulldozer', 'loader', 'roller', 'rolles', 'excavator', 'drilling',
+        'mixer', 'crane', 'paler', 'milling', 'pile', 'pruning', 'tank', 'striper',
+        'vessel', 'template', 'tugs', 'barges', 'machine', 'pulling', 'hardware', 'server', 'lift'
+    ]
+    material_keywords = ['materials', 'paving material', 'concrete', 'steel']
     
-    if any(k in name_lower for k in ['meeting', 'brainstorming', 'get-together', 'presentation', 'board']):
-        return 'communication'
-    elif any(k in name_lower for k in ['analyze', 'review', 'testing', 'inspect', 'survey']):
-        return 'testing_inspection'
-    elif any(k in name_lower for k in ['purchase', 'buy', 'supplier', 'hardware']):
+    if any(k in r_lower for k in material_keywords):
         return 'material'
-    elif any(k in name_lower for k in ['train', 'guide', 'instruction', 'coach']):
-        return 'training'
-    elif any(k in name_lower for k in ['license', 'contract', 'formal document']):
-        return 'regulatory_compliance'
+    elif any(k in r_lower for k in equipment_keywords):
+        return 'equipment'
     else:
-        return 'material'
+        return 'labor'
 
 def compute_total_hours(dur_obj, hours_per_day, days_per_week):
     hours_per_week = hours_per_day * days_per_week
     hours_per_month = hours_per_week * 4
     return (dur_obj['months'] * hours_per_month) + (dur_obj['weeks'] * hours_per_week) + (dur_obj['days'] * hours_per_day) + dur_obj['hours']
 
+def calculate_38_costs(labor_cost, equipment_cost, material_cost, overtime_cost, fixed_cost):
+    costs = {k: 0.0 for k in [
+        'labor', 'material', 'equipment', 'energy', 'testing_inspection',
+        'project_management', 'facility', 'utilities', 'communication', 'training', 'quality_management',
+        'overtime', 'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay', 'expediting',
+        'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance', 'contingency_reserve', 'management_reserve',
+        'transportation', 'ordering', 'packaging', 'reverse_logistics', 'customs', 'supplier_coordination',
+        'opportunity_cost', 'capital_cost', 'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
+    ]}
+    
+    costs['labor'] = round(labor_cost, 3)
+    costs['equipment'] = round(equipment_cost, 3)
+    costs['material'] = round(material_cost + fixed_cost, 3)
+    costs['overtime'] = round(overtime_cost, 3)
+    
+    # PRO Profile
+    energy_pct = 0.05 if equipment_cost > 0 else 0.005
+    testing_pct = 0.02
+        
+    costs['energy'] = round(equipment_cost * energy_pct if equipment_cost > 0 else (labor_cost + costs['material']) * energy_pct, 3)
+    costs['testing_inspection'] = round((costs['labor'] + costs['material'] + costs['equipment'] + costs['energy']) * testing_pct, 3)
+    
+    direct_cost = costs['labor'] + costs['material'] + costs['equipment'] + costs['energy'] + costs['testing_inspection']
+    
+    profile = {
+        'project_management': 0.04, 'facility': 0.015, 'utilities': 0.01, 'communication': 0.04, 'training': 0.03, 'quality_management': 0.025,
+        'delay_penalty': 0.015, 'inventory_holding': 0.005, 'waiting_cost': 0.01, 'idle_resource': 0.02, 'revenue_delay': 0.02, 'expediting': 0.025,
+        'insurance': 0.015, 'rework': 0.015, 'warranty': 0.015, 'litigation': 0.02, 'regulatory_compliance': 0.025, 'contingency_reserve': 0.025, 'management_reserve': 0.02,
+        'transportation': 0.01, 'ordering': 0.01, 'packaging': 0.005, 'reverse_logistics': 0.005, 'customs': 0.005, 'supplier_coordination': 0.02,
+        'capital_cost': 0.015, 'financing_cost': 0.015, 'opportunity_cost': 0.035, 'npv_loss': 0.02, 'esg_cost': 0.005, 'carbon_tax': 0.00, 'reputation_cost': 0.03
+    }
+        
+    for sub, pct in profile.items():
+        costs[sub] = round(direct_cost * pct, 3)
+        
+    task_base = round(sum(costs.values()), 3)
+    task_total = task_base # Total Cost = Base Cost
+    
+    return costs, task_base, task_total
+
 def main():
+    proj_id = 'C2011-07'
     script_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(script_dir, 'raw', 'DSLIB', 'Excel', 'C2011-07 Patient Transport System.xlsx')
-    out_dir = os.path.join(script_dir, 'processed', 'C2011-07')
+    out_dir = os.path.join(script_dir, 'processed', proj_id)
     os.makedirs(out_dir, exist_ok=True)
     
-    # Read Sheets
     df_schedule = pd.read_excel(file_path, sheet_name='Baseline Schedule')
     df_resources = pd.read_excel(file_path, sheet_name='Resources')
     df_risk = pd.read_excel(file_path, sheet_name='Risk Analysis')
     df_agenda = pd.read_excel(file_path, sheet_name='Agenda')
     
-    # 0. Process Agenda
     hours_per_day = len(df_agenda[df_agenda['Unnamed: 1'] == 'Yes'])
     days_per_week = len(df_agenda[df_agenda['Unnamed: 4'] == 'Yes'])
     if hours_per_day == 0: hours_per_day = 8
     if days_per_week == 0: days_per_week = 5
     
-    # Export Agenda CSVs
-    agenda_hours_rows = []
-    for i, row in df_agenda.iterrows():
-        tr = str(row.iloc[0]).strip()
-        is_w = str(row.iloc[1]).strip()
-        if tr and tr != 'nan' and 'PMConverter' not in tr:
-            agenda_hours_rows.append({"Time Range": tr, "Working": is_w})
-    pd.DataFrame(agenda_hours_rows).to_csv(os.path.join(out_dir, 'agenda_working_hours.csv'), index=False)
-    
-    agenda_days_rows = []
-    for i, row in df_agenda.iterrows():
-        day_name = str(row.iloc[3]).strip() if df_agenda.shape[1] > 3 else ""
-        is_w = str(row.iloc[4]).strip() if df_agenda.shape[1] > 4 else ""
-        if day_name and day_name != 'nan':
-            agenda_days_rows.append({"Day": day_name, "Working": is_w})
-    pd.DataFrame(agenda_days_rows).to_csv(os.path.join(out_dir, 'agenda_working_days.csv'), index=False)
-    
-    agenda_hol_rows = []
-    if df_agenda.shape[1] > 6:
-        for i, row in df_agenda.iterrows():
-            hol = row.iloc[6]
-            if not pd.isna(hol) and str(hol).strip() != 'nan':
-                agenda_hol_rows.append({"Holiday": str(hol).strip()})
-    pd.DataFrame(agenda_hol_rows).to_csv(os.path.join(out_dir, 'agenda_holidays.csv'), index=False)
-    
-    # 1. Process Resources Map
     res_map = {}
     for i in range(1, len(df_resources)):
         row = df_resources.iloc[i]
         res_name = str(row['Unnamed: 1']).strip()
         cost_unit = row['Unnamed: 5']
+        res_type = str(row.iloc[2]).strip() if df_resources.shape[1] > 2 and pd.notna(row.iloc[2]) else 'Renewable'
         if pd.isna(cost_unit): cost_unit = 0
-        res_map[res_name] = float(cost_unit)
+        res_map[res_name] = {'cost': float(cost_unit), 'type': res_type}
         
-    # 2. Process Risk Map
     risk_map = {}
     for i in range(1, len(df_risk)):
         row = df_risk.iloc[i]
@@ -136,8 +148,7 @@ def main():
             risk_map[tid] = {'optimistic': opt, 'most_probable': mp, 'pessimistic': pes}
         except:
             continue
-            
-    # 3. Process Baseline Schedule
+
     all_wbs = [str(x).strip()[:-2] if str(x).strip().endswith('.0') else str(x).strip() for x in df_schedule['Unnamed: 2'].dropna() if str(x).strip() != 'WBS']
     
     def is_summary_task(wbs_val):
@@ -158,29 +169,24 @@ def main():
     
     for i in range(1, len(df_schedule)):
         row = df_schedule.iloc[i]
-        
-        if pd.isna(row['General']):
-            continue
-            
-        try:
-            task_id = int(row['General'])
-        except:
-            continue
+        if pd.isna(row['General']): continue
+        try: task_id = int(row['General'])
+        except: continue
             
         task_name = str(row['Unnamed: 1']).strip()
         wbs = str(row['Unnamed: 2']).strip()
-        
-        if is_summary_task(wbs):
-            continue
+        if is_summary_task(wbs): continue
         
         dur_str = row['Unnamed: 7']
         duration_obj = parse_duration(dur_str)
         total_hours = compute_total_hours(duration_obj, hours_per_day, days_per_week)
-        
         preds = parse_edges(row['Relations'])
         
         res_demand_str = str(row['Resource Demand'])
-        internal_labor_cost = 0
+        labor_cost = 0.0
+        equipment_cost = 0.0
+        material_cost = 0.0
+        
         if res_demand_str and str(res_demand_str) != 'nan':
             res_parts = res_demand_str.split(';')
             for rp in res_parts:
@@ -193,67 +199,45 @@ def main():
                     qty = 1.0
                     if qty_str:
                         q_match = re.search(r'([\d\.]+)', qty_str)
-                        if q_match:
-                            qty = float(q_match.group(1))
+                        if q_match: qty = float(q_match.group(1))
                     
-                    rate = res_map.get(rname, 0.0)
-                    resources_rows.append({
-                        "task_id": f"C2011-07_{task_id}",
-                        "role": rname,
-                        "quantity": qty,
-                        "hourly_rate": rate
-                    })
-                    internal_labor_cost += (qty * total_hours * rate)
+                    r_info = res_map.get(rname, {'cost': 0.0, 'type': 'Renewable'})
+                    rate = r_info['cost']
+                    cat = classify_resource(rname)
                     
+                    if cat == 'material':
+                        material_cost += (qty * rate)
+                    else:
+                        cost = qty * total_hours * rate
+                        resources_rows.append({
+                            "task_id": f"{proj_id}_{task_id}",
+                            "role": rname,
+                            "quantity": round(qty, 3),
+                            "hourly_rate": round(rate, 3),
+                            "type": r_info['type']
+                        })
+                        if cat == 'equipment':
+                            equipment_cost += cost
+                        else:
+                            labor_cost += cost
+                            
         fixed_cost = float(row['Baseline Costs']) if not pd.isna(row['Baseline Costs']) else 0.0
-        var_cost = float(row['Unnamed: 12']) if not pd.isna(row['Unnamed: 12']) else 0.0
+        var_cost = float(row['Unnamed: 12']) if 'Unnamed: 12' in row and not pd.isna(row['Unnamed: 12']) else 0.0
         
-        classification = analyze_nlp_keywords(task_name)
+        costs, task_base, task_total = calculate_38_costs(labor_cost, equipment_cost, material_cost, 0.0, fixed_cost + var_cost)
         
-        # 38 cost sub-groups mapping
-        costs = {k: 0.0 for k in [
-            'labor', 'material', 'equipment', 'energy', 'testing_inspection',
-            'project_management', 'facility', 'utilities', 'communication', 'training', 'quality_management',
-            'overtime', 'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay', 'expediting',
-            'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance', 'contingency_reserve', 'management_reserve',
-            'transportation', 'ordering', 'packaging', 'reverse_logistics', 'customs', 'supplier_coordination',
-            'opportunity_cost', 'capital_cost', 'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
-        ]}
-        
-        costs['labor'] = internal_labor_cost
-        
-        if classification == 'communication':
-            costs['communication'] += var_cost
-        elif classification == 'testing_inspection':
-            costs['testing_inspection'] += fixed_cost
-        elif classification == 'material':
-            costs['material'] += fixed_cost
-        elif classification == 'training':
-            costs['training'] += fixed_cost
-        elif classification == 'regulatory_compliance':
-            costs['regulatory_compliance'] += fixed_cost
-        else:
-            costs['material'] += fixed_cost
-            costs['utilities'] += var_cost
-            
         task_risk = risk_map.get(task_id, {'optimistic': 100, 'most_probable': 100, 'pessimistic': 100})
         complexity = max(0, task_risk['pessimistic'] - 100) / 100.0
         complexity = min(0.5, complexity)
-        
         contingency = max(0, task_risk['most_probable'] - 100) / 100.0
         if contingency == 0: contingency = 0.05
-        
-        rework = 0.15 if classification == 'testing_inspection' else (0.10 if 'set-up' in task_name.lower() or 'code' in task_name.lower() else 0.0)
+        rework = 0.15 if 'test' in task_name.lower() or 'inspect' in task_name.lower() else (0.10 if 'setup' in task_name.lower() or 'code' in task_name.lower() else 0.0)
         
         baseline_start = str(row['Baseline']) if 'Baseline' in row and pd.notna(row['Baseline']) else ""
-        
-        # Base and Total costs
-        task_base = sum(costs.values())
-        r_factor = 1.0 + complexity + contingency + rework
-        task_total = task_base * r_factor
+        r_factor = 1.0 + complexity + 0.0 + contingency + rework
         
         output_row = {
-            "task_id": f"C2011-07_{task_id}",
+            "task_id": f"{proj_id}_{task_id}",
             "task_name": task_name,
             "baseline_start": baseline_start,
             "duration_months": duration_obj["months"],
@@ -261,21 +245,21 @@ def main():
             "duration_days": duration_obj["days"],
             "duration_hours": duration_obj["hours"],
             "overtime_hours": 0.0,
-            "complexity": complexity,
+            "complexity": round(complexity, 3),
             "weather_contingency": 0.0,
-            "general_contingency": contingency,
-            "rework_risk": rework,
-            "risk_factor": r_factor,
-            "base_cost": task_base,
-            "total_cost": task_total
+            "general_contingency": round(contingency, 3),
+            "rework_risk": round(rework, 3),
+            "risk_factor": round(r_factor, 3),
+            "base_cost": round(task_base, 3),
+            "total_cost": round(task_total, 3)
         }
         output_row.update(costs)
         output_tasks.append(output_row)
         
         for p in preds:
             edges_rows.append({
-                "source_id": f"C2011-07_{p['target_id']}",
-                "target_id": f"C2011-07_{task_id}",
+                "source_id": f"{proj_id}_{p['target_id']}",
+                "target_id": f"{proj_id}_{task_id}",
                 "dependency_type": p["dependency_type"],
                 "lag_months": p["lag"]["months"],
                 "lag_weeks": p["lag"]["weeks"],
@@ -284,10 +268,10 @@ def main():
             })
             
         schedules.append({
-            "task_id": f"C2011-07_{task_id}",
+            "task_id": f"{proj_id}_{task_id}",
             "baseline_start": baseline_start,
             "baseline_end": "",
-            "predecessors": [f"C2011-07_{p['target_id']}" for p in preds],
+            "predecessors": [f"{proj_id}_{p['target_id']}" for p in preds],
             "successors": []
         })
         
