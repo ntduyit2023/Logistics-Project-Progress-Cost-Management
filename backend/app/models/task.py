@@ -117,39 +117,63 @@ class Task(Base):
     duration_hours: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
     calendar_type: Mapped[Optional[str]] = mapped_column(String(50))
     
-    # G1: Direct Costs
-    internal_labor_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    overtime_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    equipment_fuel_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    qa_qc_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    material_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    outsourcing_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    # 1. Resource Cost
+    labor: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    material: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    equipment: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    energy: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    testing_inspection: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
     
-    # G2: Indirect Costs
-    training_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    facility_rent: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    communication_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    utilities_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    # 2. Overhead Cost
+    project_management: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    facility: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    utilities: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    communication: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    training: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    quality_management: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
     
-    # G4: Contractual
-    insurance_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    licensing_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    warranty_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
+    # 3. Time-dependent Cost
+    overtime: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    delay_penalty: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    inventory_holding: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    waiting_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    idle_resource: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    revenue_delay: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    expediting: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
     
-    # G5: Risk Coefficients
+    # 4. Risk & Compliance Cost
+    insurance: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    rework: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    warranty: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    litigation: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    regulatory_compliance: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    contingency_reserve: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    management_reserve: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    
+    # 5. Supply Chain & External Cost
+    transportation: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    ordering: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    packaging: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    reverse_logistics: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    customs: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    supplier_coordination: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    
+    # 6. Strategic & Financial Cost
+    opportunity_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    capital_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    financing_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    npv_loss: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    esg_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    carbon_tax: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    reputation_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+
+    # Risk Factors
     complexity: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
     weather_contingency: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
     general_contingency: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
     rework_risk: Mapped[Optional[float]] = mapped_column(Numeric(10, 4))
-    
-    # G6: Logistics
-    holding_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    international_freight: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    handling_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    reverse_logistics: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    defect_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
-    
-    # G7: Time Components
+
+    # Time Components
     overtime_hours: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
     lag_time: Mapped[Optional[float]] = mapped_column(Numeric(15, 2))
     

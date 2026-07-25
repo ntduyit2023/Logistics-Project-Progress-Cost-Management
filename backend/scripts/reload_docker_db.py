@@ -39,20 +39,15 @@ async def reload_docker_database_rigorous():
     print("1. DROP VAC TRUNCATE TOAN BO BANG TRONG DOCKER POSTGRESQL (CLEAN RESET)")
     print("========================================================================")
     
-    async with engine.connect() as conn:
-        res = await conn.execute(text("""
-            SELECT table_name 
-            FROM information_schema.tables 
-            WHERE table_schema = 'public' AND table_type = 'BASE TABLE';
-        """))
-        existing_tables = [row[0] for row in res.fetchall()]
-        print(f"Danh sach tat ca cac bang trong Docker DB ({len(existing_tables)} bang): {existing_tables}")
-        
-        if existing_tables:
-            tables_str = ", ".join(f'"{t}"' for t in existing_tables)
-            await conn.execute(text(f"TRUNCATE TABLE {tables_str} CASCADE;"))
-            await conn.commit()
-            print("[SUCCESS] Da truncate xoa sach toan bo du lieu trong tat ca cac bang Docker DB!")
+    from app.db.database import Base
+    import app.models
+
+    async with engine.begin() as conn:
+        await conn.execute(text("DROP SCHEMA public CASCADE;"))
+        await conn.execute(text("CREATE SCHEMA public;"))
+        await conn.execute(text("GRANT ALL ON SCHEMA public TO public;"))
+        await conn.run_sync(Base.metadata.create_all)
+        print("[SUCCESS] Da drop vac recreate toan bo public schema trong Docker DB theo schema SQLAlchemy model moi!")
 
     print("\n========================================================================")
     print("2. IMPORT CHUAN DATASET G1-G7: LABOR, MATERIAL, FUEL/EQUIPMENT & RISK FACTORS")
@@ -115,7 +110,7 @@ async def reload_docker_database_rigorous():
 
             # Insert project record
             res_proj = await conn.execute(
-                text("INSERT INTO projects (project_name, type, num_tasks, num_edges, base_cost, total_cost, status) VALUES (:p_name, :p_type, :n_tasks, :n_edges, :b_cost, :t_cost, 'Planning') RETURNING id"),
+                text("INSERT INTO projects (project_name, type, num_tasks, num_edges, network_density, base_cost, total_cost, status, created_at, updated_at) VALUES (:p_name, :p_type, :n_tasks, :n_edges, 0.0, :b_cost, :t_cost, 'Planning', NOW(), NOW()) RETURNING id"),
                 {"p_name": p_name, "p_type": p_type, "n_tasks": n_tasks, "n_edges": n_edges, "b_cost": base_cost_pinfo, "t_cost": total_cost_pinfo}
             )
             p_id = res_proj.fetchone()[0]
@@ -217,57 +212,98 @@ async def reload_docker_database_rigorous():
 
                 r_factor = 1.0 + g5_comp + g5_weat + g5_cont + g5_rewo
 
-                # Extract Costs directly from G1, G2, G4, G6 columns in tasks.csv
-                labor_c = float(row.get('g1_labor', row.get('internal_labor_cost', 0.0)) or 0.0)
-                mat_c = float(row.get('g1_material', row.get('material_cost', 0.0)) or 0.0)
-                equip_c = float(row.get('g1_fuel', row.get('equipment_fuel_cost', 0.0)) or 0.0)
-                ot_c = float(row.get('overtime_cost', 0.0) or 0.0)
-                qa_c = float(row.get('g1_qa_qc', row.get('qa_qc_cost', 0.0)) or 0.0)
-                out_c = float(row.get('g1_subcontract', row.get('outsourcing_cost', 0.0)) or 0.0)
+                # 38 cost sub-groups
+                labor = float(row.get('labor', row.get('g1_labor', row.get('internal_labor_cost', 0.0))) or 0.0)
+                material = float(row.get('material', row.get('g1_material', row.get('material_cost', 0.0))) or 0.0)
+                equipment = float(row.get('equipment', row.get('g1_fuel', row.get('equipment_fuel_cost', 0.0))) or 0.0)
+                energy = float(row.get('energy', 0.0) or 0.0)
+                testing_inspection = float(row.get('testing_inspection', row.get('g1_qa_qc', row.get('qa_qc_cost', 0.0))) or 0.0)
 
-                train_c = float(row.get('g2_training', row.get('training_cost', 0.0)) or 0.0)
-                space_c = float(row.get('g2_space', row.get('facility_rent', 0.0)) or 0.0)
-                comm_c = float(row.get('g2_communication', row.get('communication_cost', 0.0)) or 0.0)
-                util_c = float(row.get('g2_utility', row.get('utilities_cost', 0.0)) or 0.0)
+                project_management = float(row.get('project_management', 0.0) or 0.0)
+                facility = float(row.get('facility', row.get('g2_space', row.get('facility_rent', 0.0))) or 0.0)
+                utilities = float(row.get('utilities', row.get('g2_utility', row.get('utilities_cost', 0.0))) or 0.0)
+                communication = float(row.get('communication', row.get('g2_communication', row.get('communication_cost', 0.0))) or 0.0)
+                training = float(row.get('training', row.get('g2_training', row.get('training_cost', 0.0))) or 0.0)
+                quality_management = float(row.get('quality_management', 0.0) or 0.0)
 
-                insur_c = float(row.get('g4_insurance', row.get('insurance_cost', 0.0)) or 0.0)
-                lic_c = float(row.get('g4_license', row.get('licensing_cost', 0.0)) or 0.0)
-                warr_c = float(row.get('g4_warranty', row.get('warranty_cost', 0.0)) or 0.0)
+                overtime = float(row.get('overtime', row.get('overtime_cost', 0.0)) or 0.0)
+                delay_penalty = float(row.get('delay_penalty', 0.0) or 0.0)
+                inventory_holding = float(row.get('inventory_holding', row.get('g6_storage', row.get('holding_cost', 0.0))) or 0.0)
+                waiting_cost = float(row.get('waiting_cost', 0.0) or 0.0)
+                idle_resource = float(row.get('idle_resource', 0.0) or 0.0)
+                revenue_delay = float(row.get('revenue_delay', 0.0) or 0.0)
+                expediting = float(row.get('expediting', 0.0) or 0.0)
 
-                hold_c = float(row.get('g6_storage', row.get('holding_cost', 0.0)) or 0.0)
-                freight_c = float(row.get('g6_int_transport', row.get('international_freight', 0.0)) or 0.0)
-                handl_c = float(row.get('g6_handling', row.get('handling_cost', 0.0)) or 0.0)
-                recov_c = float(row.get('g6_recovery', row.get('reverse_logistics', 0.0)) or 0.0)
+                insurance = float(row.get('insurance', row.get('g4_insurance', row.get('insurance_cost', 0.0))) or 0.0)
+                rework = float(row.get('rework', row.get('g5_rework', row.get('rework_risk', 0.0))) or 0.0)
+                warranty = float(row.get('warranty', row.get('g4_warranty', row.get('warranty_cost', 0.0))) or 0.0)
+                litigation = float(row.get('litigation', 0.0) or 0.0)
+                regulatory_compliance = float(row.get('regulatory_compliance', row.get('g4_license', row.get('licensing_cost', 0.0))) or 0.0)
+                contingency_reserve = float(row.get('contingency_reserve', row.get('g5_contingency', row.get('general_contingency', 0.0))) or 0.0)
+                management_reserve = float(row.get('management_reserve', 0.0) or 0.0)
+
+                transportation = float(row.get('transportation', row.get('g6_int_transport', row.get('international_freight', 0.0))) or 0.0)
+                ordering = float(row.get('ordering', 0.0) or 0.0)
+                packaging = float(row.get('packaging', 0.0) or 0.0)
+                reverse_logistics = float(row.get('reverse_logistics', row.get('g6_recovery', row.get('reverse_logistics', 0.0))) or 0.0)
+                customs = float(row.get('customs', 0.0) or 0.0)
+                supplier_coordination = float(row.get('supplier_coordination', row.get('g1_subcontract', row.get('outsourcing_cost', 0.0))) or 0.0)
+
+                opportunity_cost = float(row.get('opportunity_cost', 0.0) or 0.0)
+                capital_cost = float(row.get('capital_cost', 0.0) or 0.0)
+                financing_cost = float(row.get('financing_cost', 0.0) or 0.0)
+                npv_loss = float(row.get('npv_loss', 0.0) or 0.0)
+                esg_cost = float(row.get('esg_cost', 0.0) or 0.0)
+                carbon_tax = float(row.get('carbon_tax', 0.0) or 0.0)
+                reputation_cost = float(row.get('reputation_cost', 0.0) or 0.0)
 
                 b_start = schedule_map.get(raw_id) or schedule_map.get(db_t_id)
 
-                # Base cost is sum of G1 + G2 + G4 + G6
+                # Base cost is sum of all 38 cost sub-groups
                 task_base = float(row.get('base_cost', 0.0) or 0.0)
                 if task_base <= 1e-6:
-                    task_base = labor_c + mat_c + equip_c + out_c + train_c + space_c + comm_c + util_c + insur_c + lic_c + warr_c + hold_c + freight_c + handl_c + recov_c
+                    task_base = (
+                        labor + material + equipment + energy + testing_inspection +
+                        project_management + facility + utilities + communication + training + quality_management +
+                        overtime + delay_penalty + inventory_holding + waiting_cost + idle_resource + revenue_delay + expediting +
+                        insurance + rework + warranty + litigation + regulatory_compliance + contingency_reserve + management_reserve +
+                        transportation + ordering + packaging + reverse_logistics + customs + supplier_coordination +
+                        opportunity_cost + capital_cost + financing_cost + npv_loss + esg_cost + carbon_tax + reputation_cost
+                    )
 
                 task_total = float(row.get('total_cost', 0.0) or 0.0)
                 if task_total <= 1e-6:
-                    task_total = task_base * r_factor + ot_c + qa_c
-                
+                    task_total = task_base * r_factor
+
                 calc_project_base += task_base
                 calc_project_total += task_total
 
                 await conn.execute(
                     text(
-                        "INSERT INTO tasks (id, project_id, task_name, duration_months, duration_weeks, duration_days, duration_hours, overtime_hours, baseline_start, internal_labor_cost, overtime_cost, equipment_fuel_cost, qa_qc_cost, material_cost, outsourcing_cost, training_cost, facility_rent, communication_cost, utilities_cost, insurance_cost, licensing_cost, warranty_cost, complexity, weather_contingency, general_contingency, rework_risk, holding_cost, international_freight, handling_cost, reverse_logistics, risk_factor, base_cost, total_cost, status) "
-                        "VALUES (:id, :project_id, :task_name, :duration_months, :duration_weeks, :duration_days, :duration_hours, :overtime_hours, :baseline_start, :internal_labor_cost, :overtime_cost, :equipment_fuel_cost, :qa_qc_cost, :material_cost, :outsourcing_cost, :training_cost, :facility_rent, :communication_cost, :utilities_cost, :insurance_cost, :licensing_cost, :warranty_cost, :complexity, :weather_contingency, :general_contingency, :rework_risk, :holding_cost, :international_freight, :handling_cost, :reverse_logistics, :risk_factor, :base_cost, :total_cost, :status)"
+                        "INSERT INTO tasks (id, project_id, task_name, duration_months, duration_weeks, duration_days, duration_hours, overtime_hours, baseline_start, "
+                        "labor, material, equipment, energy, testing_inspection, project_management, facility, utilities, communication, training, quality_management, "
+                        "overtime, delay_penalty, inventory_holding, waiting_cost, idle_resource, revenue_delay, expediting, insurance, rework, warranty, litigation, "
+                        "regulatory_compliance, contingency_reserve, management_reserve, transportation, ordering, packaging, reverse_logistics, customs, supplier_coordination, "
+                        "opportunity_cost, capital_cost, financing_cost, npv_loss, esg_cost, carbon_tax, reputation_cost, "
+                        "complexity, weather_contingency, general_contingency, rework_risk, risk_factor, base_cost, total_cost, status) "
+                        "VALUES (:id, :project_id, :task_name, :duration_months, :duration_weeks, :duration_days, :duration_hours, :overtime_hours, :baseline_start, "
+                        ":labor, :material, :equipment, :energy, :testing_inspection, :project_management, :facility, :utilities, :communication, :training, :quality_management, "
+                        ":overtime, :delay_penalty, :inventory_holding, :waiting_cost, :idle_resource, :revenue_delay, :expediting, :insurance, :rework, :warranty, :litigation, "
+                        ":regulatory_compliance, :contingency_reserve, :management_reserve, :transportation, :ordering, :packaging, :reverse_logistics, :customs, :supplier_coordination, "
+                        ":opportunity_cost, :capital_cost, :financing_cost, :npv_loss, :esg_cost, :carbon_tax, :reputation_cost, "
+                        ":complexity, :weather_contingency, :general_contingency, :rework_risk, :risk_factor, :base_cost, :total_cost, :status)"
                     ),
                     {
                         "id": db_t_id, "project_id": p_id, "task_name": t_name,
                         "duration_months": dur_m, "duration_weeks": dur_w, "duration_days": dur_d,
                         "duration_hours": dur_h, "overtime_hours": ot_h, "baseline_start": b_start,
-                        "internal_labor_cost": labor_c, "overtime_cost": ot_c, "equipment_fuel_cost": equip_c,
-                        "qa_qc_cost": qa_c, "material_cost": mat_c, "outsourcing_cost": out_c,
-                        "training_cost": train_c, "facility_rent": space_c, "communication_cost": comm_c, "utilities_cost": util_c,
-                        "insurance_cost": insur_c, "licensing_cost": lic_c, "warranty_cost": warr_c,
+                        "labor": labor, "material": material, "equipment": equipment, "energy": energy, "testing_inspection": testing_inspection,
+                        "project_management": project_management, "facility": facility, "utilities": utilities, "communication": communication, "training": training, "quality_management": quality_management,
+                        "overtime": overtime, "delay_penalty": delay_penalty, "inventory_holding": inventory_holding, "waiting_cost": waiting_cost, "idle_resource": idle_resource, "revenue_delay": revenue_delay, "expediting": expediting,
+                        "insurance": insurance, "rework": rework, "warranty": warranty, "litigation": litigation, "regulatory_compliance": regulatory_compliance, "contingency_reserve": contingency_reserve, "management_reserve": management_reserve,
+                        "transportation": transportation, "ordering": ordering, "packaging": packaging, "reverse_logistics": reverse_logistics, "customs": customs, "supplier_coordination": supplier_coordination,
+                        "opportunity_cost": opportunity_cost, "capital_cost": capital_cost, "financing_cost": financing_cost, "npv_loss": npv_loss, "esg_cost": esg_cost, "carbon_tax": carbon_tax, "reputation_cost": reputation_cost,
                         "complexity": g5_comp, "weather_contingency": g5_weat, "general_contingency": g5_cont, "rework_risk": g5_rewo,
-                        "holding_cost": hold_c, "international_freight": freight_c, "handling_cost": handl_c, "reverse_logistics": recov_c,
                         "risk_factor": r_factor, "base_cost": task_base, "total_cost": task_total, "status": "Pending"
                     }
                 )
@@ -311,24 +347,26 @@ async def reload_docker_database_rigorous():
             # Insert logic edges
             if not df_edges.empty:
                 edges_inserted = 0
-                p_col = 'predecessor_task_id' if 'predecessor_task_id' in df_edges.columns else ('predecessor_id' if 'predecessor_id' in df_edges.columns else df_edges.columns[0])
-                s_col = 'successor_task_id' if 'successor_task_id' in df_edges.columns else ('successor_id' if 'successor_id' in df_edges.columns else df_edges.columns[1])
+                p_col = 'source_id' if 'source_id' in df_edges.columns else ('predecessor_task_id' if 'predecessor_task_id' in df_edges.columns else ('predecessor_id' if 'predecessor_id' in df_edges.columns else df_edges.columns[0]))
+                s_col = 'target_id' if 'target_id' in df_edges.columns else ('successor_task_id' if 'successor_task_id' in df_edges.columns else ('successor_id' if 'successor_id' in df_edges.columns else df_edges.columns[1]))
                 dep_col = 'dependency_type' if 'dependency_type' in df_edges.columns else 'type'
-                lag_col = 'lag_days' if 'lag_days' in df_edges.columns else 'lag'
                 
                 for _, e_row in df_edges.iterrows():
                     orig_p = str(e_row[p_col]).strip()
                     orig_s = str(e_row[s_col]).strip()
                     dep = str(e_row.get(dep_col, 'FS') or 'FS')
-                    lag = float(e_row.get(lag_col, 0.0) or 0.0)
+                    lag_m = float(e_row.get('lag_months', 0.0) or 0.0)
+                    lag_w = float(e_row.get('lag_weeks', 0.0) or 0.0)
+                    lag_d = float(e_row.get('lag_days', 0.0) or 0.0)
+                    lag_h = float(e_row.get('lag_hours', 0.0) or 0.0)
                     
                     db_p = task_id_db_map.get(orig_p) or task_id_db_map.get(f"{proj_folder}_{orig_p}")
                     db_s = task_id_db_map.get(orig_s) or task_id_db_map.get(f"{proj_folder}_{orig_s}")
                     
                     if db_p and db_s:
                         await conn.execute(
-                            text("INSERT INTO project_constraint_logic (project_id, predecessor_id, successor_id, dependency_type, lag_days) VALUES (:p_id, :pred, :succ, :dep, :lag)"),
-                            {"p_id": p_id, "pred": db_p, "succ": db_s, "dep": dep, "lag": lag}
+                            text("INSERT INTO project_constraint_logic (project_id, predecessor_id, successor_id, dependency_type, lag_months, lag_weeks, lag_days, lag_hours) VALUES (:p_id, :pred, :succ, :dep, :lag_m, :lag_w, :lag_d, :lag_h)"),
+                            {"p_id": p_id, "pred": db_p, "succ": db_s, "dep": dep, "lag_m": lag_m, "lag_w": lag_w, "lag_d": lag_d, "lag_h": lag_h}
                         )
                         edges_inserted += 1
                 print(f"     [OK] Chen {edges_inserted} lien ket canh logic (predecessors) thanh cong!")

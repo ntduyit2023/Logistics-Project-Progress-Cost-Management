@@ -54,17 +54,17 @@ def analyze_nlp_keywords(task_name):
     name_lower = str(task_name).lower()
     
     if any(k in name_lower for k in ['fixed yard', 'containers', 'fence', 'pegging', 'network service']):
-        return 'G2_Setup_Utility'
+        return 'facility'
     elif any(k in name_lower for k in ['clearing', 'demolition', 'levelling', 'ground movement', 'embankments', 'removal']):
-        return 'G6_Handling_Earthworks'
+        return 'labor'
     elif any(k in name_lower for k in ['concrete', 'formworks', 'pile', 'paving', 'barriers', 'culverts', 'manhole']):
-        return 'G1_Material_Subcontract'
+        return 'material'
     elif any(k in name_lower for k in ['permit', 'license', 'minor works']):
-        return 'G4_Contractual'
+        return 'regulatory_compliance'
     elif any(k in name_lower for k in ['testing', 'survey', 'inspection']):
-        return 'G1_QA_QC'
+        return 'testing_inspection'
     else:
-        return 'G1_Internal_Default'
+        return 'material'
 
 def compute_total_hours(dur_obj, hours_per_day, days_per_week):
     hours_per_week = hours_per_day * days_per_week
@@ -72,7 +72,10 @@ def compute_total_hours(dur_obj, hours_per_day, days_per_week):
     return (dur_obj['months'] * hours_per_month) + (dur_obj['weeks'] * hours_per_week) + (dur_obj['days'] * hours_per_day) + dur_obj['hours']
 
 def main():
-    file_path = r'E:\University\Year 3 - 3\DA3\ai_pipeline\data\raw\DSLIB\Excel\C2012-04 Asti-Cuneo Highway.xlsx'
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, 'raw', 'DSLIB', 'Excel', 'C2012-04 Asti-Cuneo Highway.xlsx')
+    out_dir = os.path.join(script_dir, 'processed', 'C2012-04')
+    os.makedirs(out_dir, exist_ok=True)
     
     df_schedule = pd.read_excel(file_path, sheet_name='Baseline Schedule')
     df_resources = pd.read_excel(file_path, sheet_name='Resources')
@@ -85,15 +88,54 @@ def main():
     if hours_per_day == 0: hours_per_day = 8
     if days_per_week == 0: days_per_week = 5
     
+    # Export Agenda CSVs
+    agenda_hours_rows = []
+    for i, row in df_agenda.iterrows():
+        tr = str(row.iloc[0]).strip()
+        is_w = str(row.iloc[1]).strip()
+        if tr and tr != 'nan' and 'PMConverter' not in tr:
+            agenda_hours_rows.append({"Time Range": tr, "Working": is_w})
+    pd.DataFrame(agenda_hours_rows).to_csv(os.path.join(out_dir, 'agenda_working_hours.csv'), index=False)
+    
+    agenda_days_rows = []
+    for i, row in df_agenda.iterrows():
+        day_name = str(row.iloc[3]).strip() if df_agenda.shape[1] > 3 else ""
+        is_w = str(row.iloc[4]).strip() if df_agenda.shape[1] > 4 else ""
+        if day_name and day_name != 'nan':
+            agenda_days_rows.append({"Day": day_name, "Working": is_w})
+    pd.DataFrame(agenda_days_rows).to_csv(os.path.join(out_dir, 'agenda_working_days.csv'), index=False)
+    
+    agenda_hol_rows = []
+    if df_agenda.shape[1] > 6:
+        for i, row in df_agenda.iterrows():
+            hol = row.iloc[6]
+            if not pd.isna(hol) and str(hol).strip() != 'nan':
+                agenda_hol_rows.append({"Holiday": str(hol).strip()})
+    pd.DataFrame(agenda_hol_rows).to_csv(os.path.join(out_dir, 'agenda_holidays.csv'), index=False)
+    
     # 1. Process Resources
     res_map = {}
+    clean_resources_list = []
     for i in range(1, len(df_resources)):
         row = df_resources.iloc[i]
+        res_id = str(row.iloc[0]).strip()
         res_name = str(row['Unnamed: 1']).strip()
         res_type = str(row['Unnamed: 2']).strip() 
         cost_unit = row['Unnamed: 5']
+        max_avail = row['Unnamed: 3'] if pd.notna(row['Unnamed: 3']) else 10.0
         if pd.isna(cost_unit): cost_unit = 0
         res_map[res_name] = {'cost': float(cost_unit), 'type': res_type}
+        
+        # Exclude Materials and Paving Material from resources.csv
+        if res_name not in ['Materials', 'Paving Material']:
+            clean_resources_list.append({
+                "ID": res_id,
+                "Name": res_name,
+                "Type": res_type,
+                "Max Availability": max_avail,
+                "Cost/Unit": float(cost_unit)
+            })
+    pd.DataFrame(clean_resources_list).to_csv(os.path.join(out_dir, 'resources.csv'), index=False)
         
     risk_map = {}
     for i in range(1, len(df_risk)):
@@ -118,6 +160,9 @@ def main():
         return False
 
     output_tasks = []
+    edges_rows = []
+    resources_rows = []
+    schedules_rows = []
     
     for i in range(1, len(df_schedule)):
         row = df_schedule.iloc[i]
@@ -141,13 +186,11 @@ def main():
         total_hours = compute_total_hours(duration_obj, hours_per_day, days_per_week)
         
         preds = parse_edges(row['Relations'])
-        succs = parse_edges(row['Unnamed: 4'])
         
         res_demand_str = str(row['Resource Demand'])
         internal_labor_cost = 0
-        fuel_rental_cost = 0
-        material_cost = 0
-        resources_list = []
+        equipment_cost = 0
+        allocated_material_cost = 0
         
         if res_demand_str and str(res_demand_str) != 'nan':
             res_parts = res_demand_str.split(';')
@@ -168,79 +211,58 @@ def main():
                     rate = res_info['cost']
                     r_type = res_info['type']
                     
-                    if r_type == 'Consumable':
-                        cost = qty * rate 
+                    if rname in ['Materials', 'Paving Material']:
+                        # Special handling: calculate cost but do NOT add to task_resources.csv
+                        cost = qty * rate
+                        allocated_material_cost += cost
                     else:
                         cost = qty * total_hours * rate
-                        
-                    resources_list.append({"role": rname, "quantity": qty, "hourly_rate": rate, "type": r_type})
-                    
-                    rname_lower = rname.lower()
-                    if 'labourer' in rname_lower or 'worker' in rname_lower or 'coordinator' in rname_lower:
-                        internal_labor_cost += cost
-                    elif r_type == 'Consumable' or 'material' in rname_lower:
-                        material_cost += cost
-                    else:
-                        fuel_rental_cost += cost
+                        resources_rows.append({
+                            "task_id": f"C2012-04_{task_id}",
+                            "role": rname,
+                            "quantity": qty,
+                            "hourly_rate": rate,
+                            "type": r_type
+                        })
+                        rname_lower = rname.lower()
+                        if 'labourer' in rname_lower or 'worker' in rname_lower or 'coordinator' in rname_lower:
+                            internal_labor_cost += cost
+                        else:
+                            equipment_cost += cost
                     
         fixed_cost = float(row['Baseline Costs']) if not pd.isna(row['Baseline Costs']) else 0.0
         var_cost = float(row['Unnamed: 12']) if not pd.isna(row['Unnamed: 12']) else 0.0
         
         classification = analyze_nlp_keywords(task_name)
         
-        g1 = {
-            "chi_phi_nhan_cong_noi_bo": internal_labor_cost,
-            "chi_phi_lam_them_gio": 0.0,
-            "chi_phi_nhien_lieu": fuel_rental_cost,
-            "chi_phi_qa_qc": 0.0,
-            "chi_phi_vat_lieu": material_cost,
-            "chi_phi_thue_ngoai": 0.0
-        }
+        # 38 cost sub-groups mapping
+        costs = {k: 0.0 for k in [
+            'labor', 'material', 'equipment', 'energy', 'testing_inspection',
+            'project_management', 'facility', 'utilities', 'communication', 'training', 'quality_management',
+            'overtime', 'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay', 'expediting',
+            'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance', 'contingency_reserve', 'management_reserve',
+            'transportation', 'ordering', 'packaging', 'reverse_logistics', 'customs', 'supplier_coordination',
+            'opportunity_cost', 'capital_cost', 'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
+        ]}
         
-        g2 = {
-            "dao_tao_nhan_cong": 0.0,
-            "chi_phi_mat_bang": 0.0,
-            "chi_phi_truyen_thong": 0.0,
-            "chi_phi_tien_ich": 0.0
-        }
+        costs['labor'] = internal_labor_cost
+        costs['equipment'] = equipment_cost
+        costs['material'] = allocated_material_cost
         
-        g3 = {
-            "chi_phi_thay_the": 0.0,
-            "chi_phi_lam_them_gio_mot_nhan_cong": 0.0,
-            "resources": resources_list
-        }
-        
-        g4 = {
-            "chi_phi_bao_hiem": 0.0,
-            "chi_phi_giay_phep": 0.0,
-            "chi_phi_bao_hanh": 0.0
-        }
-        
-        g6 = {
-            "chi_phi_luu_kho": 0.0,
-            "chi_phi_van_tai_qt": 0.0,
-            "chi_phi_boc_xep": 0.0,
-            "chi_phi_thu_hoi": 0.0,
-            "chi_phi_loi": 0.0
-        }
-        
-        if classification == 'G2_Setup_Utility':
-            g2['chi_phi_mat_bang'] += fixed_cost * 0.8 + var_cost * 0.5
-            g2['chi_phi_tien_ich'] += fixed_cost * 0.2 + var_cost * 0.5
-        elif classification == 'G6_Handling_Earthworks':
-            g6['chi_phi_boc_xep'] += fixed_cost * 0.7 + var_cost
-            g1['chi_phi_nhien_lieu'] += fixed_cost * 0.3
-        elif classification == 'G1_Material_Subcontract':
-            g1['chi_phi_vat_lieu'] += fixed_cost * 0.6 + var_cost * 0.5
-            g1['chi_phi_thue_ngoai'] += fixed_cost * 0.4 + var_cost * 0.5
-        elif classification == 'G4_Contractual':
-            g4['chi_phi_giay_phep'] += fixed_cost * 0.7
-            g4['chi_phi_bao_hiem'] += fixed_cost * 0.3
-        elif classification == 'G1_QA_QC':
-            g1['chi_phi_qa_qc'] += fixed_cost + var_cost
+        if classification == 'facility':
+            costs['facility'] += fixed_cost * 0.8
+            costs['utilities'] += fixed_cost * 0.2
+        elif classification == 'labor':
+            costs['labor'] += fixed_cost
+        elif classification == 'material':
+            costs['material'] += fixed_cost
+        elif classification == 'regulatory_compliance':
+            costs['regulatory_compliance'] += fixed_cost
+        elif classification == 'testing_inspection':
+            costs['testing_inspection'] += fixed_cost
         else:
-            g1['chi_phi_vat_lieu'] += fixed_cost
-            g2['chi_phi_tien_ich'] += var_cost
+            costs['material'] += fixed_cost
+            costs['utilities'] += var_cost
             
         task_risk = risk_map.get(task_id, {'optimistic': 100, 'most_probable': 100, 'pessimistic': 100})
         variance = max(0, task_risk['pessimistic'] - 100) / 100.0
@@ -248,89 +270,41 @@ def main():
         
         weather_risk = variance * 0.75
         complexity = variance * 0.25
-        
         contingency = max(0, task_risk['most_probable'] - 100) / 100.0
         if contingency == 0: contingency = 0.05
-        
-        rework = 0.10 if classification == 'G1_QA_QC' else 0.0
-        
-        g5 = {
-            "do_phuc_tap": complexity,
-            "du_tru_thoi_tiet": weather_risk,
-            "du_phong_bat_ngo": contingency,
-            "rui_ro_lam_lai": rework
-        }
-        
-        g7 = {
-            "thoi_gian_thuc_hien": duration_obj,
-            "thoi_gian_lam_them": 0.0,
-            "predecessors": preds,
-            "successors": succs,
-            "baseline_start": str(row['Baseline'])
-        }
+        rework = 0.10 if classification == 'testing_inspection' else 0.0
         
         baseline_start = str(row['Baseline']) if 'Baseline' in row and pd.notna(row['Baseline']) else ""
         
-        output_tasks.append({
-            "task_id": task_id,
+        # Base and Total costs
+        task_base = sum(costs.values())
+        r_factor = 1.0 + complexity + weather_risk + contingency + rework
+        task_total = task_base * r_factor
+        
+        output_row = {
+            "task_id": f"C2012-04_{task_id}",
             "task_name": task_name,
             "baseline_start": baseline_start,
-            "g1_direct_cost": g1,
-            "g2_indirect_cost": g2,
-            "g3_hr_parameters": g3,
-            "g4_contractual_cost": g4,
-            "g5_risk_multipliers": g5,
-            "g6_logistics_cost": g6,
-            "g7_temporal": g7
-        })
-        
-    out_dir = r'E:\University\Year 3 - 3\DA3\ai_pipeline\data\processed\C2012-04'
-    os.makedirs(out_dir, exist_ok=True)
-    
-    tasks_rows = []
-    edges_rows = []
-    resources_rows = []
-    schedules_rows = []
-    
-    for t in output_tasks:
-        row = {
-            "task_id": t["task_id"],
-            "task_name": t["task_name"],
-            "baseline_start": t.get("baseline_start", ""),
-            "g1_labor": t["g1_direct_cost"]["chi_phi_nhan_cong_noi_bo"],
-            "g1_ot": t["g1_direct_cost"]["chi_phi_lam_them_gio"],
-            "g1_fuel": t["g1_direct_cost"]["chi_phi_nhien_lieu"],
-            "g1_qa_qc": t["g1_direct_cost"]["chi_phi_qa_qc"],
-            "g1_material": t["g1_direct_cost"]["chi_phi_vat_lieu"],
-            "g1_subcontract": t["g1_direct_cost"]["chi_phi_thue_ngoai"],
-            "g2_training": t["g2_indirect_cost"]["dao_tao_nhan_cong"],
-            "g2_space": t["g2_indirect_cost"]["chi_phi_mat_bang"],
-            "g2_comm": t["g2_indirect_cost"]["chi_phi_truyen_thong"],
-            "g2_utility": t["g2_indirect_cost"]["chi_phi_tien_ich"],
-            "g4_insurance": t["g4_contractual_cost"]["chi_phi_bao_hiem"],
-            "g4_license": t["g4_contractual_cost"]["chi_phi_giay_phep"],
-            "g4_warranty": t["g4_contractual_cost"]["chi_phi_bao_hanh"],
-            "g5_complexity": t["g5_risk_multipliers"]["do_phuc_tap"],
-            "g5_weather": t["g5_risk_multipliers"]["du_tru_thoi_tiet"],
-            "g5_contingency": t["g5_risk_multipliers"]["du_phong_bat_ngo"],
-            "g5_rework": t["g5_risk_multipliers"]["rui_ro_lam_lai"],
-            "g6_storage": t["g6_logistics_cost"]["chi_phi_luu_kho"],
-            "g6_int_transport": t["g6_logistics_cost"]["chi_phi_van_tai_qt"],
-            "g6_handling": t["g6_logistics_cost"]["chi_phi_boc_xep"],
-            "g6_recovery": t["g6_logistics_cost"]["chi_phi_thu_hoi"],
-            "g6_error": t["g6_logistics_cost"]["chi_phi_loi"],
-            "g7_dur_months": t["g7_temporal"]["thoi_gian_thuc_hien"]["months"],
-            "g7_dur_weeks": t["g7_temporal"]["thoi_gian_thuc_hien"]["weeks"],
-            "g7_dur_days": t["g7_temporal"]["thoi_gian_thuc_hien"]["days"],
-            "g7_dur_hours": t["g7_temporal"]["thoi_gian_thuc_hien"]["hours"],
-            "g7_ot_hours": t["g7_temporal"]["thoi_gian_lam_them"]
+            "g7_dur_months": duration_obj["months"],
+            "g7_dur_weeks": duration_obj["weeks"],
+            "g7_dur_days": duration_obj["days"],
+            "g7_dur_hours": duration_obj["hours"],
+            "g7_ot_hours": 0.0,
+            "complexity": complexity,
+            "weather_contingency": weather_risk,
+            "general_contingency": contingency,
+            "rework_risk": rework,
+            "risk_factor": r_factor,
+            "base_cost": task_base,
+            "total_cost": task_total
         }
-        tasks_rows.append(row)
+        output_row.update(costs)
+        output_tasks.append(output_row)
         
-        for p in t["g7_temporal"]["predecessors"]:
+        for p in preds:
             edges_rows.append({
-                "source_id": p["target_id"],
-                "target_id": t["task_id"],
+                "source_id": f"C2012-04_{p['target_id']}",
+                "target_id": f"C2012-04_{task_id}",
                 "dependency_type": p["dependency_type"],
                 "lag_months": p["lag"]["months"],
                 "lag_weeks": p["lag"]["weeks"],
@@ -338,30 +312,20 @@ def main():
                 "lag_hours": p["lag"]["hours"]
             })
             
-        for r in t["g3_hr_parameters"]["resources"]:
-            resources_rows.append({
-                "task_id": t["task_id"],
-                "role": r["role"],
-                "quantity": r["quantity"],
-                "hourly_rate": r["hourly_rate"],
-                "type": r["type"]
-            })
-            
         schedules_rows.append({
-            "task_id": t["task_id"],
-            "baseline_start": t["g7_temporal"]["baseline_start"],
+            "task_id": f"C2012-04_{task_id}",
+            "baseline_start": baseline_start,
             "baseline_end": str(row['Baseline End']) if 'Baseline End' in row and pd.notna(row['Baseline End']) else "",
-            "predecessors": [p["target_id"] for p in t["g7_temporal"]["predecessors"]],
+            "predecessors": [f"C2012-04_{p['target_id']}" for p in preds],
             "successors": []
         })
             
-    pd.DataFrame(tasks_rows).to_csv(os.path.join(out_dir, 'tasks.csv'), index=False, encoding='utf-8')
+    pd.DataFrame(output_tasks).to_csv(os.path.join(out_dir, 'tasks.csv'), index=False, encoding='utf-8')
     pd.DataFrame(edges_rows).to_csv(os.path.join(out_dir, 'predecessors.csv'), index=False, encoding='utf-8')
     pd.DataFrame(resources_rows).to_csv(os.path.join(out_dir, 'task_resources.csv'), index=False, encoding='utf-8')
     pd.DataFrame(schedules_rows).to_csv(os.path.join(out_dir, 'task_schedules.csv'), index=False, encoding='utf-8')
-        
-    print(f"Successfully processed {len(output_tasks)} tasks.")
-    print(f"Saved CSVs to {out_dir}")
+    
+    print(f"Successfully processed {len(output_tasks)} tasks for C2012-04.")
 
 if __name__ == '__main__':
     main()

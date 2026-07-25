@@ -87,53 +87,26 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
 
     # If resources assigned, set task costs from accumulated resources
     if len(resources) > 0:
-        task.internal_labor_cost = g1_labor
-        task.overtime_cost = g1_ot
-        if g1_fuel_res > 0: task.equipment_fuel_cost = g1_fuel_res
-        if g1_mat_res > 0: task.material_cost = g1_mat_res
-        if g1_sub_res > 0: task.outsourcing_cost = g1_sub_res
-    else:
-        g1_labor = float(task.internal_labor_cost or 0.0)
-        g1_ot = float(task.overtime_cost or 0.0)
+        task.labor = g1_labor
+        task.overtime = g1_ot
+        if g1_fuel_res > 0: task.equipment = g1_fuel_res
+        if g1_mat_res > 0: task.material = g1_mat_res
+        if g1_sub_res > 0: task.supplier_coordination = g1_sub_res
 
-    project_type = project.type
+    # Resource Cost
+    c_resource = float(task.labor or 0.0) + float(task.material or 0.0) + float(task.equipment or 0.0) + float(task.energy or 0.0) + float(task.testing_inspection or 0.0)
+    # Overhead Cost
+    c_overhead = float(task.project_management or 0.0) + float(task.facility or 0.0) + float(task.utilities or 0.0) + float(task.communication or 0.0) + float(task.training or 0.0) + float(task.quality_management or 0.0)
+    # Time-dependent Cost
+    c_time = float(task.overtime or 0.0) + float(task.delay_penalty or 0.0) + float(task.inventory_holding or 0.0) + float(task.waiting_cost or 0.0) + float(task.idle_resource or 0.0) + float(task.revenue_delay or 0.0) + float(task.expediting or 0.0)
+    # Risk & Compliance Cost
+    c_risk = float(task.insurance or 0.0) + float(task.rework or 0.0) + float(task.warranty or 0.0) + float(task.litigation or 0.0) + float(task.regulatory_compliance or 0.0) + float(task.contingency_reserve or 0.0) + float(task.management_reserve or 0.0)
+    # Supply Chain & External Cost
+    c_sc = float(task.transportation or 0.0) + float(task.ordering or 0.0) + float(task.packaging or 0.0) + float(task.reverse_logistics or 0.0) + float(task.customs or 0.0) + float(task.supplier_coordination or 0.0)
+    # Strategic & Financial Cost
+    c_strategic = float(task.opportunity_cost or 0.0) + float(task.capital_cost or 0.0) + float(task.financing_cost or 0.0) + float(task.npv_loss or 0.0) + float(task.esg_cost or 0.0) + float(task.carbon_tax or 0.0) + float(task.reputation_cost or 0.0)
 
-    g1_fuel = float(task.equipment_fuel_cost or 0.0)
-    g1_qa_qc = float(task.qa_qc_cost or 0.0)
-    g1_material = float(task.material_cost or 0.0)
-    g1_subcontract = float(task.outsourcing_cost or 0.0)
-
-    g2_training = float(task.training_cost or 0.0)
-    g2_space = float(task.facility_rent or 0.0)
-    g2_comm = float(task.communication_cost or 0.0)
-    g2_utility = float(task.utilities_cost or 0.0)
-
-    g4_insurance = float(task.insurance_cost or 0.0)
-    g4_license = float(task.licensing_cost or 0.0)
-    g4_warranty = float(task.warranty_cost or 0.0)
-
-    g6_storage = float(task.holding_cost or 0.0)
-    g6_int_transport = float(task.international_freight or 0.0)
-    g6_handling = float(task.handling_cost or 0.0)
-    g6_recovery = float(task.reverse_logistics or 0.0)
-    g6_error = float(task.defect_cost or 0.0)
-
-    if project_type == "ITLG":
-        g1 = g1_labor + g1_ot + g1_subcontract + g1_qa_qc + g1_material
-        g2 = g2_training + g2_space + g2_utility + g2_comm
-        g4 = g4_insurance + g4_license + g4_warranty
-        g6 = g6_int_transport + g6_storage + g6_recovery + g6_error
-        base_cost = g1 + g2 + g4 + g6
-    elif project_type == "PRO":
-        g1 = g1_subcontract + g1_labor
-        g2 = g2_training + g2_space + g2_comm
-        base_cost = g1 + g2
-    else:
-        g1 = g1_material + g1_qa_qc + g1_subcontract + g1_labor + g1_fuel
-        g2 = g2_space + g2_utility
-        g4 = g4_license + g4_warranty + g4_insurance
-        g6 = g6_storage + g6_handling + g6_recovery + g6_error + g6_int_transport
-        base_cost = g1 + g2 + g4 + g6
+    base_cost = c_resource + c_overhead + c_time + c_risk + c_sc + c_strategic
 
     g5_complexity = getattr(task, "complexity", 0.0) or 0.0
     g5_weather = getattr(task, "weather_contingency", 0.0) or 0.0
@@ -145,8 +118,8 @@ async def _recalculate_task_costs(db: AsyncSession, project: Any, task_id: str):
 
     await task_repo.update(db, db_obj=task, obj_in={
         "duration_hours": task.duration_hours,
-        "internal_labor_cost": g1_labor,
-        "overtime_cost": g1_ot,
+        "labor": task.labor,
+        "overtime": task.overtime,
         "base_cost": base_cost,
         "risk_factor": risk_factor,
         "total_cost": total_cost

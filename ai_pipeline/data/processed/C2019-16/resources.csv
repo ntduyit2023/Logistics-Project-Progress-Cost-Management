@@ -1,2 +1,2 @@
-ID,Name,Type,Availability,Cost/Use,Cost/Unit
-1,Employees,Renewable,3.0,0.0,40.0
+ID,Name,Type,Max Availability,Cost/Unit
+1,Employees,Renewable,10.0,40.0

@@ -32,39 +32,63 @@ class TaskBase(BaseModel):
     duration_hours: Optional[float] = None
     calendar_type: Optional[str] = Field(None, max_length=50)
     
-    # G1: Direct Costs
-    internal_labor_cost: Optional[float] = None
-    overtime_cost: Optional[float] = None
-    equipment_fuel_cost: Optional[float] = None
-    qa_qc_cost: Optional[float] = None
-    material_cost: Optional[float] = None
-    outsourcing_cost: Optional[float] = None
+    # 1. Resource Cost
+    labor: Optional[float] = None
+    material: Optional[float] = None
+    equipment: Optional[float] = None
+    energy: Optional[float] = None
+    testing_inspection: Optional[float] = None
     
-    # G2: Indirect Costs
-    training_cost: Optional[float] = None
-    facility_rent: Optional[float] = None
-    communication_cost: Optional[float] = None
-    utilities_cost: Optional[float] = None
+    # 2. Overhead Cost
+    project_management: Optional[float] = None
+    facility: Optional[float] = None
+    utilities: Optional[float] = None
+    communication: Optional[float] = None
+    training: Optional[float] = None
+    quality_management: Optional[float] = None
     
-    # G4: Contractual
-    insurance_cost: Optional[float] = None
-    licensing_cost: Optional[float] = None
-    warranty_cost: Optional[float] = None
+    # 3. Time-dependent Cost
+    overtime: Optional[float] = None
+    delay_penalty: Optional[float] = None
+    inventory_holding: Optional[float] = None
+    waiting_cost: Optional[float] = None
+    idle_resource: Optional[float] = None
+    revenue_delay: Optional[float] = None
+    expediting: Optional[float] = None
     
-    # G5: Risk Coefficients
+    # 4. Risk & Compliance Cost
+    insurance: Optional[float] = None
+    rework: Optional[float] = None
+    warranty: Optional[float] = None
+    litigation: Optional[float] = None
+    regulatory_compliance: Optional[float] = None
+    contingency_reserve: Optional[float] = None
+    management_reserve: Optional[float] = None
+    
+    # 5. Supply Chain & External Cost
+    transportation: Optional[float] = None
+    ordering: Optional[float] = None
+    packaging: Optional[float] = None
+    reverse_logistics: Optional[float] = None
+    customs: Optional[float] = None
+    supplier_coordination: Optional[float] = None
+    
+    # 6. Strategic & Financial Cost
+    opportunity_cost: Optional[float] = None
+    capital_cost: Optional[float] = None
+    financing_cost: Optional[float] = None
+    npv_loss: Optional[float] = None
+    esg_cost: Optional[float] = None
+    carbon_tax: Optional[float] = None
+    reputation_cost: Optional[float] = None
+
+    # Risk Factors
     complexity: Optional[float] = None
     weather_contingency: Optional[float] = None
     general_contingency: Optional[float] = None
     rework_risk: Optional[float] = None
     
-    # G6: Logistics
-    holding_cost: Optional[float] = None
-    international_freight: Optional[float] = None
-    handling_cost: Optional[float] = None
-    reverse_logistics: Optional[float] = None
-    defect_cost: Optional[float] = None
-    
-    # G7: Time Components
+    # Time Components
     overtime_hours: Optional[float] = None
     lag_time: Optional[float] = None
     
@@ -100,39 +124,63 @@ class TaskUpdate(BaseModel):
     duration_hours: Optional[float] = None
     calendar_type: Optional[str] = Field(None, max_length=50)
     
-    # G1: Direct Costs
-    internal_labor_cost: Optional[float] = None
-    overtime_cost: Optional[float] = None
-    equipment_fuel_cost: Optional[float] = None
-    qa_qc_cost: Optional[float] = None
-    material_cost: Optional[float] = None
-    outsourcing_cost: Optional[float] = None
+    # 1. Resource Cost
+    labor: Optional[float] = None
+    material: Optional[float] = None
+    equipment: Optional[float] = None
+    energy: Optional[float] = None
+    testing_inspection: Optional[float] = None
     
-    # G2: Indirect Costs
-    training_cost: Optional[float] = None
-    facility_rent: Optional[float] = None
-    communication_cost: Optional[float] = None
-    utilities_cost: Optional[float] = None
+    # 2. Overhead Cost
+    project_management: Optional[float] = None
+    facility: Optional[float] = None
+    utilities: Optional[float] = None
+    communication: Optional[float] = None
+    training: Optional[float] = None
+    quality_management: Optional[float] = None
     
-    # G4: Contractual
-    insurance_cost: Optional[float] = None
-    licensing_cost: Optional[float] = None
-    warranty_cost: Optional[float] = None
+    # 3. Time-dependent Cost
+    overtime: Optional[float] = None
+    delay_penalty: Optional[float] = None
+    inventory_holding: Optional[float] = None
+    waiting_cost: Optional[float] = None
+    idle_resource: Optional[float] = None
+    revenue_delay: Optional[float] = None
+    expediting: Optional[float] = None
     
-    # G5: Risk Coefficients
+    # 4. Risk & Compliance Cost
+    insurance: Optional[float] = None
+    rework: Optional[float] = None
+    warranty: Optional[float] = None
+    litigation: Optional[float] = None
+    regulatory_compliance: Optional[float] = None
+    contingency_reserve: Optional[float] = None
+    management_reserve: Optional[float] = None
+    
+    # 5. Supply Chain & External Cost
+    transportation: Optional[float] = None
+    ordering: Optional[float] = None
+    packaging: Optional[float] = None
+    reverse_logistics: Optional[float] = None
+    customs: Optional[float] = None
+    supplier_coordination: Optional[float] = None
+    
+    # 6. Strategic & Financial Cost
+    opportunity_cost: Optional[float] = None
+    capital_cost: Optional[float] = None
+    financing_cost: Optional[float] = None
+    npv_loss: Optional[float] = None
+    esg_cost: Optional[float] = None
+    carbon_tax: Optional[float] = None
+    reputation_cost: Optional[float] = None
+
+    # Risk Factors
     complexity: Optional[float] = None
     weather_contingency: Optional[float] = None
     general_contingency: Optional[float] = None
     rework_risk: Optional[float] = None
     
-    # G6: Logistics
-    holding_cost: Optional[float] = None
-    international_freight: Optional[float] = None
-    handling_cost: Optional[float] = None
-    reverse_logistics: Optional[float] = None
-    defect_cost: Optional[float] = None
-    
-    # G7: Time Components
+    # Time Components
     overtime_hours: Optional[float] = None
     lag_time: Optional[float] = None
     metadata_json: Optional[Dict[str, Any]] = None
