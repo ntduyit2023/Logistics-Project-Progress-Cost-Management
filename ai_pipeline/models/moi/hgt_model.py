@@ -1,46 +1,60 @@
 """
-Heterogeneous Graph Transformer (HGT Core Model - Enhanced Architecture)
-===========================================================================
+Native Heterogeneous Graph Transformer (HGT Core Model with HGTConv)
+====================================================================
 Thư mục: ai_pipeline/models/moi/hgt_model.py
 
 Chức năng:
-    Mô hình GNN dị thể (HGT) xử lý 4 loại nút (task, resource, time_agenda, project)
-    Hỗ trợ 128-dim hidden representation, GELU activations, LayerNorm & Residual Connections.
+    Mô hình Heterogeneous Graph Transformer (HGT) native xử lý 4 loại nút:
+        - Nút: ['task', 'resource', 'time_agenda', 'project']
+        - Cạnh quan hệ:
+            - ('task', 'precedes', 'task')
+            - ('task', 'uses', 'resource')
+            - ('task', 'constrained_by', 'time_agenda')
+            - ('task', 'belongs_to', 'project')
+    
+    Sử dụng lớp toán học PyTorch Geometric HGTConv với ma trận Query/Key/Value & Relation Attention riêng biệt cho từng loại thực thể.
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.nn import HeteroConv, GATConv, Linear
+from torch_geometric.nn import HGTConv, Linear
 
 
 class HGTTaskPredictor(nn.Module):
     """
-    Mô hình Heterogeneous Graph Transformer nâng cấp (128-dim latent space).
+    Mô hình Native Heterogeneous Graph Transformer (HGTConv).
     """
     def __init__(self, in_channels_dict, hidden_dim=128, num_heads=4, num_layers=2):
         super().__init__()
         self.hidden_dim = hidden_dim
         
+        # Metadata Đồ thị Dị thể (4 Node Types, 4 Edge Relation Triplets)
+        node_types = ['task', 'resource', 'time_agenda', 'project']
+        edge_types = [
+            ('task', 'precedes', 'task'),
+            ('task', 'uses', 'resource'),
+            ('task', 'constrained_by', 'time_agenda'),
+            ('task', 'belongs_to', 'project')
+        ]
+        self.metadata = (node_types, edge_types)
+        
         # 1. Linear Projection cho từng loại nút đưa về hidden_dim = 128
         self.proj_dict = nn.ModuleDict()
-        for node_type, in_dim in in_channels_dict.items():
+        for node_type in node_types:
+            in_dim = in_channels_dict.get(node_type, 72 if node_type == 'task' else 4)
             self.proj_dict[node_type] = nn.Sequential(
                 Linear(in_dim, hidden_dim),
                 nn.LayerNorm(hidden_dim),
                 nn.GELU()
             )
             
-        # 2. HeteroConv / GATConv cho từng quan hệ đồ thị
-        self.layers = nn.ModuleList()
+        # 2. Native HGTConv Layers (Chuyên biệt cho Heterogeneous Graph Transformer)
+        self.hgt_layers = nn.ModuleList()
         for _ in range(num_layers):
-            conv_dict = {
-                ('task', 'precedes', 'task'): GATConv(hidden_dim, hidden_dim // num_heads, heads=num_heads, concat=True, add_self_loops=False),
-                ('task', 'uses', 'resource'): GATConv(hidden_dim, hidden_dim // num_heads, heads=num_heads, concat=True, add_self_loops=False),
-                ('task', 'constrained_by', 'time_agenda'): GATConv(hidden_dim, hidden_dim // num_heads, heads=num_heads, concat=True, add_self_loops=False),
-                ('task', 'belongs_to', 'project'): GATConv(hidden_dim, hidden_dim // num_heads, heads=num_heads, concat=True, add_self_loops=False)
-            }
-            self.layers.append(HeteroConv(conv_dict, aggr='sum'))
+            self.hgt_layers.append(
+                HGTConv(hidden_dim, hidden_dim, metadata=self.metadata, heads=num_heads)
+            )
             
         # 3. Task Decoder Head (Dự đoán 3 đầu ra)
         self.task_head = nn.Sequential(
@@ -62,7 +76,7 @@ class HGTTaskPredictor(nn.Module):
         )
 
     def forward(self, x_dict, edge_index_dict):
-        # Biến đổi tuyến tính đầu vào
+        # 1. Biến đổi tuyến tính ban đầu cho từng loại nút
         h_dict = {}
         for node_type, x in x_dict.items():
             if node_type in self.proj_dict:
@@ -70,13 +84,16 @@ class HGTTaskPredictor(nn.Module):
             else:
                 h_dict[node_type] = x
                 
-        # Lan truyền thông điệp HeteroConv với Residual Connection
-        for layer in self.layers:
-            out_h_dict = layer(h_dict, edge_index_dict)
+        # 2. Native HGT Attention Message Passing với Residual Connection
+        for hgt_layer in self.hgt_layers:
+            out_h_dict = hgt_layer(h_dict, edge_index_dict)
             for node_type, h in out_h_dict.items():
-                h_dict[node_type] = F.gelu(h + h_dict[node_type])
+                if node_type in h_dict:
+                    h_dict[node_type] = F.gelu(h + h_dict[node_type])
+                else:
+                    h_dict[node_type] = F.gelu(h)
                 
-        # Trích xuất biểu diễn nút Task
+        # 3. Trích xuất biểu diễn nút Task
         task_embed = h_dict['task']
         preds = self.task_head(task_embed)
         reconstructed_x = self.recon_head(task_embed)

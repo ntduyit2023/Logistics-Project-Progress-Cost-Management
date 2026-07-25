@@ -1,11 +1,11 @@
 """
-Masked Autoencoder Pretrainer (Phase 0 - Enhanced Hybrid Loss & Active Feature Masking)
-========================================================================================
+Masked Autoencoder Pretrainer (Phase 0 Self-Supervised Reconstruction)
+========================================================================
 Thư mục: ai_pipeline/models/moi/pretrainer.py
 
 Chức năng:
     Thực hiện Huấn luyện Tự Giám Sát (Self-Supervised Pretraining) cho mô hình HGT
-    bằng cơ chế Hybrid Loss (MSE + Cosine Distance) + Active Feature Masking + Validation Monitoring.
+    bằng cơ chế Masked Feature Reconstruction với Smooth L1 Loss chuẩn hóa.
 """
 
 import os
@@ -18,40 +18,22 @@ from typing import List, Dict, Any, Tuple
 from ai_pipeline.models.moi.hgt_model import HGTTaskPredictor
 
 
-def compute_r2_score(y_true: torch.Tensor, y_pred: torch.Tensor) -> Tuple[float, float]:
+def compute_r2_score(y_true: torch.Tensor, y_pred: torch.Tensor) -> float:
     """
-    Tính hệ số R2 Score trên các cột đặc trưng hoạt động (Active Features with std > 1e-3)
-    và Độ tương đồng Cosine Similarity giữa vector gốc & vector tái tạo.
+    Tính hệ số giải thích biến thiên R2 Score tiêu chuẩn trên mảng 1D.
     """
-    y_true_np = y_true.detach().cpu().numpy()
-    y_pred_np = y_pred.detach().cpu().numpy()
+    y_true_np = y_true.detach().cpu().numpy().flatten()
+    y_pred_np = y_pred.detach().cpu().numpy().flatten()
     
-    # 1. Cosine Similarity toàn cục
-    dot_prod = np.sum(y_true_np * y_pred_np)
-    norm_a = np.linalg.norm(y_true_np) + 1e-8
-    norm_b = np.linalg.norm(y_pred_np) + 1e-8
-    cosine_sim = float(dot_prod / (norm_a * norm_b))
-
-    # 2. R2 Score trên các cột hoạt động (loại bỏ cột thưa toàn 0.0)
-    col_stds = np.std(y_true_np, axis=0)
-    active_cols = np.where(col_stds > 1e-3)[0]
-    
-    if len(active_cols) == 0:
-        return 0.0, cosine_sim
-        
-    y_true_active = y_true_np[:, active_cols].flatten()
-    y_pred_active = y_pred_np[:, active_cols].flatten()
-
-    ss_res = np.sum((y_true_active - y_pred_active) ** 2)
-    ss_tot = np.sum((y_true_active - np.mean(y_true_active)) ** 2) + 1e-8
-    r2_active = 1.0 - (ss_res / ss_tot)
-    
-    return float(r2_active), cosine_sim
+    ss_res = np.sum((y_true_np - y_pred_np) ** 2)
+    ss_tot = np.sum((y_true_np - np.mean(y_true_np)) ** 2) + 1e-8
+    r2 = 1.0 - (ss_res / ss_tot)
+    return float(r2)
 
 
 class HGTPretrainer:
     """
-    Trình quản lý Pretraining tự động cho HGT với Hybrid Loss & Active Feature Masking.
+    Trình quản lý Pretraining tự động cho HGT dùng Smooth L1 Reconstruction Loss.
     """
     def __init__(self, model: HGTTaskPredictor, checkpoint_dir: str = "checkpoints"):
         self.model = model
@@ -59,28 +41,18 @@ class HGTPretrainer:
         self.checkpoint_path = os.path.join(checkpoint_dir, "hgt_best_weights.pt")
         os.makedirs(checkpoint_dir, exist_ok=True)
 
-    def compute_hybrid_loss(self, pred_x: torch.Tensor, target_x: torch.Tensor) -> torch.Tensor:
-        """
-        Hàm tổn thất hỗn hợp Hybrid Loss = MSE Loss + (1.0 - Cosine Similarity).
-        Tối ưu hóa đồng thời cả biên độ đặc trưng và hướng vector trong không gian Latent.
-        """
-        mse_loss = F.mse_loss(pred_x, target_x)
-        cosine_sim = F.cosine_similarity(pred_x, target_x, dim=1).mean()
-        cosine_loss = 1.0 - cosine_sim
-        return mse_loss + cosine_loss
-
     def train_multi_projects(
         self,
         hetero_data_list: List[Any],
         project_ids: List[str] = None,
         max_epochs: int = 300,
-        patience: int = 25,
+        patience: int = 40,
         mask_rate: float = 0.25,
         val_ratio: float = 0.20,
         lr: float = 0.001
     ) -> Dict[str, Any]:
         """
-        Huấn luyện Pretraining tự giám sát với Train/Val Mask Split và Hybrid Loss.
+        Huấn luyện Pretraining tự giám sát với Train/Val Mask Split và Smooth L1 Loss.
         """
         if not hetero_data_list:
             print("[Pretrainer] Danh sach do thi rong!")
@@ -88,7 +60,7 @@ class HGTPretrainer:
 
         proj_str = ", ".join(project_ids) if project_ids else f"{len(hetero_data_list)} du an"
         print("================================================================================")
-        print(f"[Pretrainer] HYBRID LOSS PRETRAINING (MSE + COSINE DISTANCE): {proj_str}")
+        print(f"[Pretrainer] SMOOTH L1 RECONSTRUCTION PRETRAINING: {proj_str}")
         print(f"   * Max Epochs: {max_epochs} | Patience: {patience} | Mask Rate: {mask_rate*100:.0f}%")
         print("================================================================================")
 
@@ -114,7 +86,6 @@ class HGTPretrainer:
                 num_nodes = task_x.size(0)
 
                 if num_nodes > 0:
-                    # Ưu tiên mask các nút có đặc trưng hoạt động (Active Feature Masking)
                     perm = torch.randperm(num_nodes)
                     num_masked = max(2, int(num_nodes * mask_rate))
                     masked_indices = perm[:num_masked]
@@ -123,7 +94,6 @@ class HGTPretrainer:
                     val_indices = masked_indices[:num_val]
                     train_indices = masked_indices[num_val:]
 
-                    # Tạo masked input tensor cho GNN encoder
                     masked_task_x = task_x.clone()
                     masked_task_x[masked_indices] = 0.0
                     masked_x_dict = {k: (masked_task_x if k == 'task' else v) for k, v in x_dict.items()}
@@ -135,15 +105,15 @@ class HGTPretrainer:
                 out = self.model(masked_x_dict, edge_index_dict)
                 reconstructed_x = out['reconstructed_x']
 
-                # 1. Train Hybrid Reconstruction Loss (MSE + Cosine Distance)
+                # 1. Train Smooth L1 Loss
                 if len(train_indices) > 0:
-                    train_loss = self.compute_hybrid_loss(reconstructed_x[train_indices], task_x[train_indices])
+                    train_loss = F.smooth_l1_loss(reconstructed_x[train_indices], task_x[train_indices])
                     epoch_train_loss += train_loss
                 
-                # 2. Validation Reconstruction Loss (Out-of-sample prediction)
+                # 2. Validation Loss (Out-of-sample prediction)
                 if len(val_indices) > 0:
                     with torch.no_grad():
-                        val_loss = self.compute_hybrid_loss(reconstructed_x[val_indices], task_x[val_indices])
+                        val_loss = F.smooth_l1_loss(reconstructed_x[val_indices], task_x[val_indices])
                         epoch_val_loss += val_loss
                         val_y_true_list.append(task_x[val_indices])
                         val_y_pred_list.append(reconstructed_x[val_indices])
@@ -156,7 +126,7 @@ class HGTPretrainer:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
             optimizer.step()
 
-            # Thống kê Metric Validation (MAE, RMSE, R2, Cosine Similarity, Overfit Ratio)
+            # Thống kê Metric Validation (MAE, RMSE, R2, Overfit Ratio)
             train_loss_val = avg_train_loss.item()
             val_loss_val = avg_val_loss.item() if isinstance(avg_val_loss, torch.Tensor) else float(avg_val_loss)
             
@@ -167,9 +137,9 @@ class HGTPretrainer:
                 cat_pred = torch.cat(val_y_pred_list)
                 val_mae = float(torch.mean(torch.abs(cat_pred - cat_true)).item())
                 val_rmse = float(torch.sqrt(torch.mean((cat_pred - cat_true) ** 2)).item())
-                val_r2, val_cosine = compute_r2_score(cat_true, cat_pred)
+                val_r2 = compute_r2_score(cat_true, cat_pred)
             else:
-                val_mae, val_rmse, val_r2, val_cosine = 0.0, 0.0, 0.0, 0.0
+                val_mae, val_rmse, val_r2 = 0.0, 0.0, 0.0
 
             overfit_ratio = val_loss_val / max(1e-6, train_loss_val)
 
@@ -183,7 +153,6 @@ class HGTPretrainer:
                     'val_mae': val_mae,
                     'val_rmse': val_rmse,
                     'val_r2': val_r2,
-                    'val_cosine': val_cosine,
                     'overfit_ratio': overfit_ratio
                 }
                 no_improve_count = 0
@@ -197,7 +166,7 @@ class HGTPretrainer:
             if epoch % 10 == 0 or epoch == 1 or improved_str:
                 overfit_warning = " [CANH BAO OVERFIT!]" if overfit_ratio > 1.5 else ""
                 print(f"   * Epoch {epoch:03d}/{max_epochs:03d} | Train Loss: {train_loss_val:.6f} | "
-                      f"Val Loss: {val_loss_val:.6f} | Val MAE: {val_mae:.4f} | Active R2: {val_r2:.4f} | Cosine: {val_cosine:.4f} | "
+                      f"Val Loss: {val_loss_val:.6f} | Val MAE: {val_mae:.4f} | Val R2: {val_r2:.4f} | "
                       f"Ratio: {overfit_ratio:.2f}{improved_str}{overfit_warning}")
 
             if no_improve_count >= patience:
@@ -208,12 +177,11 @@ class HGTPretrainer:
         print("\n================================================================================")
         print("[PRETRAINER EVALUATION REPORT] SUMMARY METRICS:")
         print(f"   - Optimal Epoch: {best_metrics.get('epoch')}")
-        print(f"   - Train Loss (Hybrid MSE+Cosine): {best_metrics.get('train_loss', 0.0):.6f}")
+        print(f"   - Train Loss (Smooth L1): {best_metrics.get('train_loss', 0.0):.6f}")
         print(f"   - Val Loss (Out-of-Sample): {best_metrics.get('val_loss', 0.0):.6f}")
         print(f"   - Val MAE (Mean Absolute Error): {best_metrics.get('val_mae', 0.0):.4f}")
         print(f"   - Val RMSE (Root Mean Squared Error): {best_metrics.get('val_rmse', 0.0):.4f}")
-        print(f"   - Active R2 Score (Explaining Active Variance): {best_metrics.get('val_r2', 0.0):.4f} (Ideal -> 1.0)")
-        print(f"   - Reconstruction Cosine Similarity: {best_metrics.get('val_cosine', 0.0):.4f} (Ideal -> 1.0)")
+        print(f"   - Val R2 Score: {best_metrics.get('val_r2', 0.0):.4f}")
         print(f"   - Overfitting Ratio (Val/Train): {best_metrics.get('overfit_ratio', 1.0):.2f} (Ideal <= 1.2)")
         print("================================================================================")
 

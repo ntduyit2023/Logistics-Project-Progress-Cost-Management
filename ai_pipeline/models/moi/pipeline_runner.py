@@ -67,7 +67,7 @@ def run_new_pipeline(
         'time_agenda': hetero_data['time_agenda'].x.size(1),
         'project': hetero_data['project'].x.size(1)
     }
-    model = HGTTaskPredictor(in_dim_dict, hidden_dim=64)
+    model = HGTTaskPredictor(in_dim_dict, hidden_dim=128)
     pretrainer = HGTPretrainer(model, checkpoint_dir=os.path.join(project_root, "checkpoints"))
     pretrainer.train_or_load(hetero_data, epochs=20)
 
@@ -129,7 +129,10 @@ def run_new_pipeline(
 
     print(f"   * Tim thay {len(pareto_options)} phuong an toi uu Pareto.")
     for idx, opt in enumerate(pareto_options, 1):
-        print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Chi phi: {opt['total_cost']:,.0f}$ | Rui ro: {opt['risk_score']:.2f}")
+        tot_c = opt.get('total_cost', 0.0)
+        print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Tong Chi Phi Thuc Te: ${tot_c:,.2f} | Chi so Rui ro: {opt['risk_score']:.2f}")
+
+
 
     final_output = {
         'project_id': project_id,
