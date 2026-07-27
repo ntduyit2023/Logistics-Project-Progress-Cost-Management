@@ -20,12 +20,12 @@ interface TaskFormModalProps {
 const TABS = [
   { id: 'basic', label: 'Basic & Schedule', icon: Layers },
   { id: 'resources', label: 'Resources', icon: HardHat },
-  { id: 'g1_direct', label: 'G1: Direct Costs', icon: DollarSign },
-  { id: 'g2_indirect', label: 'G2: Indirect Costs', icon: Briefcase },
-  { id: 'g4_contractual', label: 'G4: Contractual', icon: ShieldAlert },
-  { id: 'g5_risk', label: 'G5: Risk', icon: AlertTriangle },
-  { id: 'g6_logistics', label: 'G6: Logistics', icon: ArrowRight },
-  { id: 'g7_time', label: 'G7: Time', icon: Clock },
+  { id: 'g1_direct', label: 'Resource Cost', icon: DollarSign },
+  { id: 'g2_indirect', label: 'Overhead Cost', icon: Briefcase },
+  { id: 'g4_contractual', label: 'Risk & Compliance Cost', icon: ShieldAlert },
+  { id: 'g5_risk', label: 'Risk Factors', icon: AlertTriangle },
+  { id: 'g6_logistics', label: 'Supply Chain & External Cost', icon: ArrowRight },
+  { id: 'g7_time', label: 'Time-dependent Cost', icon: Clock },
 ];
 
 const FIELD_GROUPS = {
@@ -68,18 +68,18 @@ const FIELD_GROUPS = {
 };
 
 export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initialData, availableTasks = [], tasks = [], projectResources = [], constraintLogic = [], projectType, projectId }: TaskFormModalProps) {
-  const finalOnSubmit = onSubmit || onSave || (() => {});
+  const finalOnSubmit = onSubmit || onSave || (() => { });
   const finalAvailableTasks = availableTasks.length > 0 ? availableTasks : tasks;
   const { projectId: routeProjectId } = useParams();
   const effectiveProjectId = projectId || routeProjectId;
   const [activeTab, setActiveTab] = useState('basic');
   const [formData, setFormData] = useState<any>({});
   const [predecessor, setPredecessor] = useState({ id: '', type: 'FS', lag: 0 });
-  
+
   // Logic Assignment State
   const [existingPredecessors, setExistingPredecessors] = useState<any[]>([]);
   const [existingSuccessors, setExistingSuccessors] = useState<any[]>([]);
-  
+
   // Resource Assignment State
   const [assignedResources, setAssignedResources] = useState<any[]>([]);
   const [selectedResId, setSelectedResId] = useState('');
@@ -91,17 +91,17 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
       setActiveTab('basic');
       if (initialData) {
         setFormData({ ...initialData, baseline_start: initialData.baseline_start ? initialData.baseline_start.split('T')[0] : '' });
-        
+
         // Find existing Predecessors and Successors
         const preds = constraintLogic.filter(c => c.successor_id === initialData.id);
         const succs = constraintLogic.filter(c => c.predecessor_id === initialData.id);
-        
+
         // Map names
         setExistingPredecessors(preds.map(p => {
           const t = availableTasks.find(x => x.id === p.predecessor_id);
           return { ...p, name: t ? t.task_name : p.predecessor_id };
         }));
-        
+
         setExistingSuccessors(succs.map(s => {
           const t = availableTasks.find(x => x.id === s.successor_id);
           return { ...s, name: t ? t.task_name : s.successor_id };
@@ -147,11 +147,11 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
   const handleAddResource = () => {
     if (!selectedResId) return;
     const resIdNum = Number(selectedResId);
-    
+
     // Check if already assigned, if so just update qty
     const existing = assignedResources.find(r => r.resource_id === resIdNum);
     if (existing) {
-      setAssignedResources(prev => prev.map(r => 
+      setAssignedResources(prev => prev.map(r =>
         r.resource_id === resIdNum ? { ...r, request_quantity: Number(reqQty) } : r
       ));
     } else {
@@ -182,9 +182,9 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
       alert("Task Name is required!");
       return;
     }
-    
+
     const payload: any = { ...formData };
-    
+
     // Convert all numeric string values back to numbers if needed
     for (const k of Object.keys(payload)) {
       if (payload[k] === '') payload[k] = null;
@@ -223,49 +223,49 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
       {FIELD_GROUPS[groupId as keyof typeof FIELD_GROUPS].map(field => {
         const isPercent = ['complexity', 'weather_contingency', 'general_contingency', 'rework_risk'].includes(field.key);
         return (
-        <div key={field.key}>
-          <label className="block text-xs font-semibold text-slate-600 mb-1 line-clamp-1" title={field.label}>
-            {field.label} {isPercent && '(%)'}
-          </label>
-          {isPercent ? (
-            <div className="flex items-center gap-2">
-              <input 
-                type="range" min="0" max="100" step="1"
-                value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
-                onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
-                className="flex-1 cursor-pointer accent-blue-600"
+          <div key={field.key}>
+            <label className="block text-xs font-semibold text-slate-600 mb-1 line-clamp-1" title={field.label}>
+              {field.label} {isPercent && '(%)'}
+            </label>
+            {isPercent ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="range" min="0" max="100" step="1"
+                  value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
+                  onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
+                  className="flex-1 cursor-pointer accent-blue-600"
+                />
+                <input
+                  type="number" step="1" min="0" max="100"
+                  value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
+                  onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
+                  className="w-16 border border-slate-300 rounded-md px-1 py-1.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            ) : (
+              <input
+                type="number"
+                step="0.01"
+                value={formData[field.key] ?? 0}
+                onChange={(e) => handleChange(field.key, e.target.value)}
+                disabled={['internal_labor_cost', 'overtime_cost'].includes(field.key)}
+                className={`w-full border rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors ${['internal_labor_cost', 'overtime_cost'].includes(field.key)
+                    ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed'
+                    : 'bg-white border-slate-300'
+                  }`}
+                title={['internal_labor_cost', 'overtime_cost'].includes(field.key) ? 'Calculated from assigned resources' : ''}
               />
-              <input 
-                type="number" step="1" min="0" max="100"
-                value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
-                onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
-                className="w-16 border border-slate-300 rounded-md px-1 py-1.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-          ) : (
-          <input 
-            type="number"
-            step="0.01"
-            value={formData[field.key] ?? 0}
-            onChange={(e) => handleChange(field.key, e.target.value)}
-            disabled={['internal_labor_cost', 'overtime_cost'].includes(field.key)}
-            className={`w-full border rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors ${
-              ['internal_labor_cost', 'overtime_cost'].includes(field.key) 
-                ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed' 
-                : 'bg-white border-slate-300'
-            }`}
-            title={['internal_labor_cost', 'overtime_cost'].includes(field.key) ? 'Calculated from assigned resources' : ''}
-          />
-          )}
-        </div>
-      )})}
+            )}
+          </div>
+        )
+      })}
     </div>
   );
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden max-h-[95vh] flex flex-col animate-in fade-in zoom-in-95 duration-200">
-        
+
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50 shrink-0">
           <div>
@@ -278,7 +278,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
             <X size={22} />
           </button>
         </div>
-        
+
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar Tabs */}
           <div className="w-56 bg-slate-50 border-r border-slate-200 shrink-0 p-2 overflow-y-auto">
@@ -287,11 +287,10 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-all ${
-                  activeTab === tab.id 
-                    ? 'bg-blue-600 text-white shadow-sm' 
+                className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium mb-1 transition-all ${activeTab === tab.id
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 <tab.icon size={16} className={`mr-2 ${activeTab === tab.id ? 'text-white' : 'text-slate-500'}`} />
                 {tab.label}
@@ -302,7 +301,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
           {/* Form Content */}
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
             <form id="task-form-mega" onSubmit={handleSubmit} className="space-y-6">
-              
+
               {/* TAB 1: BASIC */}
               {activeTab === 'basic' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -311,8 +310,8 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     <div className="grid grid-cols-2 gap-4">
                       <div className="col-span-2">
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Task Name <span className="text-red-500">*</span></label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={formData.task_name || ''}
                           onChange={(e) => handleChange('task_name', e.target.value)}
                           className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
@@ -322,7 +321,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Task Type</label>
-                        <select 
+                        <select
                           value={formData.task_type || 'Construction'}
                           onChange={(e) => handleChange('task_type', e.target.value)}
                           className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
@@ -336,7 +335,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Status</label>
-                        <select 
+                        <select
                           value={formData.status || 'Pending'}
                           onChange={(e) => handleChange('status', e.target.value)}
                           className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
@@ -351,7 +350,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-200">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Base Cost ($)</label>
-                        <input 
+                        <input
                           type="number" step="0.01"
                           value={formData.base_cost ?? 0}
                           readOnly
@@ -361,7 +360,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Total Cost ($)</label>
-                        <input 
+                        <input
                           type="number" step="0.01"
                           value={formData.total_cost ?? 0}
                           readOnly
@@ -371,7 +370,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Risk Factor (Multiplier)</label>
-                        <input 
+                        <input
                           type="number" step="0.01"
                           value={formData.risk_factor ?? 1.0}
                           readOnly
@@ -387,7 +386,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Baseline Start</label>
-                        <input 
+                        <input
                           type="date"
                           value={formData.baseline_start || ''}
                           onChange={(e) => handleChange('baseline_start', e.target.value)}
@@ -396,7 +395,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Days (Req)</label>
-                        <input 
+                        <input
                           type="number"
                           value={formData.duration_days || 1}
                           onChange={(e) => handleChange('duration_days', e.target.value)}
@@ -405,7 +404,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Months (Opt)</label>
-                        <input 
+                        <input
                           type="number" step="0.1"
                           value={formData.duration_months || ''}
                           onChange={(e) => handleChange('duration_months', e.target.value)}
@@ -414,7 +413,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Weeks (Opt)</label>
-                        <input 
+                        <input
                           type="number" step="0.1"
                           value={formData.duration_weeks || ''}
                           onChange={(e) => handleChange('duration_weeks', e.target.value)}
@@ -423,7 +422,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Hours (Opt)</label>
-                        <input 
+                        <input
                           type="number" step="0.5"
                           value={formData.duration_hours || ''}
                           onChange={(e) => handleChange('duration_hours', e.target.value)}
@@ -433,7 +432,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     </div>
                     <div className="mt-4">
                       <label className="block text-xs font-semibold text-slate-700 mb-1">Calendar Type</label>
-                      <select 
+                      <select
                         value={formData.calendar_type || 'Standard'}
                         onChange={(e) => handleChange('calendar_type', e.target.value)}
                         className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
@@ -448,7 +447,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                     <h3 className="text-sm font-bold text-slate-800 mb-2">Network Logic Constraints</h3>
                     <p className="text-xs text-slate-500 mb-3">Edges connecting this node. (Drag-and-drop on graph to add, or select below).</p>
-                    
+
                     {/* Existing Logic */}
                     {(existingPredecessors.length > 0 || existingSuccessors.length > 0) && (
                       <div className="mb-4 bg-white border border-slate-200 rounded-lg overflow-hidden">
@@ -486,7 +485,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     <div className="grid grid-cols-3 gap-3">
                       <div className="col-span-3 md:col-span-1">
                         <label className="block text-xs font-semibold text-slate-700 mb-1">+ Add Predecessor</label>
-                        <select 
+                        <select
                           value={predecessor.id}
                           onChange={(e) => setPredecessor(p => ({ ...p, id: e.target.value }))}
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
@@ -499,7 +498,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div className="col-span-1">
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Dependency</label>
-                        <select 
+                        <select
                           value={predecessor.type}
                           onChange={(e) => setPredecessor(p => ({ ...p, type: e.target.value }))}
                           disabled={!predecessor.id}
@@ -513,7 +512,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div className="col-span-1">
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Lag (days)</label>
-                        <input 
+                        <input
                           type="number"
                           value={predecessor.lag}
                           onChange={(e) => setPredecessor(p => ({ ...p, lag: Number(e.target.value) }))}
@@ -531,12 +530,12 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
                     <h3 className="text-sm font-bold text-slate-800 mb-3">Assign Project Resources to this Task</h3>
-                    
+
                     <div className="flex gap-3 items-end mb-4">
                       <div className="flex-1">
                         <label className="block text-xs font-semibold text-slate-600 mb-1">Select Resource</label>
-                        <select 
-                          value={selectedResId} 
+                        <select
+                          value={selectedResId}
                           onChange={(e) => setSelectedResId(e.target.value)}
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm bg-white focus:ring-2 focus:ring-blue-500/20"
                         >
@@ -548,12 +547,12 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                       <div className="w-24">
                         <label className="block text-xs font-semibold text-slate-600 mb-1">Quantity</label>
-                        <input 
+                        <input
                           type="number" step="0.1" min="0" value={reqQty} onChange={e => setReqQty(Number(e.target.value))}
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm bg-white focus:ring-2 focus:ring-blue-500/20"
                         />
                       </div>
-                      <button 
+                      <button
                         type="button" onClick={handleAddResource} disabled={!selectedResId}
                         className="bg-slate-800 hover:bg-slate-900 text-white px-4 py-1.5 rounded-md text-sm font-bold flex items-center h-[34px] disabled:opacity-50"
                       >
@@ -586,8 +585,8 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                                   </span>
                                 </td>
                                 <td className="px-4 py-2 text-right">
-                                  <input 
-                                    type="number" step="0.1" min="0" 
+                                  <input
+                                    type="number" step="0.1" min="0"
                                     value={r.request_quantity}
                                     onChange={(e) => {
                                       const newQty = Number(e.target.value);
@@ -597,7 +596,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                                   />
                                 </td>
                                 <td className="px-4 py-2 text-center">
-                                  <button 
+                                  <button
                                     type="button" onClick={() => handleRemoveResource(r.resource_id)}
                                     className="text-slate-400 hover:text-red-600 transition p-1 hover:bg-red-50 rounded"
                                   >
@@ -627,17 +626,17 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
             </form>
           </div>
         </div>
-        
+
         {/* Footer */}
         <div className="p-4 border-t border-slate-200 shrink-0 flex gap-3 justify-end bg-slate-50">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onClose}
             className="px-5 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 hover:bg-slate-100 rounded-lg transition-colors"
           >
             Cancel
           </button>
-          <button 
+          <button
             type="submit"
             form="task-form-mega"
             className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center shadow-md shadow-blue-500/20"

@@ -21,18 +21,19 @@ class AISimulationRun(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     project: Mapped["AppProject"] = relationship(back_populates="simulation_runs")
-    insights: Mapped[List["AIInsight"]] = relationship(back_populates="simulation_run", cascade="all, delete-orphan")
+    insights: Mapped[List["AIRecommendation"]] = relationship(back_populates="simulation_run", cascade="all, delete-orphan")
 
 
-class AIInsight(Base):
+class AIRecommendation(Base):
     """
     Kết quả phân tích/khuyến nghị cụ thể từ AI.
     """
-    __tablename__ = "ai_insights"
+    __tablename__ = "ai_recommendations"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     simulation_run_id: Mapped[int] = mapped_column(ForeignKey("ai_simulation_runs.id", ondelete="CASCADE"))
     
+    option_name: Mapped[Optional[str]] = mapped_column(String(255))
     action_type: Mapped[List[str]] = mapped_column(JSON) # e.g. ["CRASHING", "AGENDA_OVERRIDE"]
     target_tasks: Mapped[List[str]] = mapped_column(JSON) # e.g. ["T12", "T15"]
     human_message: Mapped[Optional[str]] = mapped_column(Text)
@@ -42,3 +43,7 @@ class AIInsight(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
     simulation_run: Mapped["AISimulationRun"] = relationship(back_populates="insights")
+
+
+# Alias để tương thích ngược với mã nguồn cũ
+AIInsight = AIRecommendation

@@ -44,6 +44,9 @@ class AppProject(Base):
     status: Mapped[str] = mapped_column(String(50), default="Planning")
     base_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
     total_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    target_deadline: Mapped[Optional[datetime]] = mapped_column(DateTime)
+    penalty_per_day: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
+    bonus_per_day: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

@@ -16,17 +16,17 @@ const nodeTypes = {
   taskNode: TaskNode,
 };
 
-const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setDefaultEdgeLabel(() => ({}));
-
 const getLayoutedElements = (
-  nodes: any[], 
-  edges: any[], 
-  direction = 'LR', 
-  horizontalSpacing = 300, 
+  nodes: any[],
+  edges: any[],
+  direction = 'LR',
+  horizontalSpacing = 300,
   verticalSpacing = 80
 ) => {
   if (nodes.length === 0) return { nodes, edges };
+
+  const dagreGraph = new dagre.graphlib.Graph();
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
 
   // Check if we have enough baseline_start data to do a time-based layout
   const nodesWithTime = nodes.filter(n => n.data && n.data.baseline_start);
@@ -144,64 +144,76 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
 }) => {
   const [horizSpacing, setHorizSpacing] = useState(300);
   const [vertSpacing, setVertSpacing] = useState(80);
-  // Simple function to get Vietnamese name and WBS based on task WBS
-  const getTaskNameByWbs = (wbs: string): string => {
-    if (wbs.startsWith('1.1')) return `Khảo sát & Chuẩn bị mặt bằng`;
-    if (wbs.startsWith('1.2')) return `Thiết kế kỹ thuật & Phê duyệt`;
-    if (wbs.startsWith('1.3')) return `Thu mua vật tư & Logistics`;
-    if (wbs.startsWith('1.4')) return `Xây dựng kết cấu nền móng`;
-    if (wbs.startsWith('1.5')) return `Thi công hệ thống phụ trợ`;
-    if (wbs.startsWith('1.6')) return `Lắp đặt cơ điện MEP & Thiết bị`;
-    if (wbs.startsWith('1.7')) return `Nghiệm thu kỹ thuật & Đo lường`;
-    if (wbs.startsWith('1.8')) return `Hoàn thiện & Nghiệm thu bàn giao`;
-    if (wbs.startsWith('1.9')) return `Quản trị dự án & Đánh giá`;
-    if (wbs.startsWith('1.10')) return `Nghiệm thu đưa vào vận hành`;
-    return `Công tác logistics chi tiết`;
-  };
 
   // Extract real features from task schema
   const getTaskGroups = (task: any) => {
+    const hubInfo: Record<string, any> = {};
+    if (task.duration_months && parseFloat(task.duration_months) > 0) hubInfo["duration_months"] = task.duration_months;
+    if (task.duration_weeks && parseFloat(task.duration_weeks) > 0) hubInfo["duration_weeks"] = task.duration_weeks;
+    if (task.duration_days && parseFloat(task.duration_days) > 0) hubInfo["duration_days"] = task.duration_days;
+    if (task.duration_hours && parseFloat(task.duration_hours) > 0) hubInfo["duration_hours"] = task.duration_hours;
+
+    if (Object.keys(hubInfo).length === 0) {
+      hubInfo["duration_hours"] = task.duration_hours || task.duration || 0;
+    }
+
     return {
-      "Hub (Thông tin chung)": {
-        "duration_months": task.duration_months,
-        "duration_weeks": task.duration_weeks,
-        "duration_days": task.duration_days,
-        "duration_hours": task.duration_hours,
-        "calendar_type": task.calendar_type
+      "Hub": hubInfo,
+      "Resource Cost": {
+        "labor": task.labor ?? task.internal_labor_cost,
+        "material": task.material ?? task.material_cost,
+        "equipment": task.equipment ?? task.equipment_fuel_cost,
+        "energy": task.energy,
+        "testing_inspection": task.testing_inspection ?? task.qa_qc_cost
       },
-      "G1: Chi phí trực tiếp": {
-        "internal_labor_cost": task.internal_labor_cost,
-        "overtime_cost": task.overtime_cost,
-        "equipment_fuel_cost": task.equipment_fuel_cost,
-        "qa_qc_cost": task.qa_qc_cost,
-        "material_cost": task.material_cost,
-        "outsourcing_cost": task.outsourcing_cost
+      "Overhead Cost": {
+        "project_management": task.project_management,
+        "facility": task.facility ?? task.facility_rent,
+        "utilities": task.utilities ?? task.utilities_cost,
+        "communication": task.communication ?? task.communication_cost,
+        "training": task.training ?? task.training_cost,
+        "quality_management": task.quality_management
       },
-      "G2: Chi phí gián tiếp": {
-        "training_cost": task.training_cost,
-        "facility_rent": task.facility_rent,
-        "communication_cost": task.communication_cost,
-        "utilities_cost": task.utilities_cost
+      "Time-dependent Cost": {
+        "overtime": task.overtime ?? task.overtime_cost,
+        "delay_penalty": task.delay_penalty,
+        "inventory_holding": task.inventory_holding ?? task.holding_cost,
+        "waiting_cost": task.waiting_cost,
+        "idle_resource": task.idle_resource,
+        "revenue_delay": task.revenue_delay,
+        "expediting": task.expediting
       },
-      "G4: Ràng buộc hợp đồng": {
-        "insurance_cost": task.insurance_cost,
-        "licensing_cost": task.licensing_cost,
-        "warranty_cost": task.warranty_cost
+      "Risk & Compliance Cost": {
+        "insurance": task.insurance ?? task.insurance_cost,
+        "rework": task.rework,
+        "warranty": task.warranty ?? task.warranty_cost,
+        "litigation": task.litigation,
+        "regulatory_compliance": task.regulatory_compliance ?? task.licensing_cost,
+        "contingency_reserve": task.contingency_reserve,
+        "management_reserve": task.management_reserve
       },
-      "G5: Hệ số rủi ro": {
+      "Supply Chain & External Cost": {
+        "transportation": task.transportation ?? task.international_freight,
+        "ordering": task.ordering,
+        "packaging": task.packaging,
+        "reverse_logistics": task.reverse_logistics,
+        "customs": task.customs,
+        "supplier_coordination": task.supplier_coordination
+      },
+      "Strategic & Financial Cost": {
+        "opportunity_cost": task.opportunity_cost,
+        "capital_cost": task.capital_cost,
+        "financing_cost": task.financing_cost,
+        "npv_loss": task.npv_loss,
+        "esg_cost": task.esg_cost,
+        "carbon_tax": task.carbon_tax,
+        "reputation_cost": task.reputation_cost
+      },
+      "Risk Factors": {
         "complexity": task.complexity,
         "weather_contingency": task.weather_contingency,
         "general_contingency": task.general_contingency,
-        "rework_risk": task.rework_risk
-      },
-      "G6: Logistics": {
-        "holding_cost": task.holding_cost,
-        "international_freight": task.international_freight,
-        "handling_cost": task.handling_cost,
-        "reverse_logistics": task.reverse_logistics,
-        "defect_cost": task.defect_cost
-      },
-      "G7: Thời gian (Time)": {
+        "rework_risk": task.rework_risk,
         "overtime_hours": task.overtime_hours,
         "lag_time": task.lag_time
       }
@@ -241,10 +253,11 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       const baseTaskCost = (task.total_cost !== undefined && task.total_cost !== null)
         ? parseFloat(task.total_cost)
         : (
-          (task.internal_labor_cost || 0) +
-          (task.equipment_fuel_cost || 0) +
-          (task.material_cost || 0) +
-          (task.outsourcing_cost || 0)
+          (parseFloat(task.labor || task.internal_labor_cost) || 0) +
+          (parseFloat(task.equipment || task.equipment_fuel_cost) || 0) +
+          (parseFloat(task.material || task.material_cost) || 0) +
+          (parseFloat(task.overtime || task.overtime_cost) || 0) +
+          (parseFloat(task.energy) || 0)
         ) || task.normal_cost || 0;
 
       const cost = mode === 1
@@ -261,18 +274,16 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           task_id: task.id,
           task_label: task.id,
           wbs,
-          task_name: task.name || task.task_name || getTaskNameByWbs(wbs),
+          task_name: task.task_name || task.name || task.id,
           duration: duration,
           total_cost: cost,
           base_duration: baseTaskDuration,
           base_cost: baseTaskCost,
           is_critical: isCritical,
-          mode,
+          is_ai_optimized: Boolean(task.is_ai_optimized || (task.overtime_hours && parseFloat(task.overtime_hours) > 0)),
           resources: task.resources || [],
           features: getTaskGroups(task),
-          baseline_start: task.baseline_start,
-          optimistic_time: duration ? duration * 0.8 : 0,
-          pessimistic_time: duration ? duration * 1.5 : 0,
+          baseline_start: task.baseline_start
         },
       };
     });
@@ -280,23 +291,23 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
     const rawEdges = dependencies
       .map((dep: any) => {
         // Handle both object format (from API) and array format (from mocks)
-        const sourceId = String(dep.predecessor_id || dep[0]);
-        const targetId = String(dep.successor_id || dep[1]);
+        const sourceId = String(dep.predecessor_id || dep.source_id || dep.source || dep.pred || (Array.isArray(dep) ? dep[0] : '')).trim();
+        const targetId = String(dep.successor_id || dep.target_id || dep.target || dep.succ || (Array.isArray(dep) ? dep[1] : '')).trim();
         return { sourceId, targetId };
       })
-      .filter((dep) => displayTaskIds.has(dep.sourceId) && displayTaskIds.has(dep.targetId))
+      .filter((dep) => dep.sourceId && dep.targetId && displayTaskIds.has(dep.sourceId) && displayTaskIds.has(dep.targetId))
       .map((dep) => ({
         id: `e-${dep.sourceId}-${dep.targetId}`,
         source: dep.sourceId,
         target: dep.targetId,
         type: 'default',
         animated: false,
-        style: { stroke: '#94a3b8', strokeWidth: 1.5, opacity: 0.4 },
+        style: { stroke: '#64748b', strokeWidth: 2, opacity: 0.7 },
         markerEnd: {
           type: MarkerType.ArrowClosed,
           width: 15,
           height: 15,
-          color: '#94a3b8',
+          color: '#64748b',
         },
       }));
 
@@ -367,7 +378,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
               * Hiển thị toàn bộ mạng lưới công việc của dự án
             </p>
           </Panel>
-          
+
           <Panel position="top-right" className="bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-md border border-slate-200 text-xs m-4 z-10 w-60 space-y-3">
             <h4 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
               <Sliders size={14} className="text-blue-600" />
@@ -378,12 +389,12 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                 <span>Khoảng cách Ngang:</span>
                 <span className="font-bold font-mono text-blue-600">{horizSpacing}px</span>
               </div>
-              <input 
-                type="range" 
-                min="100" 
-                max="600" 
+              <input
+                type="range"
+                min="100"
+                max="600"
                 step="20"
-                value={horizSpacing} 
+                value={horizSpacing}
                 onChange={(e) => setHorizSpacing(Number(e.target.value))}
                 className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
               />
@@ -393,12 +404,12 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                 <span>Khoảng cách Dọc:</span>
                 <span className="font-bold font-mono text-blue-600">{vertSpacing}px</span>
               </div>
-              <input 
-                type="range" 
-                min="20" 
-                max="300" 
+              <input
+                type="range"
+                min="20"
+                max="300"
                 step="10"
-                value={vertSpacing} 
+                value={vertSpacing}
                 onChange={(e) => setVertSpacing(Number(e.target.value))}
                 className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
               />

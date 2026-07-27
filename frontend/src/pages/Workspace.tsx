@@ -244,6 +244,33 @@ const Workspace = () => {
     }
   };
 
+  const [glpoResult, setGlpoResult] = useState<any>(null);
+  const [selectedGlpoOptionIndex, setSelectedGlpoOptionIndex] = useState<number>(0);
+  const [isGlpoLoading, setIsGlpoLoading] = useState<boolean>(false);
+
+  const handleRunGLPO = async () => {
+    try {
+      setIsGlpoLoading(true);
+      const projectCode = projectData?.metadata_json?.project_code || 'C2011-07';
+      showToast('Đang khởi chạy luồng tối ưu GLPO (HGT AI + Monte Carlo CPM + CP-SAT)...', 'info');
+      const res = await api.runGLPOOptimization(projectCode, {
+        mc_iterations: 1000,
+        pareto_count: 5,
+        overtime_multiplier: 1.5
+      });
+      if (res.success) {
+        setGlpoResult(res.data);
+        setSelectedGlpoOptionIndex(0);
+        setActiveTab('pareto');
+        showToast('Tối ưu hóa GLPO AI + OR hoàn tất thành công!', 'success');
+      }
+    } catch (err) {
+      showToast('Tối ưu hóa GLPO thất bại: ' + (err as Error).message, 'error');
+    } finally {
+      setIsGlpoLoading(false);
+    }
+  };
+
   const tasks = useMemo(() => projectData?.tasks || [], [projectData]);
   const dependencies = useMemo(() => projectData?.constraint_logic || [], [projectData]);
   const cpm_static_makespan = projectData?.metadata_json?.simulation_results?.cpm_static_makespan || (projectData?.tasks?.length * 5) || 0;
@@ -536,6 +563,14 @@ const Workspace = () => {
             Manage Resources
           </button>
           <button 
+            onClick={handleRunGLPO}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center"
+            disabled={isGlpoLoading}
+          >
+            <Sparkles className="mr-2" size={16} /> 
+            {isGlpoLoading ? 'Đang Tối Ưu GLPO...' : 'Chạy GLPO Tối Ưu Hóa (AI + OR)'}
+          </button>
+          <button 
             onClick={handleRunAI}
             className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center"
             disabled={projectData?.status === 'Simulating'}
@@ -716,9 +751,37 @@ const Workspace = () => {
                 </div>
               )}
 
-              {activeTab === 'pareto' && paretoOptions.length > 0 && (
+              {activeTab === 'pareto' && glpoResult?.pareto_options && glpoResult.pareto_options.length > 0 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-500 block uppercase">Danh sách Pareto Options:</span>
+                  <span className="text-xs font-bold text-indigo-600 block uppercase">Danh sách Phương án Pareto GLPO (AI + OR):</span>
+                  <div className="space-y-2">
+                    {glpoResult.pareto_options.map((opt: any, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedGlpoOptionIndex(index)}
+                        className={`w-full text-left p-3 rounded-lg border text-xs transition-all flex justify-between items-center ${
+                          selectedGlpoOptionIndex === index 
+                            ? 'bg-indigo-50 border-indigo-500 shadow-sm ring-1 ring-indigo-500' 
+                            : 'bg-white hover:bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div>
+                          <span className="font-extrabold text-slate-800 block">{opt.option_name}</span>
+                          <span className="text-emerald-600 font-medium text-[11px]">Chi phí: ${Number(opt.total_cost).toLocaleString(undefined, {maximumFractionDigits:2})}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-bold text-indigo-600 block">{opt.makespan_hours}h</span>
+                          <span className="text-rose-500 font-semibold text-[10px]">Rủi ro trễ: {opt.risk_pct}%</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'pareto' && (!glpoResult?.pareto_options || glpoResult.pareto_options.length === 0) && paretoOptions.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-slate-500 block uppercase">Danh sách Pareto Options (Sample):</span>
                   <div className="space-y-2">
                     {paretoOptions.slice(0, 4).map((opt: any, index: number) => (
                       <button

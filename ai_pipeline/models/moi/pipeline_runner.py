@@ -25,7 +25,17 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 # Path resolution
 script_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+cand = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+
+if os.path.exists(os.path.join("/app", "checkpoints")) or os.path.exists(os.path.join("/app", "ai_pipeline")):
+    project_root = "/app"
+elif os.path.exists(os.path.join(cand, "ai_pipeline")) and cand != "/":
+    project_root = cand
+elif os.path.exists(os.path.join(os.getcwd(), "ai_pipeline")):
+    project_root = os.getcwd()
+else:
+    project_root = os.getcwd()
+
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
@@ -73,7 +83,12 @@ def run_new_pipeline(
         'project': hetero_data['project'].x.size(1)
     }
     model = HGTTaskPredictor(in_dim_dict, hidden_dim=128)
-    pretrainer = HGTPretrainer(model, checkpoint_dir=os.path.join(project_root, "checkpoints"))
+    
+    ckpt_dir = os.path.join(project_root, "checkpoints")
+    if project_root == "/" or not os.access(project_root, os.W_OK):
+        ckpt_dir = os.path.join(os.getcwd(), "checkpoints")
+    
+    pretrainer = HGTPretrainer(model, checkpoint_dir=ckpt_dir)
     pretrainer.train_or_load(hetero_data, epochs=20)
 
     # 3. Suy luận dự báo AI

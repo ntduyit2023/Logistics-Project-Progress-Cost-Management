@@ -67,6 +67,25 @@ export const api = {
     return res.json();
   },
 
+  // --- GLPO AI + OR + MC-CPM OPTIMIZATION ---
+  async runGLPOOptimization(projectCode: string, params?: { mc_iterations?: number; pareto_count?: number; overtime_multiplier?: number }) {
+    const url = new URL(`${API_BASE_URL}/ai/${projectCode}/glpo-optimize`);
+    if (params) {
+      if (params.mc_iterations) url.searchParams.append('mc_iterations', params.mc_iterations.toString());
+      if (params.pareto_count) url.searchParams.append('pareto_count', params.pareto_count.toString());
+      if (params.overtime_multiplier) url.searchParams.append('overtime_multiplier', params.overtime_multiplier.toString());
+    }
+    const res = await fetch(url.toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to run GLPO optimization: ${text}`);
+    }
+    return res.json();
+  },
+
   // --- TASKS ---
   async createTask(projectId: number, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {

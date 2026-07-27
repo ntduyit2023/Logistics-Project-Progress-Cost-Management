@@ -3,66 +3,54 @@ import { Handle, Position } from 'reactflow';
 import { Calendar, Clock, DollarSign, Users } from 'lucide-react';
 
 const TaskNode = ({ data }: any) => {
-  // Determine border and background based on state
-  let cardClass = 'bg-white border-slate-300 text-slate-900 hover:border-slate-400';
-  if (data.is_critical) {
-    cardClass = 'bg-rose-50 border-rose-500 text-rose-950 shadow-rose-100 hover:shadow-rose-200';
-  } else if (data.mode === 1) {
-    cardClass = 'bg-amber-50 border-amber-500 text-amber-950 shadow-amber-100 hover:shadow-amber-200';
-  } else if (data.mode === 2) {
-    cardClass = 'bg-violet-50 border-violet-500 text-violet-950 shadow-violet-100 hover:shadow-violet-200';
-  }
+  const isCritical = Boolean(data.is_critical);
+  const isAiOptimized = Boolean(data.is_ai_optimized);
 
-  const getAdjustmentExplanation = () => {
-    if (data.mode === 1) {
-      const diffDur = (data.base_duration || 0) - (data.duration || 0);
-      const diffCost = (data.total_cost || 0) - (data.base_cost || 0);
-      return `Rút ngắn -${diffDur}h (Tăng +$${(diffCost/1000).toFixed(1)}k)`;
-    }
-    if (data.mode === 2) {
-      const diffDur = (data.base_duration || 0) - (data.duration || 0);
-      const diffCost = (data.total_cost || 0) - (data.base_cost || 0);
-      const releasedRes = data.resources && data.resources.length > 0 ? data.resources[0].quantity : 0;
-      return releasedRes > 0 
-        ? `Thuê ngoài: -${diffDur}h | Bớt ${releasedRes} NS (+$${(diffCost/1000).toFixed(1)}k)`
-        : `Thuê ngoài: -${diffDur}h (+$${(diffCost/1000).toFixed(1)}k)`;
-    }
-    return null;
-  };
+  // Determine border and background based on Option 1 state
+  let cardClass = 'bg-white border-slate-300 text-slate-900 hover:border-slate-400';
+  
+  if (isCritical && isAiOptimized) {
+    // Both Critical Path & AI Optimized (Option 1: Emerald bg + Red border)
+    cardClass = 'bg-emerald-50/90 border-2 border-rose-500 text-slate-900 shadow-md shadow-rose-100 hover:shadow-rose-200 ring-1 ring-rose-300';
+  } else if (isAiOptimized) {
+    // AI Optimized only
+    cardClass = 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-emerald-100 hover:shadow-emerald-200';
+  } else if (isCritical) {
+    // Critical Path only
+    cardClass = 'bg-rose-50 border-rose-500 text-rose-950 shadow-rose-100 hover:shadow-rose-200';
+  }
 
   return (
     <div 
-      className={`rounded-lg shadow-sm border-2 ${cardClass} w-52 h-20 flex items-center px-3 transition-all hover:shadow-md cursor-pointer`}
-      title={`${data.wbs} - ${data.task_name}\nDuration: ${data.duration}h | Cost: $${Number(data.total_cost).toLocaleString()}${data.resources && data.resources.length > 0 ? `\nResources: ${data.resources.map((r: any) => `${r.resource_id}: ${r.quantity}`).join(', ')}` : ''}`}
+      className={`rounded-lg shadow-sm ${cardClass} w-56 h-20 flex items-center px-3 transition-all hover:shadow-md cursor-pointer`}
+      title={`${data.wbs} - ${data.task_name}\nDuration: ${data.duration}h | Cost: $${Number(data.total_cost).toLocaleString()}`}
     >
       <Handle type="target" position={Position.Left} className="w-1.5 h-1.5 bg-blue-600 border-none" />
       
       <div className="flex flex-col w-full min-w-0">
         <div className="flex justify-between items-center mb-0.5">
           <span className="text-[10px] font-bold text-slate-500 leading-none flex items-center gap-1">
-            WBS {data.wbs} {data.is_critical && <span className="text-rose-500 animate-pulse">🔥</span>}
+            WBS {data.wbs} {isCritical && <span className="text-rose-500 animate-pulse">🔥</span>}
           </span>
-          {data.mode === 1 && (
-            <span className="text-[8px] font-extrabold bg-amber-500 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
-              TĂNG TỐC (CRASH)
+          {isCritical && isAiOptimized && (
+            <span className="text-[7.5px] font-black bg-rose-500 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm flex items-center gap-0.5">
+              CRITICAL • AI
             </span>
           )}
-          {data.mode === 2 && (
-            <span className="text-[8px] font-extrabold bg-violet-600 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
-              THUÊ NGOÀI
+          {isAiOptimized && !isCritical && (
+            <span className="text-[8px] font-extrabold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
+              AI OPTIMIZED
+            </span>
+          )}
+          {isCritical && !isAiOptimized && (
+            <span className="text-[8px] font-extrabold bg-rose-600 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
+              CRITICAL
             </span>
           )}
         </div>
         <span className="text-[12px] font-bold truncate text-slate-800 leading-tight my-0.5" title={data.task_name}>
           {data.task_name || 'Unnamed Task'}
         </span>
-        {getAdjustmentExplanation() && (
-          <div className={`text-[8px] font-semibold leading-none mb-1 truncate ${
-            data.mode === 1 ? 'text-amber-700' : 'text-violet-700'
-          }`}>
-            {getAdjustmentExplanation()}
-          </div>
-        )}
         <div className="flex items-center justify-between mt-1 text-[9px] text-slate-400 font-medium border-t border-slate-100 pt-1">
           <div className="flex items-center gap-0.5" title="Start Date">
             <Calendar size={10} className="text-slate-400" />

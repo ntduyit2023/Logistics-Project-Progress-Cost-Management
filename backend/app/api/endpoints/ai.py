@@ -18,10 +18,27 @@ from ai_pipeline.models.moi.pipeline_runner import run_new_pipeline
 
 router = APIRouter()
 
+def _convert_numpy(obj):
+    import numpy as np
+    if isinstance(obj, dict):
+        return {k: _convert_numpy(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_convert_numpy(v) for v in obj]
+    elif isinstance(obj, (np.integer, np.int64, np.int32)):
+        return int(obj)
+    elif isinstance(obj, (np.floating, np.float64, np.float32)):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return _convert_numpy(obj.tolist())
+    return obj
+
+
 @router.post("/{project_id}/glpo-optimize", response_model=APIResponse[dict])
 async def run_glpo_optimization(
     project_code: str = Path(..., alias="project_id", description="Mã dự án (ví dụ C2011-07)"),
     mc_iterations: int = 1000,
+    pareto_count: int = 5,
+    overtime_multiplier: float = 1.5,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[dict]:
     """
@@ -30,20 +47,25 @@ async def run_glpo_optimization(
       1. HeteroData Graph Construction (Task, Resource, Time Agenda, Project)
       2. HGT Pretrained Model & AI Duration/Delay Inference
       3. Monte Carlo CPM Risk Simulation
-      4. CP-SAT Pareto Scheduler (5-Tier Constraints)
+      4. CP-SAT Pareto Scheduler (Shift-Aligned Overtime & Monte Carlo Delay Risk %)
     """
     try:
-        results = run_new_pipeline(
+        raw_results = run_new_pipeline(
             project_id=project_code,
             mc_iterations=mc_iterations,
+            pareto_count=pareto_count,
+            overtime_multiplier=overtime_multiplier,
             output_json=False
         )
+        safe_results = _convert_numpy(raw_results)
         return APIResponse(
             success=True,
             message="GLPO AI + OR + MC-CPM Pipeline completed successfully",
-            data=results
+            data=safe_results
         )
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Pipeline execution error: {str(e)}")
 
 
