@@ -5,7 +5,7 @@ Thư mục: ai_pipeline/models/moi/pipeline_runner.py
 
 Chức năng:
     Orchestrator nối toàn bộ 5 bước của kiến trúc mới:
-        Bước 1: Dựng đồ thị HeteroData 4 loại nút (Task, Resource, Time Agenda, Project)
+        Bước 1: Dựng đồ thị HeteroData 4 loại nút (Task, Resource, Shift, Project)
         Bước 2: Tải/Huấn luyện HGT Masked Autoencoder Pretrainer (Phase 0)
         Bước 3: Suy luận HGT dự đoán Duration Factor, Expected Delay, Uncertainty Sigma
         Bước 4: Chạy mô phỏng Monte Carlo CPM (Tùy chọn số vòng 1000/5000/10000)
@@ -54,8 +54,6 @@ def run_new_pipeline(
     overtime_multiplier: float = 1.5,
     output_json: Optional[str] = None
 ) -> Dict[str, Any]:
-    # ...
-    # [Rest of function]
     """
     Chạy quy trình pipeline hoàn chỉnh từ đầu đến cuối.
     """
@@ -75,14 +73,12 @@ def run_new_pipeline(
           f"tai nguyen: {hetero_data['resource'].x.size(0)} nut")
 
     # 2. Khởi tạo mô hình HGT & Pretrainer (Phase 0)
-    print("\n[BUOC 2 & 3] Khoi chay HGT Pretrainer & Suy luan AI...")
-    in_dim_dict = {
+    model = HGTTaskPredictor({
         'task': hetero_data['task'].x.size(1),
         'resource': hetero_data['resource'].x.size(1),
-        'time_agenda': hetero_data['time_agenda'].x.size(1),
+        'shift': hetero_data['shift'].x.size(1),
         'project': hetero_data['project'].x.size(1)
-    }
-    model = HGTTaskPredictor(in_dim_dict, hidden_dim=128)
+    }, hidden_dim=128)
     
     ckpt_dir = os.path.join(project_root, "checkpoints")
     if project_root == "/" or not os.access(project_root, os.W_OK):
@@ -106,43 +102,29 @@ def run_new_pipeline(
         }
     print(f"   * AI suy luan & gia ma (Decoder) thanh cong du bao cho {len(ai_task_preds)} task.")
 
-    # 4. Mô phỏng Monte Carlo CPM
+    # 4. Mô phỏng Monte Carlo CPM dựa trên Lịch Agenda
     print(f"\n[BUOC 4] Mo phong Monte Carlo CPM voi {mc_iterations:,} vong chay...")
     tasks_df = pd.read_csv(os.path.join(project_dir, 'tasks.csv'))
-    edges_df = pd.read_csv(os.path.join(project_dir, 'predecessors.csv'))
+    logic_df = pd.read_csv(os.path.join(project_dir, 'logic.csv'))
     res_df = pd.read_csv(os.path.join(project_dir, 'resources.csv'))
     task_res_df = pd.read_csv(os.path.join(project_dir, 'task_resources.csv'))
 
-    hours_per_day = builder.normalizer.hours_per_day
-    days_per_week = builder.normalizer.days_per_week
-    hours_per_week = hours_per_day * days_per_week
-    hours_per_month = hours_per_week * 4.0
-
     tasks = tasks_df.to_dict(orient='records')
     for t in tasks:
-        t['id'] = str(t.get('id', t.get('task_id', '')))
+        t['id'] = str(t.get('task_id', t.get('id', '')))
 
     dependencies = []
-    for _, row in edges_df.iterrows():
-        l_m = float(row.get('lag_months', 0.0) or 0.0)
-        l_w = float(row.get('lag_weeks', 0.0) or 0.0)
-        l_d = float(row.get('lag_days', 0.0) or 0.0)
-        l_h = float(row.get('lag_hours', 0.0) or 0.0)
-        
-        tot_lag = l_m * hours_per_month + l_w * hours_per_week + l_d * hours_per_day + l_h
-        attr = {'lag_hours': tot_lag}
-        src = str(row.get('source_id', row.get('predecessor_task_id', '')))
-        tgt = str(row.get('target_id', row.get('successor_task_id', '')))
+    for _, row in logic_df.iterrows():
+        src = str(row['predecessor_id'])
+        tgt = str(row['successor_id'])
+        lag = float(row.get('lag_hours', 0.0))
+        attr = {'lag_hours': lag, 'dependency_type': str(row.get('dependency_type', 'FS'))}
         dependencies.append((src, tgt, attr))
-
-    hours_per_day = builder.normalizer.hours_per_day
-    days_per_week = builder.normalizer.days_per_week
 
     mc_engine = MonteCarloCPMEngine(
         tasks,
         dependencies,
-        hours_per_day=hours_per_day,
-        days_per_week=days_per_week
+        calendar_engine=builder.calendar_engine
     )
     mc_results = mc_engine.run_simulation(num_iterations=mc_iterations, ai_preds=ai_task_preds)
 
@@ -152,35 +134,41 @@ def run_new_pipeline(
     # 5. Lập lịch tối ưu CP-SAT Pareto
     print("\n[BUOC 5] Lap lich toi uu CP-SAT Pareto (5-Tier Constraints)...")
     capacities = {}
+    resources_dict = {}
     for _, r in res_df.iterrows():
-        r_id = str(r.get('id', r.get('resource_id', '')))
-        r_name = str(r.get('Name', r.get('name', r_id)))
-        cap = float(r.get('Availability', r.get('capacity', 1.0)))
+        r_id = str(r['ID'])
+        r_name = str(r.get('name', r_id))
+        cap = float(r.get('max_availability', 1.0))
         capacities[r_id] = cap
         capacities[r_name] = cap
+        resources_dict[r_id] = r.to_dict()
 
     task_resource_reqs = {}
     task_labor_rates = {}
     for _, tr in task_res_df.iterrows():
-        t_id = str(tr.get('task_id', ''))
-        r_key = str(tr.get('role', tr.get('resource_id', '')))
-        qty = float(tr.get('quantity', tr.get('request_quantity', 1.0)))
-        rate = float(tr.get('hourly_rate', 0.0))
-        task_resource_reqs[(t_id, r_key)] = qty
-        task_labor_rates[t_id] = task_labor_rates.get(t_id, 0.0) + (qty * rate)
+        t_id = str(tr['task_id'])
+        r_id = str(tr['resource_id'])
+        qty = float(tr.get('request_quantity', 1.0))
+        
+        r_info = resources_dict.get(r_id, {})
+        u_cost = float(r_info.get('unit_cost', 0.0))
+        
+        task_resource_reqs[(t_id, r_id)] = qty
+        task_labor_rates[t_id] = task_labor_rates.get(t_id, 0.0) + (qty * u_cost)
 
     solver = CPSATParetoSolver(
         tasks,
         dependencies,
         resource_capacities=capacities,
         task_resource_requirements=task_resource_reqs,
+        resources_dict=resources_dict,
         criticality_index=mc_results['criticality_index'],
         ai_task_preds=ai_task_preds,
         task_labor_rates=task_labor_rates,
         overtime_multiplier=overtime_multiplier,
         mc_samples=mc_results.get('makespan_samples'),
-        hours_per_day=hours_per_day,
-        days_per_week=days_per_week
+        mc_iterations=mc_iterations,
+        calendar_engine=builder.calendar_engine
     )
     pareto_options = solver.solve(time_limit_sec=15.0, pareto_count=pareto_count)
 
@@ -193,8 +181,6 @@ def run_new_pipeline(
         tot_c = opt.get('total_cost', 0.0)
         r_pct = opt.get('risk_pct', 100.0)
         print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Chi Phi: ${tot_c:,.2f} | Rui ro Tre: {r_pct}%")
-
-
 
     final_output = {
         'project_id': project_id,

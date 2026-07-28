@@ -122,12 +122,13 @@ class HGTPretrainer:
             avg_train_loss = epoch_train_loss / len(hetero_data_list)
             avg_val_loss = (epoch_val_loss / len(hetero_data_list)) if epoch_val_loss > 0 else avg_train_loss
             
-            avg_train_loss.backward()
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
-            optimizer.step()
+            if isinstance(avg_train_loss, torch.Tensor) and avg_train_loss.requires_grad:
+                avg_train_loss.backward()
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+                optimizer.step()
 
             # Thống kê Metric Validation (MAE, RMSE, R2, Overfit Ratio)
-            train_loss_val = avg_train_loss.item()
+            train_loss_val = avg_train_loss.item() if isinstance(avg_train_loss, torch.Tensor) else float(avg_train_loss)
             val_loss_val = avg_val_loss.item() if isinstance(avg_val_loss, torch.Tensor) else float(avg_val_loss)
             
             scheduler.step(val_loss_val)
@@ -192,7 +193,11 @@ class HGTPretrainer:
         if os.path.exists(self.checkpoint_path) and not force_retrain:
             print(f"[Pretrainer] Tai trong so Pretrained tu: {self.checkpoint_path}")
             try:
-                self.model.load_state_dict(torch.load(self.checkpoint_path, map_location='cpu', weights_only=True))
+                try:
+                    state_dict = torch.load(self.checkpoint_path, map_location='cpu', weights_only=True)
+                except TypeError:
+                    state_dict = torch.load(self.checkpoint_path, map_location='cpu')
+                self.model.load_state_dict(state_dict)
                 self.model.eval()
                 return True
             except Exception as e:

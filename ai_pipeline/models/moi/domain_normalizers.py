@@ -37,15 +37,33 @@ class WorkingCalendarEngine:
         default_days_per_week: float = 5.0
     ):
         self.weekly_schedule = {}
+        day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
+        
         if weekly_schedule and isinstance(weekly_schedule, dict):
             for k, v in weekly_schedule.items():
-                try:
-                    k_int = int(k)
-                    self.weekly_schedule[k_int] = max(0.0, float(v))
-                except (ValueError, TypeError):
-                    pass
+                k_lower = str(k).strip().lower()
+                day_idx = day_map.get(k_lower)
+                if day_idx is None:
+                    try:
+                        day_idx = int(k) % 7
+                    except (ValueError, TypeError):
+                        continue
+                
+                # Tính tổng số giờ từ số hoặc cấu trúc shifts dict
+                if isinstance(v, (int, float)):
+                    self.weekly_schedule[day_idx] = max(0.0, float(v))
+                elif isinstance(v, dict):
+                    if not v.get('is_working', True):
+                        self.weekly_schedule[day_idx] = 0.0
+                    else:
+                        shifts = v.get('shifts', [])
+                        if shifts:
+                            total_h = sum(float(s.get('hours', 0.0)) for s in shifts if isinstance(s, dict))
+                            self.weekly_schedule[day_idx] = max(0.0, total_h)
+                        else:
+                            self.weekly_schedule[day_idx] = default_hours_per_day
 
-        if not self.weekly_schedule:
+        if not self.weekly_schedule or sum(self.weekly_schedule.values()) <= 0:
             # Lịch mặc định tiêu chuẩn: T2->T6: 8h, T7/CN: 0h
             self.weekly_schedule = {
                 0: default_hours_per_day,
@@ -62,9 +80,9 @@ class WorkingCalendarEngine:
         if self.hours_per_week <= 0:
             self.hours_per_week = max(1.0, default_hours_per_day * default_days_per_week)
 
-        self.hours_per_month = self.hours_per_week * 4.33
+        self.hours_per_month = round(self.hours_per_week * 4.33, 2)
         self.working_days_per_week = sum(1 for h in self.weekly_schedule.values() if h > 0)
-        self.avg_hours_per_day = self.hours_per_week / max(1.0, float(self.working_days_per_week or 5.0))
+        self.avg_hours_per_day = round(self.hours_per_week / max(1.0, float(self.working_days_per_week or 5.0)), 2)
 
     def get_shift_hours(self, weekday: int) -> float:
         """Lấy số giờ ca làm việc của 1 Thứ trong tuần (0=Thứ 2, ..., 6=Chủ Nhật)."""
@@ -72,14 +90,17 @@ class WorkingCalendarEngine:
 
     def calculate_task_total_hours(self, task_data: Dict[str, Any]) -> float:
         """
-        Quy đổi tổng số giờ thi công thực tế của công việc dựa trên ca làm việc động từng ngày của Lịch Agenda.
+        Quy đổi tổng số giờ thi công thực tế của công việc dựa trên duration_hours hoặc lịch ca làm việc.
         """
+        d_h = float(task_data.get('duration_hours', task_data.get('duration', 0.0)) or 0.0)
+        if d_h > 0.0:
+            return max(0.1, d_h)
+            
         d_m = float(task_data.get('duration_months', 0.0) or 0.0)
         d_w = float(task_data.get('duration_weeks', 0.0) or 0.0)
         d_d = float(task_data.get('duration_days', 0.0) or 0.0)
-        d_h = float(task_data.get('duration_hours', task_data.get('duration', 0.0)) or 0.0)
         
-        total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.avg_hours_per_day + d_h
+        total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.avg_hours_per_day
         return max(0.1, total_hours)
 
 
@@ -112,7 +133,7 @@ class BaseProjectNormalizer:
 
     def encode_task_df(self, tasks_df: pd.DataFrame) -> torch.Tensor:
         """
-        Chuyển đổi DataFrame tasks.csv thành Tensor [N, 42] chuẩn hóa gồm 4 chỉ số thời gian + 38 cột chi phí chuẩn.
+        Chuyển đổi DataFrame tasks.csv thành Tensor [N, 39] chuẩn hóa gồm 1 chỉ số thời gian duration_hours + 38 cột chi phí chuẩn.
         """
         features_list = []
         
@@ -153,15 +174,8 @@ class BaseProjectNormalizer:
         for idx, row in tasks_df.iterrows():
             feat = []
             
-            # --- 1. Duration Metrics (4 features) ---
-            d_m = float(row.get('duration_months', 0.0) or 0.0)
-            d_w = float(row.get('duration_weeks', 0.0) or 0.0)
-            d_d = float(row.get('duration_days', 0.0) or 0.0)
+            # --- 1. Duration Metric (1 feature tiêu chuẩn) ---
             d_h = float(row.get('duration_hours', row.get('duration', 0.0)) or 0.0)
-            
-            feat.append(np.log1p(max(0.0, d_m)))
-            feat.append(np.log1p(max(0.0, d_w)))
-            feat.append(np.log1p(max(0.0, d_d)))
             feat.append(np.log1p(max(0.0, d_h)))
             
             # --- 2. Standard 38 Cost Columns (38 features) ---
@@ -180,7 +194,7 @@ class BaseProjectNormalizer:
             features_list.append(feat)
             
         if not features_list:
-            return torch.zeros((0, 42), dtype=torch.float32)
+            return torch.zeros((0, 39), dtype=torch.float32)
             
         tensor_x = torch.tensor(features_list, dtype=torch.float32)
         
@@ -213,31 +227,18 @@ class BaseProjectNormalizer:
 
     def decode_reconstructed_features(self, norm_tensor: torch.Tensor) -> np.ndarray:
         """
-        Giải mã Tensor tái tạo [N, 72] từ Phase 0 Pretrainer trở lại giá trị quy mô thực tế.
+        Giải mã Tensor tái tạo [N, 39] từ Phase 0 Pretrainer trở lại giá trị quy mô thực tế.
         """
         arr = norm_tensor.detach().cpu().numpy()
         raw = np.zeros_like(arr)
         
-        # Group 0: Time (Indices 0 - 3)
-        raw[:, 0] = np.expm1(arr[:, 0]) # Total hours
-        raw[:, 1] = np.expm1(arr[:, 1]) # Weeks
-        raw[:, 2] = np.expm1(arr[:, 2]) # Days
-        raw[:, 3] = np.expm1(arr[:, 3]) # Hours
+        # Index 0: Duration hours
+        raw[:, 0] = np.expm1(arr[:, 0])
         
-        # Group 1-3 & 5: Costs
-        cost_indices = list(range(4, 17)) + list(range(21, 26))
-        for idx in cost_indices:
-            raw[:, idx] = np.expm1(arr[:, idx]) * self.s_domain
+        # Indices 1-38: Standard 38 Cost features
+        if arr.shape[1] > 1:
+            raw[:, 1:] = np.expm1(arr[:, 1:]) * self.s_domain
             
-        # Group 4: Risk (Indices 17 - 20)
-        raw[:, 17:21] = arr[:, 17:21]
-        
-        # Group 6: Time Adjustments (26 - 27)
-        raw[:, 26] = np.expm1(arr[:, 26])
-        raw[:, 27] = np.expm1(arr[:, 27])
-        
-        # Group 7-8: Rest
-        raw[:, 28:] = arr[:, 28:]
         return raw
 
 

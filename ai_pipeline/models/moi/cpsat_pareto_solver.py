@@ -113,12 +113,12 @@ def calculate_task_inter_costs(
     Động cơ tính toán chi phí nội hàm (Dynamic Inter-Cost Engine) cho nhân công, thiết bị, năng lượng.
     """
     t_id = str(task.get('id', task.get('task_id', '')))
-    base_cost = float(task.get('base_cost', task.get('total_cost', task.get('cost', 100.0))) or 100.0)
+    base_cost = float(task.get('total_cost', task.get('base_cost', task.get('cost', 100.0))) or 100.0)
     
-    # 1. Base components
-    base_labor = float(task.get('labor', task.get('internal_labor_cost', 0.0)) or 0.0)
-    base_equipment = float(task.get('equipment', task.get('equipment_fuel_cost', 0.0)) or 0.0)
-    base_energy = float(task.get('energy', 0.0) or 0.0)
+    # 1. Base components từ các cột chi phí tiêu chuẩn
+    base_labor = float(task.get('direct_labor_cost', task.get('labor', task.get('internal_labor_cost', 0.0))) or 0.0)
+    base_equipment = float(task.get('direct_equipment_cost', task.get('equipment', task.get('equipment_fuel_cost', 0.0))) or 0.0)
+    base_energy = float(task.get('direct_energy_cost', task.get('energy', 0.0)) or 0.0)
 
     # 2. Hourly rates
     labor_rate_per_h = float(task_labor_rates.get(t_id, 0.0))
@@ -157,10 +157,14 @@ class CPSATParetoSolver:
         criticality_index: Optional[Dict[str, float]] = None,
         ai_task_preds: Optional[Dict[str, Dict[str, float]]] = None,
         task_labor_rates: Optional[Dict[str, float]] = None,
+        resources_dict: Optional[Dict[str, Dict[str, Any]]] = None,
         overtime_multiplier: float = 1.5,
         mc_samples: Optional[np.ndarray] = None,
-        hours_per_day: float = 8.0,
-        days_per_week: float = 5.0,
+        mc_iterations: int = 10000,
+        target_deadline: Optional[float] = None,
+        penalty_per_day: float = 0.0,
+        bonus_per_day: float = 0.0,
+        calendar_engine: Optional[WorkingCalendarEngine] = None,
         weekly_schedule: Optional[Dict[Any, float]] = None,
         holidays_list: Optional[list] = None
     ):
@@ -168,23 +172,26 @@ class CPSATParetoSolver:
         self.dependencies = dependencies
         self.resource_capacities = resource_capacities or {}
         self.task_resource_requirements = task_resource_requirements or {}
+        self.resources_dict = resources_dict or {}
         self.criticality_index = criticality_index or {}
         self.ai_task_preds = ai_task_preds or {}
         self.task_labor_rates = task_labor_rates or {}
         self.overtime_multiplier = float(overtime_multiplier)
         self.mc_samples = mc_samples
-        self.hours_per_day = hours_per_day
-        self.days_per_week = days_per_week
+        self.mc_iterations = max(100, int(mc_iterations))
+        self.target_deadline = target_deadline
+        self.penalty_per_day = float(penalty_per_day)
+        self.bonus_per_day = float(bonus_per_day)
         self.weekly_schedule = weekly_schedule
         self.holidays_list = holidays_list
         
-        # Initialize WorkingCalendarEngine
-        self.calendar_engine = WorkingCalendarEngine(
+        # Initialize WorkingCalendarEngine động từ agenda.json
+        self.calendar_engine = calendar_engine or WorkingCalendarEngine(
             weekly_schedule=weekly_schedule,
-            holidays_list=holidays_list,
-            default_hours_per_day=hours_per_day,
-            default_days_per_week=days_per_week
+            holidays_list=holidays_list
         )
+        self.hours_per_day = self.calendar_engine.avg_hours_per_day
+        self.days_per_week = float(self.calendar_engine.working_days_per_week or 5.0)
         
         self.real_project_cost = float(sum(
             float(t.get('total_cost', t.get('base_cost', t.get('cost', 0.0)))) for t in tasks
@@ -275,6 +282,7 @@ class CPSATParetoSolver:
         """
         model = cp_model.CpModel()
         allowed_crash_set = cfg.get('allowed_crash_set', set())
+        avg_h_day = max(1.0, self.calendar_engine.avg_hours_per_day)
         
         task_modes = {}
         for t in self.tasks:
@@ -289,15 +297,50 @@ class CPSATParetoSolver:
             cost_0 = base_cost
             risk_0 = ci_score * 1.0
 
-            dur_1 = max(1, int(round(base_dur_h * 0.75)))
+            # 1. Tìm các tài nguyên thuộc về task t_id
+            assigned_res_list = []
+            for (tid, rid), qty in self.task_resource_requirements.items():
+                if str(tid) == t_id and qty > 0:
+                    r_info = self.resources_dict.get(str(rid), {})
+                    assigned_res_list.append((r_info, float(qty)))
+
+            # 2. Lấy MIN max_overtime_per_day của các tài nguyên thuộc Task (Bottleneck MIN)
+            if assigned_res_list:
+                task_max_ot_per_day = min(
+                    float(r_info.get('max_overtime_per_day', 4.0 if str(r_info.get('type')).lower() == 'human' else 16.0))
+                    for r_info, _ in assigned_res_list
+                )
+            else:
+                task_max_ot_per_day = 0.0 # Task không có tài nguyên không thể tăng ca
+
+            # 3. Tính đơn giá Tăng ca Động theo từng loại tài nguyên thực tế
+            ot_labor_rate = 0.0
+            ot_equip_rate = 0.0
+            ot_energy_rate = 0.0
+            for r_info, qty in assigned_res_list:
+                r_type = str(r_info.get('type', 'Machine')).lower()
+                u_cost = float(r_info.get('unit_cost', 0.0))
+                ot_multi = float(r_info.get('overtime_multi', 1.5 if r_type == 'human' else 1.0))
+                energy_val = float(r_info.get('energy', 0.25 * u_cost if r_type == 'machine' else 0.0))
+                
+                if r_type == 'human':
+                    ot_labor_rate += qty * u_cost * ot_multi
+                else:
+                    ot_equip_rate += qty * u_cost * ot_multi
+                    ot_energy_rate += qty * energy_val
+
+            # 4. Tính toán thời gian rút ngắn & chi phí tăng ca động
+            dur_days = base_dur_h / avg_h_day
+            max_ot_hours = dur_days * task_max_ot_per_day
+            
+            dur_1 = max(1, int(round(base_dur_h - max_ot_hours))) if max_ot_hours > 0 else dur_0
             delta_h = max(0.0, base_dur_h - dur_1)
 
-            # Dynamic Overtime Cost Formulas
-            labor_ot_cost = delta_h * self.overtime_multiplier * cost_meta['labor_rate_per_h']
-            energy_ot_cost = delta_h * 1.0 * cost_meta['energy_rate_per_h']
-            equipment_ot_cost = delta_h * 1.0 * cost_meta['equipment_rate_per_h']
+            labor_ot_cost = delta_h * (ot_labor_rate if ot_labor_rate > 0 else cost_meta['labor_rate_per_h'] * self.overtime_multiplier)
+            equipment_ot_cost = delta_h * (ot_equip_rate if ot_equip_rate > 0 else cost_meta['equipment_rate_per_h'])
+            energy_ot_cost = delta_h * (ot_energy_rate if ot_energy_rate > 0 else cost_meta['energy_rate_per_h'])
 
-            total_ot_extra = labor_ot_cost + energy_ot_cost + equipment_ot_cost
+            total_ot_extra = labor_ot_cost + equipment_ot_cost + energy_ot_cost
             cost_1 = base_cost + total_ot_extra
             risk_1 = ci_score * 0.75
 

@@ -64,14 +64,12 @@ def evaluate_lopo_cross_validation(
     print(f"   + Loaded Unseen Test Graph [{test_project_id}]: {test_graph['task'].x.size(0)} tasks")
 
     # 3. Khởi tạo mô hình
-    sample_data = train_graphs[0]
-    in_dim_dict = {
+    model = HGTTaskPredictor({
         'task': sample_data['task'].x.size(1),
         'resource': sample_data['resource'].x.size(1),
-        'time_agenda': sample_data['time_agenda'].x.size(1),
+        'shift': sample_data['shift'].x.size(1),
         'project': sample_data['project'].x.size(1)
-    }
-    model = HGTTaskPredictor(in_dim_dict, hidden_dim=64)
+    }, hidden_dim=64)
     pretrainer = HGTPretrainer(model, checkpoint_dir=os.path.join(project_root, "checkpoints"))
 
     # 4. Huấn luyện mô hình trên Train Graphs với Validation Split

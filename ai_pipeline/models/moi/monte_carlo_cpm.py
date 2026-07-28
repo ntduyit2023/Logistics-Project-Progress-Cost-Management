@@ -29,32 +29,40 @@ def sample_beta_pert(a: float, m: float, b: float) -> float:
     return a + (b - a) * sample
 
 
-from ai_pipeline.models.moi.domain_normalizers import calculate_task_total_hours
+from ai_pipeline.models.moi.domain_normalizers import WorkingCalendarEngine, calculate_task_total_hours
 
 
 class MonteCarloCPMEngine:
     """
-    Bộ mô phỏng Monte Carlo kết hợp CPM cho dự án.
+    Bộ mô phỏng Monte Carlo kết hợp CPM cho dự án dựa trên Lịch Agenda.
     """
     def __init__(
         self,
         tasks: List[Dict[str, Any]],
         dependencies: List[Tuple[Any, Any, Dict[str, Any]]],
-        hours_per_day: float = 8.0,
-        days_per_week: float = 5.0
+        calendar_engine: Optional[WorkingCalendarEngine] = None,
+        weekly_schedule: Optional[Dict[Any, float]] = None,
+        holidays_list: Optional[list] = None
     ):
         self.tasks = tasks
         self.dependencies = dependencies
-        self.hours_per_day = hours_per_day
-        self.days_per_week = days_per_week
+        
+        self.calendar_engine = calendar_engine or WorkingCalendarEngine(
+            weekly_schedule=weekly_schedule,
+            holidays_list=holidays_list
+        )
+        self.hours_per_day = self.calendar_engine.avg_hours_per_day
+        self.days_per_week = float(self.calendar_engine.working_days_per_week or 5.0)
         
         # Dựng đồ thị DAG
         self.graph = nx.DiGraph()
         for t in tasks:
-            self.graph.add_node(str(t['id']), **t)
+            t_id = str(t.get('id', t.get('task_id', '')))
+            self.graph.add_node(t_id, **t)
         for pred, succ, attr in dependencies:
-            if str(pred) in self.graph and str(succ) in self.graph:
-                self.graph.add_edge(str(pred), str(succ), **(attr or {}))
+            p_id, s_id = str(pred), str(succ)
+            if p_id in self.graph and s_id in self.graph:
+                self.graph.add_edge(p_id, s_id, **(attr or {}))
 
     def run_simulation(
         self,
@@ -78,7 +86,7 @@ class MonteCarloCPMEngine:
             sampled_durations = {}
             for t_id in task_ids:
                 node_data = self.graph.nodes[t_id]
-                base_dur = calculate_task_total_hours(node_data, self.hours_per_day, self.days_per_week)
+                base_dur = self.calendar_engine.calculate_task_total_hours(node_data)
                 
                 # Áp dụng dự báo AI nếu có
                 if ai_preds and t_id in ai_preds:

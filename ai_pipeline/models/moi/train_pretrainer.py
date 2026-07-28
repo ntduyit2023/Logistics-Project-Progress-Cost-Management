@@ -81,15 +81,12 @@ def train_multi_domain_projects(
         raise RuntimeError("Khong nap duoc do thi du an nao!")
 
     # 2. Khởi tạo Mô hình HGT Predictor
-    sample_data = hetero_data_list[0]
-    in_dim_dict = {
+    model = HGTTaskPredictor({
         'task': sample_data['task'].x.size(1),
         'resource': sample_data['resource'].x.size(1),
-        'time_agenda': sample_data['time_agenda'].x.size(1),
+        'shift': sample_data['shift'].x.size(1),
         'project': sample_data['project'].x.size(1)
-    }
-    
-    model = HGTTaskPredictor(in_dim_dict, hidden_dim=128)
+    }, hidden_dim=128)
     checkpoint_dir = os.path.join(project_root, "checkpoints")
     pretrainer = HGTPretrainer(model, checkpoint_dir=checkpoint_dir)
 
