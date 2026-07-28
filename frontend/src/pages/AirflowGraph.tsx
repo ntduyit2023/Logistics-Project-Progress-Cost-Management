@@ -208,14 +208,6 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
         "esg_cost": task.esg_cost,
         "carbon_tax": task.carbon_tax,
         "reputation_cost": task.reputation_cost
-      },
-      "Risk Factors": {
-        "complexity": task.complexity,
-        "weather_contingency": task.weather_contingency,
-        "general_contingency": task.general_contingency,
-        "rework_risk": task.rework_risk,
-        "overtime_hours": task.overtime_hours,
-        "lag_time": task.lag_time
       }
     };
   };

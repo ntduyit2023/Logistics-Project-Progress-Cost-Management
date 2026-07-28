@@ -1,203 +1,203 @@
-task_id,role,quantity,hourly_rate,type
-C2012-04_1,Labourers,2.0,60.0,Renewable
-C2012-04_1,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_2,Labourers,4.0,60.0,Renewable
-C2012-04_2,Truck IVECO Trakker,3.0,70.0,Renewable
-C2012-04_2,Wheel Loader,1.0,60.0,Renewable
-C2012-04_3,Labourers,3.0,60.0,Renewable
-C2012-04_3,Bulldozer D8T,1.0,75.0,Renewable
-C2012-04_3,Wheel Loader,1.0,60.0,Renewable
-C2012-04_3,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_4,Labourers,2.0,60.0,Renewable
-C2012-04_4,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_4,Crane,1.0,105.0,Renewable
-C2012-04_5,Labourers,3.0,60.0,Renewable
-C2012-04_5,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_6,Labourers,2.0,60.0,Renewable
-C2012-04_6,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_7,Labourers,7.0,60.0,Renewable
-C2012-04_7,Truck IVECO Trakker,5.0,70.0,Renewable
-C2012-04_7,Wheel Loader,2.0,60.0,Renewable
-C2012-04_7,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_8,Labourers,4.0,60.0,Renewable
-C2012-04_8,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_8,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_8,Paler,1.0,65.0,Renewable
-C2012-04_9,Labourers,3.0,60.0,Renewable
-C2012-04_9,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_9,Bulldozer D8T,1.0,75.0,Renewable
-C2012-04_9,Wheel Loader,1.0,60.0,Renewable
-C2012-04_14,Labourers,3.0,60.0,Renewable
-C2012-04_14,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_14,Crane,1.0,105.0,Renewable
-C2012-04_11,Labourers,4.0,60.0,Renewable
-C2012-04_11,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_11,Crane,1.0,105.0,Renewable
-C2012-04_19,Labourers,10.0,60.0,Renewable
-C2012-04_19,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_19,Wheel Loader,2.0,60.0,Renewable
-C2012-04_19,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_20,Labourers,4.0,60.0,Renewable
-C2012-04_20,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_20,Crane,1.0,105.0,Renewable
-C2012-04_17,Labourers,9.0,60.0,Renewable
-C2012-04_17,Crawler Excavator,2.0,98.0,Renewable
-C2012-04_17,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_17,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_22,Labourers,4.0,60.0,Renewable
-C2012-04_22,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_22,Crane,1.0,105.0,Renewable
-C2012-04_22,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_24,Labourers,4.0,60.0,Renewable
-C2012-04_24,Truck IVECO Trakker,3.0,70.0,Renewable
-C2012-04_24,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_25,Labourers,6.0,60.0,Renewable
-C2012-04_25,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_25,Drilling Rid,1.0,75.0,Renewable
-C2012-04_25,Crane,1.0,105.0,Renewable
-C2012-04_25,Wheel Loader,1.0,60.0,Renewable
-C2012-04_27,Labourers,4.0,60.0,Renewable
-C2012-04_27,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_27,Crane,1.0,105.0,Renewable
-C2012-04_29,Labourers,4.0,60.0,Renewable
-C2012-04_29,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_29,Crane,1.0,105.0,Renewable
-C2012-04_31,Labourers,4.0,60.0,Renewable
-C2012-04_31,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_31,Crane,1.0,105.0,Renewable
-C2012-04_33,Labourers,4.0,60.0,Renewable
-C2012-04_33,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_33,Crane,1.0,105.0,Renewable
-C2012-04_34,Labourers,5.0,60.0,Renewable
-C2012-04_34,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_34,Crane,1.0,105.0,Renewable
-C2012-04_36,Labourers,5.0,60.0,Renewable
-C2012-04_36,Truck IVECO Trakker,3.0,70.0,Renewable
-C2012-04_36,Wheel Loader,1.0,60.0,Renewable
-C2012-04_36,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_41,Labourers,3.0,60.0,Renewable
-C2012-04_41,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_41,Cold Milling Machine,1.0,230.0,Renewable
-C2012-04_42,Labourers,3.0,60.0,Renewable
-C2012-04_42,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_42,Wheel Loader,1.0,60.0,Renewable
-C2012-04_42,Bulldozer D8T,1.0,75.0,Renewable
-C2012-04_38,Labourers,10.0,60.0,Renewable
-C2012-04_38,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_38,Wheel Loader,2.0,60.0,Renewable
-C2012-04_38,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_39,Labourers,4.0,60.0,Renewable
-C2012-04_39,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_39,Crane,1.0,105.0,Renewable
-C2012-04_63,Labourers,2.0,60.0,Renewable
-C2012-04_63,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_63,Crane,1.0,105.0,Renewable
-C2012-04_62,Labourers,4.0,60.0,Renewable
-C2012-04_62,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_62,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_62,Crane,1.0,105.0,Renewable
-C2012-04_66,Labourers,5.0,60.0,Renewable
-C2012-04_66,Crane,1.0,105.0,Renewable
-C2012-04_66,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_68,Labourers,4.0,60.0,Renewable
-C2012-04_68,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_68,Crane,1.0,105.0,Renewable
-C2012-04_69,Labourers,5.0,60.0,Renewable
-C2012-04_69,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_69,Crane,1.0,105.0,Renewable
-C2012-04_82,Labourers,3.0,60.0,Renewable
-C2012-04_82,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_82,Cold Milling Machine,1.0,230.0,Renewable
-C2012-04_83,Labourers,4.0,60.0,Renewable
-C2012-04_83,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_83,Bulldozer D8T,1.0,75.0,Renewable
-C2012-04_83,Wheel Loader,1.0,60.0,Renewable
-C2012-04_75,Labourers,10.0,60.0,Renewable
-C2012-04_75,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_75,Wheel Loader,2.0,60.0,Renewable
-C2012-04_75,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_75,Tank Truck,1.0,78.0,Renewable
-C2012-04_73,Labourers,3.0,60.0,Renewable
-C2012-04_73,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_73,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_73,Tank Truck,1.0,78.0,Renewable
-C2012-04_72,Labourers,10.0,60.0,Renewable
-C2012-04_72,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_72,Wheel Loader,2.0,60.0,Renewable
-C2012-04_72,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_72,Tank Truck,1.0,78.0,Renewable
-C2012-04_80,Labourers,3.0,60.0,Renewable
-C2012-04_80,Crane,1.0,105.0,Renewable
-C2012-04_80,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_78,Labourers,4.0,60.0,Renewable
-C2012-04_78,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_78,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_78,Crane,1.0,105.0,Renewable
-C2012-04_77,Labourers,3.0,60.0,Renewable
-C2012-04_77,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_77,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_77,Crane,1.0,105.0,Renewable
-C2012-04_48,Labourers,3.0,60.0,Renewable
-C2012-04_48,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_48,Cold Milling Machine,1.0,230.0,Renewable
-C2012-04_49,Labourers,3.0,60.0,Renewable
-C2012-04_49,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_49,Wheel Loader,1.0,60.0,Renewable
-C2012-04_49,Bulldozer D8T,1.0,75.0,Renewable
-C2012-04_46,Labourers,10.0,60.0,Renewable
-C2012-04_46,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_46,Wheel Loader,2.0,60.0,Renewable
-C2012-04_46,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_46,Tank Truck,1.0,78.0,Renewable
-C2012-04_44,Labourers,4.0,60.0,Renewable
-C2012-04_44,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_44,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_44,Crane,1.0,105.0,Renewable
-C2012-04_58,Labourers,3.0,60.0,Renewable
-C2012-04_58,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_58,Cold Milling Machine,1.0,230.0,Renewable
-C2012-04_59,Labourers,4.0,60.0,Renewable
-C2012-04_59,Bulldozer D8T,1.0,75.0,Renewable
-C2012-04_59,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_59,Wheel Loader,1.0,60.0,Renewable
-C2012-04_52,Labourers,3.0,60.0,Renewable
-C2012-04_52,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_52,Sheepfoot rolles,1.0,70.0,Renewable
-C2012-04_52,Tank Truck,1.0,78.0,Renewable
-C2012-04_51,Labourers,8.0,60.0,Renewable
-C2012-04_51,Truck IVECO Trakker,6.0,70.0,Renewable
-C2012-04_51,Crawler Excavator,2.0,98.0,Renewable
-C2012-04_55,Labourers,3.0,60.0,Renewable
-C2012-04_55,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_55,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_55,Crane,1.0,105.0,Renewable
-C2012-04_56,Labourers,4.0,60.0,Renewable
-C2012-04_56,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_56,Crawler Excavator,1.0,98.0,Renewable
-C2012-04_56,Crane,1.0,105.0,Renewable
-C2012-04_85,Labourers,7.0,60.0,Renewable
-C2012-04_85,Truck IVECO Trakker,5.0,70.0,Renewable
-C2012-04_85,Paler,1.0,65.0,Renewable
-C2012-04_85,Smooth Roller,1.0,60.0,Renewable
-C2012-04_86,Labourers,4.0,60.0,Renewable
-C2012-04_86,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_86,Pile Driver,1.0,48.0,Renewable
-C2012-04_87,Labourers,5.0,60.0,Renewable
-C2012-04_87,Truck IVECO Trakker,2.0,70.0,Renewable
-C2012-04_87,Wheel Loader,2.0,60.0,Renewable
-C2012-04_87,Pruning Machine,1.0,40.0,Renewable
-C2012-04_88,Labourers,3.0,60.0,Renewable
-C2012-04_88,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_89,Labourers,2.0,60.0,Renewable
-C2012-04_89,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_89,Line Striper Machine,1.0,30.0,Renewable
-C2012-04_91,Labourers,2.0,60.0,Renewable
-C2012-04_91,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_92,Labourers,2.0,60.0,Renewable
-C2012-04_92,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_92,Crane,1.0,105.0,Renewable
-C2012-04_93,Labourers,2.0,60.0,Renewable
-C2012-04_93,Truck IVECO Trakker,1.0,70.0,Renewable
-C2012-04_93,Wheel Loader,1.0,60.0,Renewable
-C2012-04_94,Labourers,2.0,60.0,Renewable
-C2012-04_94,Truck IVECO Trakker,1.0,70.0,Renewable
+task_id,resource_id,request_quantity
+C2012-04_1,Labourers,2.0
+C2012-04_1,Truck IVECO Trakker,1.0
+C2012-04_2,Labourers,4.0
+C2012-04_2,Truck IVECO Trakker,3.0
+C2012-04_2,Wheel Loader,1.0
+C2012-04_3,Labourers,3.0
+C2012-04_3,Bulldozer D8T,1.0
+C2012-04_3,Wheel Loader,1.0
+C2012-04_3,Truck IVECO Trakker,1.0
+C2012-04_4,Labourers,2.0
+C2012-04_4,Truck IVECO Trakker,1.0
+C2012-04_4,Crane,1.0
+C2012-04_5,Labourers,3.0
+C2012-04_5,Truck IVECO Trakker,1.0
+C2012-04_6,Labourers,2.0
+C2012-04_6,Truck IVECO Trakker,1.0
+C2012-04_7,Labourers,7.0
+C2012-04_7,Truck IVECO Trakker,5.0
+C2012-04_7,Wheel Loader,2.0
+C2012-04_7,Sheepfoot rolles,1.0
+C2012-04_8,Labourers,4.0
+C2012-04_8,Truck IVECO Trakker,2.0
+C2012-04_8,Crawler Excavator,1.0
+C2012-04_8,Paler,1.0
+C2012-04_9,Labourers,3.0
+C2012-04_9,Truck IVECO Trakker,1.0
+C2012-04_9,Bulldozer D8T,1.0
+C2012-04_9,Wheel Loader,1.0
+C2012-04_14,Labourers,3.0
+C2012-04_14,Truck IVECO Trakker,1.0
+C2012-04_14,Crane,1.0
+C2012-04_11,Labourers,4.0
+C2012-04_11,Truck IVECO Trakker,1.0
+C2012-04_11,Crane,1.0
+C2012-04_19,Labourers,10.0
+C2012-04_19,Truck IVECO Trakker,6.0
+C2012-04_19,Wheel Loader,2.0
+C2012-04_19,Sheepfoot rolles,1.0
+C2012-04_20,Labourers,4.0
+C2012-04_20,Truck IVECO Trakker,1.0
+C2012-04_20,Crane,1.0
+C2012-04_17,Labourers,9.0
+C2012-04_17,Crawler Excavator,2.0
+C2012-04_17,Truck IVECO Trakker,6.0
+C2012-04_17,Sheepfoot rolles,1.0
+C2012-04_22,Labourers,4.0
+C2012-04_22,Truck IVECO Trakker,1.0
+C2012-04_22,Crane,1.0
+C2012-04_22,Crawler Excavator,1.0
+C2012-04_24,Labourers,4.0
+C2012-04_24,Truck IVECO Trakker,3.0
+C2012-04_24,Crawler Excavator,1.0
+C2012-04_25,Labourers,6.0
+C2012-04_25,Truck IVECO Trakker,1.0
+C2012-04_25,Drilling Rid,1.0
+C2012-04_25,Crane,1.0
+C2012-04_25,Wheel Loader,1.0
+C2012-04_27,Labourers,4.0
+C2012-04_27,Truck IVECO Trakker,1.0
+C2012-04_27,Crane,1.0
+C2012-04_29,Labourers,4.0
+C2012-04_29,Truck IVECO Trakker,1.0
+C2012-04_29,Crane,1.0
+C2012-04_31,Labourers,4.0
+C2012-04_31,Truck IVECO Trakker,1.0
+C2012-04_31,Crane,1.0
+C2012-04_33,Labourers,4.0
+C2012-04_33,Truck IVECO Trakker,1.0
+C2012-04_33,Crane,1.0
+C2012-04_34,Labourers,5.0
+C2012-04_34,Truck IVECO Trakker,1.0
+C2012-04_34,Crane,1.0
+C2012-04_36,Labourers,5.0
+C2012-04_36,Truck IVECO Trakker,3.0
+C2012-04_36,Wheel Loader,1.0
+C2012-04_36,Sheepfoot rolles,1.0
+C2012-04_41,Labourers,3.0
+C2012-04_41,Truck IVECO Trakker,2.0
+C2012-04_41,Cold Milling Machine,1.0
+C2012-04_42,Labourers,3.0
+C2012-04_42,Truck IVECO Trakker,1.0
+C2012-04_42,Wheel Loader,1.0
+C2012-04_42,Bulldozer D8T,1.0
+C2012-04_38,Labourers,10.0
+C2012-04_38,Truck IVECO Trakker,6.0
+C2012-04_38,Wheel Loader,2.0
+C2012-04_38,Sheepfoot rolles,1.0
+C2012-04_39,Labourers,4.0
+C2012-04_39,Truck IVECO Trakker,1.0
+C2012-04_39,Crane,1.0
+C2012-04_63,Labourers,2.0
+C2012-04_63,Truck IVECO Trakker,1.0
+C2012-04_63,Crane,1.0
+C2012-04_62,Labourers,4.0
+C2012-04_62,Truck IVECO Trakker,2.0
+C2012-04_62,Crawler Excavator,1.0
+C2012-04_62,Crane,1.0
+C2012-04_66,Labourers,5.0
+C2012-04_66,Crane,1.0
+C2012-04_66,Truck IVECO Trakker,1.0
+C2012-04_68,Labourers,4.0
+C2012-04_68,Truck IVECO Trakker,1.0
+C2012-04_68,Crane,1.0
+C2012-04_69,Labourers,5.0
+C2012-04_69,Truck IVECO Trakker,1.0
+C2012-04_69,Crane,1.0
+C2012-04_82,Labourers,3.0
+C2012-04_82,Truck IVECO Trakker,2.0
+C2012-04_82,Cold Milling Machine,1.0
+C2012-04_83,Labourers,4.0
+C2012-04_83,Truck IVECO Trakker,2.0
+C2012-04_83,Bulldozer D8T,1.0
+C2012-04_83,Wheel Loader,1.0
+C2012-04_75,Labourers,10.0
+C2012-04_75,Truck IVECO Trakker,6.0
+C2012-04_75,Wheel Loader,2.0
+C2012-04_75,Sheepfoot rolles,1.0
+C2012-04_75,Tank Truck,1.0
+C2012-04_73,Labourers,3.0
+C2012-04_73,Crawler Excavator,1.0
+C2012-04_73,Sheepfoot rolles,1.0
+C2012-04_73,Tank Truck,1.0
+C2012-04_72,Labourers,10.0
+C2012-04_72,Truck IVECO Trakker,6.0
+C2012-04_72,Wheel Loader,2.0
+C2012-04_72,Sheepfoot rolles,1.0
+C2012-04_72,Tank Truck,1.0
+C2012-04_80,Labourers,3.0
+C2012-04_80,Crane,1.0
+C2012-04_80,Truck IVECO Trakker,1.0
+C2012-04_78,Labourers,4.0
+C2012-04_78,Truck IVECO Trakker,2.0
+C2012-04_78,Crawler Excavator,1.0
+C2012-04_78,Crane,1.0
+C2012-04_77,Labourers,3.0
+C2012-04_77,Truck IVECO Trakker,1.0
+C2012-04_77,Crawler Excavator,1.0
+C2012-04_77,Crane,1.0
+C2012-04_48,Labourers,3.0
+C2012-04_48,Truck IVECO Trakker,2.0
+C2012-04_48,Cold Milling Machine,1.0
+C2012-04_49,Labourers,3.0
+C2012-04_49,Truck IVECO Trakker,1.0
+C2012-04_49,Wheel Loader,1.0
+C2012-04_49,Bulldozer D8T,1.0
+C2012-04_46,Labourers,10.0
+C2012-04_46,Truck IVECO Trakker,6.0
+C2012-04_46,Wheel Loader,2.0
+C2012-04_46,Sheepfoot rolles,1.0
+C2012-04_46,Tank Truck,1.0
+C2012-04_44,Labourers,4.0
+C2012-04_44,Truck IVECO Trakker,2.0
+C2012-04_44,Crawler Excavator,1.0
+C2012-04_44,Crane,1.0
+C2012-04_58,Labourers,3.0
+C2012-04_58,Truck IVECO Trakker,2.0
+C2012-04_58,Cold Milling Machine,1.0
+C2012-04_59,Labourers,4.0
+C2012-04_59,Bulldozer D8T,1.0
+C2012-04_59,Truck IVECO Trakker,2.0
+C2012-04_59,Wheel Loader,1.0
+C2012-04_52,Labourers,3.0
+C2012-04_52,Crawler Excavator,1.0
+C2012-04_52,Sheepfoot rolles,1.0
+C2012-04_52,Tank Truck,1.0
+C2012-04_51,Labourers,8.0
+C2012-04_51,Truck IVECO Trakker,6.0
+C2012-04_51,Crawler Excavator,2.0
+C2012-04_55,Labourers,3.0
+C2012-04_55,Crawler Excavator,1.0
+C2012-04_55,Truck IVECO Trakker,1.0
+C2012-04_55,Crane,1.0
+C2012-04_56,Labourers,4.0
+C2012-04_56,Truck IVECO Trakker,2.0
+C2012-04_56,Crawler Excavator,1.0
+C2012-04_56,Crane,1.0
+C2012-04_85,Labourers,7.0
+C2012-04_85,Truck IVECO Trakker,5.0
+C2012-04_85,Paler,1.0
+C2012-04_85,Smooth Roller,1.0
+C2012-04_86,Labourers,4.0
+C2012-04_86,Truck IVECO Trakker,1.0
+C2012-04_86,Pile Driver,1.0
+C2012-04_87,Labourers,5.0
+C2012-04_87,Truck IVECO Trakker,2.0
+C2012-04_87,Wheel Loader,2.0
+C2012-04_87,Pruning Machine,1.0
+C2012-04_88,Labourers,3.0
+C2012-04_88,Truck IVECO Trakker,1.0
+C2012-04_89,Labourers,2.0
+C2012-04_89,Truck IVECO Trakker,1.0
+C2012-04_89,Line Striper Machine,1.0
+C2012-04_91,Labourers,2.0
+C2012-04_91,Truck IVECO Trakker,1.0
+C2012-04_92,Labourers,2.0
+C2012-04_92,Truck IVECO Trakker,1.0
+C2012-04_92,Crane,1.0
+C2012-04_93,Labourers,2.0
+C2012-04_93,Truck IVECO Trakker,1.0
+C2012-04_93,Wheel Loader,1.0
+C2012-04_94,Labourers,2.0
+C2012-04_94,Truck IVECO Trakker,1.0

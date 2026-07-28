@@ -1,17 +1,17 @@
-ID,Name,Type,Max Availability,Cost/Unit
-1,Labourers,Renewable,10 men,60.0
-2,Truck IVECO Trakker,Renewable,6 mach,70.0
-3,Bulldozer D8T,Renewable,1 mach,75.0
-4,Wheel Loader,Renewable,2 mach,60.0
-5,Sheepfoot rolles,Renewable,2 mach,70.0
-6,Smooth Roller,Renewable,2 mach,60.0
-7,Crawler Excavator,Renewable,2 mach,98.0
-8,Drilling Rid,Renewable,1 mach,75.0
-9,Concrete Mixer Truck,Renewable,1 mach,95.0
-10,Crane,Renewable,1 mach,105.0
-11,Paler,Renewable,1 mach,65.0
-12,Cold Milling Machine,Renewable,1 mach,230.0
-13,Pile Driver,Renewable,1 mach,48.0
-14,Pruning Machine,Renewable,1 mach,40.0
-15,Tank Truck,Renewable,1 mach,78.0
-16,Line Striper Machine,Renewable,1 mach,30.0
+ID,name,type,max_availability,unit_cost,energy,overtime_multi,max_overtime_per_day
+1,Labourers,Human,10,60.0,0.0,1.5,4.0
+2,Truck IVECO Trakker,Machine,6,70.0,17.5,1.0,16.0
+3,Bulldozer D8T,Machine,1,75.0,18.75,1.0,16.0
+4,Wheel Loader,Machine,2,60.0,15.0,1.0,16.0
+5,Sheepfoot rolles,Machine,2,70.0,17.5,1.0,16.0
+6,Smooth Roller,Machine,2,60.0,15.0,1.0,16.0
+7,Crawler Excavator,Machine,2,98.0,24.5,1.0,16.0
+8,Drilling Rid,Machine,1,75.0,18.75,1.0,16.0
+9,Concrete Mixer Truck,Machine,1,95.0,23.75,1.0,16.0
+10,Crane,Machine,1,105.0,26.25,1.0,16.0
+11,Paler,Machine,1,65.0,16.25,1.0,16.0
+12,Cold Milling Machine,Machine,1,230.0,57.5,1.0,16.0
+13,Pile Driver,Machine,1,48.0,12.0,1.0,16.0
+14,Pruning Machine,Machine,1,40.0,10.0,1.0,16.0
+15,Tank Truck,Machine,1,78.0,19.5,1.0,16.0
+16,Line Striper Machine,Machine,1,30.0,7.5,1.0,16.0

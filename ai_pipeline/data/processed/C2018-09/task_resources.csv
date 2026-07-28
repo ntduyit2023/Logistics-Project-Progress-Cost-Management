@@ -1,26 +1,26 @@
-task_id,role,quantity,hourly_rate,type
-C2018-09_3,Project Leader,1.0,30.0,Renewable
-C2018-09_4,Engineer,1.0,50.0,Renewable
-C2018-09_5,Engineer,1.0,50.0,Renewable
-C2018-09_6,Engineer,1.0,50.0,Renewable
-C2018-09_7,Engineer,1.0,50.0,Renewable
-C2018-09_8,Engineer,1.0,50.0,Renewable
-C2018-09_9,Engineer,1.0,50.0,Renewable
-C2018-09_10,Engineer,1.0,50.0,Renewable
-C2018-09_11,Project Leader,1.0,30.0,Renewable
-C2018-09_13,Project Leader,1.0,30.0,Renewable
-C2018-09_14,Project Leader,1.0,30.0,Renewable
-C2018-09_15,Project Leader,1.0,30.0,Renewable
-C2018-09_16,Project Leader,1.0,30.0,Renewable
-C2018-09_17,Project Leader,1.0,30.0,Renewable
-C2018-09_19,Project Leader,1.0,30.0,Renewable
-C2018-09_25,Project Leader,1.0,30.0,Renewable
-C2018-09_36,Worker,1.0,24.0,Renewable
-C2018-09_37,Engineer,1.0,50.0,Renewable
-C2018-09_39,Marketeer,1.0,28.0,Renewable
-C2018-09_41,Administrator,1.0,30.0,Renewable
-C2018-09_42,Administrator,1.0,30.0,Renewable
-C2018-09_43,Administrator,1.0,30.0,Renewable
-C2018-09_44,Administrator,1.0,30.0,Renewable
-C2018-09_45,Administrator,1.0,30.0,Renewable
-C2018-09_46,Administrator,1.0,30.0,Renewable
+task_id,resource_id,request_quantity
+C2018-09_3,Project Leader,1.0
+C2018-09_4,Engineer,1.0
+C2018-09_5,Engineer,1.0
+C2018-09_6,Engineer,1.0
+C2018-09_7,Engineer,1.0
+C2018-09_8,Engineer,1.0
+C2018-09_9,Engineer,1.0
+C2018-09_10,Engineer,1.0
+C2018-09_11,Project Leader,1.0
+C2018-09_13,Project Leader,1.0
+C2018-09_14,Project Leader,1.0
+C2018-09_15,Project Leader,1.0
+C2018-09_16,Project Leader,1.0
+C2018-09_17,Project Leader,1.0
+C2018-09_19,Project Leader,1.0
+C2018-09_25,Project Leader,1.0
+C2018-09_36,Worker,1.0
+C2018-09_37,Engineer,1.0
+C2018-09_39,Marketeer,1.0
+C2018-09_41,Administrator,1.0
+C2018-09_42,Administrator,1.0
+C2018-09_43,Administrator,1.0
+C2018-09_44,Administrator,1.0
+C2018-09_45,Administrator,1.0
+C2018-09_46,Administrator,1.0

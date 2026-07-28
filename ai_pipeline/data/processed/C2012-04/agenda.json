@@ -1,0 +1,89 @@
+{
+  "project_id": "C2012-04",
+  "weekly_schedule": {
+    "Monday": {
+      "is_working": true,
+      "shifts": [
+        {
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "hours": 4.0
+        },
+        {
+          "start_time": "13:00",
+          "end_time": "17:00",
+          "hours": 4.0
+        }
+      ]
+    },
+    "Tuesday": {
+      "is_working": true,
+      "shifts": [
+        {
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "hours": 4.0
+        },
+        {
+          "start_time": "13:00",
+          "end_time": "17:00",
+          "hours": 4.0
+        }
+      ]
+    },
+    "Wednesday": {
+      "is_working": true,
+      "shifts": [
+        {
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "hours": 4.0
+        },
+        {
+          "start_time": "13:00",
+          "end_time": "17:00",
+          "hours": 4.0
+        }
+      ]
+    },
+    "Thursday": {
+      "is_working": true,
+      "shifts": [
+        {
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "hours": 4.0
+        },
+        {
+          "start_time": "13:00",
+          "end_time": "17:00",
+          "hours": 4.0
+        }
+      ]
+    },
+    "Friday": {
+      "is_working": true,
+      "shifts": [
+        {
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "hours": 4.0
+        },
+        {
+          "start_time": "13:00",
+          "end_time": "17:00",
+          "hours": 4.0
+        }
+      ]
+    },
+    "Saturday": {
+      "is_working": false,
+      "shifts": []
+    },
+    "Sunday": {
+      "is_working": false,
+      "shifts": []
+    }
+  },
+  "holidays_list": []
+}

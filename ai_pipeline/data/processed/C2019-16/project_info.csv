@@ -1,2 +1,2 @@
-project_id,project_name,project_type,working_hours_per_day,working_days_per_week,project_start,total_effort_hours,project_calendar_days,project_working_hours,total_baseline_cost,total_final_cost
-C2019-16,Lock Ganzepoot Ypres,CON,8,5,,0,0.0,0.0,266117.019,266117.019
+project_id,project_name,project_type,penalty_per_day,bonus_per_day
+C2019-16,Lock Ganzepoot Ypres,CON,500.0,200.0

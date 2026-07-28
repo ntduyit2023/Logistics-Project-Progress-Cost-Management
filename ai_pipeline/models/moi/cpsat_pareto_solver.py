@@ -1,19 +1,27 @@
 """
-CP-SAT HGT AI-Guided Critical Path Solver (Monte Carlo Delay Risk Probability %)
+CP-SAT HGT AI-Guided Critical Path Solver System
 ================================================================================
 Thư mục: ai_pipeline/models/moi/cpsat_pareto_solver.py
 
 Chức năng:
-    Bộ giải lập lịch CP-SAT tính toán Xác suất Trễ Thực tế (%) dựa trên phân phối Monte Carlo:
-        - Baseline: Tính từ tỷ lệ các vòng Monte Carlo bị trễ (ví dụ: 48.5%).
-        - Các phương án tăng ca: Giảm rủi ro thực tế xuống còn 12.3% (tùy theo số giờ rút ngắn).
+    Bộ giải lập lịch CP-SAT tối ưu hóa đa mục tiêu (Thời gian + Chi phí + Rủi ro Trễ)
+    kết hợp suy luận HGT AI và mô phỏng Monte Carlo.
+
+Cấu trúc Mã nguồn (Clean Architecture):
+    1. SECTION 1: IMPORTS & ENGINE INITIALIZATION
+    2. SECTION 2: CRITICAL PATH COMPUTATION (CPM PASS)
+    3. SECTION 3: INTER-COST CALCULATION ENGINE
+    4. SECTION 4: CP-SAT PARETO SOLVER CLASS & OPTIMIZATION METHODS
 """
 
 import numpy as np
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
 
-from ai_pipeline.models.moi.domain_normalizers import calculate_task_total_hours
+from ai_pipeline.models.moi.domain_normalizers import (
+    calculate_task_total_hours,
+    WorkingCalendarEngine
+)
 
 try:
     from ortools.sat.python import cp_model
@@ -22,23 +30,29 @@ except ImportError:
     ORTOOLS_AVAILABLE = False
 
 
+# ==============================================================================
+# SECTION 2: CRITICAL PATH COMPUTATION (CPM PASS)
+# ==============================================================================
+
 def compute_ai_critical_path(
     tasks: List[Dict[str, Any]],
     dependencies: List[Tuple[Any, Any, Dict[str, Any]]],
     ai_task_preds: Dict[str, Dict[str, float]],
-    hours_per_day: float = 8.0,
-    days_per_week: float = 5.0
+    calendar_engine: Optional[WorkingCalendarEngine] = None
 ) -> Tuple[Dict[str, float], List[str]]:
     """
-    Tính toán Forward / Backward CPM pass dựa trên thời lượng HGT AI dự báo để xác định Đường Găng AI.
+    Tính toán Forward / Backward CPM pass dựa trên Lịch Agenda (WorkingCalendarEngine) và thời lượng HGT AI dự báo để xác định Đường Găng AI.
     """
+    if calendar_engine is None:
+        calendar_engine = WorkingCalendarEngine()
+
     G = nx.DiGraph()
     task_map = {}
     
     for t in tasks:
         t_id = str(t.get('id', t.get('task_id', '')))
         task_map[t_id] = t
-        base_dur = calculate_task_total_hours(t, hours_per_day, days_per_week)
+        base_dur = calendar_engine.calculate_task_total_hours(t)
         
         preds = ai_task_preds.get(t_id, {})
         dur_factor = preds.get('duration_factor', 1.0)
@@ -85,6 +99,51 @@ def compute_ai_critical_path(
     return slack, critical_tasks
 
 
+# ==============================================================================
+# SECTION 3: INTER-COST CALCULATION ENGINE
+# ==============================================================================
+
+def calculate_task_inter_costs(
+    task: Dict[str, Any],
+    base_dur_h: float,
+    overtime_multiplier: float,
+    task_labor_rates: Dict[str, float]
+) -> Dict[str, float]:
+    """
+    Động cơ tính toán chi phí nội hàm (Dynamic Inter-Cost Engine) cho nhân công, thiết bị, năng lượng.
+    """
+    t_id = str(task.get('id', task.get('task_id', '')))
+    base_cost = float(task.get('base_cost', task.get('total_cost', task.get('cost', 100.0))) or 100.0)
+    
+    # 1. Base components
+    base_labor = float(task.get('labor', task.get('internal_labor_cost', 0.0)) or 0.0)
+    base_equipment = float(task.get('equipment', task.get('equipment_fuel_cost', 0.0)) or 0.0)
+    base_energy = float(task.get('energy', 0.0) or 0.0)
+
+    # 2. Hourly rates
+    labor_rate_per_h = float(task_labor_rates.get(t_id, 0.0))
+    if labor_rate_per_h <= 0:
+        labor_rate_per_h = base_labor / max(1.0, base_dur_h)
+
+    energy_rate_per_h = base_energy / max(1.0, base_dur_h)
+    equipment_rate_per_h = base_equipment / max(1.0, base_dur_h)
+
+    return {
+        't_id': t_id,
+        'base_cost': base_cost,
+        'base_labor': base_labor,
+        'base_equipment': base_equipment,
+        'base_energy': base_energy,
+        'labor_rate_per_h': labor_rate_per_h,
+        'energy_rate_per_h': energy_rate_per_h,
+        'equipment_rate_per_h': equipment_rate_per_h
+    }
+
+
+# ==============================================================================
+# SECTION 4: CP-SAT PARETO SOLVER CLASS & OPTIMIZATION METHODS
+# ==============================================================================
+
 class CPSATParetoSolver:
     """
     Bộ giải CP-SAT Tinh Gọn Động dẫn đường bởi HGT AI (Monte Carlo Delay Risk Probability %).
@@ -101,7 +160,9 @@ class CPSATParetoSolver:
         overtime_multiplier: float = 1.5,
         mc_samples: Optional[np.ndarray] = None,
         hours_per_day: float = 8.0,
-        days_per_week: float = 5.0
+        days_per_week: float = 5.0,
+        weekly_schedule: Optional[Dict[Any, float]] = None,
+        holidays_list: Optional[list] = None
     ):
         self.tasks = tasks
         self.dependencies = dependencies
@@ -114,21 +175,34 @@ class CPSATParetoSolver:
         self.mc_samples = mc_samples
         self.hours_per_day = hours_per_day
         self.days_per_week = days_per_week
+        self.weekly_schedule = weekly_schedule
+        self.holidays_list = holidays_list
+        
+        # Initialize WorkingCalendarEngine
+        self.calendar_engine = WorkingCalendarEngine(
+            weekly_schedule=weekly_schedule,
+            holidays_list=holidays_list,
+            default_hours_per_day=hours_per_day,
+            default_days_per_week=days_per_week
+        )
         
         self.real_project_cost = float(sum(
             float(t.get('total_cost', t.get('base_cost', t.get('cost', 0.0)))) for t in tasks
         ))
 
-        # Tính toán AI Critical Path
+        # Tính toán AI Critical Path chuẩn theo Lịch Agenda
         self.slack, self.critical_tasks = compute_ai_critical_path(
-            self.tasks, self.dependencies, self.ai_task_preds, self.hours_per_day, self.days_per_week
+            self.tasks, self.dependencies, self.ai_task_preds, calendar_engine=self.calendar_engine
         )
 
     def solve(self, time_limit_sec: float = 15.0, pareto_count: int = 5) -> List[Dict[str, Any]]:
+        """
+        Thực thi quy trình lập lịch đa kịch bản để xuất danh sách pareto_count phương án Pareto.
+        """
         if not ORTOOLS_AVAILABLE:
             return self._generate_real_pareto_set()
 
-        # Xếp hạng các task găng theo điểm rủi ro HGT AI (uncertainty_sigma * expected_delay)
+        # Xếp hạng các task găng theo điểm rủi ro HGT AI
         ranked_crit_tasks = sorted(
             self.critical_tasks,
             key=lambda tid: (
@@ -138,7 +212,6 @@ class CPSATParetoSolver:
             reverse=True
         )
 
-        # ĐỘNG sinh pareto_count kịch bản phân bổ ngân sách crash theo tỷ lệ rủi ro HGT AI
         ratios = np.linspace(0.0, 1.0, num=max(2, pareto_count))
         configs = []
         for idx, r in enumerate(ratios, start=1):
@@ -165,16 +238,14 @@ class CPSATParetoSolver:
 
         results.sort(key=lambda x: (x['makespan_hours'], x['total_cost']))
         
-        # Mốc hạn định P50/Mean từ mô phỏng Monte Carlo
+        # Mốc hạn định P50 từ Monte Carlo
         if self.mc_samples is not None and len(self.mc_samples) > 0:
             target_deadline = float(np.percentile(self.mc_samples, 50))
             samples_arr = np.array(self.mc_samples)
         else:
-            # Nếu không có mẫu mô phỏng, tính mốc tham chiếu mặc định
             target_deadline = max((r['makespan_hours'] for r in results), default=3152.0)
             samples_arr = None
 
-        # Đánh lại tên và tính Xác suất Trễ Tiến độ Thực tế % từ Monte Carlo
         min_makespan = min(r['makespan_hours'] for r in results)
         max_makespan = max(r['makespan_hours'] for r in results)
         makespan_range = max(1.0, max_makespan - min_makespan)
@@ -184,11 +255,8 @@ class CPSATParetoSolver:
             mk = res['makespan_hours']
             
             if samples_arr is not None:
-                # Tính xác suất trễ thực tế = tỷ lệ các lần chạy Monte Carlo có thời gian > thời gian lập lịch của phương án
-                # Thêm hệ số tỷ lệ rút ngắn thời gian để tính xác suất trễ thực tế
                 mc_delay_prob = float(np.mean(samples_arr > (mk * 1.18))) * 100.0
                 if mc_delay_prob <= 0.0:
-                    # Giới hạn mức trễ tối thiểu theo mức độ rút ngắn thời gian
                     rel_ratio = (mk - min_makespan) / makespan_range
                     mc_delay_prob = round(10.0 + rel_ratio * 38.5, 1)
                 else:
@@ -202,6 +270,9 @@ class CPSATParetoSolver:
         return results[:pareto_count]
 
     def _run_ai_guided_scenario(self, cfg: Dict[str, Any], time_limit_sec: float = 5.0) -> Optional[Dict[str, Any]]:
+        """
+        Xây dựng mô hình CP-SAT cho 1 kịch bản Pareto cụ thể.
+        """
         model = cp_model.CpModel()
         allowed_crash_set = cfg.get('allowed_crash_set', set())
         
@@ -209,19 +280,10 @@ class CPSATParetoSolver:
         for t in self.tasks:
             t_id = str(t.get('id', t.get('task_id', '')))
             base_dur_h = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
-            base_cost = float(t.get('total_cost', t.get('base_cost', t.get('cost', 100.0))))
             ci_score = float(self.criticality_index.get(t_id, 10.0))
 
-            labor_rate_per_h = float(self.task_labor_rates.get(t_id, 0.0))
-            if labor_rate_per_h <= 0:
-                labor_cost = float(t.get('labor', 0.0))
-                labor_rate_per_h = labor_cost / max(1.0, base_dur_h)
-
-            energy_cost = float(t.get('energy', 0.0))
-            energy_rate_per_h = energy_cost / max(1.0, base_dur_h)
-
-            equipment_cost = float(t.get('equipment', 0.0))
-            equipment_rate_per_h = equipment_cost / max(1.0, base_dur_h)
+            cost_meta = calculate_task_inter_costs(t, base_dur_h, self.overtime_multiplier, self.task_labor_rates)
+            base_cost = cost_meta['base_cost']
 
             dur_0 = max(1, int(round(base_dur_h)))
             cost_0 = base_cost
@@ -230,9 +292,10 @@ class CPSATParetoSolver:
             dur_1 = max(1, int(round(base_dur_h * 0.75)))
             delta_h = max(0.0, base_dur_h - dur_1)
 
-            labor_ot_cost = delta_h * self.overtime_multiplier * labor_rate_per_h
-            energy_ot_cost = delta_h * 1.0 * energy_rate_per_h
-            equipment_ot_cost = delta_h * 1.0 * equipment_rate_per_h
+            # Dynamic Overtime Cost Formulas
+            labor_ot_cost = delta_h * self.overtime_multiplier * cost_meta['labor_rate_per_h']
+            energy_ot_cost = delta_h * 1.0 * cost_meta['energy_rate_per_h']
+            equipment_ot_cost = delta_h * 1.0 * cost_meta['equipment_rate_per_h']
 
             total_ot_extra = labor_ot_cost + energy_ot_cost + equipment_ot_cost
             cost_1 = base_cost + total_ot_extra
@@ -247,7 +310,14 @@ class CPSATParetoSolver:
                     'risk': risk_0,
                     'normal_dur': dur_0,
                     'ot_hours': 0,
-                    'ot_extra_cost': 0.0
+                    'ot_extra_cost': 0.0,
+                    'base_cost': base_cost,
+                    'base_labor': cost_meta['base_labor'],
+                    'base_equipment': cost_meta['base_equipment'],
+                    'base_energy': cost_meta['base_energy'],
+                    'labor_ot_cost': 0.0,
+                    'equipment_ot_cost': 0.0,
+                    'energy_ot_cost': 0.0
                 },
                 {
                     'mode': 1,
@@ -257,7 +327,14 @@ class CPSATParetoSolver:
                     'risk': risk_1,
                     'normal_dur': dur_0,
                     'ot_hours': int(round(delta_h)),
-                    'ot_extra_cost': total_ot_extra
+                    'ot_extra_cost': total_ot_extra,
+                    'base_cost': base_cost,
+                    'base_labor': cost_meta['base_labor'],
+                    'base_equipment': cost_meta['base_equipment'],
+                    'base_energy': cost_meta['base_energy'],
+                    'labor_ot_cost': labor_ot_cost,
+                    'equipment_ot_cost': equipment_ot_cost,
+                    'energy_ot_cost': energy_ot_cost
                 }
             ]
 
@@ -289,7 +366,7 @@ class CPSATParetoSolver:
             if t_id not in allowed_crash_set:
                 model.Add(mode_presence_vars[0] == 1)
             else:
-                model.AddExactlyOne(mode_presence_vars)
+                model.Add(sum(mode_presence_vars) == 1)
 
             task_vars[t_id] = {
                 'start': start_var,
@@ -299,12 +376,14 @@ class CPSATParetoSolver:
                 'modes': modes
             }
 
+        # Constraint dependencies
         for pred, succ, attr in self.dependencies:
             p_id, s_id = str(pred), str(succ)
             if p_id in task_vars and s_id in task_vars:
                 lag = int(float((attr or {}).get('lag_hours', 0.0)))
                 model.Add(task_vars[s_id]['start'] >= task_vars[p_id]['end'] + lag)
 
+        # Cumulative Resource Constraints
         for r_id, capacity in self.resource_capacities.items():
             cap_val = int(round(capacity))
             if cap_val <= 0:
@@ -345,75 +424,184 @@ class CPSATParetoSolver:
         status = solver.Solve(model)
 
         if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            res_makespan = solver.Value(makespan)
-            res_cost = float(solver.Value(total_cost)) / 100.0
-            res_risk = float(solver.Value(total_risk)) / 100.0
-            
-            schedule = {}
-            total_ot_hours_project = 0
-            tasks_overtime_count = 0
-            
-            for t_id, t_var in task_vars.items():
-                sel_mode = 0
-                for idx, b_var in enumerate(t_var['presence_vars']):
-                    if solver.Value(b_var) == 1:
-                        sel_mode = idx
-                        break
-                
-                m_info = t_var['modes'][sel_mode]
-                if m_info['ot_hours'] > 0:
-                    tasks_overtime_count += 1
-                    total_ot_hours_project += m_info['ot_hours']
-
-                schedule[t_id] = {
-                    'start': solver.Value(t_var['start']),
-                    'end': solver.Value(t_var['end']),
-                    'mode': m_info['name'],
-                    'duration': m_info['dur'],
-                    'normal_duration': m_info['normal_dur'],
-                    'overtime_hours': m_info['ot_hours'],
-                    'overtime_extra_cost': round(m_info['ot_extra_cost'], 2),
-                    'cost': round(m_info['cost'], 2)
-                }
-
-            return {
-                'option_name': cfg['name'],
-                'makespan_hours': res_makespan,
-                'total_cost': round(res_cost, 2),
-                'raw_risk_score': round(res_risk, 2),
-                'risk_pct': 48.5,
-                'tasks_overtime_count': tasks_overtime_count,
-                'total_ot_hours_project': total_ot_hours_project,
-                'schedule': schedule
-            }
+            return self._extract_solution_schedule(solver, makespan, total_cost, total_risk, task_vars, cfg)
 
         return None
 
-    def _generate_real_pareto_set(self) -> List[Dict[str, Any]]:
+    def _extract_solution_schedule(
+        self,
+        solver,
+        makespan,
+        total_cost,
+        total_risk,
+        task_vars: Dict[str, Any],
+        cfg: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Trích xuất kết quả lịch thi công chi tiết từ lời giải CP-SAT.
+        """
+        res_makespan = solver.Value(makespan)
+        res_cost = float(solver.Value(total_cost)) / 100.0
+        res_risk = float(solver.Value(total_risk)) / 100.0
+        
         schedule = {}
+        affected_tasks = []
+        total_ot_hours_project = 0
+        tasks_overtime_count = 0
+        
+        hours_per_day = self.calendar_engine.avg_hours_per_day
+        hours_per_week = self.calendar_engine.hours_per_week
+        hours_per_month = self.calendar_engine.hours_per_month
+
+        for t_id, t_var in task_vars.items():
+            sel_mode = 0
+            for idx, b_var in enumerate(t_var['presence_vars']):
+                if solver.Value(b_var) == 1:
+                    sel_mode = idx
+                    break
+            
+            m_info = t_var['modes'][sel_mode]
+            ot_hours = float(m_info['ot_hours'])
+            if ot_hours > 0:
+                tasks_overtime_count += 1
+                total_ot_hours_project += ot_hours
+
+            st_val = solver.Value(t_var['start'])
+            end_val = solver.Value(t_var['end'])
+            dur_h = float(m_info['dur'])
+            norm_dur_h = float(m_info['normal_dur'])
+            
+            # Durations
+            dur_d = round(dur_h / hours_per_day, 2)
+            dur_w = round(dur_h / hours_per_week, 2)
+            dur_m = round(dur_h / hours_per_month, 2)
+            
+            daily_work_h = round(hours_per_day + (ot_hours / max(1.0, dur_d)), 2)
+            ot_h_per_day = round(ot_hours / max(1.0, dur_d), 2)
+            
+            base_c = float(m_info.get('base_cost', m_info['cost']))
+            ot_c = round(m_info['ot_extra_cost'], 2)
+            tot_task_cost = round(base_c + ot_c, 2)
+            
+            is_crit = t_id in self.critical_tasks
+            is_opt = bool(st_val > 0 or ot_hours > 0 or dur_h != norm_dur_h)
+            
+            if is_opt:
+                affected_tasks.append(t_id)
+
+            # Component Totals
+            base_labor = float(m_info.get('base_labor', 0.0))
+            base_equipment = float(m_info.get('base_equipment', 0.0))
+            base_energy = float(m_info.get('base_energy', 0.0))
+            
+            ot_labor_c = float(m_info.get('labor_ot_cost', 0.0))
+            ot_equip_c = float(m_info.get('equipment_ot_cost', 0.0))
+            ot_energy_c = float(m_info.get('energy_ot_cost', 0.0))
+
+            tot_labor = round(base_labor + ot_labor_c, 2)
+            tot_equipment = round(base_equipment + ot_equip_c, 2)
+            tot_energy = round(base_energy + ot_energy_c, 2)
+
+            schedule[t_id] = {
+                'task_id': t_id,
+                'start_hours': st_val,
+                'finish_hours': end_val,
+                'duration_hours': dur_h,
+                'duration_days': dur_d,
+                'duration_weeks': dur_w,
+                'duration_months': dur_m,
+                'daily_working_hours': daily_work_h,
+                'overtime_hours': ot_hours,
+                'overtime_hours_per_day': ot_h_per_day,
+                'total_labor': tot_labor,
+                'total_equipment': tot_equipment,
+                'total_energy': tot_energy,
+                'base_cost': base_c,
+                'overtime_cost': ot_c,
+                'total_cost': tot_task_cost,
+                'optimized_cost': tot_task_cost,
+                'cost_variance': round(tot_task_cost - base_c, 2),
+                'is_ai_optimized': is_opt,
+                'is_critical': is_crit
+            }
+
+        makespan_days = round(res_makespan / hours_per_day, 2)
+
+        return {
+            'option_name': cfg['name'],
+            'makespan_hours': res_makespan,
+            'makespan_days': makespan_days,
+            'total_cost': round(res_cost, 2),
+            'project_total_cost': round(res_cost, 2),
+            'raw_risk_score': round(res_risk, 2),
+            'risk_pct': 0.0,
+            'affected_tasks': affected_tasks,
+            'tasks_overtime_count': tasks_overtime_count,
+            'total_ot_hours_project': total_ot_hours_project,
+            'tasks_schedule': schedule
+        }
+
+    def _generate_real_pareto_set(self) -> List[Dict[str, Any]]:
+        """
+        Sinh lịch mặc định khi không tìm thấy phương án tối ưu hoặc không có OR-Tools.
+        """
+        schedule = {}
+        affected_tasks = []
         curr = 0
+        
+        hours_per_day = self.calendar_engine.avg_hours_per_day
+        hours_per_week = self.calendar_engine.hours_per_week
+        hours_per_month = self.calendar_engine.hours_per_month
+
         for t in self.tasks:
             t_id = str(t.get('id', t.get('task_id', '')))
             dur_h = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
             dur = max(1, int(round(dur_h)))
+            base_c = float(t.get('base_cost', t.get('total_cost', 0.0)) or 0.0)
+            base_labor = float(t.get('labor', t.get('internal_labor_cost', 0.0)) or 0.0)
+            base_equip = float(t.get('equipment', t.get('equipment_fuel_cost', 0.0)) or 0.0)
+            base_energy = float(t.get('energy', 0.0) or 0.0)
+
+            dur_d = round(dur / hours_per_day, 2)
+            dur_w = round(dur / hours_per_week, 2)
+            dur_m = round(dur / hours_per_month, 2)
+
             schedule[t_id] = {
-                'start': curr,
-                'end': curr + dur,
-                'duration': dur,
-                'normal_duration': dur,
+                'task_id': t_id,
+                'start_hours': curr,
+                'finish_hours': curr + dur,
+                'duration_hours': dur,
+                'duration_days': dur_d,
+                'duration_weeks': dur_w,
+                'duration_months': dur_m,
+                'daily_working_hours': hours_per_day,
                 'overtime_hours': 0,
-                'overtime_extra_cost': 0.0,
-                'mode': 'Normal'
+                'overtime_hours_per_day': 0.0,
+                'total_labor': round(base_labor, 2),
+                'total_equipment': round(base_equip, 2),
+                'total_energy': round(base_energy, 2),
+                'base_cost': base_c,
+                'overtime_cost': 0.0,
+                'total_cost': base_c,
+                'optimized_cost': base_c,
+                'cost_variance': 0.0,
+                'is_ai_optimized': False,
+                'is_critical': t_id in self.critical_tasks
             }
             curr += dur
+
+        makespan_days = round(curr / hours_per_day, 2)
 
         return [{
             'option_name': 'Phương án [1]',
             'makespan_hours': curr,
+            'makespan_days': makespan_days,
             'total_cost': round(self.real_project_cost, 2),
+            'project_total_cost': round(self.real_project_cost, 2),
             'raw_risk_score': 10.0,
             'risk_pct': 48.5,
+            'affected_tasks': affected_tasks,
             'tasks_overtime_count': 0,
             'total_ot_hours_project': 0,
-            'schedule': schedule
+            'tasks_schedule': schedule
         }]

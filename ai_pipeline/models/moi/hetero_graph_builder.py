@@ -40,71 +40,71 @@ class HeteroGraphBuilder:
 
     def build(self) -> HeteroData:
         """
-        Nạp dữ liệu từ các file CSV và đẻ ra đối tượng HeteroData với 4 loại nút.
+        Nạp dữ liệu từ các file CSV/JSON tiêu chuẩn và dựng đối tượng HeteroData.
         """
         data = HeteroData()
         
-        # 1. Nạp dữ liệu các file CSV
-        tasks_path = os.path.join(self.project_dir, 'tasks.csv')
-        edges_path = os.path.join(self.project_dir, 'predecessors.csv')
-        res_path = os.path.join(self.project_dir, 'resources.csv')
-        task_res_path = os.path.join(self.project_dir, 'task_resources.csv')
-        project_info_path = os.path.join(self.project_dir, 'project_info.csv')
+        # 1. Nạp trực tiếp 5 File Dữ liệu Tiêu chuẩn
+        tasks_df = pd.read_csv(os.path.join(self.project_dir, 'tasks.csv'))
+        edges_df = pd.read_csv(os.path.join(self.project_dir, 'logic.csv'))
+        res_df = pd.read_csv(os.path.join(self.project_dir, 'resources.csv'))
+        task_res_df = pd.read_csv(os.path.join(self.project_dir, 'task_resources.csv'))
+        info_df = pd.read_csv(os.path.join(self.project_dir, 'project_info.csv'))
         
-        tasks_df = pd.read_csv(tasks_path) if os.path.exists(tasks_path) else pd.DataFrame()
-        edges_df = pd.read_csv(edges_path) if os.path.exists(edges_path) else pd.DataFrame()
-        res_df = pd.read_csv(res_path) if os.path.exists(res_path) else pd.DataFrame()
-        task_res_df = pd.read_csv(task_res_path) if os.path.exists(task_res_path) else pd.DataFrame()
-        
-        # 1.5. Nạp project_type và Agenda parameters
-        project_type = 'ITLG'
-        hours_per_day = 8.0
-        days_per_week = 5.0
-        if os.path.exists(project_info_path):
-            try:
-                info_df = pd.read_csv(project_info_path)
-                if not info_df.empty:
-                    project_type = str(info_df.get('project_type', ['ITLG'])[0])
-                    hours_per_day = float(info_df.get('working_hours_per_day', [8.0])[0])
-                    days_per_week = float(info_df.get('working_days_per_week', [5.0])[0])
-            except Exception:
-                pass
+        project_type = str(info_df['project_type'].iloc[0]) if 'project_type' in info_df.columns else 'ITLG'
+
+        # Nạp Lịch Agenda từ agenda.json
+        weekly_schedule = {}
+        holidays_list = []
+        agenda_json_path = os.path.join(self.project_dir, 'agenda.json')
+        if os.path.exists(agenda_json_path):
+            with open(agenda_json_path, 'r', encoding='utf-8') as f:
+                ag_data = json.load(f)
+                weekly_schedule = ag_data.get('weekly_schedule', {})
+                holidays_list = ag_data.get('holidays_list', [])
                 
         from ai_pipeline.models.moi.domain_normalizers import NormalizerRegistry
-        self.normalizer = NormalizerRegistry.get_normalizer(
-            project_type=project_type,
-            hours_per_day=hours_per_day,
-            days_per_week=days_per_week
-        )
+        self.normalizer = NormalizerRegistry.get_normalizer(project_type=project_type)
         
-        # --- NÚT 1: TASK NODES ---
+        # --- NÚT 1: TASK NODES (42 Features) ---
         for idx, row in tasks_df.iterrows():
-            t_id = str(row.get('id', row.get('task_id', idx)))
+            t_id = str(row['task_id'])
             self.task_id_map[t_id] = idx
             
-        data['task'].x = self.normalizer.encode_task_df(tasks_df) if not tasks_df.empty else torch.zeros((0, 72), dtype=torch.float32)
+        data['task'].x = self.normalizer.encode_task_df(tasks_df)
 
-        
-        # --- NÚT 2: RESOURCE NODES ---
+        # --- NÚT 2: RESOURCE NODES (6 Features) ---
         res_features = []
         for idx, row in res_df.iterrows():
-            r_id = str(row.get('id', row.get('resource_id', idx)))
+            r_id = str(row['ID'])
             self.resource_id_map[r_id] = idx
             
-            unit_cost = float(row.get('unit_cost', 0.0))
-            capacity = float(row.get('capacity', 1.0))
-            res_type = 1.0 if str(row.get('resource_type', '')).lower() == 'labor' else 0.0
-            res_features.append([unit_cost, capacity, res_type, 0.0])
+            unit_cost = float(row['unit_cost'])
+            capacity = float(row['max_availability'])
+            res_type = 1.0 if str(row['type']).lower() == 'human' else 0.0
+            energy = float(row['energy'])
+            ot_multi = float(row['overtime_multi'])
+            max_ot_day = float(row.get('max_overtime_per_day', 4.0 if res_type == 1.0 else 16.0))
+
+            res_features.append([unit_cost, capacity, res_type, energy, ot_multi, max_ot_day])
             
-        data['resource'].x = torch.tensor(res_features, dtype=torch.float32) if res_features else torch.zeros((0, 4), dtype=torch.float32)
+        data['resource'].x = torch.tensor(res_features, dtype=torch.float32)
         
-        # --- NÚT 3: TIME AGENDA NODES ---
-        agenda_features = [
-            [8.0, 5.0, 0.0],  # Standard Agenda: 8h/day, 5 days/week
-            [10.0, 6.0, 0.0], # Overtime Agenda
-            [0.0, 0.0, 1.0]   # Holiday / Non-working
-        ]
-        self.agenda_id_map = {"standard": 0, "overtime": 1, "holiday": 2}
+        # --- NÚT 3: TIME AGENDA NODES (Động 100% từ Lịch Agenda: 7 ngày ca + Ngày lễ + Chỉ số động) ---
+        day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        sched_vec = []
+        for d in day_names:
+            day_info = weekly_schedule.get(d, {})
+            shifts = day_info.get('shifts', [])
+            day_h = sum(float(s.get('hours', 0.0)) for s in shifts) if day_info.get('is_working', True) else 0.0
+            sched_vec.append(day_h)
+        
+        num_holidays = float(len(holidays_list))
+        active_days_count = float(sum(1 for h in sched_vec if h > 0.0))
+        avg_hours = round(sum(sched_vec) / max(1.0, active_days_count), 2) if active_days_count > 0 else 0.0
+        
+        agenda_features = [sched_vec + [num_holidays, avg_hours, active_days_count]]
+        self.agenda_id_map = {"project_agenda": 0}
         data['time_agenda'].x = torch.tensor(agenda_features, dtype=torch.float32)
         
         # --- NÚT 4: PROJECT NODE ---
@@ -113,40 +113,33 @@ class HeteroGraphBuilder:
         # --- CẠNH 1: TASK PRECEDENCE ('task', 'precedes', 'task') ---
         src_tasks, dst_tasks, edge_attrs = [], [], []
         for _, row in edges_df.iterrows():
-            p_id = str(row.get('predecessor_task_id', ''))
-            s_id = str(row.get('successor_task_id', ''))
+            p_id = str(row['predecessor_id'])
+            s_id = str(row['successor_id'])
             
             if p_id in self.task_id_map and s_id in self.task_id_map:
                 src_tasks.append(self.task_id_map[p_id])
                 dst_tasks.append(self.task_id_map[s_id])
                 
-                lag_h = float(row.get('lag_hours', 0.0)) + float(row.get('lag_days', 0.0)) * 8.0
+                lag_h = float(row.get('lag_hours', 0.0))
                 edge_attrs.append([lag_h, 1.0, 0.0, 0.0])
                 
-        if src_tasks:
-            data['task', 'precedes', 'task'].edge_index = torch.tensor([src_tasks, dst_tasks], dtype=torch.long)
-            data['task', 'precedes', 'task'].edge_attr = torch.tensor(edge_attrs, dtype=torch.float32)
-        else:
-            data['task', 'precedes', 'task'].edge_index = torch.zeros((2, 0), dtype=torch.long)
-            data['task', 'precedes', 'task'].edge_attr = torch.zeros((0, 4), dtype=torch.float32)
+        data['task', 'precedes', 'task'].edge_index = torch.tensor([src_tasks, dst_tasks], dtype=torch.long) if src_tasks else torch.zeros((2, 0), dtype=torch.long)
+        data['task', 'precedes', 'task'].edge_attr = torch.tensor(edge_attrs, dtype=torch.float32) if edge_attrs else torch.zeros((0, 4), dtype=torch.float32)
             
         # --- CẠNH 2: TASK USES RESOURCE ('task', 'uses', 'resource') ---
         t_src, r_dst, req_qty = [], [], []
         for _, row in task_res_df.iterrows():
-            t_id = str(row.get('task_id', ''))
-            r_id = str(row.get('resource_id', ''))
-            qty = float(row.get('request_quantity', 1.0))
+            t_id = str(row['task_id'])
+            r_id = str(row['resource_id'])
+            qty = float(row['request_quantity'])
             
             if t_id in self.task_id_map and r_id in self.resource_id_map:
                 t_src.append(self.task_id_map[t_id])
                 r_dst.append(self.resource_id_map[r_id])
                 req_qty.append([qty])
                 
-        if t_src:
-            data['task', 'uses', 'resource'].edge_index = torch.tensor([t_src, r_dst], dtype=torch.long)
-            data['task', 'uses', 'resource'].edge_attr = torch.tensor(req_qty, dtype=torch.float32)
-        else:
-            data['task', 'uses', 'resource'].edge_index = torch.zeros((2, 0), dtype=torch.long)
+        data['task', 'uses', 'resource'].edge_index = torch.tensor([t_src, r_dst], dtype=torch.long) if t_src else torch.zeros((2, 0), dtype=torch.long)
+        data['task', 'uses', 'resource'].edge_attr = torch.tensor(req_qty, dtype=torch.float32) if req_qty else torch.zeros((0, 1), dtype=torch.float32)
             
         # --- CẠNH 3: TASK CONSTRAINED BY TIME AGENDA ('task', 'constrained_by', 'time_agenda') ---
         t_indices = list(range(len(tasks_df)))

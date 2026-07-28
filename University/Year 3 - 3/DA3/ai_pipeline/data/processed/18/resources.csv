@@ -1,6 +1,6 @@
-ID,resource_name,resource_type,unit_cost,capacity
-778,Project Leader,Renewable,30.00,1.00
-779,Engineer,Renewable,50.00,3.00
-780,Worker,Renewable,24.00,2.00
-781,Marketeer,Renewable,28.00,1.00
-782,Administrator,Renewable,30.00,1.00
+ID,name,type,max_availability,unit_cost,energy,overtime_multi,max_overtime_per_day
+778,Project Leader,Human,1,30.0,0.0,1.5,4.0
+779,Engineer,Human,3,50.0,0.0,1.5,4.0
+780,Worker,Human,2,24.0,0.0,1.5,4.0
+781,Marketeer,Human,1,28.0,0.0,1.5,4.0
+782,Administrator,Human,1,30.0,0.0,1.5,4.0

@@ -23,7 +23,6 @@ const TABS = [
   { id: 'g1_direct', label: 'Resource Cost', icon: DollarSign },
   { id: 'g2_indirect', label: 'Overhead Cost', icon: Briefcase },
   { id: 'g4_contractual', label: 'Risk & Compliance Cost', icon: ShieldAlert },
-  { id: 'g5_risk', label: 'Risk Factors', icon: AlertTriangle },
   { id: 'g6_logistics', label: 'Supply Chain & External Cost', icon: ArrowRight },
   { id: 'g7_time', label: 'Time-dependent Cost', icon: Clock },
 ];
@@ -48,12 +47,6 @@ const FIELD_GROUPS = {
     { key: 'licensing_cost', label: 'Licensing Cost' },
     { key: 'warranty_cost', label: 'Warranty Cost' },
   ],
-  g5_risk: [
-    { key: 'complexity', label: 'Complexity' },
-    { key: 'weather_contingency', label: 'Weather Contingency' },
-    { key: 'general_contingency', label: 'General Contingency' },
-    { key: 'rework_risk', label: 'Rework Risk' },
-  ],
   g6_logistics: [
     { key: 'holding_cost', label: 'Holding Cost' },
     { key: 'international_freight', label: 'International Freight' },
@@ -63,7 +56,6 @@ const FIELD_GROUPS = {
   ],
   g7_time: [
     { key: 'overtime_hours', label: 'Overtime Hours' },
-    { key: 'lag_time', label: 'Lag Time' },
   ]
 };
 

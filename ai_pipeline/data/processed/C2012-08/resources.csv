@@ -1,28 +1,28 @@
-ID,Name,Type,Max Availability,Cost/Unit
-1,Skipper,Renewable,4 s,60.0
-2,Welder,Renewable,8 w,60.0
-3,Engineer,Renewable,18 e,160.0
-4,Special team,Renewable,2 st,800.0
-5,Disconnecting team,Renewable,1 dct,800.0
-6,Commissioning team,Renewable,1 ct,800.0
-7,Testing team,Renewable,1 tt,800.0
-8,Diving team,Renewable,1 dvt,900.0
-9,Crane,Renewable,3 c,200.0
-10,Vessel Pompei,Renewable,1 vp,3320.0
-11,Vessel Neptune,Renewable,1 vn,3750.0
-12,Vessel Vagant,Renewable,1 vv,3180.0
-13,Vessel Sternat Spirit,Renewable,1 vss,3250.0
-14,Vessel Souverreign,Renewable,1 vs,3250.0
-15,Vessel Rambiz,Renewable,1 vr,3620.0
-16,Vessel Buzzard,Renewable,1 vbz,3200.0
-17,Vessel Breydel,Renewable,2 vbd,3200.0
-18,Vessel Breughel,Renewable,1 vbg,3200.0
-19,Vessel Pearl River,Renewable,1 vpr,3250.0
-20,Vessel Maersk,Renewable,1 vm,800.0
-21,Vessel Innovator,Renewable,1 vi,3250.0
-22,Pre-piling template,Renewable,1 pt,200.0
-23,Towning tugs,Renewable,2 twt,450.0
-24,Transport barges,Renewable,2 tb,400.0
-25,Drilling machine,Renewable,2 dm,1200.0
-26,Pulling machine,Renewable,1 pm,1300.0
-27,Laborer,Renewable,60 l,40.0
+ID,name,type,max_availability,unit_cost,energy,overtime_multi,max_overtime_per_day
+1,Skipper,Human,4,60.0,0.0,1.5,4.0
+2,Welder,Human,8,60.0,0.0,1.5,4.0
+3,Engineer,Human,18,160.0,0.0,1.5,4.0
+4,Special team,Human,2,800.0,0.0,1.5,4.0
+5,Disconnecting team,Human,1,800.0,0.0,1.5,4.0
+6,Commissioning team,Human,1,800.0,0.0,1.5,4.0
+7,Testing team,Human,1,800.0,0.0,1.5,4.0
+8,Diving team,Human,1,900.0,0.0,1.5,4.0
+9,Crane,Machine,3,200.0,50.0,1.0,16.0
+10,Vessel Pompei,Machine,1,3320.0,830.0,1.0,16.0
+11,Vessel Neptune,Machine,1,3750.0,937.5,1.0,16.0
+12,Vessel Vagant,Machine,1,3180.0,795.0,1.0,16.0
+13,Vessel Sternat Spirit,Machine,1,3250.0,812.5,1.0,16.0
+14,Vessel Souverreign,Machine,1,3250.0,812.5,1.0,16.0
+15,Vessel Rambiz,Machine,1,3620.0,905.0,1.0,16.0
+16,Vessel Buzzard,Machine,1,3200.0,800.0,1.0,16.0
+17,Vessel Breydel,Machine,2,3200.0,800.0,1.0,16.0
+18,Vessel Breughel,Machine,1,3200.0,800.0,1.0,16.0
+19,Vessel Pearl River,Machine,1,3250.0,812.5,1.0,16.0
+20,Vessel Maersk,Machine,1,800.0,200.0,1.0,16.0
+21,Vessel Innovator,Machine,1,3250.0,812.5,1.0,16.0
+22,Pre-piling template,Machine,1,200.0,50.0,1.0,16.0
+23,Towning tugs,Machine,2,450.0,112.5,1.0,16.0
+24,Transport barges,Machine,2,400.0,100.0,1.0,16.0
+25,Drilling machine,Machine,2,1200.0,300.0,1.0,16.0
+26,Pulling machine,Machine,1,1300.0,325.0,1.0,16.0
+27,Laborer,Human,60,40.0,0.0,1.5,4.0

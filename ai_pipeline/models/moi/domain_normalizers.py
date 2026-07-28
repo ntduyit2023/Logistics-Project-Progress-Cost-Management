@@ -24,27 +24,72 @@ import pandas as pd
 from typing import Dict, Any, Tuple, Optional
 
 
+class WorkingCalendarEngine:
+    """
+    Động cơ Lịch Agenda tính toán thời gian động chi tiết theo ca làm việc của từng Thứ (Thứ 2 -> Chủ Nhật)
+    và danh sách ngày nghỉ lễ (holidays_list). Tuyệt đối không dùng số giờ khóa cứng!
+    """
+    def __init__(
+        self,
+        weekly_schedule: Optional[Dict[Any, float]] = None,
+        holidays_list: Optional[list] = None,
+        default_hours_per_day: float = 8.0,
+        default_days_per_week: float = 5.0
+    ):
+        self.weekly_schedule = {}
+        if weekly_schedule and isinstance(weekly_schedule, dict):
+            for k, v in weekly_schedule.items():
+                try:
+                    k_int = int(k)
+                    self.weekly_schedule[k_int] = max(0.0, float(v))
+                except (ValueError, TypeError):
+                    pass
+
+        if not self.weekly_schedule:
+            # Lịch mặc định tiêu chuẩn: T2->T6: 8h, T7/CN: 0h
+            self.weekly_schedule = {
+                0: default_hours_per_day,
+                1: default_hours_per_day,
+                2: default_hours_per_day,
+                3: default_hours_per_day,
+                4: default_hours_per_day,
+                5: 0.0,
+                6: 0.0
+            }
+
+        self.holidays_set = set(holidays_list or [])
+        self.hours_per_week = sum(self.weekly_schedule.values())
+        if self.hours_per_week <= 0:
+            self.hours_per_week = max(1.0, default_hours_per_day * default_days_per_week)
+
+        self.hours_per_month = self.hours_per_week * 4.33
+        self.working_days_per_week = sum(1 for h in self.weekly_schedule.values() if h > 0)
+        self.avg_hours_per_day = self.hours_per_week / max(1.0, float(self.working_days_per_week or 5.0))
+
+    def get_shift_hours(self, weekday: int) -> float:
+        """Lấy số giờ ca làm việc của 1 Thứ trong tuần (0=Thứ 2, ..., 6=Chủ Nhật)."""
+        return self.weekly_schedule.get(int(weekday) % 7, 0.0)
+
+    def calculate_task_total_hours(self, task_data: Dict[str, Any]) -> float:
+        """
+        Quy đổi tổng số giờ thi công thực tế của công việc dựa trên ca làm việc động từng ngày của Lịch Agenda.
+        """
+        d_m = float(task_data.get('duration_months', 0.0) or 0.0)
+        d_w = float(task_data.get('duration_weeks', 0.0) or 0.0)
+        d_d = float(task_data.get('duration_days', 0.0) or 0.0)
+        d_h = float(task_data.get('duration_hours', task_data.get('duration', 0.0)) or 0.0)
+        
+        total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.avg_hours_per_day + d_h
+        return max(0.1, total_hours)
+
+
 def calculate_task_total_hours(
     task_data: Dict[str, Any],
     hours_per_day: float = 8.0,
     days_per_week: float = 5.0
 ) -> float:
-    """
-    Quy đổi tổng số giờ thực hiện công việc dựa trên các thuộc tính duration_months, duration_weeks,
-    duration_days, duration_hours và cấu hình ca làm việc của Agenda.
-    """
-    h_per_day = max(1.0, float(hours_per_day))
-    d_per_week = max(1.0, float(days_per_week))
-    h_per_week = d_per_week * h_per_day
-    h_per_month = 4.0 * h_per_week
-    
-    d_m = float(task_data.get('duration_months', 0.0) or 0.0)
-    d_w = float(task_data.get('duration_weeks', 0.0) or 0.0)
-    d_d = float(task_data.get('duration_days', 0.0) or 0.0)
-    d_h = float(task_data.get('duration_hours', task_data.get('duration', 0.0)) or 0.0)
-    
-    total_hours = d_m * h_per_month + d_w * h_per_week + d_d * h_per_day + d_h
-    return max(0.1, total_hours)
+    engine = WorkingCalendarEngine(default_hours_per_day=hours_per_day, default_days_per_week=days_per_week)
+    return engine.calculate_task_total_hours(task_data)
 
 
 class BaseProjectNormalizer:
@@ -67,89 +112,84 @@ class BaseProjectNormalizer:
 
     def encode_task_df(self, tasks_df: pd.DataFrame) -> torch.Tensor:
         """
-        Chuyển đổi DataFrame tasks.csv thành Tensor đã chuẩn hóa [N, 72].
+        Chuyển đổi DataFrame tasks.csv thành Tensor [N, 42] chuẩn hóa gồm 4 chỉ số thời gian + 38 cột chi phí chuẩn.
         """
         features_list = []
         
+        # Danh sách 38 cột chi phí chuẩn theo đúng sơ đồ INPUT của hệ thống
+        cost_columns = [
+            # Group 1: Resource Costs (6)
+            'labor', 'material', 'equipment', 'energy', 'testing_inspection', 'project_management',
+            # Group 2: Overhead Costs (5)
+            'facility', 'utilities', 'communication', 'training', 'quality_management',
+            # Group 3: Time-dependent Costs (7)
+            'overtime', 'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay', 'expediting',
+            # Group 4: Risk & Compliance Costs (7)
+            'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance', 'contingency_reserve', 'management_reserve',
+            # Group 5: Supply Chain & External Costs (6)
+            'transportation', 'ordering', 'packaging', 'reverse_logistics', 'customs', 'supplier_coordination',
+            # Group 6: Strategic & Financial Costs (7)
+            'opportunity_cost', 'capital_cost', 'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
+        ]
+
+        # Ánh xạ Alias đọc linh hoạt các tên cột tương đương từ CSV/DB
+        aliases = {
+            'labor': ['internal_labor_cost', 'labor'],
+            'material': ['material_cost', 'material'],
+            'equipment': ['equipment_fuel_cost', 'equipment'],
+            'testing_inspection': ['qa_qc_cost', 'testing_inspection'],
+            'facility': ['facility_rent', 'facility'],
+            'utilities': ['utilities_cost', 'utilities'],
+            'communication': ['communication_cost', 'communication'],
+            'training': ['training_cost', 'training'],
+            'overtime': ['overtime_cost', 'overtime'],
+            'inventory_holding': ['holding_cost', 'inventory_holding'],
+            'insurance': ['insurance_cost', 'insurance'],
+            'warranty': ['warranty_cost', 'warranty'],
+            'regulatory_compliance': ['licensing_cost', 'regulatory_compliance'],
+            'transportation': ['international_freight', 'transportation']
+        }
+
         for idx, row in tasks_df.iterrows():
-            feat = [0.0] * 72
+            feat = []
             
-            # --- Group 0: Time & Schedule (Indices 0 - 3) ---
+            # --- 1. Duration Metrics (4 features) ---
+            d_m = float(row.get('duration_months', 0.0) or 0.0)
             d_w = float(row.get('duration_weeks', 0.0) or 0.0)
             d_d = float(row.get('duration_days', 0.0) or 0.0)
-            d_h = float(row.get('duration_hours', 0.0) or 0.0)
+            d_h = float(row.get('duration_hours', row.get('duration', 0.0)) or 0.0)
             
-            # Quy đổi tổng giờ dựa trên Agenda
-            total_hours = calculate_task_total_hours(row.to_dict(), self.hours_per_day, self.days_per_week)
-            feat[0] = np.log1p(max(0.0, total_hours))
-            feat[1] = np.log1p(max(0.0, d_w))
-            feat[2] = np.log1p(max(0.0, d_d))
-            feat[3] = np.log1p(max(0.0, d_h))
+            feat.append(np.log1p(max(0.0, d_m)))
+            feat.append(np.log1p(max(0.0, d_w)))
+            feat.append(np.log1p(max(0.0, d_d)))
+            feat.append(np.log1p(max(0.0, d_h)))
             
-            # --- Group 1: Direct Costs (Indices 4 - 9) ---
-            direct_cols = ['internal_labor_cost', 'overtime_cost', 'equipment_fuel_cost', 'qa_qc_cost', 'material_cost', 'outsourcing_cost']
-            for i, col in enumerate(direct_cols, start=4):
-                val = float(row.get(col, row.get(col.replace('internal_labor_cost', 'labor'), 0.0)) or 0.0)
-                feat[i] = np.log1p(max(0.0, val) / self.s_domain)
-                
-            # --- Group 2: Indirect Overhead (Indices 10 - 13) ---
-            indirect_cols = ['training_cost', 'facility_rent', 'communication_cost', 'utilities_cost']
-            for i, col in enumerate(indirect_cols, start=10):
-                val = float(row.get(col, 0.0) or 0.0)
-                feat[i] = np.log1p(max(0.0, val) / self.s_domain)
-                
-            # --- Group 3: Contractual Costs (Indices 14 - 16) ---
-            contract_cols = ['insurance_cost', 'licensing_cost', 'warranty_cost']
-            for i, col in enumerate(contract_cols, start=14):
-                val = float(row.get(col, 0.0) or 0.0)
-                feat[i] = np.log1p(max(0.0, val) / self.s_domain)
-                
-            # --- Group 4: Risk & Contingencies (Indices 17 - 20) ---
-            feat[17] = min(1.0, max(0.0, float(row.get('complexity', 0.1) or 0.1)))
-            feat[18] = min(1.0, max(0.0, float(row.get('weather_contingency', 0.0) or 0.0)))
-            feat[19] = min(1.0, max(0.0, float(row.get('general_contingency', 0.05) or 0.05)))
-            feat[20] = min(1.0, max(0.0, float(row.get('rework_risk', 0.0) or 0.0)))
-            
-            # --- Group 5: Logistics Costs (Indices 21 - 25) ---
-            logistics_cols = ['holding_cost', 'international_freight', 'handling_cost', 'reverse_logistics', 'defect_cost']
-            for i, col in enumerate(logistics_cols, start=21):
-                val = float(row.get(col, 0.0) or 0.0)
-                feat[i] = np.log1p(max(0.0, val) / self.s_domain)
-                
-            # --- Group 6: Time Adjustments (Indices 26 - 27) ---
-            feat[26] = np.log1p(max(0.0, float(row.get('overtime_hours', 0.0) or 0.0)))
-            feat[27] = np.log1p(max(0.0, float(row.get('lag_time', 0.0) or 0.0)))
-            
-            # --- Group 7 & 8 & Other numerical columns (Indices 28 - 71) ---
-            curr_idx = 28
-            for col_name, col_val in row.items():
-                if curr_idx >= 72:
-                    break
-                if col_name not in ['task_id', 'id', 'task_name', 'name', 'baseline_start']:
-                    try:
-                        v = float(col_val)
-                        if not np.isnan(v) and not np.isinf(v):
-                            if v > 100.0:
-                                feat[curr_idx] = np.log1p(v / self.s_domain)
-                            else:
-                                feat[curr_idx] = v
-                            curr_idx += 1
-                    except (ValueError, TypeError):
-                        pass
+            # --- 2. Standard 38 Cost Columns (38 features) ---
+            for col in cost_columns:
+                val = 0.0
+                possible_names = aliases.get(col, [col])
+                for pname in possible_names:
+                    if pname in row and pd.notna(row[pname]):
+                        try:
+                            val = float(row[pname])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+                feat.append(np.log1p(max(0.0, val) / self.s_domain))
 
             features_list.append(feat)
             
         if not features_list:
-            return torch.zeros((0, 72), dtype=torch.float32)
+            return torch.zeros((0, 42), dtype=torch.float32)
             
         tensor_x = torch.tensor(features_list, dtype=torch.float32)
         
-        # Z-Score Normalization theo tung chieu dac trung de giu phan phoi phuan N(0, 1)
+        # Z-Score Normalization theo từng chiều đặc trưng để giữ phân phối chuẩn N(0, 1)
         mean = torch.mean(tensor_x, dim=0, keepdim=True)
         std = torch.std(tensor_x, dim=0, keepdim=True) + 1e-6
         norm_tensor_x = (tensor_x - mean) / std
         
-        # Clamp bien do dac trung trong khoang an toan [-5.0, 5.0] chong ngoai le (Outliers)
+        # Clamp biên độ đặc trưng trong khoảng an toàn [-5.0, 5.0] chống ngoại lệ (Outliers)
         norm_tensor_x = torch.clamp(norm_tensor_x, min=-5.0, max=5.0)
         return norm_tensor_x
 

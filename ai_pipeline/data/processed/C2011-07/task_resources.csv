@@ -1,77 +1,77 @@
-task_id,role,quantity,hourly_rate,type
-C2011-07_1,Project Coordinator,1.0,31.28,Renewable
-C2011-07_2,Headnurses,65.0,31.28,Renewable
-C2011-07_2,Stretcher-bearer/logisticians,24.0,22.31,Renewable
-C2011-07_3,Project Coordinator,1.0,31.28,Renewable
-C2011-07_4,Project Coordinator,1.0,31.28,Renewable
-C2011-07_4,ICT committee,5.0,27.62,Renewable
-C2011-07_4,Board of directors,7.0,62.1,Renewable
-C2011-07_5,Project Coordinator,1.0,31.28,Renewable
-C2011-07_6,Project Coordinator,1.0,31.28,Renewable
-C2011-07_6,ICT committee,1.0,27.62,Renewable
-C2011-07_7,Project Coordinator,1.0,31.28,Renewable
-C2011-07_8,Project Coordinator,1.0,31.28,Renewable
-C2011-07_9,Project Coordinator,1.0,31.28,Renewable
-C2011-07_10,Project Coordinator,1.0,31.28,Renewable
-C2011-07_10,Board of directors,7.0,62.1,Renewable
-C2011-07_10,ICT committee,1.0,27.62,Renewable
-C2011-07_11,Project Coordinator,1.0,31.28,Renewable
-C2011-07_12,Project Coordinator,1.0,31.28,Renewable
-C2011-07_13,Project Coordinator,1.0,31.28,Renewable
-C2011-07_13,Board of directors,7.0,62.1,Renewable
-C2011-07_13,ICT committee,5.0,27.62,Renewable
-C2011-07_14,Project Coordinator,1.0,31.28,Renewable
-C2011-07_15,Project Coordinator,1.0,31.28,Renewable
-C2011-07_16,Project Coordinator,1.0,31.28,Renewable
-C2011-07_17,Project Coordinator,1.0,31.28,Renewable
-C2011-07_17,Board of directors,7.0,62.1,Renewable
-C2011-07_18,Project Coordinator,1.0,31.28,Renewable
-C2011-07_19,Project Coordinator,1.0,31.28,Renewable
-C2011-07_19,Board of directors,1.0,62.1,Renewable
-C2011-07_20,Project Coordinator,1.0,31.28,Renewable
-C2011-07_20,ICT committee,5.0,27.62,Renewable
-C2011-07_21,Project Coordinator,1.0,31.28,Renewable
-C2011-07_22,Project Coordinator,1.0,31.28,Renewable
-C2011-07_23,Project Coordinator,1.0,31.28,Renewable
-C2011-07_23,Board of directors,7.0,62.1,Renewable
-C2011-07_24,Project Coordinator,1.0,31.28,Renewable
-C2011-07_24,ICT committee,5.0,27.62,Renewable
-C2011-07_25,Project Coordinator,1.0,31.28,Renewable
-C2011-07_26,Project Coordinator,1.0,31.28,Renewable
-C2011-07_26,Board of directors,1.0,62.1,Renewable
-C2011-07_27,Project Coordinator,1.0,31.28,Renewable
-C2011-07_27,Board of directors,7.0,62.1,Renewable
-C2011-07_27,ICT committee,5.0,27.62,Renewable
-C2011-07_28,Project Coordinator,1.0,31.28,Renewable
-C2011-07_28,Stretcher-bearer/logisticians,24.0,22.31,Renewable
-C2011-07_28,Headnurses,65.0,31.28,Renewable
-C2011-07_29,ICT committee,2.0,27.62,Renewable
-C2011-07_30,ICT committee,2.0,27.62,Renewable
-C2011-07_31,Project Coordinator,1.0,31.28,Renewable
-C2011-07_32,Project Coordinator,1.0,31.28,Renewable
-C2011-07_33,Project Coordinator,1.0,31.28,Renewable
-C2011-07_34,Project Coordinator,1.0,31.28,Renewable
-C2011-07_34,Stretcher-bearer/logisticians,24.0,22.31,Renewable
-C2011-07_35,Project Coordinator,1.0,31.28,Renewable
-C2011-07_35,ICT committee,1.0,27.62,Renewable
-C2011-07_36,Project Coordinator,1.0,31.28,Renewable
-C2011-07_37,Project Coordinator,1.0,31.28,Renewable
-C2011-07_38,Project Coordinator,1.0,31.28,Renewable
-C2011-07_38,Stretcher-bearer/logisticians,12.0,22.31,Renewable
-C2011-07_39,Project Coordinator,1.0,31.28,Renewable
-C2011-07_39,Stretcher-bearer/logisticians,12.0,22.31,Renewable
-C2011-07_40,Project Coordinator,1.0,31.28,Renewable
-C2011-07_40,Headnurses,17.0,31.28,Renewable
-C2011-07_41,Project Coordinator,1.0,31.28,Renewable
-C2011-07_41,Headnurses,16.0,31.28,Renewable
-C2011-07_42,Project Coordinator,1.0,31.28,Renewable
-C2011-07_42,Headnurses,16.0,31.28,Renewable
-C2011-07_43,Project Coordinator,1.0,31.28,Renewable
-C2011-07_43,Headnurses,16.0,31.28,Renewable
-C2011-07_44,Project Coordinator,1.0,31.28,Renewable
-C2011-07_45,ICT committee,5.0,27.62,Renewable
-C2011-07_47,Project Coordinator,1.0,31.28,Renewable
-C2011-07_47,Board of directors,7.0,62.1,Renewable
-C2011-07_48,Project Coordinator,1.0,31.28,Renewable
-C2011-07_48,Headnurses,65.0,31.28,Renewable
-C2011-07_49,Project Coordinator,1.0,31.28,Renewable
+task_id,resource_id,request_quantity
+C2011-07_1,Project Coordinator,1.0
+C2011-07_2,Headnurses,65.0
+C2011-07_2,Stretcher-bearer/logisticians,24.0
+C2011-07_3,Project Coordinator,1.0
+C2011-07_4,Project Coordinator,1.0
+C2011-07_4,ICT committee,5.0
+C2011-07_4,Board of directors,7.0
+C2011-07_5,Project Coordinator,1.0
+C2011-07_6,Project Coordinator,1.0
+C2011-07_6,ICT committee,1.0
+C2011-07_7,Project Coordinator,1.0
+C2011-07_8,Project Coordinator,1.0
+C2011-07_9,Project Coordinator,1.0
+C2011-07_10,Project Coordinator,1.0
+C2011-07_10,Board of directors,7.0
+C2011-07_10,ICT committee,1.0
+C2011-07_11,Project Coordinator,1.0
+C2011-07_12,Project Coordinator,1.0
+C2011-07_13,Project Coordinator,1.0
+C2011-07_13,Board of directors,7.0
+C2011-07_13,ICT committee,5.0
+C2011-07_14,Project Coordinator,1.0
+C2011-07_15,Project Coordinator,1.0
+C2011-07_16,Project Coordinator,1.0
+C2011-07_17,Project Coordinator,1.0
+C2011-07_17,Board of directors,7.0
+C2011-07_18,Project Coordinator,1.0
+C2011-07_19,Project Coordinator,1.0
+C2011-07_19,Board of directors,1.0
+C2011-07_20,Project Coordinator,1.0
+C2011-07_20,ICT committee,5.0
+C2011-07_21,Project Coordinator,1.0
+C2011-07_22,Project Coordinator,1.0
+C2011-07_23,Project Coordinator,1.0
+C2011-07_23,Board of directors,7.0
+C2011-07_24,Project Coordinator,1.0
+C2011-07_24,ICT committee,5.0
+C2011-07_25,Project Coordinator,1.0
+C2011-07_26,Project Coordinator,1.0
+C2011-07_26,Board of directors,1.0
+C2011-07_27,Project Coordinator,1.0
+C2011-07_27,Board of directors,7.0
+C2011-07_27,ICT committee,5.0
+C2011-07_28,Project Coordinator,1.0
+C2011-07_28,Stretcher-bearer/logisticians,24.0
+C2011-07_28,Headnurses,65.0
+C2011-07_29,ICT committee,2.0
+C2011-07_30,ICT committee,2.0
+C2011-07_31,Project Coordinator,1.0
+C2011-07_32,Project Coordinator,1.0
+C2011-07_33,Project Coordinator,1.0
+C2011-07_34,Project Coordinator,1.0
+C2011-07_34,Stretcher-bearer/logisticians,24.0
+C2011-07_35,Project Coordinator,1.0
+C2011-07_35,ICT committee,1.0
+C2011-07_36,Project Coordinator,1.0
+C2011-07_37,Project Coordinator,1.0
+C2011-07_38,Project Coordinator,1.0
+C2011-07_38,Stretcher-bearer/logisticians,12.0
+C2011-07_39,Project Coordinator,1.0
+C2011-07_39,Stretcher-bearer/logisticians,12.0
+C2011-07_40,Project Coordinator,1.0
+C2011-07_40,Headnurses,17.0
+C2011-07_41,Project Coordinator,1.0
+C2011-07_41,Headnurses,16.0
+C2011-07_42,Project Coordinator,1.0
+C2011-07_42,Headnurses,16.0
+C2011-07_43,Project Coordinator,1.0
+C2011-07_43,Headnurses,16.0
+C2011-07_44,Project Coordinator,1.0
+C2011-07_45,ICT committee,5.0
+C2011-07_47,Project Coordinator,1.0
+C2011-07_47,Board of directors,7.0
+C2011-07_48,Project Coordinator,1.0
+C2011-07_48,Headnurses,65.0
+C2011-07_49,Project Coordinator,1.0

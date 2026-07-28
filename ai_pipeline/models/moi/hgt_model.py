@@ -42,7 +42,8 @@ class HGTTaskPredictor(nn.Module):
         # 1. Linear Projection cho từng loại nút đưa về hidden_dim = 128
         self.proj_dict = nn.ModuleDict()
         for node_type in node_types:
-            in_dim = in_channels_dict.get(node_type, 72 if node_type == 'task' else 4)
+            default_dim = 42 if node_type == 'task' else (6 if node_type == 'resource' else 10)
+            in_dim = in_channels_dict.get(node_type, default_dim)
             self.proj_dict[node_type] = nn.Sequential(
                 Linear(in_dim, hidden_dim),
                 nn.LayerNorm(hidden_dim),

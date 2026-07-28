@@ -1,2 +1,2 @@
-ID,Name,Type,Max Availability,Cost/Unit
-1,Employees,Renewable,10.0,40.0
+ID,name,type,max_availability,unit_cost,energy,overtime_multi,max_overtime_per_day
+1,Employees,Human,10,40.0,0.0,1.5,4.0
