@@ -5,11 +5,11 @@ Thư mục: ai_pipeline/models/moi/hgt_model.py
 
 Chức năng:
     Mô hình Heterogeneous Graph Transformer (HGT) native xử lý 4 loại nút:
-        - Nút: ['task', 'resource', 'time_agenda', 'project']
+        - Nút: ['task', 'resource', 'shift', 'project']
         - Cạnh quan hệ:
             - ('task', 'precedes', 'task')
             - ('task', 'uses', 'resource')
-            - ('task', 'constrained_by', 'time_agenda')
+            - ('task', 'constrained_by', 'shift')
             - ('task', 'belongs_to', 'project')
     
     Sử dụng lớp toán học PyTorch Geometric HGTConv với ma trận Query/Key/Value & Relation Attention riêng biệt cho từng loại thực thể.
@@ -30,11 +30,11 @@ class HGTTaskPredictor(nn.Module):
         self.hidden_dim = hidden_dim
         
         # Metadata Đồ thị Dị thể (4 Node Types, 4 Edge Relation Triplets)
-        node_types = ['task', 'resource', 'time_agenda', 'project']
+        node_types = ['task', 'resource', 'shift', 'project']
         edge_types = [
             ('task', 'precedes', 'task'),
             ('task', 'uses', 'resource'),
-            ('task', 'constrained_by', 'time_agenda'),
+            ('task', 'constrained_by', 'shift'),
             ('task', 'belongs_to', 'project')
         ]
         self.metadata = (node_types, edge_types)
@@ -42,7 +42,7 @@ class HGTTaskPredictor(nn.Module):
         # 1. Linear Projection cho từng loại nút đưa về hidden_dim = 128
         self.proj_dict = nn.ModuleDict()
         for node_type in node_types:
-            default_dim = 42 if node_type == 'task' else (6 if node_type == 'resource' else 10)
+            default_dim = 39 if node_type == 'task' else (6 if node_type == 'resource' else (5 if node_type == 'shift' else 3))
             in_dim = in_channels_dict.get(node_type, default_dim)
             self.proj_dict[node_type] = nn.Sequential(
                 Linear(in_dim, hidden_dim),
@@ -67,7 +67,7 @@ class HGTTaskPredictor(nn.Module):
         )
         
         # 4. Feature Reconstruction Head cho Masked Autoencoder (Phase 0) với LayerNorm & GELU
-        task_in_dim = in_channels_dict.get('task', 72)
+        task_in_dim = in_channels_dict.get('task', 39)
         self.recon_head = nn.Sequential(
             Linear(hidden_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),

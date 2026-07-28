@@ -1,21 +1,21 @@
 """
-Heterogeneous Graph Builder (4 Node Types)
-===========================================
+Heterogeneous Graph Builder (4 Node Types, 4 Edge Relations)
+============================================================
 Thư mục: ai_pipeline/models/moi/hetero_graph_builder.py
 
 Chức năng:
-    Xây dựng đối tượng HeteroData từ dữ liệu CSV / DB của dự án.
+    Xây dựng đối tượng HeteroData từ dữ liệu tiêu chuẩn (CSV / JSON) của dự án.
     Hỗ trợ 4 loại nút:
-        - task: Nút công việc (72-dim feature vector)
-        - resource: Nút tài nguyên (Capacity, Unit Cost, Type)
-        - time_agenda: Nút thời gian/lịch làm việc (Mốc tiến độ, ngày lễ, khung giờ)
-        - project: Nút dự án (Baseline Start, Deadline, Budget)
+        - task: Nút công việc (39-dim feature vector: 1 thời gian duration_hours + 38 chi phí chuẩn)
+        - resource: Nút tài nguyên (6-dim feature vector: unit_cost, capacity, type, energy, ot_multi, max_ot_day)
+        - shift: Nút ca thi công thực tế (5-dim feature vector: start_h, end_h, dur, day_of_week, is_working)
+        - project: Nút dự án tổng thể (3-dim feature vector)
 
-    Và các loại cạnh:
-        - ('task', 'precedes', 'task'): Quan hệ thứ tự (FS, SS, FF, SF + Lags)
-        - ('task', 'uses', 'resource'): Nhu cầu tài nguyên
-        - ('task', 'constrained_by', 'time_agenda'): Ràng buộc thời gian (MSO, MFO, SNET, FNLT)
-        - ('task', 'belongs_to', 'project'): Thuộc dự án
+    Và 4 loại cạnh quan hệ:
+        - ('task', 'precedes', 'task'): Quan hệ mối nối thứ tự logic
+        - ('task', 'uses', 'resource'): Nhu cầu sử dụng tài nguyên của công việc
+        - ('task', 'constrained_by', 'shift'): Ràng buộc khung giờ ca thi công
+        - ('task', 'belongs_to', 'project'): Công việc thuộc dự án
 """
 
 import os
@@ -66,7 +66,7 @@ class HeteroGraphBuilder:
         from ai_pipeline.models.moi.domain_normalizers import NormalizerRegistry
         self.normalizer = NormalizerRegistry.get_normalizer(project_type=project_type)
         
-        # --- NÚT 1: TASK NODES (42 Features) ---
+        # --- NÚT 1: TASK NODES (39 Features) ---
         for idx, row in tasks_df.iterrows():
             t_id = str(row['task_id'])
             self.task_id_map[t_id] = idx
@@ -90,22 +90,71 @@ class HeteroGraphBuilder:
             
         data['resource'].x = torch.tensor(res_features, dtype=torch.float32)
         
-        # --- NÚT 3: TIME AGENDA NODES (Động 100% từ Lịch Agenda: 7 ngày ca + Ngày lễ + Chỉ số động) ---
+        # --- NÚT 3: SHIFT NODES (Sinh Nút trực tiếp theo từng Ca thi công thực tế từ agenda.json) ---
         day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        sched_vec = []
-        for d in day_names:
-            day_info = weekly_schedule.get(d, {})
+        shift_features = []
+        shift_idx = 0
+        self.shift_id_map = {}
+
+        for d_idx, d_name in enumerate(day_names):
+            day_info = weekly_schedule.get(d_name, {})
+            is_working = 1.0 if day_info.get('is_working', True) else 0.0
             shifts = day_info.get('shifts', [])
-            day_h = sum(float(s.get('hours', 0.0)) for s in shifts) if day_info.get('is_working', True) else 0.0
-            sched_vec.append(day_h)
+            
+            if is_working and shifts:
+                for s in shifts:
+                    start_str = str(s.get('start_time', '08:00')).strip()
+                    end_str = str(s.get('end_time', '17:00')).strip()
+                    
+                    def parse_h(t_str, default_val):
+                        try:
+                            parts = t_str.split(':')
+                            return float(parts[0]) + float(parts[1]) / 60.0
+                        except Exception:
+                            return default_val
+                            
+                    s_h = parse_h(start_str, 8.0)
+                    e_h = parse_h(end_str, 17.0)
+                    
+                    if e_h < s_h:
+                        # CA VẮT ĐÊM QUA MỐC 24:00: Tách thành 2 Nút Ca thuộc 2 Thứ liên tiếp!
+                        # Đoạn 1: Đêm Thứ d_idx (s_h ➔ 24.0)
+                        dur1 = round(24.0 - s_h, 2)
+                        s_id1 = f"{d_name}_{start_str}_24:00"
+                        self.shift_id_map[s_id1] = shift_idx
+                        shift_idx += 1
+                        shift_features.append([s_h, 24.0, dur1, float(d_idx), 1.0])
+                        
+                        # Đoạn 2: Rạng sáng Thứ d_idx + 1 (00:00 ➔ e_h)
+                        next_d_idx = (d_idx + 1) % 7
+                        next_d_name = day_names[next_d_idx]
+                        dur2 = round(e_h, 2)
+                        s_id2 = f"{next_d_name}_00:00_{end_str}"
+                        self.shift_id_map[s_id2] = shift_idx
+                        shift_idx += 1
+                        shift_features.append([0.0, e_h, dur2, float(next_d_idx), 1.0])
+                    else:
+                        # Ca làm việc bình thường trong ngày (08:00 ➔ 17:00)
+                        raw_dur = s.get('hours')
+                        dur = float(raw_dur) if raw_dur is not None else round(e_h - s_h, 2)
+                        
+                        s_id = f"{d_name}_{start_str}_{end_str}"
+                        self.shift_id_map[s_id] = shift_idx
+                        shift_idx += 1
+                        shift_features.append([s_h, e_h, dur, float(d_idx), 1.0])
+            else:
+                # Nút Ngày nghỉ không ca
+                s_id = f"{d_name}_OFF"
+                self.shift_id_map[s_id] = shift_idx
+                shift_idx += 1
+                shift_features.append([0.0, 0.0, 0.0, float(d_idx), 0.0])
+
+        data['shift'].x = torch.tensor(shift_features, dtype=torch.float32)
         
-        num_holidays = float(len(holidays_list))
-        active_days_count = float(sum(1 for h in sched_vec if h > 0.0))
-        avg_hours = round(sum(sched_vec) / max(1.0, active_days_count), 2) if active_days_count > 0 else 0.0
-        
-        agenda_features = [sched_vec + [num_holidays, avg_hours, active_days_count]]
-        self.agenda_id_map = {"project_agenda": 0}
-        data['time_agenda'].x = torch.tensor(agenda_features, dtype=torch.float32)
+        # Tính Tổng số giờ làm việc chuẩn trong 1 tuần tiêu chuẩn (weekly_working_hours)
+        weekly_working_hours = float(sum(feat[2] for feat in shift_features if feat[4] == 1.0))
+        if weekly_working_hours <= 0.0:
+            weekly_working_hours = 40.0
         
         # --- NÚT 4: PROJECT NODE ---
         data['project'].x = torch.tensor([[len(tasks_df), len(res_df), 1.0]], dtype=torch.float32)
@@ -141,13 +190,28 @@ class HeteroGraphBuilder:
         data['task', 'uses', 'resource'].edge_index = torch.tensor([t_src, r_dst], dtype=torch.long) if t_src else torch.zeros((2, 0), dtype=torch.long)
         data['task', 'uses', 'resource'].edge_attr = torch.tensor(req_qty, dtype=torch.float32) if req_qty else torch.zeros((0, 1), dtype=torch.float32)
             
-        # --- CẠNH 3: TASK CONSTRAINED BY TIME AGENDA ('task', 'constrained_by', 'time_agenda') ---
-        t_indices = list(range(len(tasks_df)))
-        agenda_indices = [0] * len(tasks_df)
-        data['task', 'constrained_by', 'time_agenda'].edge_index = torch.tensor([t_indices, agenda_indices], dtype=torch.long)
+        # --- CẠNH 3: TASK CONSTRAINED BY SHIFT ('task', 'constrained_by', 'shift') ---
+        t_indices, shift_indices, shift_edge_attrs = [], [], []
+        num_shifts = len(shift_features)
+        
+        for t_idx, row in tasks_df.iterrows():
+            dur_h = float(row.get('duration_hours', 0.0))
+            b_start = float(row.get('baseline_start', 0.0))
+            
+            est_weeks = round(dur_h / weekly_working_hours, 2)
+            start_week = round(b_start / 7.0, 2)
+            start_day = float(round(b_start % 7.0, 1))
+            
+            for s_idx in range(num_shifts):
+                t_indices.append(t_idx)
+                shift_indices.append(s_idx)
+                shift_edge_attrs.append([est_weeks, start_week, start_day])
+                
+        data['task', 'constrained_by', 'shift'].edge_index = torch.tensor([t_indices, shift_indices], dtype=torch.long) if t_indices else torch.zeros((2, 0), dtype=torch.long)
+        data['task', 'constrained_by', 'shift'].edge_attr = torch.tensor(shift_edge_attrs, dtype=torch.float32) if shift_edge_attrs else torch.zeros((0, 3), dtype=torch.float32)
         
         # --- CẠNH 4: TASK BELONGS TO PROJECT ('task', 'belongs_to', 'project') ---
         proj_indices = [0] * len(tasks_df)
-        data['task', 'belongs_to', 'project'].edge_index = torch.tensor([t_indices, proj_indices], dtype=torch.long)
+        data['task', 'belongs_to', 'project'].edge_index = torch.tensor([list(range(len(tasks_df))), proj_indices], dtype=torch.long) if len(tasks_df) > 0 else torch.zeros((2, 0), dtype=torch.long)
         
         return data
