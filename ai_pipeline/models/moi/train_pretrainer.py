@@ -73,7 +73,10 @@ def train_multi_domain_projects(
         print(f"\n[BUILD] Dang dung do thi HeteroData (Z-Score Normalization) cho du an {p_id}...")
         builder = HeteroGraphBuilder(project_dir)
         hetero_data = builder.build()
-        print(f"   -> Node tasks: {hetero_data['task'].x.size(0)} | Node resources: {hetero_data['resource'].x.size(0)}")
+        total_edges = sum(hetero_data[edge_type].edge_index.size(1) for edge_type in hetero_data.edge_types)
+        print(f"   -> Nodes: Task={hetero_data['task'].x.size(0)} | Resource={hetero_data['resource'].x.size(0)} | "
+              f"Shift={hetero_data['shift'].x.size(0)} | Project={hetero_data['project'].x.size(0)} | "
+              f"Edges={total_edges}")
         hetero_data_list.append(hetero_data)
         valid_projects.append(p_id)
 
@@ -81,6 +84,7 @@ def train_multi_domain_projects(
         raise RuntimeError("Khong nap duoc do thi du an nao!")
 
     # 2. Khởi tạo Mô hình HGT Predictor
+    sample_data = hetero_data_list[0]
     model = HGTTaskPredictor({
         'task': sample_data['task'].x.size(1),
         'resource': sample_data['resource'].x.size(1),

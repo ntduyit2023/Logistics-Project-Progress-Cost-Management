@@ -15,6 +15,7 @@ Cấu trúc Mã nguồn (Clean Architecture):
 """
 
 import numpy as np
+import pandas as pd
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
 
@@ -113,12 +114,30 @@ def calculate_task_inter_costs(
     Động cơ tính toán chi phí nội hàm (Dynamic Inter-Cost Engine) cho nhân công, thiết bị, năng lượng.
     """
     t_id = str(task.get('id', task.get('task_id', '')))
-    base_cost = float(task.get('total_cost', task.get('base_cost', task.get('cost', 100.0))) or 100.0)
+    # Tính tổng chi phí thực tế từ 38 cột chi phí tiêu chuẩn trong tasks.csv
+    cost_cols = [
+        'labor', 'material', 'equipment', 'energy', 'testing_inspection', 'project_management',
+        'facility', 'utilities', 'communication', 'training', 'quality_management', 'overtime',
+        'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay',
+        'expediting', 'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance',
+        'contingency_reserve', 'management_reserve', 'transportation', 'ordering', 'packaging',
+        'reverse_logistics', 'customs', 'supplier_coordination', 'opportunity_cost', 'capital_cost',
+        'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
+    ]
     
+    if 'total_cost' in task and float(task.get('total_cost', 0.0) or 0.0) > 0:
+        base_cost = float(task['total_cost'])
+    elif 'base_cost' in task and float(task.get('base_cost', 0.0) or 0.0) > 0:
+        base_cost = float(task['base_cost'])
+    else:
+        base_cost = sum(float(task.get(c, 0.0) or 0.0) for c in cost_cols)
+        if base_cost <= 0:
+            base_cost = 100.0
+            
     # 1. Base components từ các cột chi phí tiêu chuẩn
-    base_labor = float(task.get('direct_labor_cost', task.get('labor', task.get('internal_labor_cost', 0.0))) or 0.0)
-    base_equipment = float(task.get('direct_equipment_cost', task.get('equipment', task.get('equipment_fuel_cost', 0.0))) or 0.0)
-    base_energy = float(task.get('direct_energy_cost', task.get('energy', 0.0)) or 0.0)
+    base_labor = float(task.get('labor', task.get('direct_labor_cost', 0.0)) or 0.0)
+    base_equipment = float(task.get('equipment', task.get('direct_equipment_cost', 0.0)) or 0.0)
+    base_energy = float(task.get('energy', task.get('direct_energy_cost', 0.0)) or 0.0)
 
     # 2. Hourly rates
     labor_rate_per_h = float(task_labor_rates.get(t_id, 0.0))
@@ -570,12 +589,46 @@ class CPSATParetoSolver:
 
         makespan_days = round(res_makespan / hours_per_day, 2)
 
+        # Chuẩn hóa 100% target_deadline theo đúng 1 chuẩn duy nhất là Datetime String (ví dụ: '2010-06-30 17:00:00')
+        penalty_cost = 0.0
+        bonus_amount = 0.0
+        
+        if self.target_deadline is not None and str(self.target_deadline).strip():
+            try:
+                target_dt = pd.to_datetime(self.target_deadline)
+                
+                # Mốc bắt đầu dự án ban đầu
+                b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
+                b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
+                min_proj_dt = b_dt.min() if len(b_dt) > 0 else target_dt
+                
+                # Tính Ngày Giờ Hoàn Thành Thực Tế (Actual Finish Datetime) từ res_makespan (giờ thi công)
+                actual_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, res_makespan)
+                
+                # So sánh trực tiếp Mốc Hoàn Thành Thực Tế với Hạn chót Target Datetime
+                delta_days = (actual_finish_dt - target_dt).total_seconds() / 86400.0
+                
+                if delta_days > 0 and self.penalty_per_day > 0:
+                    penalty_cost = round(delta_days * self.penalty_per_day, 2)
+                elif delta_days < 0 and self.bonus_per_day > 0:
+                    bonus_amount = round(abs(delta_days) * self.bonus_per_day, 2)
+            except Exception as e:
+                print(f"[CP-SAT Solver Warning] Lỗi parse target_deadline Datetime '{self.target_deadline}': {e}")
+
+        final_cost = round(res_cost + penalty_cost - bonus_amount, 2)
+
+        actual_finish_str = actual_finish_dt.strftime('%d/%m/%Y %H:%M') if 'actual_finish_dt' in locals() else ""
+
         return {
             'option_name': cfg['name'],
             'makespan_hours': res_makespan,
             'makespan_days': makespan_days,
-            'total_cost': round(res_cost, 2),
-            'project_total_cost': round(res_cost, 2),
+            'finish_datetime': actual_finish_str,
+            'base_project_cost': round(res_cost, 2),
+            'penalty_cost': penalty_cost,
+            'bonus_amount': bonus_amount,
+            'total_cost': final_cost,
+            'project_total_cost': final_cost,
             'raw_risk_score': round(res_risk, 2),
             'risk_pct': 0.0,
             'affected_tasks': affected_tasks,

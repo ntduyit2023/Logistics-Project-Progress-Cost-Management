@@ -63,7 +63,8 @@ class HeteroGraphBuilder:
                 weekly_schedule = ag_data.get('weekly_schedule', {})
                 holidays_list = ag_data.get('holidays_list', [])
                 
-        from ai_pipeline.models.moi.domain_normalizers import NormalizerRegistry
+        from ai_pipeline.models.moi.domain_normalizers import WorkingCalendarEngine, NormalizerRegistry
+        self.calendar_engine = WorkingCalendarEngine(weekly_schedule=weekly_schedule, holidays_list=holidays_list)
         self.normalizer = NormalizerRegistry.get_normalizer(project_type=project_type)
         
         # --- NÚT 1: TASK NODES (39 Features) ---
@@ -194,18 +195,38 @@ class HeteroGraphBuilder:
         t_indices, shift_indices, shift_edge_attrs = [], [], []
         num_shifts = len(shift_features)
         
+        # Tính toán offset ngày/tuần khởi công từ baseline_start (hỗ trợ cả datetime string và số)
+        b_start_series = tasks_df.get('baseline_start', pd.Series([0.0] * len(tasks_df)))
+        try:
+            b_start_floats = b_start_series.astype(float).values
+        except (ValueError, TypeError):
+            try:
+                b_dt = pd.to_datetime(b_start_series, errors='coerce')
+                min_dt = b_dt.min()
+                if pd.notna(min_dt):
+                    b_start_floats = ((b_dt - min_dt).dt.total_seconds() / 86400.0).fillna(0.0).values
+                else:
+                    b_start_floats = np.zeros(len(tasks_df))
+            except Exception:
+                b_start_floats = np.zeros(len(tasks_df))
+
+        # Tính toán max_project_weeks để chuẩn hóa MinMax Scaling về khoảng [0.0, 1.0]
+        max_start_week = max(0.0, float(np.max(b_start_floats) / 7.0)) if len(b_start_floats) > 0 else 0.0
+        tot_dur_weeks = sum(float(r.get('duration_hours', 0.0)) for _, r in tasks_df.iterrows()) / weekly_working_hours
+        max_project_weeks = max(1.0, max_start_week + tot_dur_weeks)
+
         for t_idx, row in tasks_df.iterrows():
             dur_h = float(row.get('duration_hours', 0.0))
-            b_start = float(row.get('baseline_start', 0.0))
+            b_start = float(b_start_floats[t_idx]) if t_idx < len(b_start_floats) else 0.0
             
-            est_weeks = round(dur_h / weekly_working_hours, 2)
-            start_week = round(b_start / 7.0, 2)
-            start_day = float(round(b_start % 7.0, 1))
+            est_weeks_norm = round(min(1.0, max(0.0, (dur_h / weekly_working_hours) / max_project_weeks)), 4)
+            start_week_norm = round(min(1.0, max(0.0, (b_start / 7.0) / max_project_weeks)), 4)
+            start_day_norm = round(min(1.0, max(0.0, (b_start % 7.0) / 7.0)), 4)
             
             for s_idx in range(num_shifts):
                 t_indices.append(t_idx)
                 shift_indices.append(s_idx)
-                shift_edge_attrs.append([est_weeks, start_week, start_day])
+                shift_edge_attrs.append([est_weeks_norm, start_week_norm, start_day_norm])
                 
         data['task', 'constrained_by', 'shift'].edge_index = torch.tensor([t_indices, shift_indices], dtype=torch.long) if t_indices else torch.zeros((2, 0), dtype=torch.long)
         data['task', 'constrained_by', 'shift'].edge_attr = torch.tensor(shift_edge_attrs, dtype=torch.float32) if shift_edge_attrs else torch.zeros((0, 3), dtype=torch.float32)

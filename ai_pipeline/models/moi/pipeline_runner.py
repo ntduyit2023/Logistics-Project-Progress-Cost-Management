@@ -52,6 +52,9 @@ def run_new_pipeline(
     pareto_sort_by: str = "makespan_hours",
     pareto_count: int = 5,
     overtime_multiplier: float = 1.5,
+    target_deadline: Optional[float] = None,
+    penalty_per_day: float = 0.0,
+    bonus_per_day: float = 0.0,
     output_json: Optional[str] = None
 ) -> Dict[str, Any]:
     """
@@ -168,6 +171,9 @@ def run_new_pipeline(
         overtime_multiplier=overtime_multiplier,
         mc_samples=mc_results.get('makespan_samples'),
         mc_iterations=mc_iterations,
+        target_deadline=target_deadline,
+        penalty_per_day=penalty_per_day,
+        bonus_per_day=bonus_per_day,
         calendar_engine=builder.calendar_engine
     )
     pareto_options = solver.solve(time_limit_sec=15.0, pareto_count=pareto_count)
@@ -178,9 +184,22 @@ def run_new_pipeline(
 
     print(f"   * Tim thay {len(pareto_options)} phuong an toi uu Pareto.")
     for idx, opt in enumerate(pareto_options, 1):
-        tot_c = opt.get('total_cost', 0.0)
+        base_c = opt.get('base_project_cost', 0.0)
+        net_c = opt.get('total_cost', 0.0)
+        pen_c = opt.get('penalty_cost', 0.0)
+        bon_c = opt.get('bonus_amount', 0.0)
         r_pct = opt.get('risk_pct', 100.0)
-        print(f"     [{idx}] {opt['option_name']} -> Thoi gian: {opt['makespan_hours']}h | Chi Phi: ${tot_c:,.2f} | Rui ro Tre: {r_pct}%")
+        
+        bonus_pen_str = ""
+        if pen_c > 0:
+            bonus_pen_str = f" | Phạt Trễ: +${pen_c:,.2f}"
+        elif bon_c > 0:
+            bonus_pen_str = f" | Thưởng Sớm: -${bon_c:,.2f}"
+            
+        f_dt = opt.get('finish_datetime', '')
+        dt_str = f" (Đến ngày: {f_dt})" if f_dt else ""
+        print(f"     [{idx}] {opt['option_name']} -> Thời gian: {opt['makespan_hours']}h{dt_str} | "
+              f"Chi phí Gốc: ${base_c:,.2f}{bonus_pen_str} => Chi phí Ròng: ${net_c:,.2f} | Rủi ro Trễ: {r_pct}%")
 
     final_output = {
         'project_id': project_id,
@@ -205,6 +224,9 @@ if __name__ == "__main__":
     parser.add_argument("--mc_iterations", type=int, default=10000, help="Số vòng mô phỏng Monte Carlo (1000, 5000, 10000)")
     parser.add_argument("--pareto_count", type=int, default=5, help="Số lượng phương án Pareto xuất ra (ví dụ 3, 5, 10)")
     parser.add_argument("--overtime_multiplier", type=float, default=1.5, help="Hệ số lương nhân công tăng ca (ví dụ 1.5, 2.0, 1.25)")
+    parser.add_argument("--target_deadline", type=str, default=None, help="Hạn chót mới người quản lý muốn AI ép dự án hoàn thành theo chuẩn Datetime String (ví dụ: '2010-06-30 17:00:00')")
+    parser.add_argument("--penalty_per_day", type=float, default=0.0, help="Tiền phạt trễ hợp đồng ($/ngày)")
+    parser.add_argument("--bonus_per_day", type=float, default=0.0, help="Tiền thưởng hoàn thành sớm ($/ngày)")
     parser.add_argument("--pareto_sort", type=str, default="makespan_hours", choices=["makespan_hours", "total_cost", "risk_score"], help="Tiêu chí sắp xếp tập Pareto")
     parser.add_argument("--output_json", type=str, default=None, help="Đường dẫn lưu file JSON đầu ra")
 
@@ -215,5 +237,8 @@ if __name__ == "__main__":
         pareto_sort_by=args.pareto_sort,
         pareto_count=args.pareto_count,
         overtime_multiplier=args.overtime_multiplier,
+        target_deadline=args.target_deadline,
+        penalty_per_day=args.penalty_per_day,
+        bonus_per_day=args.bonus_per_day,
         output_json=args.output_json
     )

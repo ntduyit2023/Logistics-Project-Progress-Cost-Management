@@ -103,6 +103,44 @@ class WorkingCalendarEngine:
         total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.avg_hours_per_day
         return max(0.1, total_hours)
 
+    def add_working_hours(self, start_dt: Any, working_hours: float) -> pd.Timestamp:
+        """
+        Cộng số giờ làm việc (working_hours) vào mốc thời gian start_dt,
+        tính toán chính xác các ngày nghỉ cuối tuần và ngày lễ theo agenda.json.
+        """
+        if working_hours <= 0:
+            return pd.to_datetime(start_dt)
+
+        rem_h = float(working_hours)
+        curr_dt = pd.to_datetime(start_dt)
+        curr_hour = curr_dt.hour + curr_dt.minute / 60.0
+        
+        max_safety = 10000
+        step = 0
+        while rem_h > 0 and step < max_safety:
+            step += 1
+            weekday = curr_dt.weekday()
+            date_str = curr_dt.strftime('%Y-%m-%d')
+            
+            shift_h = 0.0 if date_str in self.holidays_set else self.get_shift_hours(weekday)
+            
+            if shift_h > 0:
+                avail_h_today = max(0.0, shift_h - max(0.0, curr_hour - 8.0))
+                if avail_h_today <= 0:
+                    avail_h_today = shift_h
+                    
+                if rem_h <= avail_h_today:
+                    curr_dt = curr_dt + pd.Timedelta(hours=rem_h)
+                    rem_h = 0
+                    break
+                else:
+                    rem_h -= avail_h_today
+                    
+            curr_dt = (curr_dt + pd.Timedelta(days=1)).replace(hour=8, minute=0, second=0)
+            curr_hour = 8.0
+            
+        return curr_dt
+
 
 def calculate_task_total_hours(
     task_data: Dict[str, Any],
