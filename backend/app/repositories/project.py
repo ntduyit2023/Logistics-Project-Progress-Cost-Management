@@ -34,13 +34,13 @@ class ProjectRepository(BaseRepository[AppProject, ProjectCreate, ProjectUpdate]
             search_pattern = f"%{clean_q}%"
             
             # PostgreSQL Native Full-Text Search Vector
-            ts_vector = func.to_tsvector('simple', func.coalesce(self.model.project_name, '') + ' ' + func.coalesce(self.model.project_code, ''))
+            ts_vector = func.to_tsvector('simple', func.coalesce(self.model.project_name, '') + ' ' + func.coalesce(self.model.id, ''))
             ts_query = func.plainto_tsquery('simple', clean_q)
             
             query = query.filter(
                 (ts_vector.op('@@')(ts_query)) |
                 (self.model.project_name.ilike(search_pattern)) | 
-                (self.model.project_code.ilike(search_pattern))
+                (self.model.id.ilike(search_pattern))
             )
             
         if project_type and project_type.strip():

@@ -7,7 +7,7 @@ from app.schemas.constraint import ConstraintLogicResponse, ConstraintResourceRe
 
 
 class ProjectBase(BaseModel):
-    project_code: str = Field(..., min_length=2, max_length=100, description="Mã dự án (ví dụ: C2011-07)")
+    id: Optional[str] = Field(None, min_length=2, max_length=100, description="Mã dự án duy nhất (ví dụ: C2011-07)")
     project_name: str = Field(..., min_length=3, max_length=255, description="Tên hiển thị dự án")
     project_type: Optional[str] = Field("CON", max_length=50, description="CON, ITLG hoặc PRO")
     status: str = Field("Planning", max_length=50, description="Planning, Executing, Closed")
@@ -16,10 +16,14 @@ class ProjectBase(BaseModel):
     penalty_per_day: Optional[float] = Field(0.0, ge=0, description="Phạt trễ ($/ngày)")
     bonus_per_day: Optional[float] = Field(0.0, ge=0, description="Thưởng làm sớm ($/ngày)")
     
-    base_cost: Optional[float] = Field(0.0, ge=0, description="Tự động tính từ các Tasks (Mặc định: 0.0)")
-    total_cost: Optional[float] = Field(0.0, ge=0, description="Tự động tính từ AI/Solver (Mặc định: 0.0)")
+    base_cost: Optional[float] = Field(0.0, ge=0, description="Tổng chi phí gốc")
+    total_cost: Optional[float] = Field(0.0, ge=0, description="Tổng chi phí dự báo")
     
     metadata_json: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Metadata động")
+
+    @property
+    def project_code(self) -> Optional[str]:
+        return self.id
 
 
 class ProjectCreate(ProjectBase):
@@ -27,7 +31,6 @@ class ProjectCreate(ProjectBase):
 
 
 class ProjectUpdate(BaseModel):
-    project_code: Optional[str] = Field(None, min_length=2, max_length=100)
     project_name: Optional[str] = Field(None, min_length=3, max_length=255)
     project_type: Optional[str] = Field(None, max_length=50)
     status: Optional[str] = Field(None, max_length=50)
@@ -43,8 +46,8 @@ class ProjectUpdate(BaseModel):
 
 class ProjectSummary(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: int
-    project_code: str
+    id: str = Field(..., description="Mã dự án (ví dụ C2011-07)")
+    project_code: Optional[str] = Field(None, description="Mã dự án")
     project_name: str
     project_type: Optional[str] = "CON"
     status: str = "Planning"
@@ -73,6 +76,6 @@ class ProjectDetail(ProjectSummary):
 
 class ProjectGraphResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    project_id: int
+    project_id: str
     nodes: List[TaskResponse] = Field(default_factory=list)
     edges: List[ConstraintLogicResponse] = Field(default_factory=list)

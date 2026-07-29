@@ -18,7 +18,7 @@ router = APIRouter()
 
 @router.get("/{project_id}/tasks", response_model=APIResponse[List[TaskResponse]], summary="Danh sách Tasks của Dự án")
 async def get_project_tasks_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="ID số (ví dụ 1) hoặc Mã dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ):
     """
@@ -30,7 +30,7 @@ async def get_project_tasks_api(
 
 @router.get("/{project_id}/tasks/{task_id}", response_model=APIResponse[TaskResponse], summary="Chi tiết một Task")
 async def get_task_detail_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="ID số (ví dụ 1) hoặc Mã dự án (ví dụ C2011-07)"),
     task_id: str = Path(..., description="Mã task (ví dụ C2011-07_1)"),
     db: AsyncSession = Depends(get_db)
 ):
@@ -43,7 +43,7 @@ async def get_task_detail_api(
 
 @router.post("/{project_id}/tasks", response_model=APIResponse[TaskResponse], summary="Thêm Task mới")
 async def create_task_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="ID số (ví dụ 1) hoặc Mã dự án (ví dụ C2011-07)"),
     task_in: TaskCreate = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[TaskResponse]:
@@ -56,7 +56,7 @@ async def create_task_api(
 
 @router.put("/{project_id}/tasks/{task_id}", response_model=APIResponse[TaskResponse], summary="Cập nhật Task")
 async def update_task_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="ID số (ví dụ 1) hoặc Mã dự án (ví dụ C2011-07)"),
     task_id: str = Path(..., description="Mã task (ví dụ C2011-07_1)"),
     task_in: TaskUpdate = ...,
     db: AsyncSession = Depends(get_db)

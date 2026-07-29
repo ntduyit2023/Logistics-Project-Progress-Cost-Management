@@ -12,7 +12,7 @@ class ConstraintLogicBase(BaseModel):
 class ConstraintLogicResponse(ConstraintLogicBase):
     model_config = ConfigDict(from_attributes=True)
     id: Optional[int] = None
-    project_id: int
+    project_id: str
 
 
 # Trục 2: Resource (resources.csv)
@@ -30,7 +30,7 @@ class ConstraintResourceBase(BaseModel):
 class ConstraintResourceResponse(ConstraintResourceBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
-    project_id: int
+    project_id: str
 
 
 # Trục 3: Time
@@ -43,4 +43,4 @@ class ConstraintTimeBase(BaseModel):
 class ConstraintTimeResponse(ConstraintTimeBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
-    project_id: int
+    project_id: str

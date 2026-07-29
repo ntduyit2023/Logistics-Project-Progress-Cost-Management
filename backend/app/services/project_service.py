@@ -71,19 +71,32 @@ async def search_projects(
     )
 
 
-async def get_project_summary(db: AsyncSession, project_id: int) -> ProjectSummary:
+from app.models import AppProject
+from sqlalchemy import select
+
+async def get_project_by_identifier(db: AsyncSession, identifier: Any) -> AppProject:
     """
-    Lấy thông tin tóm tắt cơ bản của một dự án (không tải toàn bộ nodes, edges).
+    Tìm kiếm Dự án theo Mã/ID (ví dụ 'C2011-07').
     """
-    project = await project_repo.get_by_id(db, project_id)
+    id_str = str(identifier).strip()
+    stmt = select(AppProject).where(AppProject.id.ilike(id_str))
+    result = await db.execute(stmt)
+    project = result.scalars().first()
     if not project:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Không tìm thấy dự án với ID {project_id}"
+            detail=f"Không tìm thấy dự án với Mã '{identifier}'."
         )
-        
-    tasks = await task_repo.get_by_project(db, project_id)
-    dependencies = await dependency_repo.get_by_project(db, project_id)
+    return project
+
+
+async def get_project_summary(db: AsyncSession, project_id: Any) -> ProjectSummary:
+    """
+    Lấy thông tin tóm tắt của một Dự án theo ID hoặc Mã C2011-07.
+    """
+    project = await get_project_by_identifier(db, project_id)
+    tasks = await task_repo.get_by_project(db, project.id)
+    dependencies = await dependency_repo.get_by_project(db, project.id)
     
     return ProjectSummary(
         id=project.id,

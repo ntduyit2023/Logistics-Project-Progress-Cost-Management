@@ -73,10 +73,10 @@ services:
           memory: 8G
         reservations:
           memory: 1G
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+          # devices:
+          #   - driver: nvidia
+          #     count: 1
+          #     capabilities: [gpu]
     restart: unless-stopped
 
   # --------------------------------------------------

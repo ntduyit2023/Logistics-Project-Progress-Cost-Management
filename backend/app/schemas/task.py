@@ -1,6 +1,6 @@
 from typing import Optional, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TaskBase(BaseModel):
@@ -8,10 +8,10 @@ class TaskBase(BaseModel):
     task_name: str = Field(..., max_length=255, description="Tên hiển thị công việc")
     baseline_start: Optional[datetime] = Field(None, description="Mốc thời gian bắt đầu thi công (Datetime)")
     duration_hours: float = Field(0.0, ge=0, description="Thời gian thi công thực tế (giờ)")
-    total_cost: Optional[float] = Field(0.0, ge=0, description="Tổng chi phí của Task (Tự động cộng dồn hoặc chỉ định)")
+    total_cost: Optional[float] = Field(0.0, ge=0, description="Tổng chi phí của Task ($)")
     
     # 1. Chi phí Trực tiếp & Vật tư (Nhập tay hoặc tự động)
-    labor: Optional[float] = Field(0.0, ge=0, description="Chi phí nhân công (Tự động tính từ Resource hoặc nhập tay)")
+    labor: Optional[float] = Field(0.0, ge=0, description="Chi phí nhân công")
     material: Optional[float] = Field(0.0, ge=0, description="Chi phí vật tư/vật liệu")
     equipment: Optional[float] = Field(0.0, ge=0, description="Chi phí ca máy/thiết bị")
     energy: Optional[float] = Field(0.0, ge=0, description="Chi phí nhiên liệu/năng lượng")
@@ -59,8 +59,6 @@ class TaskBase(BaseModel):
     esg_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí môi trường/ESG")
     carbon_tax: Optional[float] = Field(0.0, ge=0, description="Thuế carbon")
     reputation_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí rủi ro uy tín")
-
-    cost_features: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Metadata dictionary chi phí")
 
 
 class TaskCreate(TaskBase):
@@ -112,42 +110,16 @@ class TaskUpdate(BaseModel):
     esg_cost: Optional[float] = Field(None, ge=0)
     carbon_tax: Optional[float] = Field(None, ge=0)
     reputation_cost: Optional[float] = Field(None, ge=0)
-    
-    cost_features: Optional[Dict[str, Any]] = Field(None)
 
 
 class TaskResponse(TaskBase):
     model_config = ConfigDict(from_attributes=True)
     
     id: int
-    project_id: int
+    project_id: str
     task_id: str
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-
-    @model_validator(mode='before')
-    @classmethod
-    def populate_costs_from_cost_features(cls, data: Any) -> Any:
-        """
-        Tự động bung 38 chi phí từ cost_features JSONB ra các thuộc tính trực tiếp nếu chưa có
-        """
-        if hasattr(data, 'cost_features') and isinstance(data.cost_features, dict):
-            cf = data.cost_features
-            for k, v in cf.items():
-                if not hasattr(data, k) or getattr(data, k, None) is None:
-                    try:
-                        setattr(data, k, float(v or 0.0))
-                    except Exception:
-                        pass
-        elif isinstance(data, dict) and 'cost_features' in data and isinstance(data['cost_features'], dict):
-            cf = data['cost_features']
-            for k, v in cf.items():
-                if k not in data or data[k] is None:
-                    try:
-                        data[k] = float(v or 0.0)
-                    except Exception:
-                        pass
-        return data
 
 
 # --- Task Resource Assignment ---
@@ -160,7 +132,7 @@ class TaskResourceCreate(BaseModel):
 class TaskResourceResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: Optional[int] = None
-    project_id: int
+    project_id: str
     task_id: str
     resource_id: str
     resource_name: Optional[str] = None

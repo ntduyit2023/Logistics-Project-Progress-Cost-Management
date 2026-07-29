@@ -16,12 +16,12 @@ from app.db.database import Base
 class AppProject(Base):
     """
     Quản lý thông tin Dự án & Tham số Hợp đồng.
+    Khóa chính `id` chính là Mã dự án (ví dụ 'C2011-07').
     """
     __tablename__ = "projects"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id: Mapped[str] = mapped_column(String(100), primary_key=True, index=True)
     user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    project_code: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
     project_name: Mapped[str] = mapped_column(String(255), nullable=False)
     project_type: Mapped[str] = mapped_column(String(50), default="CON")
     status: Mapped[str] = mapped_column(String(50), default="Planning")
@@ -39,6 +39,10 @@ class AppProject(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    @property
+    def project_code(self) -> str:
+        return self.id
+
     # Relationships
     owner = relationship("User", back_populates="projects", lazy="selectin")
     calendar = relationship("ProjectCalendar", back_populates="project", uselist=False, cascade="all, delete-orphan")
@@ -51,14 +55,14 @@ class AppProject(Base):
 
 class ProjectCalendar(Base):
     """
-    Lưu trữ Lịch ca làm việc Agenda (agenda.json).
+    Cấu hình Thời gian làm việc của Dự án (agenda.json).
     """
     __tablename__ = "project_calendars"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), unique=True, nullable=False)
+    project_id: Mapped[str] = mapped_column(String(100), ForeignKey("projects.id", ondelete="CASCADE"), unique=True, nullable=False)
     weekly_schedule: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict)
-    holidays_list: Mapped[List[str]] = mapped_column(JSON, default=list)
+    holidays_list: Mapped[List[Any]] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -67,12 +71,12 @@ class ProjectCalendar(Base):
 
 class Resource(Base):
     """
-    Lưu trữ Tài nguyên (resources.csv).
+    Khai báo Tài nguyên (resources.csv).
     """
     __tablename__ = "resources"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(100), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     resource_id: Mapped[str] = mapped_column(String(100), nullable=False)
     name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     type: Mapped[str] = mapped_column(String(50), default="Human")
@@ -89,12 +93,12 @@ class Resource(Base):
 
 class TaskLogic(Base):
     """
-    Mối quan hệ Phụ thuộc (logic.csv).
+    Mối quan hệ Phụ thuộc Logic giữa các Tasks (logic.csv).
     """
     __tablename__ = "task_logic"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(100), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     predecessor_id: Mapped[str] = mapped_column(String(100), nullable=False)
     successor_id: Mapped[str] = mapped_column(String(100), nullable=False)
     dependency_type: Mapped[str] = mapped_column(String(10), default="FS")
@@ -111,7 +115,7 @@ class TaskResource(Base):
     __tablename__ = "task_resources"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    project_id: Mapped[str] = mapped_column(String(100), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     task_id: Mapped[str] = mapped_column(String(100), nullable=False)
     resource_id: Mapped[str] = mapped_column(String(100), nullable=False)
     request_quantity: Mapped[float] = mapped_column(Numeric(10, 2), default=1.0)

@@ -11,70 +11,62 @@ from app.models import Task, TaskResource, Resource, AppProject
 from app.schemas import TaskCreate, TaskUpdate, TaskResourceCreate
 
 
-async def get_project_tasks(db: AsyncSession, project_id: int) -> List[Task]:
+from app.services.project_service import get_project_by_identifier
+
+async def get_project_tasks(db: AsyncSession, project_id_or_code: Any) -> List[Dict[str, Any]]:
     """
-    Lấy danh sách tất cả các Tasks của một dự án.
+    Lấy danh sách tất cả các Tasks của một dự án (chấp nhận ID số hoặc mã C2011-07).
     """
-    stmt = select(Task).where(Task.project_id == project_id).order_by(Task.id.asc())
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = select(Task).where(Task.project_id == project.id).order_by(Task.id.asc())
     result = await db.execute(stmt)
-    return list(result.scalars().all())
+    tasks = list(result.scalars().all())
+    
+    from app.schemas.task import TaskResponse
+    res = []
+    for t in tasks:
+        td = TaskResponse.model_validate(t).model_dump()
+        td["project_code"] = project.project_code
+        res.append(td)
+    return res
 
 
-async def get_task_by_id(db: AsyncSession, project_id: int, task_id_str: str) -> Task:
+async def get_task_by_id(db: AsyncSession, project_id_or_code: Any, task_id_str: str) -> Dict[str, Any]:
     """
     Lấy thông tin chi tiết của 1 Task theo task_id.
     """
-    stmt = select(Task).where(Task.project_id == project_id, Task.task_id == task_id_str)
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = select(Task).where(Task.project_id == project.id, Task.task_id == task_id_str)
     result = await db.execute(stmt)
     task_obj = result.scalars().first()
     if not task_obj:
         raise HTTPException(status_code=404, detail="Task không tồn tại.")
-    return task_obj
+        
+    from app.schemas.task import TaskResponse
+    td = TaskResponse.model_validate(task_obj).model_dump()
+    td["project_code"] = project.project_code
+    return td
 
 
-async def create_task(db: AsyncSession, project_id: int, task_in: TaskCreate) -> Task:
+async def create_task(db: AsyncSession, project_id_or_code: Any, task_in: TaskCreate) -> Dict[str, Any]:
     """
     Tạo mới một công việc (Task) và gắn vào Dự án.
     """
-    stmt = select(AppProject).where(AppProject.id == project_id)
-    result = await db.execute(stmt)
-    project = result.scalars().first()
-    if not project:
-        raise HTTPException(status_code=404, detail="Dự án không tồn tại.")
+    project = await get_project_by_identifier(db, project_id_or_code)
 
     task_dict = task_in.model_dump(exclude_unset=True)
-    task_dict["project_id"] = project_id
+    task_dict["project_id"] = project.id
     if "task_id" not in task_dict or not task_dict["task_id"]:
         task_dict["task_id"] = f"{project.project_code}_{task_dict.get('task_name', '1')}"
 
-    # Tách 38 cột chi phí chuẩn vào cost_features JSONB
-    cost_cols = [
-        'labor', 'material', 'equipment', 'energy', 'testing_inspection', 'project_management',
-        'facility', 'utilities', 'communication', 'training', 'quality_management', 'overtime',
-        'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay',
-        'expediting', 'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance',
-        'contingency_reserve', 'management_reserve', 'transportation', 'ordering', 'packaging',
-        'reverse_logistics', 'customs', 'supplier_coordination', 'opportunity_cost', 'capital_cost',
-        'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
-    ]
-    
-    cost_features = task_dict.get("cost_features", {}) or {}
-    total_cost = 0.0
-    for col in cost_cols:
-        if col in task_dict:
-            val = float(task_dict.pop(col, 0.0) or 0.0)
-            cost_features[col] = val
-            total_cost += val
-
-    task_dict["cost_features"] = cost_features
-    if total_cost > 0:
-        task_dict["total_cost"] = total_cost
-
+    task_dict.pop("total_cost", None)
     new_task = Task(**task_dict)
     db.add(new_task)
     await db.commit()
     await db.refresh(new_task)
-    return new_task
+    from app.schemas.task import TaskResponse
+    td = TaskResponse.model_validate(new_task).model_dump()
+    return td
 
 
 async def update_task(db: AsyncSession, project_id: int, task_id_str: str, task_in: TaskUpdate) -> Task:
