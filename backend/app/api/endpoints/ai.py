@@ -46,29 +46,28 @@ async def run_glpo_optimization(
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[dict]:
     """
-    Chạy Toàn bộ GLPO New AI + OR + MC-CPM Pipeline cho dự án.
-    Bao gồm:
-      1. HeteroData Graph Construction (Task, Resource, Shift, Project)
-      2. HGT Pretrained Model & AI Duration/Delay Inference
-      3. Monte Carlo CPM Risk Simulation
-      4. CP-SAT Pareto Scheduler (Overtime & Penalty/Bonus)
+    Chạy Quy trình AI Pipeline 4 Bước Tự Động:
+      1. Xuất CSDL dự án ra thư mục chuẩn
+      2. Xử lý qua AI + OR + MC-CPM Pipeline
+      3. Ghi nhận kết quả & tập phương án Pareto vào Database PostgreSQL
+      4. Xóa dọn dẹp thư mục chuẩn tạm thời cho sạch hệ thống
     """
     try:
-        raw_results = run_new_pipeline(
-            project_id=project_code,
+        from app.services.ai_pipeline_service import run_ai_pipeline_workflow
+        results = await run_ai_pipeline_workflow(
+            db=db,
+            project_id_or_code=project_code,
             mc_iterations=mc_iterations,
             pareto_count=pareto_count,
             overtime_multiplier=overtime_multiplier,
             target_deadline=target_deadline,
             penalty_per_day=penalty_per_day,
-            bonus_per_day=bonus_per_day,
-            output_json=False
+            bonus_per_day=bonus_per_day
         )
-        safe_results = _convert_numpy(raw_results)
         return APIResponse(
             success=True,
-            message="GLPO AI + OR + MC-CPM Pipeline completed successfully",
-            data=safe_results
+            message="GLPO AI + OR + MC-CPM Pipeline completed successfully and saved to Database.",
+            data=results
         )
     except Exception as e:
         import traceback
@@ -76,43 +75,53 @@ async def run_glpo_optimization(
         raise HTTPException(status_code=500, detail=f"Pipeline execution error: {str(e)}")
 
 
+@router.get("/pipeline/runs/{project_id}", response_model=APIResponse[list])
+async def get_ai_pipeline_runs_api(
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
+    db: AsyncSession = Depends(get_db)
+) -> APIResponse[list]:
+    """
+    Lấy danh sách các phiên mô phỏng AI Pipeline của dự án.
+    """
+    from app.models.ai import AIPipelineRun
+    from app.services.project_service import get_project_by_identifier
+    project = await get_project_by_identifier(db, project_id)
+    
+    stmt = select(AIPipelineRun).where(AIPipelineRun.project_id == project.id).order_by(AIPipelineRun.id.desc())
+    result = await db.execute(stmt)
+    runs = list(result.scalars().all())
+    
+    data = []
+    for r in runs:
+        data.append({
+            "id": r.id,
+            "project_id": r.project_id,
+            "status": r.status,
+            "pareto_count": r.pareto_count,
+            "created_at": r.created_at
+        })
+    return APIResponse(success=True, message="Lấy danh sách AI Pipeline runs thành công.", data=data)
+
+
 @router.post("/{project_id}/simulate", response_model=APIResponse[dict])
 async def run_ai_simulation(
-    project_id: int = Path(..., description="ID của dự án cần chạy mô phỏng AI"),
+    project_id: str = Path(..., description="Mã/ID dự án cần chạy mô phỏng AI"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[dict]:
     """
     Chạy mô phỏng AI (Cost Model) cho một dự án cụ thể.
-
-    Hàm này lấy toàn bộ Tasks và Resources của dự án từ DB, 
-    chuyển chúng thành Pandas DataFrame và gọi mô hình học máy (cost_model) 
-    để dự đoán chi phí. Kết quả sau đó được cập nhật lại vào Database.
-
-    Args:
-        project_id (int): ID dự án cần mô phỏng.
-        db (AsyncSession): Phiên làm việc cơ sở dữ liệu (Dependency Injection).
-
-    Returns:
-        APIResponse[dict]: Phản hồi chứa kết quả dự đoán tổng chi phí và số lượng task cập nhật.
-
-    Raises:
-        HTTPException(404): Nếu không tìm thấy Project.
-        HTTPException(400): Nếu Project không có Task nào.
     """
-    # 1. Lấy Project
-    result = await db.execute(select(AppProject).where(AppProject.id == project_id))
-    project = result.scalars().first()
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
+    from app.services.project_service import get_project_by_identifier
+    project = await get_project_by_identifier(db, project_id)
 
-    # 2. Lấy Tasks và TaskResources
+    # 2. Lấy Tasks
     tasks_query = await db.execute(
-        select(Task).where(Task.project_id == project_id).options(selectinload(Task.resources))
+        select(Task).where(Task.project_id == project.id)
     )
-    tasks = tasks_query.scalars().all()
+    tasks = list(tasks_query.scalars().all())
     
     if not tasks:
-        raise HTTPException(status_code=400, detail="No tasks found for this project")
+        raise HTTPException(status_code=400, detail="Dự án chưa có công việc nào.")
 
     # Convert to DataFrames cho cost_model
     tasks_data = []

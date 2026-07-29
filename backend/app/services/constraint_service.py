@@ -16,29 +16,30 @@ from app.schemas import (
 from app.models import ProjectCalendar, Resource, TaskLogic, AppProject
 
 
+from app.services.project_service import get_project_by_identifier
+
 # ==============================================================================
 # TIME CONSTRAINTS (PROJECT CALENDARS)
 # ==============================================================================
 
-async def get_constraint_time(db: AsyncSession, project_id: int) -> Optional[ProjectCalendar]:
+async def get_constraint_time(db: AsyncSession, project_id: Any) -> Optional[ProjectCalendar]:
     """
     Lấy cấu hình Lịch làm việc (ProjectCalendar) của dự án.
     """
-    stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == project_id)
+    project = await get_project_by_identifier(db, project_id)
+    stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == project.id)
     result = await db.execute(stmt)
     return result.scalars().first()
 
 
-async def create_constraint_time(db: AsyncSession, project_id: int, time_in: ConstraintTimeBase) -> ProjectCalendar:
+async def create_constraint_time(db: AsyncSession, project_id: Any, time_in: ConstraintTimeBase) -> ProjectCalendar:
     """
     Tạo lịch làm việc (ProjectCalendar) cho dự án.
     """
-    project = await project_repo.get_by_id(db, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Dự án không tồn tại.")
+    project = await get_project_by_identifier(db, project_id)
         
     time_dict = time_in.model_dump()
-    time_dict["project_id"] = project_id
+    time_dict["project_id"] = project.id
     
     new_time = ProjectCalendar(**time_dict)
     db.add(new_time)
@@ -47,17 +48,18 @@ async def create_constraint_time(db: AsyncSession, project_id: int, time_in: Con
     return new_time
 
 
-async def update_constraint_time(db: AsyncSession, project_id: int, time_in: ConstraintTimeBase) -> ConstraintTimeResponse:
+async def update_constraint_time(db: AsyncSession, project_id: Any, time_in: ConstraintTimeBase) -> ConstraintTimeResponse:
     """
     Cập nhật lịch làm việc (ProjectCalendar).
     """
-    stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == project_id)
+    project = await get_project_by_identifier(db, project_id)
+    stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == project.id)
     result = await db.execute(stmt)
     time_cfg = result.scalars().first()
     
     if not time_cfg:
         time_dict = time_in.model_dump()
-        time_dict["project_id"] = project_id
+        time_dict["project_id"] = project.id
         time_cfg = ProjectCalendar(**time_dict)
         db.add(time_cfg)
     else:
@@ -69,11 +71,12 @@ async def update_constraint_time(db: AsyncSession, project_id: int, time_in: Con
     return ConstraintTimeResponse.model_validate(time_cfg)
 
 
-async def delete_constraint_time(db: AsyncSession, project_id: int) -> Dict[str, str]:
+async def delete_constraint_time(db: AsyncSession, project_id: Any) -> Dict[str, str]:
     """
     Xóa cấu hình thời gian.
     """
-    stmt = delete(ProjectCalendar).where(ProjectCalendar.project_id == project_id)
+    project = await get_project_by_identifier(db, project_id)
+    stmt = delete(ProjectCalendar).where(ProjectCalendar.project_id == project.id)
     result = await db.execute(stmt)
     await db.commit()
     if result.rowcount == 0:
@@ -85,25 +88,24 @@ async def delete_constraint_time(db: AsyncSession, project_id: int) -> Dict[str,
 # RESOURCE CONSTRAINTS (RESOURCES)
 # ==============================================================================
 
-async def get_constraint_resources(db: AsyncSession, project_id: int) -> List[Resource]:
+async def get_constraint_resources(db: AsyncSession, project_id: Any) -> List[Resource]:
     """
     Lấy danh sách tất cả các tài nguyên của dự án.
     """
-    stmt = select(Resource).where(Resource.project_id == project_id)
+    project = await get_project_by_identifier(db, project_id)
+    stmt = select(Resource).where(Resource.project_id == project.id)
     result = await db.execute(stmt)
     return list(result.scalars().all())
 
 
-async def create_constraint_resource(db: AsyncSession, project_id: int, resource_in: ConstraintResourceBase) -> Resource:
+async def create_constraint_resource(db: AsyncSession, project_id: Any, resource_in: ConstraintResourceBase) -> Resource:
     """
     Định nghĩa một loại tài nguyên mới.
     """
-    project = await project_repo.get_by_id(db, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Dự án không tồn tại.")
+    project = await get_project_by_identifier(db, project_id)
         
     res_dict = resource_in.model_dump()
-    res_dict["project_id"] = project_id
+    res_dict["project_id"] = project.id
     
     new_res = Resource(**res_dict)
     db.add(new_res)
@@ -112,12 +114,13 @@ async def create_constraint_resource(db: AsyncSession, project_id: int, resource
     return new_res
 
 
-async def update_constraint_resource(db: AsyncSession, project_id: int, resource_id: int, resource_in: ConstraintResourceBase) -> ConstraintResourceResponse:
+async def update_constraint_resource(db: AsyncSession, project_id: Any, resource_id: int, resource_in: ConstraintResourceBase) -> ConstraintResourceResponse:
     """
     Cập nhật một tài nguyên.
     """
+    project = await get_project_by_identifier(db, project_id)
     stmt = select(Resource).where(
-        Resource.project_id == project_id,
+        Resource.project_id == project.id,
         Resource.id == resource_id
     )
     result = await db.execute(stmt)
@@ -134,12 +137,13 @@ async def update_constraint_resource(db: AsyncSession, project_id: int, resource
     return ConstraintResourceResponse.model_validate(res_obj)
 
 
-async def delete_constraint_resource(db: AsyncSession, project_id: int, resource_id: int) -> Dict[str, str]:
+async def delete_constraint_resource(db: AsyncSession, project_id: Any, resource_id: int) -> Dict[str, str]:
     """
     Xóa một tài nguyên.
     """
+    project = await get_project_by_identifier(db, project_id)
     stmt = delete(Resource).where(
-        Resource.project_id == project_id,
+        Resource.project_id == project.id,
         Resource.id == resource_id
     )
     result = await db.execute(stmt)
@@ -153,25 +157,24 @@ async def delete_constraint_resource(db: AsyncSession, project_id: int, resource
 # LOGIC CONSTRAINTS (TASK LOGIC EDGES)
 # ==============================================================================
 
-async def get_constraint_logics(db: AsyncSession, project_id: int) -> List[TaskLogic]:
+async def get_constraint_logics(db: AsyncSession, project_id: Any) -> List[TaskLogic]:
     """
     Lấy tất cả các mối quan hệ phụ thuộc logic giữa các Tasks.
     """
-    stmt = select(TaskLogic).where(TaskLogic.project_id == project_id)
+    project = await get_project_by_identifier(db, project_id)
+    stmt = select(TaskLogic).where(TaskLogic.project_id == project.id)
     result = await db.execute(stmt)
     return list(result.scalars().all())
 
 
-async def create_constraint_logic(db: AsyncSession, project_id: int, logic_in: ConstraintLogicBase) -> TaskLogic:
+async def create_constraint_logic(db: AsyncSession, project_id: Any, logic_in: ConstraintLogicBase) -> TaskLogic:
     """
     Tạo mối quan hệ phụ thuộc giữa 2 Tasks.
     """
-    project = await project_repo.get_by_id(db, project_id)
-    if not project:
-        raise HTTPException(status_code=404, detail="Dự án không tồn tại.")
+    project = await get_project_by_identifier(db, project_id)
         
     logic_dict = logic_in.model_dump()
-    logic_dict["project_id"] = project_id
+    logic_dict["project_id"] = project.id
     
     new_logic = TaskLogic(**logic_dict)
     db.add(new_logic)

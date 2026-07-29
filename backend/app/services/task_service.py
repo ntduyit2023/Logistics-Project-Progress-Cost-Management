@@ -56,8 +56,9 @@ async def create_task(db: AsyncSession, project_id_or_code: Any, task_in: TaskCr
 
     task_dict = task_in.model_dump(exclude_unset=True)
     task_dict["project_id"] = project.id
-    if "task_id" not in task_dict or not task_dict["task_id"]:
-        task_dict["task_id"] = f"{project.project_code}_{task_dict.get('task_name', '1')}"
+    if "task_id" not in task_dict or not task_dict.get("task_id"):
+        import uuid
+        task_dict["task_id"] = f"{project.project_code}_NEW_{uuid.uuid4().hex[:6]}"
 
     task_dict.pop("total_cost", None)
     new_task = Task(**task_dict)
@@ -69,30 +70,34 @@ async def create_task(db: AsyncSession, project_id_or_code: Any, task_in: TaskCr
     return td
 
 
-async def update_task(db: AsyncSession, project_id: int, task_id_str: str, task_in: TaskUpdate) -> Task:
+async def update_task(db: AsyncSession, project_id_or_code: Any, task_id_str: str, task_in: TaskUpdate) -> Dict[str, Any]:
     """
     Cập nhật thông tin của một công việc.
     """
-    stmt = select(Task).where(Task.project_id == project_id, Task.task_id == task_id_str)
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = select(Task).where(Task.project_id == project.id, Task.task_id == task_id_str)
     result = await db.execute(stmt)
     task_obj = result.scalars().first()
     if not task_obj:
         raise HTTPException(status_code=404, detail="Task không tồn tại.")
 
-    update_dict = task_in.model_dump(exclude_unset=True)
-    for k, v in update_dict.items():
+    update_data = task_in.model_dump(exclude_unset=True)
+    update_data.pop("total_cost", None)
+    for k, v in update_data.items():
         setattr(task_obj, k, v)
 
     await db.commit()
     await db.refresh(task_obj)
-    return task_obj
+    from app.schemas.task import TaskResponse
+    return TaskResponse.model_validate(task_obj).model_dump()
 
 
-async def delete_task(db: AsyncSession, project_id: int, task_id_str: str) -> Dict[str, str]:
+async def delete_task(db: AsyncSession, project_id_or_code: Any, task_id_str: str) -> Dict[str, str]:
     """
     Xóa một công việc khỏi Dự án.
     """
-    stmt = delete(Task).where(Task.project_id == project_id, Task.task_id == task_id_str)
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = delete(Task).where(Task.project_id == project.id, Task.task_id == task_id_str)
     result = await db.execute(stmt)
     await db.commit()
     if result.rowcount == 0:
@@ -100,13 +105,14 @@ async def delete_task(db: AsyncSession, project_id: int, task_id_str: str) -> Di
     return {"message": "Đã xóa công việc thành công."}
 
 
-async def get_task_resources(db: AsyncSession, project_id: int, task_id_str: str) -> List[Dict[str, Any]]:
+async def get_task_resources(db: AsyncSession, project_id_or_code: Any, task_id_str: str) -> List[Dict[str, Any]]:
     """
     Lấy danh sách phân bổ tài nguyên cho một Task.
     """
+    project = await get_project_by_identifier(db, project_id_or_code)
     stmt = select(TaskResource, Resource).join(
         Resource, (TaskResource.resource_id == Resource.resource_id) & (TaskResource.project_id == Resource.project_id)
-    ).where(TaskResource.project_id == project_id, TaskResource.task_id == task_id_str)
+    ).where(TaskResource.project_id == project.id, TaskResource.task_id == task_id_str)
     
     result = await db.execute(stmt)
     items = []
@@ -124,12 +130,13 @@ async def get_task_resources(db: AsyncSession, project_id: int, task_id_str: str
     return items
 
 
-async def assign_resource(db: AsyncSession, project_id: int, task_id_str: str, resource_in: TaskResourceCreate) -> TaskResource:
+async def assign_resource(db: AsyncSession, project_id_or_code: Any, task_id_str: str, resource_in: TaskResourceCreate) -> TaskResource:
     """
     Phân bổ tài nguyên cho Task.
     """
+    project = await get_project_by_identifier(db, project_id_or_code)
     new_tr = TaskResource(
-        project_id=project_id,
+        project_id=project.id,
         task_id=task_id_str,
         resource_id=resource_in.resource_id,
         request_quantity=resource_in.request_quantity
@@ -140,12 +147,13 @@ async def assign_resource(db: AsyncSession, project_id: int, task_id_str: str, r
     return new_tr
 
 
-async def remove_task_resource(db: AsyncSession, project_id: int, task_id_str: str, resource_tr_id: int) -> Dict[str, str]:
+async def remove_task_resource(db: AsyncSession, project_id_or_code: Any, task_id_str: str, resource_tr_id: int) -> Dict[str, str]:
     """
     Xóa phân bổ tài nguyên.
     """
+    project = await get_project_by_identifier(db, project_id_or_code)
     stmt = delete(TaskResource).where(
-        TaskResource.project_id == project_id,
+        TaskResource.project_id == project.id,
         TaskResource.task_id == task_id_str,
         TaskResource.id == resource_tr_id
     )

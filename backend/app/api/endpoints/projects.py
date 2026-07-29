@@ -41,21 +41,11 @@ async def get_projects_api(
 
 @router.get("/{project_id}", response_model=APIResponse[ProjectDetail], summary="Chi tiết Dự án")
 async def get_project_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ProjectDetail]:
     """
     Xem thông tin chi tiết một Dự án bao gồm toàn bộ Nodes (Tasks) và Edges (Logic).
-
-    Args:
-        project_id (int): ID dự án.
-        db (AsyncSession): Phiên DB (Dependency Injection).
-
-    Returns:
-        APIResponse[ProjectDetail]: Dữ liệu chi tiết của Dự án.
-        
-    Raises:
-        HTTPException: Nếu Dự án không tồn tại.
     """
     data = await project_service.get_project_detail(db, project_id)
     return APIResponse(success=True, message="Lấy chi tiết dự án thành công.", data=data)
@@ -63,21 +53,11 @@ async def get_project_api(
 
 @router.get("/{project_id}/summary", response_model=APIResponse[ProjectSummary], summary="Tóm tắt Dự án")
 async def get_project_summary_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ProjectSummary]:
     """
-    Lấy thông tin tóm tắt của một Dự án (số task, số cạnh, trạng thái) mà KHÔNG tải toàn bộ các node/edge bên trong.
-
-    Args:
-        project_id (int): ID dự án.
-        db (AsyncSession): Phiên DB (Dependency Injection).
-
-    Returns:
-        APIResponse[ProjectSummary]: Thông tin cơ bản của dự án.
-        
-    Raises:
-        HTTPException: Nếu Dự án không tồn tại.
+    Lấy thông tin tóm tắt của một Dự án (số task, số cạnh, trạng thái).
     """
     data = await project_service.get_project_summary(db, project_id)
     return APIResponse(success=True, message="Lấy tóm tắt dự án thành công.", data=data)
@@ -85,7 +65,7 @@ async def get_project_summary_api(
 
 @router.get("/{project_id}/simulation-stream", summary="Luồng sự kiện chạy mô phỏng AI (SSE Stream)")
 async def stream_simulation_events(
-    project_id: int = Path(..., description="ID dự án")
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)")
 ):
     """
     Kết nối Server-Sent Events (SSE) để lắng nghe tiến trình chạy mô phỏng AI thời gian thực.
@@ -110,21 +90,11 @@ async def stream_simulation_events(
 
 @router.get("/{project_id}/graph", response_model=APIResponse[ProjectGraphResponse], summary="Đồ thị Dự án")
 async def get_project_graph_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ProjectGraphResponse]:
     """
     Lấy toàn bộ dữ liệu Đồ thị mạng lưới (Nodes & Edges) của một Dự án.
-
-    Args:
-        project_id (int): ID dự án.
-        db (AsyncSession): Phiên DB (Dependency Injection).
-
-    Returns:
-        APIResponse[ProjectGraphResponse]: Cấu trúc Đồ thị (Graph) của dự án.
-        
-    Raises:
-        HTTPException: Nếu Dự án rỗng hoặc không tồn tại.
     """
     data = await project_service.get_project_graph(db, project_id)
     return APIResponse(success=True, message="Lấy dữ liệu đồ thị thành công.", data=data)
@@ -141,13 +111,6 @@ async def create_project_api(
 ) -> APIResponse[ProjectSummary]:
     """
     Tạo một Dự án mới với tên và trạng thái khởi tạo.
-
-    Args:
-        project_in (ProjectCreate): Dữ liệu khởi tạo Dự án.
-        db (AsyncSession): Phiên DB (Dependency Injection).
-
-    Returns:
-        APIResponse[ProjectSummary]: Thông tin dự án vừa tạo.
     """
     data = await project_service.create_project(db, project_in)
     return APIResponse(success=True, message="Tạo dự án thành công.", data=data)
@@ -155,23 +118,12 @@ async def create_project_api(
 
 @router.put("/{project_id}", response_model=APIResponse[ProjectSummary], summary="Cập nhật Dự án")
 async def update_project_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     project_in: ProjectUpdate = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ProjectSummary]:
     """
     Cập nhật thông tin cơ bản của Dự án (Tên, Trạng thái).
-
-    Args:
-        project_id (int): ID dự án.
-        project_in (ProjectUpdate): Dữ liệu cập nhật Dự án.
-        db (AsyncSession): Phiên DB (Dependency Injection).
-
-    Returns:
-        APIResponse[ProjectSummary]: Dữ liệu dự án sau khi cập nhật.
-        
-    Raises:
-        HTTPException: Nếu Dự án không tồn tại.
     """
     data = await project_service.update_project(db, project_id, project_in)
     return APIResponse(success=True, message="Cập nhật dự án thành công.", data=data)
@@ -179,7 +131,7 @@ async def update_project_api(
 
 @router.delete("/{project_id}", response_model=APIResponse, summary="Xóa Dự án")
 async def delete_project_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse:
     """
@@ -223,4 +175,47 @@ async def run_simulation_api(
     return APIResponse(
         success=True, 
         message="Đã đưa tác vụ mô phỏng vào chạy ngầm. Trạng thái dự án đang là 'Simulating'."
+    )
+
+
+# ==============================================================================
+# DATASET EXPORT / IMPORT FOR AI PIPELINE TRAINING
+# ==============================================================================
+
+@router.post("/{project_id}/export-dataset", response_model=APIResponse[dict], summary="Xuất Dataset chuẩn AI Pipeline")
+async def export_project_dataset_api(
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
+    db: AsyncSession = Depends(get_db)
+) -> APIResponse[dict]:
+    """
+    Xuất toàn bộ dữ liệu từ PostgreSQL thành bộ 6 tệp CSV/JSON chuẩn AI 
+    vào thư mục /ai_pipeline/data/processed/{project_code}/ để phục vụ Huấn luyện AI (Training).
+    """
+    from app.services.dataset_sync import export_project_dataset
+    out_dir = await export_project_dataset(db, project_id)
+    return APIResponse(
+        success=True,
+        message=f"Đã xuất bộ dữ liệu huấn luyện AI thành công.",
+        data={"project_id": project_id, "path": str(out_dir)}
+    )
+
+
+@router.post("/{project_id}/import-dataset", response_model=APIResponse[dict], summary="Nhập lại Dataset chuẩn AI")
+async def import_project_dataset_api(
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
+    db: AsyncSession = Depends(get_db)
+) -> APIResponse[dict]:
+    """
+    Nạp/Cập nhật lại toàn bộ dữ liệu từ thư mục /ai_pipeline/data/processed/{project_code}/ vào CSDL PostgreSQL.
+    """
+    from app.services.dataset_sync import import_project_dataset, BASE_PROCESSED_DIR
+    target_dir = BASE_PROCESSED_DIR / project_id
+    if not target_dir.exists():
+        raise HTTPException(status_code=404, detail=f"Không tìm thấy dữ liệu mẫu cho dự án {project_id}")
+
+    project = await import_project_dataset(db, target_dir)
+    return APIResponse(
+        success=True,
+        message=f"Đã nạp đồng bộ dữ liệu AI từ tệp vào CSDL thành công.",
+        data={"project_id": project.id, "project_name": project.project_name}
     )

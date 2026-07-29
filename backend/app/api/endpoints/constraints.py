@@ -21,7 +21,7 @@ router = APIRouter()
 
 @router.get("/{project_id}/constraints/time", response_model=APIResponse[Optional[ConstraintTimeResponse]], summary="Lấy Lịch làm việc")
 async def get_time_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ):
     data = await constraint_service.get_constraint_time(db, project_id)
@@ -30,7 +30,7 @@ async def get_time_constraint_api(
 
 @router.post("/{project_id}/constraints/time", response_model=APIResponse[ConstraintTimeResponse], summary="Định nghĩa Lịch làm việc")
 async def create_time_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     time_in: ConstraintTimeBase = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ConstraintTimeResponse]:
@@ -40,7 +40,7 @@ async def create_time_constraint_api(
 
 @router.put("/{project_id}/constraints/time", response_model=APIResponse[ConstraintTimeResponse], summary="Cập nhật Lịch làm việc")
 async def update_time_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     time_in: ConstraintTimeBase = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ConstraintTimeResponse]:
@@ -50,7 +50,7 @@ async def update_time_constraint_api(
 
 @router.delete("/{project_id}/constraints/time", response_model=APIResponse, summary="Xóa Lịch làm việc")
 async def delete_time_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse:
     await constraint_service.delete_constraint_time(db, project_id)
@@ -61,9 +61,10 @@ async def delete_time_constraint_api(
 # RESOURCE CONSTRAINTS (RESOURCES)
 # ==============================================================================
 
-@router.get("/{project_id}/constraints/resources", response_model=APIResponse[List[ConstraintResourceResponse]], summary="Danh sách Tài nguyên")
+@router.get("/{project_id}/constraints/resource", response_model=APIResponse[List[ConstraintResourceResponse]], summary="Danh sách Tài nguyên")
+@router.get("/{project_id}/constraints/resources", response_model=APIResponse[List[ConstraintResourceResponse]], summary="Danh sách Tài nguyên (alias)")
 async def get_resource_constraints_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ):
     data = await constraint_service.get_constraint_resources(db, project_id)
@@ -72,7 +73,7 @@ async def get_resource_constraints_api(
 
 @router.post("/{project_id}/constraints/resources", response_model=APIResponse[ConstraintResourceResponse], summary="Thêm Tài nguyên mới")
 async def create_resource_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     resource_in: ConstraintResourceBase = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ConstraintResourceResponse]:
@@ -82,7 +83,7 @@ async def create_resource_constraint_api(
 
 @router.put("/{project_id}/constraints/resources/{resource_id}", response_model=APIResponse[ConstraintResourceResponse], summary="Cập nhật Tài nguyên")
 async def update_resource_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     resource_id: int = Path(..., description="ID tài nguyên"),
     resource_in: ConstraintResourceBase = ...,
     db: AsyncSession = Depends(get_db)
@@ -93,7 +94,7 @@ async def update_resource_constraint_api(
 
 @router.delete("/{project_id}/constraints/resources/{resource_id}", response_model=APIResponse, summary="Xóa Tài nguyên")
 async def delete_resource_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     resource_id: int = Path(..., description="ID tài nguyên"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse:
@@ -107,7 +108,7 @@ async def delete_resource_constraint_api(
 
 @router.get("/{project_id}/constraints/logic", response_model=APIResponse[List[ConstraintLogicResponse]], summary="Danh sách Phụ thuộc (Edges)")
 async def get_logic_constraints_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     db: AsyncSession = Depends(get_db)
 ):
     data = await constraint_service.get_constraint_logics(db, project_id)
@@ -116,7 +117,7 @@ async def get_logic_constraints_api(
 
 @router.post("/{project_id}/constraints/logic", response_model=APIResponse[ConstraintLogicResponse], summary="Thêm Liên kết (Edge)")
 async def create_logic_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     logic_in: ConstraintLogicBase = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ConstraintLogicResponse]:
@@ -126,7 +127,7 @@ async def create_logic_constraint_api(
 
 @router.put("/{project_id}/constraints/logic", response_model=APIResponse[ConstraintLogicResponse], summary="Cập nhật Liên kết (Edge)")
 async def update_logic_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     logic_in: ConstraintLogicBase = ...,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[ConstraintLogicResponse]:
@@ -136,7 +137,7 @@ async def update_logic_constraint_api(
 
 @router.delete("/{project_id}/constraints/logic/{predecessor_id}/{successor_id}", response_model=APIResponse, summary="Xóa Liên kết (Edge)")
 async def delete_logic_constraint_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     predecessor_id: str = Path(..., description="ID Task đứng trước"),
     successor_id: str = Path(..., description="ID Task đứng sau"),
     db: AsyncSession = Depends(get_db)

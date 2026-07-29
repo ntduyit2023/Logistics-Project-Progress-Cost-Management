@@ -70,7 +70,7 @@ async def update_task_api(
 
 @router.delete("/{project_id}/tasks/{task_id}", response_model=APIResponse, summary="Xóa Task")
 async def delete_task_api(
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="Mã/ID dự án (ví dụ C2011-07)"),
     task_id: str = Path(..., description="Mã task cần xóa"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse:

@@ -64,7 +64,20 @@ def run_new_pipeline(
     print(f"[START] KHOI DONG HE THONG PIPELINE MOI (AI + OR + MC-CPM) CHO DU AN: {project_id}")
     print("================================================================================")
     
-    project_dir = os.path.join(project_root, 'ai_pipeline', 'data', 'processed', project_id)
+    cands = [
+        os.path.join(project_root, 'ai_pipeline', 'data', 'production', project_id),
+        os.path.join('/', 'ai_pipeline', 'data', 'production', project_id),
+        os.path.join(project_root, 'ai_pipeline', 'data', 'processed', project_id),
+        os.path.join('/', 'ai_pipeline', 'data', 'processed', project_id),
+    ]
+    project_dir = None
+    for cand in cands:
+        if os.path.exists(cand):
+            project_dir = cand
+            break
+    if not project_dir:
+        project_dir = cands[0]
+
     if not os.path.exists(project_dir):
         raise FileNotFoundError(f"Thư mục dự án không tồn tại: {project_dir}")
 
