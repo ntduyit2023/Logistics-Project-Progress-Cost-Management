@@ -1,15 +1,15 @@
 """
 GLPO Backend - Constraint Repositories (Time & Resource)
 """
-from app.models import ProjectConstraintTime, ProjectConstraintResource
+from app.models import ProjectCalendar, Resource
 from app.repositories.base import BaseRepository
 from app.schemas import ConstraintTimeBase, ConstraintResourceBase
 
-class ConstraintTimeRepository(BaseRepository[ProjectConstraintTime, ConstraintTimeBase, ConstraintTimeBase]):
+class ConstraintTimeRepository(BaseRepository[ProjectCalendar, ConstraintTimeBase, ConstraintTimeBase]):
     pass
 
-class ConstraintResourceRepository(BaseRepository[ProjectConstraintResource, ConstraintResourceBase, ConstraintResourceBase]):
+class ConstraintResourceRepository(BaseRepository[Resource, ConstraintResourceBase, ConstraintResourceBase]):
     pass
 
-time_repo = ConstraintTimeRepository(ProjectConstraintTime)
-resource_repo = ConstraintResourceRepository(ProjectConstraintResource)
+time_repo = ConstraintTimeRepository(ProjectCalendar)
+resource_repo = ConstraintResourceRepository(Resource)

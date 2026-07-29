@@ -1,76 +1,120 @@
+"""
+App Project & Resource ORM Models
+=====================================================
+Thư mục: backend/app/models/project.py
+"""
+
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from sqlalchemy import (
-    String, Numeric, ForeignKey, DateTime, JSON, Boolean
+    String, Numeric, ForeignKey, DateTime, JSON, Boolean, Integer
 )
-from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.db.database import Base
 
 
 class AppProject(Base):
     """
-    Lưu trữ thông tin gốc của một Dự án (Project).
-
-    Attributes:
-        id (int): Khóa chính của dự án.
-        user_id (Optional[int]): Khóa ngoại liên kết tới bảng users.
-        project_name (str): Tên hiển thị của dự án.
-        search_vector (TSVECTOR): Vector tìm kiếm full-text.
-        metadata_json (Optional[Dict[str, Any]]): Lưu trữ JSON linh hoạt cho NoSQL.
-        num_tasks (int): Số lượng công việc trong dự án.
-        num_edges (int): Số lượng phụ thuộc (edges).
-        status (str): Trạng thái của dự án (Planning, Executing, Closed).
-        type (Optional[str]): Phân loại dự án (PRO, CON, ITLG).
-        base_cost (Optional[float]): Tổng chi phí cơ bản.
-        total_cost (Optional[float]): Tổng chi phí dự báo.
-        created_at (datetime): Thời gian tạo.
-        updated_at (datetime): Thời gian cập nhật gần nhất.
+    Quản lý thông tin Dự án & Tham số Hợp đồng.
     """
     __tablename__ = "projects"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
-    project_name: Mapped[str] = mapped_column(String(255))
-    search_vector = mapped_column(TSVECTOR)
-    
-    # DYNAMIC FEATURES: Biến Project thành dạng NoSQL kết hợp SQL
-    metadata_json: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, default=dict)
-    
-    num_tasks: Mapped[int] = mapped_column(default=0)
-    num_edges: Mapped[int] = mapped_column(default=0)
-    network_density: Mapped[float] = mapped_column(Numeric(5, 4), default=0)
-    type: Mapped[Optional[str]] = mapped_column(String(50))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    project_code: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
+    project_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    project_type: Mapped[str] = mapped_column(String(50), default="CON")
     status: Mapped[str] = mapped_column(String(50), default="Planning")
-    base_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
-    total_cost: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
-    target_deadline: Mapped[Optional[datetime]] = mapped_column(DateTime)
-    penalty_per_day: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
-    bonus_per_day: Mapped[Optional[float]] = mapped_column(Numeric(15, 2), default=0.0)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    owner: Mapped[Optional["User"]] = relationship(back_populates="projects")
-    tasks: Mapped[List["Task"]] = relationship(back_populates="project", cascade="all, delete-orphan")
-    simulation_runs: Mapped[List["AISimulationRun"]] = relationship(back_populates="project", cascade="all, delete-orphan")
-    baselines: Mapped[List["ProjectBaseline"]] = relationship(back_populates="project", cascade="all, delete-orphan")
     
-    # Constraint Relationships
-    constraint_time: Mapped[Optional["ProjectConstraintTime"]] = relationship(back_populates="project", cascade="all, delete-orphan")
-    constraint_resources: Mapped[List["ProjectConstraintResource"]] = relationship(back_populates="project", cascade="all, delete-orphan")
-    constraint_logic: Mapped[List["ProjectConstraintLogic"]] = relationship(back_populates="project", cascade="all, delete-orphan")
+    target_deadline: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    penalty_per_day: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
+    bonus_per_day: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
+    
+    base_cost: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
+    total_cost: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
+    num_tasks: Mapped[int] = mapped_column(Integer, default=0)
+    num_edges: Mapped[int] = mapped_column(Integer, default=0)
+    
+    metadata_json: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    owner = relationship("User", back_populates="projects", lazy="selectin")
+    calendar = relationship("ProjectCalendar", back_populates="project", uselist=False, cascade="all, delete-orphan")
+    tasks = relationship("Task", back_populates="project", cascade="all, delete-orphan")
+    resources = relationship("Resource", back_populates="project", cascade="all, delete-orphan")
+    logic_edges = relationship("TaskLogic", back_populates="project", cascade="all, delete-orphan")
+    task_resources = relationship("TaskResource", back_populates="project", cascade="all, delete-orphan")
+    pipeline_runs = relationship("AIPipelineRun", back_populates="project", cascade="all, delete-orphan")
 
 
-class ProjectBaseline(Base):
+class ProjectCalendar(Base):
     """
-    Lưu trữ các Baseline (mốc thời gian, chi phí chuẩn) của Dự án.
+    Lưu trữ Lịch ca làm việc Agenda (agenda.json).
     """
-    __tablename__ = "project_baselines"
+    __tablename__ = "project_calendars"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id", ondelete="CASCADE"))
-    simulation_run_id: Mapped[Optional[int]] = mapped_column(ForeignKey("ai_simulation_runs.id", ondelete="SET NULL"))
-    is_active: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), unique=True, nullable=False)
+    weekly_schedule: Mapped[Dict[str, Any]] = mapped_column(JSON, default=dict)
+    holidays_list: Mapped[List[str]] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    project: Mapped["AppProject"] = relationship(back_populates="baselines")
+    project = relationship("AppProject", back_populates="calendar")
+
+
+class Resource(Base):
+    """
+    Lưu trữ Tài nguyên (resources.csv).
+    """
+    __tablename__ = "resources"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    resource_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    type: Mapped[str] = mapped_column(String(50), default="Human")
+    max_availability: Mapped[float] = mapped_column(Numeric(10, 2), default=1.0)
+    unit_cost: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
+    energy: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
+    overtime_multi: Mapped[float] = mapped_column(Numeric(5, 2), default=1.5)
+    max_overtime_per_day: Mapped[float] = mapped_column(Numeric(5, 2), default=4.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    project = relationship("AppProject", back_populates="resources")
+
+
+class TaskLogic(Base):
+    """
+    Mối quan hệ Phụ thuộc (logic.csv).
+    """
+    __tablename__ = "task_logic"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    predecessor_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    successor_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    dependency_type: Mapped[str] = mapped_column(String(10), default="FS")
+    lag_hours: Mapped[float] = mapped_column(Numeric(10, 2), default=0.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    project = relationship("AppProject", back_populates="logic_edges")
+
+
+class TaskResource(Base):
+    """
+    Phân bổ Tài nguyên cho Task (task_resources.csv).
+    """
+    __tablename__ = "task_resources"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    project_id: Mapped[int] = mapped_column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    task_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    resource_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    request_quantity: Mapped[float] = mapped_column(Numeric(10, 2), default=1.0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    project = relationship("AppProject", back_populates="task_resources")

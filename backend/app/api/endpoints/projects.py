@@ -25,24 +25,17 @@ router = APIRouter()
 
 @router.get("", response_model=APIResponse[PaginatedResponse[ProjectSummary]], summary="Danh sách Dự án")
 async def get_projects_api(
-    q: Optional[str] = Query(None, description="Từ khóa tìm kiếm theo tên"),
+    q: Optional[str] = Query(None, description="Từ khóa tìm kiếm theo Tên hoặc Mã dự án"),
+    project_type: Optional[str] = Query(None, description="Lọc theo loại hình dự án (ví dụ CON, ITLG, PRO)"),
+    status: Optional[str] = Query(None, description="Lọc theo trạng thái (ví dụ Planning, Executing, Closed)"),
     page: int = Query(1, ge=1, description="Trang hiện tại"),
     page_size: int = Query(20, ge=1, le=100, description="Kích thước trang"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[PaginatedResponse[ProjectSummary]]:
     """
-    Lấy danh sách các Dự án, hỗ trợ tìm kiếm và phân trang.
-
-    Args:
-        q (Optional[str]): Từ khóa tìm kiếm Full-Text.
-        page (int): Số trang hiện tại.
-        page_size (int): Kích thước một trang.
-        db (AsyncSession): Phiên DB (Dependency Injection).
-
-    Returns:
-        APIResponse[PaginatedResponse[ProjectSummary]]: Kết quả phân trang danh sách Dự án.
+    Lấy danh sách các Dự án, hỗ trợ Full-Text Search, Lọc theo Loại hình & Trạng thái, và Phân trang.
     """
-    data = await project_service.search_projects(db, q, page, page_size)
+    data = await project_service.search_projects(db, q, project_type, status, page, page_size)
     return APIResponse(success=True, message="Lấy danh sách dự án thành công.", data=data)
 
 

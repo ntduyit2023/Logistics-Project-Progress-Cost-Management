@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 from pathlib import Path as FilePath
 import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException, Path
@@ -36,18 +37,21 @@ def _convert_numpy(obj):
 @router.post("/{project_id}/glpo-optimize", response_model=APIResponse[dict])
 async def run_glpo_optimization(
     project_code: str = Path(..., alias="project_id", description="Mã dự án (ví dụ C2011-07)"),
-    mc_iterations: int = 1000,
+    mc_iterations: int = 10000,
     pareto_count: int = 5,
     overtime_multiplier: float = 1.5,
+    target_deadline: Optional[str] = None,
+    penalty_per_day: float = 0.0,
+    bonus_per_day: float = 0.0,
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse[dict]:
     """
     Chạy Toàn bộ GLPO New AI + OR + MC-CPM Pipeline cho dự án.
     Bao gồm:
-      1. HeteroData Graph Construction (Task, Resource, Time Agenda, Project)
+      1. HeteroData Graph Construction (Task, Resource, Shift, Project)
       2. HGT Pretrained Model & AI Duration/Delay Inference
       3. Monte Carlo CPM Risk Simulation
-      4. CP-SAT Pareto Scheduler (Shift-Aligned Overtime & Monte Carlo Delay Risk %)
+      4. CP-SAT Pareto Scheduler (Overtime & Penalty/Bonus)
     """
     try:
         raw_results = run_new_pipeline(
@@ -55,6 +59,9 @@ async def run_glpo_optimization(
             mc_iterations=mc_iterations,
             pareto_count=pareto_count,
             overtime_multiplier=overtime_multiplier,
+            target_deadline=target_deadline,
+            penalty_per_day=penalty_per_day,
+            bonus_per_day=bonus_per_day,
             output_json=False
         )
         safe_results = _convert_numpy(raw_results)

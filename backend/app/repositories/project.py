@@ -15,22 +15,39 @@ class ProjectRepository(BaseRepository[AppProject, ProjectCreate, ProjectUpdate]
     Repository thao tác với bảng app_projects.
     """
 
-    async def search_projects(self, db: AsyncSession, q: Optional[str], page: int, page_size: int) -> PaginatedResponse[Any]:
+    async def search_projects(
+        self,
+        db: AsyncSession,
+        q: Optional[str],
+        project_type: Optional[str],
+        status: Optional[str],
+        page: int,
+        page_size: int
+    ) -> PaginatedResponse[Any]:
         """
-        Tìm kiếm và phân trang danh sách các dự án.
+        Tìm kiếm Full-Text Search và Lọc theo loại hình (project_type) & trạng thái (status).
         """
         query = select(self.model)
         
-        if q:
-            # Clean and format query for PostgreSQL Full-Text Search with prefix matching (e.g. "proj" -> "proj:*")
-            words = [f"{w}:*" for w in q.split() if w]
-            if words:
-                formatted_query = ' & '.join(words)
-                query = query.filter(
-                    func.to_tsvector('simple', self.model.project_name).op('@@')(
-                        func.to_tsquery('simple', formatted_query)
-                    )
-                )
+        if q and q.strip():
+            clean_q = q.strip()
+            search_pattern = f"%{clean_q}%"
+            
+            # PostgreSQL Native Full-Text Search Vector
+            ts_vector = func.to_tsvector('simple', func.coalesce(self.model.project_name, '') + ' ' + func.coalesce(self.model.project_code, ''))
+            ts_query = func.plainto_tsquery('simple', clean_q)
+            
+            query = query.filter(
+                (ts_vector.op('@@')(ts_query)) |
+                (self.model.project_name.ilike(search_pattern)) | 
+                (self.model.project_code.ilike(search_pattern))
+            )
+            
+        if project_type and project_type.strip():
+            query = query.filter(self.model.project_type.ilike(project_type.strip()))
+            
+        if status and status.strip():
+            query = query.filter(self.model.status.ilike(status.strip()))
             
         # Sắp xếp mới nhất lên đầu
         query = query.order_by(self.model.created_at.desc())

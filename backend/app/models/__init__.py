@@ -1,19 +1,16 @@
 from app.models.user import User
-from app.models.project import AppProject, ProjectBaseline
-from app.models.task import Task, TaskResource
-from app.models.constraint import ProjectConstraintTime, ProjectConstraintResource, ProjectConstraintLogic
-from app.models.ai import AISimulationRun, AIRecommendation, AIInsight
+from app.models.project import AppProject, ProjectCalendar, Resource, TaskLogic, TaskResource
+from app.models.task import Task
+from app.models.ai import AIPipelineRun, ParetoSolution
 
 __all__ = [
     "User",
     "AppProject",
-    "ProjectBaseline",
-    "Task",
+    "ProjectCalendar",
+    "Resource",
+    "TaskLogic",
     "TaskResource",
-    "ProjectConstraintTime",
-    "ProjectConstraintResource",
-    "ProjectConstraintLogic",
-    "AISimulationRun",
-    "AIRecommendation",
-    "AIInsight"
+    "Task",
+    "AIPipelineRun",
+    "ParetoSolution"
 ]

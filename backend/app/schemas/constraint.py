@@ -1,29 +1,30 @@
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field, ConfigDict
 
-# Trục 1: Logic
+# Trục 1: Logic (logic.csv)
 class ConstraintLogicBase(BaseModel):
     predecessor_id: str = Field(..., description="ID của Task đứng trước")
     successor_id: str = Field(..., description="ID của Task đứng sau")
     dependency_type: str = Field("FS", min_length=2, max_length=10)
-    lag_months: Optional[float] = Field(0)
-    lag_weeks: Optional[float] = Field(0)
-    lag_days: Optional[float] = Field(0)
-    lag_hours: Optional[float] = Field(0)
+    lag_hours: Optional[float] = Field(0.0, description="Số giờ độ trễ (lag_hours)")
 
 
 class ConstraintLogicResponse(ConstraintLogicBase):
     model_config = ConfigDict(from_attributes=True)
+    id: Optional[int] = None
     project_id: int
 
 
-# Trục 2: Resource
+# Trục 2: Resource (resources.csv)
 class ConstraintResourceBase(BaseModel):
-    resource_name: str = Field(..., max_length=100)
-    resource_type: str = Field(..., max_length=50) # Renewable / Consumable
-    max_availability: float = Field(..., ge=0)
-    cost_per_use: Optional[float] = Field(0, ge=0)
-    cost_per_unit: Optional[float] = Field(0, ge=0)
+    resource_id: str = Field(..., max_length=100, description="Mã tài nguyên (ví dụ R1)")
+    name: Optional[str] = Field(None, max_length=255)
+    type: str = Field("Human", max_length=50, description="Loại tài nguyên: Human / Machine")
+    max_availability: float = Field(1.0, ge=0)
+    unit_cost: float = Field(0.0, ge=0)
+    energy: float = Field(0.0, ge=0)
+    overtime_multi: float = Field(1.5, ge=1.0)
+    max_overtime_per_day: float = Field(4.0, ge=0)
 
 
 class ConstraintResourceResponse(ConstraintResourceBase):

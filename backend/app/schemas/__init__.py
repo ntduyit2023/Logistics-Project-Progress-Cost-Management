@@ -1,4 +1,4 @@
-from app.schemas.task import TaskBase, TaskCreate, TaskUpdate, TaskResponse
+from app.schemas.task import TaskBase, TaskCreate, TaskUpdate, TaskResponse, TaskResourceCreate, TaskResourceResponse
 from app.schemas.constraint import (
     ConstraintLogicBase, ConstraintLogicResponse, 
     ConstraintResourceBase, ConstraintResourceResponse,
@@ -10,7 +10,7 @@ from app.schemas.common import APIResponse, PaginatedResponse, HealthCheckRespon
 from app.schemas.user import UserCreate, UserResponse
 
 __all__ = [
-    "TaskBase", "TaskCreate", "TaskUpdate", "TaskResponse",
+    "TaskBase", "TaskCreate", "TaskUpdate", "TaskResponse", "TaskResourceCreate", "TaskResourceResponse",
     "ConstraintLogicBase", "ConstraintLogicResponse", 
     "ConstraintResourceBase", "ConstraintResourceResponse",
     "ConstraintTimeBase", "ConstraintTimeResponse",

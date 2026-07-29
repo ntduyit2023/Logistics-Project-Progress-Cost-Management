@@ -1,219 +1,169 @@
 from typing import Optional, Dict, Any
 from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
+
 
 class TaskBase(BaseModel):
-    """
-    Schema cơ sở cho Công việc (Task).
+    task_id: Optional[str] = Field(None, max_length=100, description="Mã công việc (ví dụ C2011-07_1). Tự động sinh nếu để trống.")
+    task_name: str = Field(..., max_length=255, description="Tên hiển thị công việc")
+    baseline_start: Optional[datetime] = Field(None, description="Mốc thời gian bắt đầu thi công (Datetime)")
+    duration_hours: float = Field(0.0, ge=0, description="Thời gian thi công thực tế (giờ)")
+    total_cost: Optional[float] = Field(0.0, ge=0, description="Tổng chi phí của Task (Tự động cộng dồn hoặc chỉ định)")
+    
+    # 1. Chi phí Trực tiếp & Vật tư (Nhập tay hoặc tự động)
+    labor: Optional[float] = Field(0.0, ge=0, description="Chi phí nhân công (Tự động tính từ Resource hoặc nhập tay)")
+    material: Optional[float] = Field(0.0, ge=0, description="Chi phí vật tư/vật liệu")
+    equipment: Optional[float] = Field(0.0, ge=0, description="Chi phí ca máy/thiết bị")
+    energy: Optional[float] = Field(0.0, ge=0, description="Chi phí nhiên liệu/năng lượng")
+    testing_inspection: Optional[float] = Field(0.0, ge=0, description="Chi phí kiểm định/thí nghiệm")
+    
+    # 2. Chi phí Gián tiếp & Quản lý
+    project_management: Optional[float] = Field(0.0, ge=0, description="Chi phí ban quản lý dự án")
+    facility: Optional[float] = Field(0.0, ge=0, description="Chi phí lán trại/mặt bằng")
+    utilities: Optional[float] = Field(0.0, ge=0, description="Chi phí điện nước thi công")
+    communication: Optional[float] = Field(0.0, ge=0, description="Chi phí thông tin liên lạc")
+    training: Optional[float] = Field(0.0, ge=0, description="Chi phí đào tạo/an toàn lao động")
+    quality_management: Optional[float] = Field(0.0, ge=0, description="Chi phí quản lý chất lượng")
+    
+    # 3. Chi phí Phụ thuộc Thời gian
+    overtime: Optional[float] = Field(0.0, ge=0, description="Chi phí lương tăng ca")
+    delay_penalty: Optional[float] = Field(0.0, ge=0, description="Chi phí phạt trễ công việc")
+    inventory_holding: Optional[float] = Field(0.0, ge=0, description="Chi phí lưu kho vật tư")
+    waiting_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí chờ đợi/tạm dừng")
+    idle_resource: Optional[float] = Field(0.0, ge=0, description="Chi phí tài nguyên nhàn rỗi")
+    revenue_delay: Optional[float] = Field(0.0, ge=0, description="Chi phí mất doanh thu trễ")
+    expediting: Optional[float] = Field(0.0, ge=0, description="Chi phí đẩy nhanh tiến độ")
+    
+    # 4. Chi phí Rủi ro & Tuân thủ
+    insurance: Optional[float] = Field(0.0, ge=0, description="Chi phí bảo hiểm công trình")
+    rework: Optional[float] = Field(0.0, ge=0, description="Chi phí làm lại/sửa chữa")
+    warranty: Optional[float] = Field(0.0, ge=0, description="Chi phí bảo hành")
+    litigation: Optional[float] = Field(0.0, ge=0, description="Chi phí pháp lý/tranh chấp")
+    regulatory_compliance: Optional[float] = Field(0.0, ge=0, description="Chi phí tuân thủ quy định")
+    contingency_reserve: Optional[float] = Field(0.0, ge=0, description="Dự phòng rủi ro công việc")
+    management_reserve: Optional[float] = Field(0.0, ge=0, description="Dự phòng quản lý")
+    
+    # 5. Chi phí Chuỗi cung ứng & Logistics
+    transportation: Optional[float] = Field(0.0, ge=0, description="Chi phí vận chuyển/logistics")
+    ordering: Optional[float] = Field(0.0, ge=0, description="Chi phí đặt hàng/procurement")
+    packaging: Optional[float] = Field(0.0, ge=0, description="Chi phí đóng gói/bảo quản")
+    reverse_logistics: Optional[float] = Field(0.0, ge=0, description="Chi phí logistics ngược")
+    customs: Optional[float] = Field(0.0, ge=0, description="Chi phí thủ tục hải quan")
+    supplier_coordination: Optional[float] = Field(0.0, ge=0, description="Chi phí phối hợp nhà thầu phụ")
+    
+    # 6. Chi phí Chiến lược & Tài chính
+    opportunity_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí cơ hội")
+    capital_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí vốn")
+    financing_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí lãi vay/tài chính")
+    npv_loss: Optional[float] = Field(0.0, ge=0, description="Tổn thất NPV")
+    esg_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí môi trường/ESG")
+    carbon_tax: Optional[float] = Field(0.0, ge=0, description="Thuế carbon")
+    reputation_cost: Optional[float] = Field(0.0, ge=0, description="Chi phí rủi ro uy tín")
 
-    Attributes:
-        task_name (str): Tên task.
-        task_type (Optional[str]): Phân loại task.
-        status (str): Trạng thái.
-        base_cost (Optional[float]): Chi phí gốc.
-        total_cost (Optional[float]): Tổng chi phí.
-        risk_factor (Optional[float]): Hệ số rủi ro.
-        baseline_start (Optional[datetime]): Ngày bắt đầu.
-        type (Optional[str]): Phân loại.
-    """
-    task_name: str = Field(..., max_length=255)
-    task_type: Optional[str] = Field(None, max_length=100)
-    status: str = Field("Pending", max_length=50)
-    base_cost: Optional[float] = Field(0.0)
-    total_cost: Optional[float] = Field(0.0)
-    risk_factor: Optional[float] = Field(1.0)
-    baseline_start: Optional[datetime] = None
-    type: Optional[str] = Field(None, max_length=255)
-    
-    # Hub Time Components
-    duration_months: Optional[float] = None
-    duration_weeks: Optional[float] = None
-    duration_days: Optional[float] = None
-    duration_hours: Optional[float] = None
-    calendar_type: Optional[str] = Field(None, max_length=50)
-    
-    # 1. Resource Cost
-    labor: Optional[float] = None
-    material: Optional[float] = None
-    equipment: Optional[float] = None
-    energy: Optional[float] = None
-    testing_inspection: Optional[float] = None
-    
-    # 2. Overhead Cost
-    project_management: Optional[float] = None
-    facility: Optional[float] = None
-    utilities: Optional[float] = None
-    communication: Optional[float] = None
-    training: Optional[float] = None
-    quality_management: Optional[float] = None
-    
-    # 3. Time-dependent Cost
-    overtime: Optional[float] = None
-    delay_penalty: Optional[float] = None
-    inventory_holding: Optional[float] = None
-    waiting_cost: Optional[float] = None
-    idle_resource: Optional[float] = None
-    revenue_delay: Optional[float] = None
-    expediting: Optional[float] = None
-    
-    # 4. Risk & Compliance Cost
-    insurance: Optional[float] = None
-    rework: Optional[float] = None
-    warranty: Optional[float] = None
-    litigation: Optional[float] = None
-    regulatory_compliance: Optional[float] = None
-    contingency_reserve: Optional[float] = None
-    management_reserve: Optional[float] = None
-    
-    # 5. Supply Chain & External Cost
-    transportation: Optional[float] = None
-    ordering: Optional[float] = None
-    packaging: Optional[float] = None
-    reverse_logistics: Optional[float] = None
-    customs: Optional[float] = None
-    supplier_coordination: Optional[float] = None
-    
-    # 6. Strategic & Financial Cost
-    opportunity_cost: Optional[float] = None
-    capital_cost: Optional[float] = None
-    financing_cost: Optional[float] = None
-    npv_loss: Optional[float] = None
-    esg_cost: Optional[float] = None
-    carbon_tax: Optional[float] = None
-    reputation_cost: Optional[float] = None
-
-    # Risk Factors
-    complexity: Optional[float] = None
-    weather_contingency: Optional[float] = None
-    general_contingency: Optional[float] = None
-    rework_risk: Optional[float] = None
-    
-    # Time Components
-    overtime_hours: Optional[float] = None
-    lag_time: Optional[float] = None
-    
-    # Metadata JSON
-    metadata_json: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    cost_features: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Metadata dictionary chi phí")
 
 
 class TaskCreate(TaskBase):
-    """
-    Schema dùng để tạo Task mới.
-    """
-    id: Optional[str] = Field(None)
-    project_id: Optional[int] = Field(None)
+    pass
 
 
 class TaskUpdate(BaseModel):
-    """
-    Schema dùng để cập nhật Task (chỉ gửi các trường cần update).
-    """
+    task_id: Optional[str] = Field(None, max_length=100)
     task_name: Optional[str] = Field(None, max_length=255)
-    task_type: Optional[str] = Field(None, max_length=100)
-    status: Optional[str] = Field(None, max_length=50)
-    base_cost: Optional[float] = None
-    total_cost: Optional[float] = None
-    risk_factor: Optional[float] = None
-    baseline_start: Optional[datetime] = None
-    type: Optional[str] = Field(None, max_length=255)
+    baseline_start: Optional[datetime] = Field(None)
+    duration_hours: Optional[float] = Field(None, ge=0)
+    total_cost: Optional[float] = Field(None, ge=0)
     
-    # Hub Time Components
-    duration_months: Optional[float] = None
-    duration_weeks: Optional[float] = None
-    duration_days: Optional[float] = None
-    duration_hours: Optional[float] = None
-    calendar_type: Optional[str] = Field(None, max_length=50)
+    labor: Optional[float] = Field(None, ge=0)
+    material: Optional[float] = Field(None, ge=0)
+    equipment: Optional[float] = Field(None, ge=0)
+    energy: Optional[float] = Field(None, ge=0)
+    testing_inspection: Optional[float] = Field(None, ge=0)
+    project_management: Optional[float] = Field(None, ge=0)
+    facility: Optional[float] = Field(None, ge=0)
+    utilities: Optional[float] = Field(None, ge=0)
+    communication: Optional[float] = Field(None, ge=0)
+    training: Optional[float] = Field(None, ge=0)
+    quality_management: Optional[float] = Field(None, ge=0)
+    overtime: Optional[float] = Field(None, ge=0)
+    delay_penalty: Optional[float] = Field(None, ge=0)
+    inventory_holding: Optional[float] = Field(None, ge=0)
+    waiting_cost: Optional[float] = Field(None, ge=0)
+    idle_resource: Optional[float] = Field(None, ge=0)
+    revenue_delay: Optional[float] = Field(None, ge=0)
+    expediting: Optional[float] = Field(None, ge=0)
+    insurance: Optional[float] = Field(None, ge=0)
+    rework: Optional[float] = Field(None, ge=0)
+    warranty: Optional[float] = Field(None, ge=0)
+    litigation: Optional[float] = Field(None, ge=0)
+    regulatory_compliance: Optional[float] = Field(None, ge=0)
+    contingency_reserve: Optional[float] = Field(None, ge=0)
+    management_reserve: Optional[float] = Field(None, ge=0)
+    transportation: Optional[float] = Field(None, ge=0)
+    ordering: Optional[float] = Field(None, ge=0)
+    packaging: Optional[float] = Field(None, ge=0)
+    reverse_logistics: Optional[float] = Field(None, ge=0)
+    customs: Optional[float] = Field(None, ge=0)
+    supplier_coordination: Optional[float] = Field(None, ge=0)
+    opportunity_cost: Optional[float] = Field(None, ge=0)
+    capital_cost: Optional[float] = Field(None, ge=0)
+    financing_cost: Optional[float] = Field(None, ge=0)
+    npv_loss: Optional[float] = Field(None, ge=0)
+    esg_cost: Optional[float] = Field(None, ge=0)
+    carbon_tax: Optional[float] = Field(None, ge=0)
+    reputation_cost: Optional[float] = Field(None, ge=0)
     
-    # 1. Resource Cost
-    labor: Optional[float] = None
-    material: Optional[float] = None
-    equipment: Optional[float] = None
-    energy: Optional[float] = None
-    testing_inspection: Optional[float] = None
-    
-    # 2. Overhead Cost
-    project_management: Optional[float] = None
-    facility: Optional[float] = None
-    utilities: Optional[float] = None
-    communication: Optional[float] = None
-    training: Optional[float] = None
-    quality_management: Optional[float] = None
-    
-    # 3. Time-dependent Cost
-    overtime: Optional[float] = None
-    delay_penalty: Optional[float] = None
-    inventory_holding: Optional[float] = None
-    waiting_cost: Optional[float] = None
-    idle_resource: Optional[float] = None
-    revenue_delay: Optional[float] = None
-    expediting: Optional[float] = None
-    
-    # 4. Risk & Compliance Cost
-    insurance: Optional[float] = None
-    rework: Optional[float] = None
-    warranty: Optional[float] = None
-    litigation: Optional[float] = None
-    regulatory_compliance: Optional[float] = None
-    contingency_reserve: Optional[float] = None
-    management_reserve: Optional[float] = None
-    
-    # 5. Supply Chain & External Cost
-    transportation: Optional[float] = None
-    ordering: Optional[float] = None
-    packaging: Optional[float] = None
-    reverse_logistics: Optional[float] = None
-    customs: Optional[float] = None
-    supplier_coordination: Optional[float] = None
-    
-    # 6. Strategic & Financial Cost
-    opportunity_cost: Optional[float] = None
-    capital_cost: Optional[float] = None
-    financing_cost: Optional[float] = None
-    npv_loss: Optional[float] = None
-    esg_cost: Optional[float] = None
-    carbon_tax: Optional[float] = None
-    reputation_cost: Optional[float] = None
-
-    # Risk Factors
-    complexity: Optional[float] = None
-    weather_contingency: Optional[float] = None
-    general_contingency: Optional[float] = None
-    rework_risk: Optional[float] = None
-    
-    # Time Components
-    overtime_hours: Optional[float] = None
-    lag_time: Optional[float] = None
-    metadata_json: Optional[Dict[str, Any]] = None
+    cost_features: Optional[Dict[str, Any]] = Field(None)
 
 
 class TaskResponse(TaskBase):
-    """
-    Schema trả về thông tin Task.
+    model_config = ConfigDict(from_attributes=True)
     
-    Attributes:
-        id (str): Khóa chính của Task.
-        project_id (int): Khóa ngoại liên kết tới project.
-    """
-    model_config = ConfigDict(from_attributes=True)
-    id: str
+    id: int
     project_id: int
-
-# --- G7: Task Resource Assignment ---
-
-class TaskResourceBase(BaseModel):
-    request_quantity: float = Field(..., ge=0, description="Số lượng tài nguyên yêu cầu")
-    allocated_quantity: Optional[float] = Field(None, ge=0)
-    labor_productivity: Optional[float] = Field(None, ge=0)
-    equipment_utilization: Optional[float] = Field(None, ge=0)
-    resource_substitutability: Optional[int] = Field(None)
-
-class TaskResourceCreate(TaskResourceBase):
-    resource_id: int = Field(..., description="ID của ProjectConstraintResource")
-
-class TaskResourceResponse(TaskResourceBase):
-    model_config = ConfigDict(from_attributes=True)
     task_id: str
-    resource_id: int
-    resource_name: Optional[str] = None # Will be populated if joined
-    resource_type: Optional[str] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
+    @model_validator(mode='before')
+    @classmethod
+    def populate_costs_from_cost_features(cls, data: Any) -> Any:
+        """
+        Tự động bung 38 chi phí từ cost_features JSONB ra các thuộc tính trực tiếp nếu chưa có
+        """
+        if hasattr(data, 'cost_features') and isinstance(data.cost_features, dict):
+            cf = data.cost_features
+            for k, v in cf.items():
+                if not hasattr(data, k) or getattr(data, k, None) is None:
+                    try:
+                        setattr(data, k, float(v or 0.0))
+                    except Exception:
+                        pass
+        elif isinstance(data, dict) and 'cost_features' in data and isinstance(data['cost_features'], dict):
+            cf = data['cost_features']
+            for k, v in cf.items():
+                if k not in data or data[k] is None:
+                    try:
+                        data[k] = float(v or 0.0)
+                    except Exception:
+                        pass
+        return data
+
+
+# --- Task Resource Assignment ---
+
+class TaskResourceCreate(BaseModel):
+    resource_id: str = Field(..., description="Mã tài nguyên (ví dụ R1)")
+    request_quantity: float = Field(1.0, ge=0, description="Số lượng tài nguyên yêu cầu")
+
+
+class TaskResourceResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: Optional[int] = None
+    project_id: int
+    task_id: str
+    resource_id: str
+    resource_name: Optional[str] = None
+    resource_type: Optional[str] = None
+    request_quantity: float = 1.0
+    unit_cost: Optional[float] = 0.0

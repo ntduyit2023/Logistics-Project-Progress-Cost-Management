@@ -19,20 +19,18 @@ from app.schemas import (
 # QUERIES
 # ==============================================================================
 
-async def search_projects(db: AsyncSession, q: Optional[str], page: int, page_size: int) -> PaginatedResponse[ProjectSummary]:
+async def search_projects(
+    db: AsyncSession,
+    q: Optional[str],
+    project_type: Optional[str],
+    status: Optional[str],
+    page: int,
+    page_size: int
+) -> PaginatedResponse[ProjectSummary]:
     """
-    Tìm kiếm và phân trang danh sách các dự án.
-
-    Args:
-        db (AsyncSession): Phiên kết nối DB.
-        q (Optional[str]): Từ khóa tìm kiếm tên dự án.
-        page (int): Trang hiện tại.
-        page_size (int): Số lượng trên một trang.
-
-    Returns:
-        PaginatedResponse[ProjectSummary]: Kết quả phân trang Dự án.
+    Tìm kiếm và phân trang danh sách các dự án có hỗ trợ lọc theo loại hình và trạng thái.
     """
-    paginated = await project_repo.search_projects(db, q, page, page_size)
+    paginated = await project_repo.search_projects(db, q, project_type, status, page, page_size)
     
     # Map to ProjectSummary
     summaries = []
@@ -47,15 +45,19 @@ async def search_projects(db: AsyncSession, q: Optional[str], page: int, page_si
         
         summaries.append(ProjectSummary(
             id=p.id,
+            project_code=p.project_code,
             project_name=p.project_name,
-            metadata_json=p.metadata_json,
+            project_type=p.project_type,
+            status=p.status,
+            target_deadline=p.target_deadline,
+            penalty_per_day=p.penalty_per_day,
+            bonus_per_day=p.bonus_per_day,
+            base_cost=p.base_cost,
+            total_cost=p.total_cost,
             num_tasks=num_tasks,
             num_edges=num_edges,
             network_density=network_density,
-            status=p.status,
-            type=p.type,
-            base_cost=p.base_cost,
-            total_cost=p.total_cost,
+            metadata_json=p.metadata_json,
             created_at=p.created_at,
             updated_at=p.updated_at
         ))
@@ -85,31 +87,25 @@ async def get_project_summary(db: AsyncSession, project_id: int) -> ProjectSumma
     
     return ProjectSummary(
         id=project.id,
+        project_code=project.project_code,
         project_name=project.project_name,
-        metadata_json=project.metadata_json,
+        project_type=project.project_type,
+        status=project.status,
+        target_deadline=project.target_deadline,
+        penalty_per_day=project.penalty_per_day,
+        bonus_per_day=project.bonus_per_day,
+        base_cost=project.base_cost,
+        total_cost=project.total_cost,
         num_tasks=len(tasks),
         num_edges=len(dependencies),
         network_density=0.0,
-        status=project.status,
+        metadata_json=project.metadata_json,
         created_at=project.created_at,
         updated_at=project.updated_at
     )
 
 
 async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail:
-    """
-    Lấy thông tin chi tiết một dự án.
-
-    Args:
-        db (AsyncSession): Phiên DB.
-        project_id (int): ID dự án.
-
-    Returns:
-        ProjectDetail: Chi tiết dự án cùng các công việc.
-
-    Raises:
-        HTTPException: Nếu dự án không tồn tại.
-    """
     project = await project_repo.get_by_id(db, project_id)
     if not project:
         raise HTTPException(
@@ -121,26 +117,30 @@ async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail
     dependencies = await dependency_repo.get_by_project(db, project_id)
     
     from sqlalchemy import select
-    from app.models import ProjectConstraintResource, ProjectConstraintTime
-    res_stmt = select(ProjectConstraintResource).where(ProjectConstraintResource.project_id == project_id)
+    from app.models import Resource, ProjectCalendar
+    res_stmt = select(Resource).where(Resource.project_id == project_id)
     res_result = await db.execute(res_stmt)
     resources = res_result.scalars().all()
     
-    time_stmt = select(ProjectConstraintTime).where(ProjectConstraintTime.project_id == project_id)
+    time_stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == project_id)
     time_result = await db.execute(time_stmt)
     time_constraint = time_result.scalars().first()
     
     return ProjectDetail(
         id=project.id,
+        project_code=project.project_code,
         project_name=project.project_name,
-        metadata_json=project.metadata_json,
+        project_type=project.project_type,
+        status=project.status,
+        target_deadline=project.target_deadline,
+        penalty_per_day=project.penalty_per_day,
+        bonus_per_day=project.bonus_per_day,
+        base_cost=project.base_cost,
+        total_cost=project.total_cost,
         num_tasks=len(tasks),
         num_edges=len(dependencies),
         network_density=0.0,
-        status=project.status,
-        type=project.type,
-        base_cost=project.base_cost,
-        total_cost=project.total_cost,
+        metadata_json=project.metadata_json,
         created_at=project.created_at,
         updated_at=project.updated_at,
         tasks=tasks,
@@ -184,43 +184,27 @@ async def get_project_graph(db: AsyncSession, project_id: int) -> ProjectGraphRe
 # MUTATIONS (CREATES)
 # ==============================================================================
 
-async def create_project(db: AsyncSession, project_in: ProjectCreate) -> Any:
+async def create_project(db: AsyncSession, project_in: ProjectCreate) -> ProjectSummary:
     """
     Khởi tạo một dự án mới.
-
-    Args:
-        db (AsyncSession): Phiên DB.
-        project_in (ProjectCreate): Dữ liệu khởi tạo.
-
-    Returns:
-        Any: Đối tượng Dự án vừa tạo.
     """
-    return await project_repo.create(db, obj_in=project_in)
+    new_p = await project_repo.create(db, obj_in=project_in)
+    return await get_project_summary(db, new_p.id)
 
 
 # ==============================================================================
 # MUTATIONS (UPDATES & DELETES)
 # ==============================================================================
 
-async def update_project(db: AsyncSession, project_id: int, project_in: ProjectUpdate) -> Any:
+async def update_project(db: AsyncSession, project_id: int, project_in: ProjectUpdate) -> ProjectSummary:
     """
     Cập nhật thông tin dự án.
-
-    Args:
-        db (AsyncSession): Phiên DB.
-        project_id (int): ID dự án.
-        project_in (ProjectUpdate): Dữ liệu cập nhật.
-
-    Returns:
-        Any: Dự án sau cập nhật.
-
-    Raises:
-        HTTPException: Nếu không tìm thấy.
     """
     project = await project_repo.get_by_id(db, project_id)
     if not project:
         raise HTTPException(status_code=404, detail="Dự án không tồn tại.")
-    return await project_repo.update(db, db_obj=project, obj_in=project_in)
+    updated_p = await project_repo.update(db, db_obj=project, obj_in=project_in)
+    return await get_project_summary(db, updated_p.id)
 
 
 async def delete_project(db: AsyncSession, project_id: int) -> Any:
