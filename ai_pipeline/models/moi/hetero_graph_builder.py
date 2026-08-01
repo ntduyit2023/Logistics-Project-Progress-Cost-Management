@@ -1,21 +1,19 @@
 """
-Heterogeneous Graph Builder (4 Node Types, 4 Edge Relations)
+Heterogeneous Graph Builder (3 Node Types, 3 Edge Relations)
 ============================================================
 Thư mục: ai_pipeline/models/moi/hetero_graph_builder.py
 
 Chức năng:
-    Xây dựng đối tượng HeteroData từ dữ liệu tiêu chuẩn (CSV / JSON) của dự án.
-    Hỗ trợ 4 loại nút:
+    Xây dựng đối tượng HeteroData tinh gọn từ dữ liệu tiêu chuẩn (CSV / JSON) của dự án.
+    Hỗ trợ 3 loại nút:
         - task: Nút công việc (39-dim feature vector: 1 thời gian duration_hours + 38 chi phí chuẩn)
         - resource: Nút tài nguyên (6-dim feature vector: unit_cost, capacity, type, energy, ot_multi, max_ot_day)
         - shift: Nút ca thi công thực tế (5-dim feature vector: start_h, end_h, dur, day_of_week, is_working)
-        - project: Nút dự án tổng thể (3-dim feature vector)
 
-    Và 4 loại cạnh quan hệ:
+    Và 3 loại cạnh quan hệ:
         - ('task', 'precedes', 'task'): Quan hệ mối nối thứ tự logic
         - ('task', 'uses', 'resource'): Nhu cầu sử dụng tài nguyên của công việc
         - ('task', 'constrained_by', 'shift'): Ràng buộc khung giờ ca thi công
-        - ('task', 'belongs_to', 'project'): Công việc thuộc dự án
 """
 
 import os
@@ -157,9 +155,6 @@ class HeteroGraphBuilder:
         if weekly_working_hours <= 0.0:
             weekly_working_hours = 40.0
         
-        # --- NÚT 4: PROJECT NODE ---
-        data['project'].x = torch.tensor([[len(tasks_df), len(res_df), 1.0]], dtype=torch.float32)
-        
         # --- CẠNH 1: TASK PRECEDENCE ('task', 'precedes', 'task') ---
         src_tasks, dst_tasks, edge_attrs = [], [], []
         for _, row in edges_df.iterrows():
@@ -190,7 +185,7 @@ class HeteroGraphBuilder:
                 
         data['task', 'uses', 'resource'].edge_index = torch.tensor([t_src, r_dst], dtype=torch.long) if t_src else torch.zeros((2, 0), dtype=torch.long)
         data['task', 'uses', 'resource'].edge_attr = torch.tensor(req_qty, dtype=torch.float32) if req_qty else torch.zeros((0, 1), dtype=torch.float32)
-            
+
         # --- CẠNH 3: TASK CONSTRAINED BY SHIFT ('task', 'constrained_by', 'shift') ---
         t_indices, shift_indices, shift_edge_attrs = [], [], []
         num_shifts = len(shift_features)
@@ -230,9 +225,5 @@ class HeteroGraphBuilder:
                 
         data['task', 'constrained_by', 'shift'].edge_index = torch.tensor([t_indices, shift_indices], dtype=torch.long) if t_indices else torch.zeros((2, 0), dtype=torch.long)
         data['task', 'constrained_by', 'shift'].edge_attr = torch.tensor(shift_edge_attrs, dtype=torch.float32) if shift_edge_attrs else torch.zeros((0, 3), dtype=torch.float32)
-        
-        # --- CẠNH 4: TASK BELONGS TO PROJECT ('task', 'belongs_to', 'project') ---
-        proj_indices = [0] * len(tasks_df)
-        data['task', 'belongs_to', 'project'].edge_index = torch.tensor([list(range(len(tasks_df))), proj_indices], dtype=torch.long) if len(tasks_df) > 0 else torch.zeros((2, 0), dtype=torch.long)
         
         return data

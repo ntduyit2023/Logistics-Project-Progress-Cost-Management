@@ -104,7 +104,10 @@ class GlPoProjectGraph:
     def _process(self):
         # 1. Load CSVs
         tasks_df = pd.read_csv(os.path.join(self.project_dir, 'tasks.csv'))
-        edges_df = pd.read_csv(os.path.join(self.project_dir, 'predecessors.csv'))
+        pred_path = os.path.join(self.project_dir, 'logic.csv')
+        if not os.path.exists(pred_path):
+            pred_path = os.path.join(self.project_dir, 'predecessors.csv')
+        edges_df = pd.read_csv(pred_path)
         try:
             task_resources_df = pd.read_csv(os.path.join(self.project_dir, 'task_resources.csv'))
         except FileNotFoundError:

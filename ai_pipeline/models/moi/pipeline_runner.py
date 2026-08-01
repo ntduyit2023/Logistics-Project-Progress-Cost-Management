@@ -81,19 +81,19 @@ def run_new_pipeline(
     if not os.path.exists(project_dir):
         raise FileNotFoundError(f"Thư mục dự án không tồn tại: {project_dir}")
 
-    # 1. Dựng Đồ thị HeteroData 4 loại nút
-    print("\n[BUOC 1] Dung Do thi HeteroData (4 Node Types)...")
+    # 1. Dựng Đồ thị HeteroData 3 loại nút tinh gọn
+    print("\n[BUOC 1] Dung Do thi HeteroData (3 Node Types: task, resource, shift)...")
     builder = HeteroGraphBuilder(project_dir)
     hetero_data = builder.build()
     print(f"   * Da tao do thi nut task: {hetero_data['task'].x.size(0)} nut, "
-          f"tai nguyen: {hetero_data['resource'].x.size(0)} nut")
+          f"tai nguyen: {hetero_data['resource'].x.size(0)} nut, "
+          f"ca thi cong: {hetero_data['shift'].x.size(0)} nut")
 
-    # 2. Khởi tạo mô hình HGT & Pretrainer (Phase 0)
+    # 2. Khởi tạo mô hình HGT & Pretrainer (Phase 0) với Hybrid Readout Pooling (Mean + Max)
     model = HGTTaskPredictor({
         'task': hetero_data['task'].x.size(1),
         'resource': hetero_data['resource'].x.size(1),
-        'shift': hetero_data['shift'].x.size(1),
-        'project': hetero_data['project'].x.size(1)
+        'shift': hetero_data['shift'].x.size(1)
     }, hidden_dim=128)
     
     ckpt_dir = os.path.join(project_root, "checkpoints")

@@ -75,7 +75,7 @@ def train_multi_domain_projects(
         hetero_data = builder.build()
         total_edges = sum(hetero_data[edge_type].edge_index.size(1) for edge_type in hetero_data.edge_types)
         print(f"   -> Nodes: Task={hetero_data['task'].x.size(0)} | Resource={hetero_data['resource'].x.size(0)} | "
-              f"Shift={hetero_data['shift'].x.size(0)} | Project={hetero_data['project'].x.size(0)} | "
+              f"Shift={hetero_data['shift'].x.size(0)} | "
               f"Edges={total_edges}")
         hetero_data_list.append(hetero_data)
         valid_projects.append(p_id)
@@ -83,13 +83,12 @@ def train_multi_domain_projects(
     if not hetero_data_list:
         raise RuntimeError("Khong nap duoc do thi du an nao!")
 
-    # 2. Khởi tạo Mô hình HGT Predictor
+    # 2. Khởi tạo Mô hình HGT Predictor với Hybrid Readout Pooling (3 Node Types)
     sample_data = hetero_data_list[0]
     model = HGTTaskPredictor({
         'task': sample_data['task'].x.size(1),
         'resource': sample_data['resource'].x.size(1),
-        'shift': sample_data['shift'].x.size(1),
-        'project': sample_data['project'].x.size(1)
+        'shift': sample_data['shift'].x.size(1)
     }, hidden_dim=128)
     checkpoint_dir = os.path.join(project_root, "checkpoints")
     pretrainer = HGTPretrainer(model, checkpoint_dir=checkpoint_dir)
