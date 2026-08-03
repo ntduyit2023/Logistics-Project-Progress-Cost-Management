@@ -145,7 +145,7 @@ class CPSATParetoSolver:
             })
 
         results = []
-        step_time = max(1.0, time_limit_sec / len(configs))
+        step_time = max(5.0, time_limit_sec / max(1, len(configs)))
         for cfg in configs:
             sol = self._run_ai_guided_scenario(cfg, time_limit_sec=step_time)
             if sol and not any(
@@ -154,10 +154,16 @@ class CPSATParetoSolver:
             ):
                 results.append(sol)
 
-        if not results or len(results) < pareto_count:
-            results = self._expand_pareto_frontier(results, pareto_count)
+        print(f"[DEBUG] Number of unique CP-SAT solutions: {len(results)}")
+        for i, res in enumerate(results):
+            crashed = sum(1 for t in res['tasks_schedule'].values() if t.get('crashing_strategy') != 'Normal')
+            print(f"  [DEBUG] Sol {i}: makespan={res['makespan_hours']}, cost={res['total_cost']}, crashed_tasks={crashed}")
 
         results.sort(key=lambda x: (x['makespan_hours'], x['total_cost']))
+
+        if not results or len(results) < pareto_count:
+            print("[DEBUG] Calling _expand_pareto_frontier!")
+            results = self._expand_pareto_frontier(results, pareto_count)
         
         # Mốc hạn định P50 từ Monte Carlo
         if self.mc_samples is not None and len(self.mc_samples) > 0:
@@ -285,11 +291,7 @@ class CPSATParetoSolver:
             # ========== MODE 1: OT (nếu có resource cho phép và bị tràn lịch) ==========
             allow_ot = False
             if task_max_ot_per_day > 0:
-                # Dùng Calendar Engine mô phỏng thời gian thực
-                b_start = pd.to_datetime(t.get('baseline_start', '2010-01-01 08:00:00'))
-                b_end = self.calendar_engine.add_working_hours(b_start, base_effort_h)
-                if b_end.date() > b_start.date():
-                    allow_ot = True
+                allow_ot = True
 
             if allow_ot:
                 dur_days = base_effort_h / self.hours_per_day
@@ -433,6 +435,12 @@ class CPSATParetoSolver:
                     })
 
             task_modes[t_id] = modes
+            
+            # [DEBUG] Print modes for a few tasks
+            if cfg.get('name') == 'Phương án [1]' and len(task_modes) <= 2:
+                print(f"[DEBUG] Task {t_id} modes:")
+                for m in modes:
+                    print(f"  Mode {m['mode']} ({m['name']}): dur={m['dur']} workers={m['workers']} extra={m['extra_workers']}")
 
         horizon = sum(m[0]['dur'] for m in task_modes.values()) * 2
         horizon = max(10000, horizon)
@@ -533,6 +541,8 @@ class CPSATParetoSolver:
         solver.parameters.num_search_workers = 8
 
         status = solver.Solve(model)
+        status_name = solver.StatusName(status)
+        print(f"[DEBUG] CP-SAT {cfg['name']} finished with status: {status_name}")
 
         if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return self._extract_solution_schedule(solver, makespan, total_cost, total_risk, task_vars, cfg)

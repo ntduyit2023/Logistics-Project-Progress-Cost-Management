@@ -23,7 +23,7 @@ print(f"Chi phi phat: {opt.get('penalty_cost', 0)}")
 print(f"Tien thuong: {opt.get('bonus_amount', 0)}")
 
 print("\n--- CHI TIET 2 TASKS ---")
-for idx, t in enumerate(opt['tasks'][:2]):
+for idx, t in enumerate(list(opt['tasks_schedule'].values())[:2]):
     print(f"Task {idx+1}: {t['task_id']}")
     print(f"  Duration: {t['duration_hours']} h (Base: {t.get('base_effort_hours', 0)} h)")
     print(f"  Start: {t.get('start_datetime')} - End: {t.get('finish_datetime')}")

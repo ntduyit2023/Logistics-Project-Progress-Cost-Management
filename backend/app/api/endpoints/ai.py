@@ -274,7 +274,7 @@ async def apply_pareto_option_api(
                     
                     matched_task.overtime = ot_cost
 
-                    is_crashed = (new_dur < old_dur - 0.01) or (ot_cost > 0) or (ot_hours_per_day > 0)
+                    is_crashed = (new_dur < old_dur - 0.01) or (ot_cost > 0) or (ot_hours_per_day > 0) or (s_data.get("crashing_strategy", "Normal") != "Normal") or (s_data.get("extra_workers", 0) > 0) or s_data.get("is_ai_optimized", False)
                     
                     # Debug first 5 tasks
                     if updated_count < 5:
@@ -311,6 +311,8 @@ async def apply_pareto_option_api(
         proj_meta["applied_task_ids"] = list(set(modified_task_ids))
         proj_meta["applied_task_details"] = task_details_map
         project.metadata_json = proj_meta
+        from sqlalchemy.orm.attributes import flag_modified
+        flag_modified(project, "metadata_json")
 
         await db.commit()
         
