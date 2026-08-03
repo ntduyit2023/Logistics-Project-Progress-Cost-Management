@@ -118,6 +118,23 @@ def run_new_pipeline(
         }
     print(f"   * AI suy luan & gia ma (Decoder) thanh cong du bao cho {len(ai_task_preds)} task.")
 
+    ai_attention_scores = {}
+    if 'resource_embeddings' in preds and preds['resource_embeddings'] is not None:
+        import torch.nn.functional as F
+        task_emb = preds['task_embeddings']
+        res_emb = preds['resource_embeddings']
+        
+        # Tính toán ma trận Cosine Similarity [num_tasks, num_resources]
+        task_norm = F.normalize(task_emb, p=2, dim=1)
+        res_norm = F.normalize(res_emb, p=2, dim=1)
+        sim_matrix = torch.matmul(task_norm, res_norm.t()) # [N_task, N_res]
+        
+        res_id_map = {idx: r_id for r_id, idx in builder.resource_id_map.items()}
+        for t_id, t_idx in builder.task_id_map.items():
+            ai_attention_scores[t_id] = {}
+            for r_idx, r_id in res_id_map.items():
+                ai_attention_scores[t_id][r_id] = float(sim_matrix[t_idx, r_idx])
+
     # 4. Mô phỏng Monte Carlo CPM dựa trên Lịch Agenda
     print(f"\n[BUOC 4] Mo phong Monte Carlo CPM voi {mc_iterations:,} vong chay...")
     tasks_df = pd.read_csv(os.path.join(project_dir, 'tasks.csv'))
@@ -187,7 +204,8 @@ def run_new_pipeline(
         target_deadline=target_deadline,
         penalty_per_day=penalty_per_day,
         bonus_per_day=bonus_per_day,
-        calendar_engine=builder.calendar_engine
+        calendar_engine=builder.calendar_engine,
+        ai_attention_scores=ai_attention_scores
     )
     pareto_options = solver.solve(time_limit_sec=15.0, pareto_count=pareto_count)
 

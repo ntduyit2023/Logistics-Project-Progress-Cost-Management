@@ -1,29 +1,59 @@
 import React from 'react';
 import { Handle, Position } from 'reactflow';
-import { Calendar, Clock, DollarSign, Users } from 'lucide-react';
+import { Calendar, Clock, DollarSign } from 'lucide-react';
 
 const TaskNode = ({ data }: any) => {
   const isCritical = Boolean(data.is_critical);
   const isAiOptimized = Boolean(data.is_ai_optimized);
+  const mode = data.mode || 0; // 0: Standard, 1: Crashed, 2: Outsourced
 
-  // Determine border and background based on Option 1 state
+  const otHours = data.overtime_hours_per_day || data.overtime_hours ? parseFloat(data.overtime_hours_per_day || data.overtime_hours) : 0;
+  const otCost = data.overtime_cost || data.overtime ? parseFloat(data.overtime_cost || data.overtime) : 0;
+  const durDiff = data.base_duration && data.duration && (data.base_duration > data.duration + 0.01) ? Math.round((data.base_duration - data.duration) * 10) / 10 : 0;
+  
+  const isCrashedTask = durDiff > 0 || otHours > 0 || otCost > 0 || (isAiOptimized && mode === 1);
+  const isOutsourced = mode === 2;
+
+  const baseEffort = parseFloat(data.base_effort_hours || data.duration || 0);
+  const extraWorkers = parseInt(data.extra_workers || 0);
+  const crashStrategy = data.crashing_strategy || 'Normal';
+  const laborOtPremium = parseFloat(data.labor_ot_premium || 0);
+  const equipOtExtra = parseFloat(data.equipment_ot_extra || 0);
+  const energyOtExtra = parseFloat(data.energy_ot_extra || 0);
+  const addedResCost = parseFloat(data.added_resources_cost || 0);
+
+  // Determine border and background based on Legend categories
   let cardClass = 'bg-white border-slate-300 text-slate-900 hover:border-slate-400';
   
-  if (isCritical && isAiOptimized) {
-    // Both Critical Path & AI Optimized (Option 1: Emerald bg + Red border)
-    cardClass = 'bg-emerald-50/90 border-2 border-rose-500 text-slate-900 shadow-md shadow-rose-100 hover:shadow-rose-200 ring-1 ring-rose-300';
-  } else if (isAiOptimized) {
-    // AI Optimized only
-    cardClass = 'bg-emerald-50 border-emerald-500 text-emerald-950 shadow-emerald-100 hover:shadow-emerald-200';
+  if (isCritical && isCrashedTask) {
+    cardClass = 'bg-amber-50/90 border-2 border-rose-500 text-slate-900 shadow-md shadow-amber-200 ring-2 ring-rose-300';
+  } else if (isOutsourced) {
+    cardClass = 'bg-purple-50 border-2 border-purple-500 text-purple-950 shadow-purple-100 hover:shadow-purple-200';
+  } else if (isCrashedTask) {
+    cardClass = 'bg-amber-50 border-2 border-amber-500 text-amber-950 shadow-amber-100 hover:shadow-amber-200';
   } else if (isCritical) {
-    // Critical Path only
-    cardClass = 'bg-rose-50 border-rose-500 text-rose-950 shadow-rose-100 hover:shadow-rose-200';
+    cardClass = 'bg-rose-50 border-2 border-rose-500 text-rose-950 shadow-rose-100 hover:shadow-rose-200';
   }
+
+  const startDateStr = data.baseline_start ? new Date(data.baseline_start).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'TBD';
+  const endDateStr = data.baseline_end ? new Date(data.baseline_end).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'TBD';
+
+  const tooltipText = `${data.wbs} - ${data.task_name}\n` +
+    `• Thời gian: ${startDateStr} ➔ ${endDateStr}\n` +
+    `• Khối lượng (Effort): ${baseEffort}h (Không đổi)\n` +
+    `• Thời lượng (Duration): ${data.duration}h ${durDiff > 0 ? `(Rút ngắn -${durDiff}h)` : ''}\n` +
+    (crashStrategy !== 'Normal' ? `• Chiến lược: ${crashStrategy}\n` : '') +
+    (laborOtPremium > 0 ? `• OT Premium (Nhân công): +$${laborOtPremium.toFixed(0)}\n` : '') +
+    (equipOtExtra > 0 ? `• Equipment tăng thêm: +$${equipOtExtra.toFixed(0)}\n` : '') +
+    (energyOtExtra > 0 ? `• Energy tăng thêm: +$${energyOtExtra.toFixed(0)}\n` : '') +
+    (addedResCost > 0 ? `• Thuê thêm nhân sự: +$${addedResCost.toFixed(0)}\n` : '') +
+    (extraWorkers > 0 ? `• Thêm ${extraWorkers} nhân sự\n` : '') +
+    `• Tổng chi phí: $${Number(data.total_cost).toLocaleString()}`;
 
   return (
     <div 
-      className={`rounded-lg shadow-sm ${cardClass} w-56 h-20 flex items-center px-3 transition-all hover:shadow-md cursor-pointer`}
-      title={`${data.wbs} - ${data.task_name}\nDuration: ${data.duration}h | Cost: $${Number(data.total_cost).toLocaleString()}`}
+      className={`rounded-lg shadow-sm ${cardClass} w-60 h-22 flex items-center px-3 py-1.5 transition-all hover:shadow-md cursor-pointer relative group`}
+      title={tooltipText}
     >
       <Handle type="target" position={Position.Left} className="w-1.5 h-1.5 bg-blue-600 border-none" />
       
@@ -32,44 +62,59 @@ const TaskNode = ({ data }: any) => {
           <span className="text-[10px] font-bold text-slate-500 leading-none flex items-center gap-1">
             WBS {data.wbs} {isCritical && <span className="text-rose-500 animate-pulse">🔥</span>}
           </span>
-          {isCritical && isAiOptimized && (
+          {isCritical && isCrashedTask && (
             <span className="text-[7.5px] font-black bg-rose-500 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm flex items-center gap-0.5">
-              CRITICAL • AI
+              GĂNG • TĂNG TỐC
             </span>
           )}
-          {isAiOptimized && !isCritical && (
-            <span className="text-[8px] font-extrabold bg-emerald-600 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
-              AI OPTIMIZED
+          {isCrashedTask && !isCritical && (
+            <span className="text-[8px] font-extrabold bg-amber-500 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
+              ⚡ TĂNG TỐC (OT)
             </span>
           )}
-          {isCritical && !isAiOptimized && (
+          {isOutsourced && (
+            <span className="text-[8px] font-extrabold bg-purple-600 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
+              💼 THUÊ NGOÀI
+            </span>
+          )}
+          {isCritical && !isCrashedTask && (
             <span className="text-[8px] font-extrabold bg-rose-600 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
-              CRITICAL
+              🔥 GĂNG
             </span>
           )}
         </div>
         <span className="text-[12px] font-bold truncate text-slate-800 leading-tight my-0.5" title={data.task_name}>
           {data.task_name || 'Unnamed Task'}
         </span>
-        <div className="flex items-center justify-between mt-1 text-[9px] text-slate-400 font-medium border-t border-slate-100 pt-1">
-          <div className="flex items-center gap-0.5" title="Start Date">
+
+        {/* Real AI Optimization Details Badge Line */}
+        {isCrashedTask && (
+          <div className="flex items-center gap-1.5 text-[8.5px] font-extrabold text-amber-900 bg-amber-100/90 px-1.5 py-0.5 rounded border border-amber-200/80 my-0.5">
+            <span>⚡ {crashStrategy !== 'Normal' ? crashStrategy : 'Tối ưu AI'}</span>
+            {durDiff > 0 && <span>-{durDiff}h</span>}
+            {otHours > 0 && <span>OT {otHours}h/ngày</span>}
+            {extraWorkers > 0 && <span>+{extraWorkers} thợ</span>}
+            {(laborOtPremium + equipOtExtra + energyOtExtra + addedResCost) > 0 && (
+              <span>• +${(laborOtPremium + equipOtExtra + energyOtExtra + addedResCost).toFixed(0)}</span>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mt-0.5 text-[9px] text-slate-400 font-medium border-t border-slate-100 pt-1">
+          <div className="flex items-center gap-0.5 text-[8px]" title={`Start: ${startDateStr}\nEnd: ${endDateStr}`}>
             <Calendar size={10} className="text-slate-400" />
-            <span>{data.baseline_start ? new Date(data.baseline_start).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'TBD'}</span>
+            <span className="truncate max-w-[80px]">
+              {startDateStr.slice(0,5)}➔{endDateStr.slice(0,5)}
+            </span>
           </div>
           <div className="flex items-center gap-0.5" title="Duration">
             <Clock size={10} className="text-slate-400" />
-            <span>{data.duration}h</span>
+            <span className={durDiff > 0 ? "font-bold text-emerald-600" : ""}>{data.duration}h</span>
           </div>
           <div className="flex items-center gap-0.5" title="Cost">
             <DollarSign size={10} className="text-slate-400" />
             <span>{(Number(data.total_cost)/1000).toFixed(1)}k</span>
           </div>
-          {data.resources && data.resources.length > 0 && (
-            <div className="flex items-center gap-0.5 text-blue-600 bg-blue-50 px-1 rounded border border-blue-100/60" title={data.mode === 2 ? "Công việc thuê ngoài - Giải phóng nhân sự nội bộ" : data.resources.map((r: any) => `${r.resource_id}: ${r.quantity}`).join(', ')}>
-              <Users size={10} />
-              <span>{data.mode === 2 ? 0 : data.resources[0].quantity}</span>
-            </div>
-          )}
         </div>
       </div>
 

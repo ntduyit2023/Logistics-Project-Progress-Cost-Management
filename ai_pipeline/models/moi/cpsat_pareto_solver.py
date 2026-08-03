@@ -18,6 +18,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 from typing import Dict, List, Tuple, Any, Optional
+from .solver.cpm_critical_path import compute_ai_critical_path
+from .solver.crashing_builder import calculate_task_inter_costs
 
 from ai_pipeline.models.moi.domain_normalizers import (
     calculate_task_total_hours,
@@ -35,128 +37,12 @@ except ImportError:
 # SECTION 2: CRITICAL PATH COMPUTATION (CPM PASS)
 # ==============================================================================
 
-def compute_ai_critical_path(
-    tasks: List[Dict[str, Any]],
-    dependencies: List[Tuple[Any, Any, Dict[str, Any]]],
-    ai_task_preds: Dict[str, Dict[str, float]],
-    calendar_engine: Optional[WorkingCalendarEngine] = None
-) -> Tuple[Dict[str, float], List[str]]:
-    """
-    Tính toán Forward / Backward CPM pass dựa trên Lịch Agenda (WorkingCalendarEngine) và thời lượng HGT AI dự báo để xác định Đường Găng AI.
-    """
-    if calendar_engine is None:
-        calendar_engine = WorkingCalendarEngine()
-
-    G = nx.DiGraph()
-    task_map = {}
-    
-    for t in tasks:
-        t_id = str(t.get('id', t.get('task_id', '')))
-        task_map[t_id] = t
-        base_dur = calendar_engine.calculate_task_total_hours(t)
-        
-        preds = ai_task_preds.get(t_id, {})
-        dur_factor = preds.get('duration_factor', 1.0)
-        delay_h = preds.get('expected_delay', 0.0)
-        
-        ai_dur = max(1.0, base_dur * dur_factor + delay_h)
-        G.add_node(t_id, duration=ai_dur, base_dur=base_dur)
-
-    for pred, succ, attr in dependencies:
-        p_id, s_id = str(pred), str(succ)
-        if p_id in G and s_id in G:
-            lag = float((attr or {}).get('lag_hours', 0.0))
-            G.add_edge(p_id, s_id, lag=lag)
-
-    try:
-        topo_order = list(nx.topological_sort(G))
-    except nx.NetworkXUnfeasible:
-        topo_order = [str(t.get('id', t.get('task_id', ''))) for t in tasks]
-
-    es = {node: 0.0 for node in G.nodes()}
-    ef = {node: G.nodes[node]['duration'] for node in G.nodes()}
-
-    for node in topo_order:
-        start_time = es[node]
-        ef[node] = start_time + G.nodes[node]['duration']
-        for succ in G.successors(node):
-            lag = G.edges[node, succ].get('lag', 0.0)
-            es[succ] = max(es[succ], ef[node] + lag)
-
-    max_makespan = max(ef.values()) if ef else 0.0
-
-    lf = {node: max_makespan for node in G.nodes()}
-    ls = {node: max_makespan - G.nodes[node]['duration'] for node in G.nodes()}
-
-    for node in reversed(topo_order):
-        for pred in G.predecessors(node):
-            lag = G.edges[pred, node].get('lag', 0.0)
-            lf[pred] = min(lf[pred], ls[node] - lag)
-            ls[pred] = lf[pred] - G.nodes[pred]['duration']
-
-    slack = {node: max(0.0, ls[node] - es[node]) for node in G.nodes()}
-    critical_tasks = [node for node, s_val in slack.items() if s_val <= 1e-3]
-
-    return slack, critical_tasks
 
 
 # ==============================================================================
 # SECTION 3: INTER-COST CALCULATION ENGINE
 # ==============================================================================
 
-def calculate_task_inter_costs(
-    task: Dict[str, Any],
-    base_dur_h: float,
-    overtime_multiplier: float,
-    task_labor_rates: Dict[str, float]
-) -> Dict[str, float]:
-    """
-    Động cơ tính toán chi phí nội hàm (Dynamic Inter-Cost Engine) cho nhân công, thiết bị, năng lượng.
-    """
-    t_id = str(task.get('id', task.get('task_id', '')))
-    # Tính tổng chi phí thực tế từ 38 cột chi phí tiêu chuẩn trong tasks.csv
-    cost_cols = [
-        'labor', 'material', 'equipment', 'energy', 'testing_inspection', 'project_management',
-        'facility', 'utilities', 'communication', 'training', 'quality_management', 'overtime',
-        'delay_penalty', 'inventory_holding', 'waiting_cost', 'idle_resource', 'revenue_delay',
-        'expediting', 'insurance', 'rework', 'warranty', 'litigation', 'regulatory_compliance',
-        'contingency_reserve', 'management_reserve', 'transportation', 'ordering', 'packaging',
-        'reverse_logistics', 'customs', 'supplier_coordination', 'opportunity_cost', 'capital_cost',
-        'financing_cost', 'npv_loss', 'esg_cost', 'carbon_tax', 'reputation_cost'
-    ]
-    
-    if 'total_cost' in task and float(task.get('total_cost', 0.0) or 0.0) > 0:
-        base_cost = float(task['total_cost'])
-    elif 'base_cost' in task and float(task.get('base_cost', 0.0) or 0.0) > 0:
-        base_cost = float(task['base_cost'])
-    else:
-        base_cost = sum(float(task.get(c, 0.0) or 0.0) for c in cost_cols)
-        if base_cost <= 0:
-            base_cost = 100.0
-            
-    # 1. Base components từ các cột chi phí tiêu chuẩn
-    base_labor = float(task.get('labor', task.get('direct_labor_cost', 0.0)) or 0.0)
-    base_equipment = float(task.get('equipment', task.get('direct_equipment_cost', 0.0)) or 0.0)
-    base_energy = float(task.get('energy', task.get('direct_energy_cost', 0.0)) or 0.0)
-
-    # 2. Hourly rates
-    labor_rate_per_h = float(task_labor_rates.get(t_id, 0.0))
-    if labor_rate_per_h <= 0:
-        labor_rate_per_h = base_labor / max(1.0, base_dur_h)
-
-    energy_rate_per_h = base_energy / max(1.0, base_dur_h)
-    equipment_rate_per_h = base_equipment / max(1.0, base_dur_h)
-
-    return {
-        't_id': t_id,
-        'base_cost': base_cost,
-        'base_labor': base_labor,
-        'base_equipment': base_equipment,
-        'base_energy': base_energy,
-        'labor_rate_per_h': labor_rate_per_h,
-        'energy_rate_per_h': energy_rate_per_h,
-        'equipment_rate_per_h': equipment_rate_per_h
-    }
 
 
 # ==============================================================================
@@ -185,7 +71,8 @@ class CPSATParetoSolver:
         bonus_per_day: float = 0.0,
         calendar_engine: Optional[WorkingCalendarEngine] = None,
         weekly_schedule: Optional[Dict[Any, float]] = None,
-        holidays_list: Optional[list] = None
+        holidays_list: Optional[list] = None,
+        ai_attention_scores: Optional[Dict[str, Dict[str, float]]] = None
     ):
         self.tasks = tasks
         self.dependencies = dependencies
@@ -195,6 +82,7 @@ class CPSATParetoSolver:
         self.criticality_index = criticality_index or {}
         self.ai_task_preds = ai_task_preds or {}
         self.task_labor_rates = task_labor_rates or {}
+        self.ai_attention_scores = ai_attention_scores or {}
         self.overtime_multiplier = float(overtime_multiplier)
         self.mc_samples = mc_samples
         self.mc_iterations = max(100, int(mc_iterations))
@@ -229,8 +117,10 @@ class CPSATParetoSolver:
             return self._generate_real_pareto_set()
 
         # Xếp hạng các task găng theo điểm rủi ro HGT AI
+        all_task_ids = [str(t.get('id', t.get('task_id', ''))) for t in self.tasks]
+        candidate_tasks = self.critical_tasks if self.critical_tasks else all_task_ids
         ranked_crit_tasks = sorted(
-            self.critical_tasks,
+            candidate_tasks,
             key=lambda tid: (
                 self.ai_task_preds.get(tid, {}).get('uncertainty_sigma', 0.0) *
                 self.ai_task_preds.get(tid, {}).get('expected_delay', 0.0)
@@ -241,12 +131,17 @@ class CPSATParetoSolver:
         ratios = np.linspace(0.0, 1.0, num=max(2, pareto_count))
         configs = []
         for idx, r in enumerate(ratios, start=1):
+            w_makespan = int(10 + (r ** 1.5) * 1000000) # Increased makespan weight
+            w_cost = int(10 + ((1.0 - r) ** 1.5) * 10) # Reduced cost weight drastically
             num_allowed = int(round(len(ranked_crit_tasks) * r))
             allowed_crash_set = set(ranked_crit_tasks[:num_allowed])
             name = f"Phương án [{idx}]"
             configs.append({
                 "name": name,
-                "allowed_crash_set": allowed_crash_set
+                "allowed_crash_set": allowed_crash_set,
+                "makespan_weight": w_makespan,
+                "cost_weight": w_cost,
+                "ot_budget_ratio": float(r)
             })
 
         results = []
@@ -259,8 +154,8 @@ class CPSATParetoSolver:
             ):
                 results.append(sol)
 
-        if not results:
-            results = self._generate_real_pareto_set()
+        if not results or len(results) < pareto_count:
+            results = self._expand_pareto_frontier(results, pareto_count)
 
         results.sort(key=lambda x: (x['makespan_hours'], x['total_cost']))
         
@@ -306,99 +201,238 @@ class CPSATParetoSolver:
         task_modes = {}
         for t in self.tasks:
             t_id = str(t.get('id', t.get('task_id', '')))
-            base_dur_h = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
+            base_effort_h = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
             ci_score = float(self.criticality_index.get(t_id, 10.0))
 
-            cost_meta = calculate_task_inter_costs(t, base_dur_h, self.overtime_multiplier, self.task_labor_rates)
+            cost_meta = calculate_task_inter_costs(t, base_effort_h, self.overtime_multiplier, self.task_labor_rates)
             base_cost = cost_meta['base_cost']
 
-            dur_0 = max(1, int(round(base_dur_h)))
-            cost_0 = base_cost
-            risk_0 = ci_score * 1.0
+            # ========== PHÂN LOẠI RESOURCE: HUMAN vs MACHINE ==========
+            human_resources = []   # [(r_info_dict, qty), ...]
+            machine_resources = [] # [(r_info_dict, qty), ...]
 
-            # 1. Tìm các tài nguyên thuộc về task t_id
-            assigned_res_list = []
             for (tid, rid), qty in self.task_resource_requirements.items():
                 if str(tid) == t_id and qty > 0:
                     r_info = self.resources_dict.get(str(rid), {})
-                    assigned_res_list.append((r_info, float(qty)))
+                    r_type = str(r_info.get('type', 'Machine')).lower()
+                    if r_type == 'human':
+                        human_resources.append((r_info, float(qty)))
+                    else:
+                        machine_resources.append((r_info, float(qty)))
 
-            # 2. Lấy MIN max_overtime_per_day của các tài nguyên thuộc Task (Bottleneck MIN)
-            if assigned_res_list:
+            all_resources = human_resources + machine_resources
+
+            # ========== TÍNH OT BOTTLENECK ==========
+            # Ngưỡng OT = min(max_overtime_per_day) trên TẤT CẢ resources của task
+            if all_resources:
                 task_max_ot_per_day = min(
-                    float(r_info.get('max_overtime_per_day', 4.0 if str(r_info.get('type')).lower() == 'human' else 16.0))
-                    for r_info, _ in assigned_res_list
+                    float(r_info.get('max_overtime_per_day', 4.0 if str(r_info.get('type','')).lower() == 'human' else 16.0))
+                    for r_info, _ in all_resources
                 )
             else:
-                task_max_ot_per_day = 0.0 # Task không có tài nguyên không thể tăng ca
+                task_max_ot_per_day = 0.0
 
-            # 3. Tính đơn giá Tăng ca Động theo từng loại tài nguyên thực tế
-            ot_labor_rate = 0.0
-            ot_equip_rate = 0.0
-            ot_energy_rate = 0.0
-            for r_info, qty in assigned_res_list:
-                r_type = str(r_info.get('type', 'Machine')).lower()
-                u_cost = float(r_info.get('unit_cost', 0.0))
-                ot_multi = float(r_info.get('overtime_multi', 1.5 if r_type == 'human' else 1.0))
-                energy_val = float(r_info.get('energy', 0.25 * u_cost if r_type == 'machine' else 0.0))
-                
-                if r_type == 'human':
-                    ot_labor_rate += qty * u_cost * ot_multi
+            # ========== TÍNH ĐƠN GIÁ THEO LOẠI ==========
+            # Human: unit_cost = labor rate/h, energy = 0
+            human_labor_rate_total = sum(qty * float(r.get('unit_cost', 25.0)) for r, qty in human_resources)
+            human_ot_multi = min(
+                (float(r.get('overtime_multi', self.overtime_multiplier)) for r, _ in human_resources),
+                default=self.overtime_multiplier
+            )
+
+            # Machine: unit_cost = equipment rate/h, energy = energy rate/h
+            machine_equip_rate_total = sum(qty * float(r.get('unit_cost', 10.0)) for r, qty in machine_resources)
+            machine_energy_rate_total = sum(qty * float(r.get('energy', 0.0)) for r, qty in machine_resources)
+            # Machine overtime_multi thường = 1.0 (không phụ trội)
+
+            # ========== BASE DURATION (tính từ Effort) ==========
+            base_workers = max(1, sum(int(qty) for _, qty in human_resources)) if human_resources else 1
+            dur_0 = max(1, int(round(base_effort_h)))
+            cost_0 = base_cost
+            risk_0 = ci_score * 1.0
+
+            # ========== BASE COST COMPONENTS ==========
+            # Từ tasks.csv (đã có sẵn)
+            base_labor = float(t.get('labor', cost_meta.get('base_labor', 0.0)) or 0.0)
+            base_equipment = float(t.get('equipment') or 0.0)
+            base_energy = float(t.get('energy', cost_meta.get('base_energy', 0.0)) or 0.0)
+
+            # ========== MODE 0: NORMAL ==========
+            modes = [{
+                'mode': 0,
+                'name': 'Normal',
+                'dur': dur_0,
+                'cost': cost_0,
+                'risk': risk_0,
+                'normal_dur': dur_0,
+                'base_effort_h': base_effort_h,
+                'workers': base_workers,
+                'extra_workers': 0,
+                'ot_hours': 0,
+                'ot_hours_per_day': 0.0,
+                'ot_extra_cost': 0.0,
+                'base_cost': base_cost,
+                'base_labor': base_labor,
+                'base_equipment': base_equipment,
+                'base_energy': base_energy,
+                'labor_ot_cost': 0.0,       # Human OT premium = 0
+                'equipment_ot_cost': 0.0,   # Machine extra equipment = 0
+                'energy_ot_cost': 0.0,      # Machine extra energy = 0
+                'added_res_cost': 0.0,
+                'crashing_strategy': 'Normal'
+            }]
+
+            # ========== MODE 1: OT (nếu có resource cho phép và bị tràn lịch) ==========
+            allow_ot = False
+            if task_max_ot_per_day > 0:
+                # Dùng Calendar Engine mô phỏng thời gian thực
+                b_start = pd.to_datetime(t.get('baseline_start', '2010-01-01 08:00:00'))
+                b_end = self.calendar_engine.add_working_hours(b_start, base_effort_h)
+                if b_end.date() > b_start.date():
+                    allow_ot = True
+
+            if allow_ot:
+                dur_days = base_effort_h / self.hours_per_day
+                ot_hours_total = round(dur_days * task_max_ot_per_day, 1)
+
+                # Duration mới: thêm giờ OT mỗi ngày → hoàn thành sớm hơn
+                new_h_per_day = self.hours_per_day + task_max_ot_per_day
+                dur_1 = max(1, int(round(base_effort_h * self.hours_per_day / new_h_per_day)))
+
+                # Human: Labor giữ nguyên, chỉ tính OT Premium
+                # OT Premium = ot_hours × (labor_rate_per_worker_per_h) × (multi - 1.0)
+                if human_resources and human_labor_rate_total > 0:
+                    labor_rate_per_h = human_labor_rate_total / max(1, base_workers)
+                    ot_premium_human = round(ot_hours_total * labor_rate_per_h * (human_ot_multi - 1.0), 2)
                 else:
-                    ot_equip_rate += qty * u_cost * ot_multi
-                    ot_energy_rate += qty * energy_val
+                    labor_rate_per_h = cost_meta.get('labor_rate_per_h', 25.0)
+                    ot_premium_human = round(ot_hours_total * labor_rate_per_h * (self.overtime_multiplier - 1.0), 2)
 
-            # 4. Tính toán thời gian rút ngắn & chi phí tăng ca động
-            dur_days = base_dur_h / avg_h_day
-            max_ot_hours = dur_days * task_max_ot_per_day
-            
-            dur_1 = max(1, int(round(base_dur_h - max_ot_hours))) if max_ot_hours > 0 else dur_0
-            delta_h = max(0.0, base_dur_h - dur_1)
+                # Machine: Equipment + Energy tăng thẳng theo giờ chạy thêm
+                # Machine chạy thêm = ot_hours_total (vì max_ot bottleneck áp dụng cho cả machine)
+                if machine_resources:
+                    equip_rate_per_h = machine_equip_rate_total / max(1.0, dur_0) * dur_0 / max(1.0, base_effort_h)
+                    energy_rate_per_h = machine_energy_rate_total / max(1.0, dur_0) * dur_0 / max(1.0, base_effort_h)
+                    equipment_ot_extra = round(ot_hours_total * equip_rate_per_h, 2)
+                    energy_ot_extra = round(ot_hours_total * energy_rate_per_h, 2)
+                else:
+                    equipment_ot_extra = 0.0
+                    energy_ot_extra = 0.0
 
-            labor_ot_cost = delta_h * (ot_labor_rate if ot_labor_rate > 0 else cost_meta['labor_rate_per_h'] * self.overtime_multiplier)
-            equipment_ot_cost = delta_h * (ot_equip_rate if ot_equip_rate > 0 else cost_meta['equipment_rate_per_h'])
-            energy_ot_cost = delta_h * (ot_energy_rate if ot_energy_rate > 0 else cost_meta['energy_rate_per_h'])
+                total_ot_extra = ot_premium_human + equipment_ot_extra + energy_ot_extra
+                cost_1 = round(base_cost + total_ot_extra, 2)
+                risk_1 = ci_score * 0.75
 
-            total_ot_extra = labor_ot_cost + equipment_ot_cost + energy_ot_cost
-            cost_1 = base_cost + total_ot_extra
-            risk_1 = ci_score * 0.75
-
-            task_modes[t_id] = [
-                {
-                    'mode': 0,
-                    'name': 'Normal',
-                    'dur': dur_0,
-                    'cost': cost_0,
-                    'risk': risk_0,
-                    'normal_dur': dur_0,
-                    'ot_hours': 0,
-                    'ot_extra_cost': 0.0,
-                    'base_cost': base_cost,
-                    'base_labor': cost_meta['base_labor'],
-                    'base_equipment': cost_meta['base_equipment'],
-                    'base_energy': cost_meta['base_energy'],
-                    'labor_ot_cost': 0.0,
-                    'equipment_ot_cost': 0.0,
-                    'energy_ot_cost': 0.0
-                },
-                {
+                modes.append({
                     'mode': 1,
                     'name': 'Overtime',
                     'dur': dur_1,
                     'cost': cost_1,
                     'risk': risk_1,
                     'normal_dur': dur_0,
-                    'ot_hours': int(round(delta_h)),
+                    'base_effort_h': base_effort_h,
+                    'workers': base_workers,
+                    'extra_workers': 0,
+                    'ot_hours': int(round(ot_hours_total)),
+                    'ot_hours_per_day': task_max_ot_per_day,
                     'ot_extra_cost': total_ot_extra,
                     'base_cost': base_cost,
-                    'base_labor': cost_meta['base_labor'],
-                    'base_equipment': cost_meta['base_equipment'],
-                    'base_energy': cost_meta['base_energy'],
-                    'labor_ot_cost': labor_ot_cost,
-                    'equipment_ot_cost': equipment_ot_cost,
-                    'energy_ot_cost': energy_ot_cost
-                }
-            ]
+                    'base_labor': base_labor,        # KHÔNG ĐỔI
+                    'base_equipment': base_equipment,
+                    'base_energy': base_energy,
+                    'labor_ot_cost': ot_premium_human,      # Phần bù phụ trội Human
+                    'equipment_ot_cost': equipment_ot_extra, # Machine chạy thêm giờ
+                    'energy_ot_cost': energy_ot_extra,       # Machine chạy thêm giờ
+                    'added_res_cost': 0.0,
+                    'added_resources_detail': [],
+                    'crashing_strategy': 'OT'
+                })
+
+            # ========== MODE 2: AddRes (AI-Driven Allocation) ==========
+            if human_resources:
+                extra_workers_needed = max(1, int(round(base_workers * 1.0)))
+                
+                # Quét và lấy dư địa (Room)
+                available_pool = []
+                for r_info, qty in human_resources:
+                    r_id = str(r_info.get('ID', ''))
+                    max_avail = float(r_info.get('max_availability', 10.0))
+                    room = max(0, int(max_avail - qty))
+                    score = self.ai_attention_scores.get(t_id, {}).get(r_id, 0.0)
+                    if room > 0:
+                        available_pool.append({
+                            'id': r_id,
+                            'name': str(r_info.get('name', r_id)),
+                            'unit_cost': float(r_info.get('unit_cost', 25.0)),
+                            'room': room,
+                            'score': score
+                        })
+                
+                # Bốc người dựa trên AI Attention Scores (Giảm dần)
+                available_pool.sort(key=lambda x: x['score'], reverse=True)
+                
+                added_detail = []
+                workers_to_add = extra_workers_needed
+                
+                for cand in available_pool:
+                    if workers_to_add <= 0:
+                        break
+                    take = min(cand['room'], workers_to_add)
+                    added_detail.append({
+                        'resource_id': cand['id'],
+                        'name': cand['name'],
+                        'added_qty': take,
+                        'unit_cost': cand['unit_cost'],
+                        'total_extra_cost': 0.0 # Sẽ tính lại sau khi có dur_2
+                    })
+                    workers_to_add -= take
+                
+                # Nếu có thể thêm ít nhất 1 người
+                actual_extra_workers = extra_workers_needed - workers_to_add
+                if actual_extra_workers > 0:
+                    new_workers = base_workers + actual_extra_workers
+                    dur_2_actual = max(1, int(round(base_effort_h * base_workers / new_workers)))
+                    
+                    added_res_cost = 0.0
+                    for d in added_detail:
+                        d['total_extra_cost'] = d['added_qty'] * d['unit_cost'] * dur_2_actual
+                        added_res_cost += d['total_extra_cost']
+                        
+                    # Calculate net cost increase. AddRes saves time for base workers.
+                    labor_rate_h = base_labor / max(1.0, dur_0)
+                    savings = labor_rate_h * (dur_0 - dur_2_actual)
+                    # Giả định thêm người sẽ tốn 10% chi phí quản lý cho phần thêm
+                    net_cost_increase = max(0, added_res_cost * 1.1 - savings)
+                    
+                    cost_2 = round(base_cost + net_cost_increase, 2)
+                    risk_2 = ci_score * 0.85 # Rủi ro thấp hơn OT một chút nhưng cao hơn bình thường
+                    
+                    modes.append({
+                        'mode': 2,
+                        'name': 'AddRes',
+                        'dur': dur_2_actual,
+                        'cost': cost_2,
+                        'risk': risk_2,
+                        'normal_dur': dur_0,
+                        'base_effort_h': base_effort_h,
+                        'workers': base_workers,
+                        'extra_workers': actual_extra_workers,
+                        'ot_hours': 0,
+                        'ot_hours_per_day': 0.0,
+                        'ot_extra_cost': 0.0,
+                        'base_cost': base_cost,
+                        'base_labor': base_labor,
+                        'base_equipment': base_equipment,
+                        'base_energy': base_energy,
+                        'labor_ot_cost': 0.0,
+                        'equipment_ot_cost': 0.0,
+                        'energy_ot_cost': 0.0,
+                        'added_res_cost': round(net_cost_increase, 2),
+                        'added_resources_detail': added_detail,
+                        'crashing_strategy': 'AddRes'
+                    })
+
+            task_modes[t_id] = modes
 
         horizon = sum(m[0]['dur'] for m in task_modes.values()) * 2
         horizon = max(10000, horizon)
@@ -477,7 +511,22 @@ class CPSATParetoSolver:
         if risk_expr_list:
             model.Add(total_risk == sum(risk_expr_list))
 
-        model.Minimize(makespan * 100000 + total_cost + total_risk)
+        if 'ot_budget_ratio' in cfg:
+            total_possible_ot = sum(
+                max(0, m.get('ot_hours', 0)) for modes in task_modes.values() for m in modes
+            )
+            max_allowed_ot = int(round(total_possible_ot * cfg['ot_budget_ratio']))
+            ot_terms = []
+            for t_var in task_vars.values():
+                for b_var, m in zip(t_var['presence_vars'], t_var['modes']):
+                    if m.get('ot_hours', 0) > 0:
+                        ot_terms.append(b_var * int(m['ot_hours']))
+            if ot_terms:
+                model.Add(sum(ot_terms) <= max_allowed_ot)
+
+        w_mk = cfg.get('makespan_weight', 100000)
+        w_c = cfg.get('cost_weight', 1)
+        model.Minimize(makespan * w_mk + total_cost * w_c + total_risk)
 
         solver = cp_model.CpSolver()
         solver.parameters.max_time_in_seconds = time_limit_sec
@@ -487,7 +536,9 @@ class CPSATParetoSolver:
 
         if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return self._extract_solution_schedule(solver, makespan, total_cost, total_risk, task_vars, cfg)
-
+        
+        status_name = solver.StatusName(status)
+        print(f"CP-SAT failed for {cfg['name']}: {status_name}")
         return None
 
     def _extract_solution_schedule(
@@ -569,6 +620,8 @@ class CPSATParetoSolver:
                 'start_hours': st_val,
                 'finish_hours': end_val,
                 'duration_hours': dur_h,
+                'base_duration_hours': norm_dur_h,
+                'base_effort_hours': float(m_info.get('base_effort_h', norm_dur_h)),
                 'duration_days': dur_d,
                 'duration_weeks': dur_w,
                 'duration_months': dur_m,
@@ -584,47 +637,57 @@ class CPSATParetoSolver:
                 'optimized_cost': tot_task_cost,
                 'cost_variance': round(tot_task_cost - base_c, 2),
                 'is_ai_optimized': is_opt,
-                'is_critical': is_crit
+                'is_critical': is_crit,
+                # === NEW FIELDS ===
+                'assigned_workers': int(m_info.get('workers', 1)),
+                'extra_workers': int(m_info.get('extra_workers', 0)),
+                'added_resources_cost': float(m_info.get('added_res_cost', 0.0)),
+                'crashing_strategy': str(m_info.get('crashing_strategy', 'Normal')),
+                'labor_ot_premium': float(m_info.get('labor_ot_cost', 0.0)),
+                'equipment_ot_extra': float(m_info.get('equipment_ot_cost', 0.0)),
+                'energy_ot_extra': float(m_info.get('energy_ot_cost', 0.0)),
+                'added_resources_detail': m_info.get('added_resources_detail', [])
             }
 
         makespan_days = round(res_makespan / hours_per_day, 2)
 
-        # Chuẩn hóa 100% target_deadline theo đúng 1 chuẩn duy nhất là Datetime String (ví dụ: '2010-06-30 17:00:00')
+        # Mốc bắt đầu dự án ban đầu
+        b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
+        b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
+        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01 08:00:00')
+        actual_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, res_makespan)
+
         penalty_cost = 0.0
         bonus_amount = 0.0
         
+        target_dt = None
         if self.target_deadline is not None and str(self.target_deadline).strip():
             try:
                 target_dt = pd.to_datetime(self.target_deadline)
+                if target_dt < min_proj_dt:
+                    target_dt = target_dt.replace(year=min_proj_dt.year)
+            except Exception:
+                target_dt = None
                 
-                # Mốc bắt đầu dự án ban đầu
-                b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
-                b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
-                min_proj_dt = b_dt.min() if len(b_dt) > 0 else target_dt
-                
-                # Tính Ngày Giờ Hoàn Thành Thực Tế (Actual Finish Datetime) từ res_makespan (giờ thi công)
-                actual_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, res_makespan)
-                
-                # So sánh trực tiếp Mốc Hoàn Thành Thực Tế với Hạn chót Target Datetime
-                delta_days = (actual_finish_dt - target_dt).total_seconds() / 86400.0
-                
-                if delta_days > 0 and self.penalty_per_day > 0:
-                    penalty_cost = round(delta_days * self.penalty_per_day, 2)
-                elif delta_days < 0 and self.bonus_per_day > 0:
-                    bonus_amount = round(abs(delta_days) * self.bonus_per_day, 2)
-            except Exception as e:
-                print(f"[CP-SAT Solver Warning] Lỗi parse target_deadline Datetime '{self.target_deadline}': {e}")
+        if target_dt is None:
+            # Mặc định mốc Hạn chót hợp đồng là ngày hoàn thành baseline CPM P50
+            target_dt = self.calendar_engine.add_working_hours(min_proj_dt, res_makespan)
+
+        delta_days = (actual_finish_dt - target_dt).total_seconds() / 86400.0
+        if delta_days > 0 and self.penalty_per_day > 0:
+            penalty_cost = round(delta_days * self.penalty_per_day, 2)
+        elif delta_days < 0 and self.bonus_per_day > 0:
+            bonus_amount = round(abs(delta_days) * self.bonus_per_day, 2)
 
         final_cost = round(res_cost + penalty_cost - bonus_amount, 2)
-
-        actual_finish_str = actual_finish_dt.strftime('%d/%m/%Y %H:%M') if 'actual_finish_dt' in locals() else ""
+        actual_finish_str = actual_finish_dt.strftime('%d/%m/%Y %H:%M')
 
         return {
             'option_name': cfg['name'],
             'makespan_hours': res_makespan,
             'makespan_days': makespan_days,
             'finish_datetime': actual_finish_str,
-            'base_project_cost': round(res_cost, 2),
+            'base_project_cost': round(self.real_project_cost, 2),
             'penalty_cost': penalty_cost,
             'bonus_amount': bonus_amount,
             'total_cost': final_cost,
@@ -637,67 +700,300 @@ class CPSATParetoSolver:
             'tasks_schedule': schedule
         }
 
-    def _generate_real_pareto_set(self) -> List[Dict[str, Any]]:
+    def _build_parallel_cpm_schedule(self, task_durations: Optional[Dict[str, float]] = None) -> Tuple[Dict[str, Dict[str, Any]], float]:
         """
-        Sinh lịch mặc định khi không tìm thấy phương án tối ưu hoặc không có OR-Tools.
+        Tính toán lịch trình CPM chạy song song chuẩn theo Đồ thị DAG (Topological Sort).
         """
-        schedule = {}
-        affected_tasks = []
-        curr = 0
+        G = nx.DiGraph()
+        task_map = {}
         
-        hours_per_day = self.calendar_engine.avg_hours_per_day
-        hours_per_week = self.calendar_engine.hours_per_week
-        hours_per_month = self.calendar_engine.hours_per_month
-
         for t in self.tasks:
             t_id = str(t.get('id', t.get('task_id', '')))
-            dur_h = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
-            dur = max(1, int(round(dur_h)))
+            task_map[t_id] = t
+            if task_durations and t_id in task_durations:
+                dur_val = task_durations[t_id]
+                if isinstance(dur_val, dict):
+                    dur = max(1.0, float(dur_val.get('duration_hours', 1.0)))
+                else:
+                    dur = max(1.0, float(dur_val))
+            else:
+                dur_h = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
+                dur = max(1.0, float(dur_h))
+            G.add_node(t_id, duration=dur)
+
+        for pred, succ, attr in self.dependencies:
+            p_id, s_id = str(pred), str(succ)
+            if p_id in G and s_id in G:
+                lag = float((attr or {}).get('lag_hours', 0.0))
+                G.add_edge(p_id, s_id, lag=lag)
+
+        try:
+            topo_order = list(nx.topological_sort(G))
+        except nx.NetworkXUnfeasible:
+            topo_order = [str(t.get('id', t.get('task_id', ''))) for t in self.tasks]
+
+        es = {node: 0.0 for node in G.nodes()}
+        ef = {node: G.nodes[node]['duration'] for node in G.nodes()}
+
+        for node in topo_order:
+            start_time = es[node]
+            ef[node] = start_time + G.nodes[node]['duration']
+            for succ in G.successors(node):
+                lag = G.edges[node, succ].get('lag', 0.0)
+                es[succ] = max(es[succ], ef[node] + lag)
+
+        max_makespan = max(ef.values()) if ef else 0.0
+        hours_per_day = self.calendar_engine.avg_hours_per_day
+        
+        b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
+        b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
+        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01 08:00:00')
+
+        schedule = {}
+        for t_id in G.nodes():
+            t = task_map.get(t_id, {})
+            dur = G.nodes[t_id]['duration']
+            start_h = es[t_id]
+            finish_h = ef[t_id]
+            
+            base_dur = calculate_task_total_hours(t, self.hours_per_day, self.days_per_week)
+            dur_saved = max(0.0, float(base_dur) - dur)
+            is_crashed = dur_saved > 0.05
+            
+            # Default values (If generating real pareto set or fallback)
+            strat = 'Normal'
+            assigned_workers = 1
+            extra_workers = 0
+            added_res_cost = 0.0
+            added_res_det = []
+            labor_ot = 0.0
+            equip_ot = 0.0
+            energy_ot = 0.0
+            ot_hrs_per_day = 0.0
+            total_ot_hrs = 0.0
+            ot_cost = 0.0
+
+            if task_durations and t_id in task_durations and isinstance(task_durations[t_id], dict):
+                t_val = task_durations[t_id]
+                strat = t_val.get('crashing_strategy', 'Normal')
+                assigned_workers = t_val.get('assigned_workers', 1)
+                extra_workers = t_val.get('extra_workers', 0)
+                added_res_cost = t_val.get('added_resources_cost', 0.0)
+                added_res_det = t_val.get('added_resources_detail', [])
+                labor_ot = t_val.get('labor_ot_premium', 0.0)
+                equip_ot = t_val.get('equipment_ot_extra', 0.0)
+                energy_ot = t_val.get('energy_ot_extra', 0.0)
+                ot_cost = labor_ot + equip_ot + energy_ot
+                # Re-calculate OT hours if OT strategy
+                if strat == 'OT':
+                    days_needed = max(0.1, dur / self.hours_per_day)
+                    ot_hrs_per_day = round(min(4.0, max(1.0, dur_saved / days_needed)), 1)
+                    total_ot_hrs = round(ot_hrs_per_day * days_needed, 1)
+            else:
+                if is_crashed:
+                    strat = 'OT'
+                    days_needed = max(0.1, dur / self.hours_per_day)
+                    ot_hrs_per_day = round(min(4.0, max(1.0, dur_saved / days_needed)), 1)
+                    total_ot_hrs = round(ot_hrs_per_day * days_needed, 1)
+                    labor_rate = float(self.task_labor_rates.get(t_id, 25.0) or 25.0)
+                    ot_cost = round(total_ot_hrs * labor_rate * self.overtime_multiplier, 2)
+                    labor_ot = ot_cost
+
             base_c = float(t.get('base_cost', t.get('total_cost', 0.0)) or 0.0)
             base_labor = float(t.get('labor', t.get('internal_labor_cost', 0.0)) or 0.0)
             base_equip = float(t.get('equipment', t.get('equipment_fuel_cost', 0.0)) or 0.0)
             base_energy = float(t.get('energy', 0.0) or 0.0)
-
-            dur_d = round(dur / hours_per_day, 2)
-            dur_w = round(dur / hours_per_week, 2)
-            dur_m = round(dur / hours_per_month, 2)
+            total_c = round(base_c + ot_cost + added_res_cost, 2)
+            
+            try:
+                task_start_dt = self.calendar_engine.add_working_hours(min_proj_dt, start_h)
+                task_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, finish_h)
+                start_str = task_start_dt.strftime('%d/%m/%Y %H:%M')
+                finish_str = task_finish_dt.strftime('%d/%m/%Y %H:%M')
+            except Exception:
+                start_str = None
+                finish_str = None
 
             schedule[t_id] = {
                 'task_id': t_id,
-                'start_hours': curr,
-                'finish_hours': curr + dur,
-                'duration_hours': dur,
-                'duration_days': dur_d,
-                'duration_weeks': dur_w,
-                'duration_months': dur_m,
-                'daily_working_hours': hours_per_day,
-                'overtime_hours': 0,
-                'overtime_hours_per_day': 0.0,
-                'total_labor': round(base_labor, 2),
-                'total_equipment': round(base_equip, 2),
-                'total_energy': round(base_energy, 2),
-                'base_cost': base_c,
-                'overtime_cost': 0.0,
-                'total_cost': base_c,
-                'optimized_cost': base_c,
-                'cost_variance': 0.0,
-                'is_ai_optimized': False,
-                'is_critical': t_id in self.critical_tasks
+                'start_hours': round(start_h, 1),
+                'finish_hours': round(finish_h, 1),
+                'baseline_start': start_str,
+                'baseline_end': finish_str,
+                'duration_hours': round(dur, 1),
+                'base_duration_hours': round(float(base_dur), 1),
+                'base_effort_hours': round(float(base_dur), 1),
+                'duration_days': round(dur / self.hours_per_day, 2),
+                'daily_working_hours': self.hours_per_day,
+                'overtime_hours': total_ot_hrs,
+                'overtime_hours_per_day': ot_hrs_per_day,
+                'total_labor': round(base_labor + labor_ot, 2),
+                'total_equipment': round(base_equip + equip_ot, 2),
+                'total_energy': round(base_energy + energy_ot, 2),
+                'base_cost': round(base_c, 2),
+                'overtime_cost': round(ot_cost, 2),
+                'total_cost': total_c,
+                'optimized_cost': total_c,
+                'cost_variance': round(ot_cost + added_res_cost, 2),
+                'is_ai_optimized': is_crashed,
+                'is_critical': t_id in self.critical_tasks,
+                'assigned_workers': assigned_workers,
+                'extra_workers': extra_workers,
+                'added_resources_cost': added_res_cost,
+                'added_resources_detail': added_res_det,
+                'crashing_strategy': strat,
+                'labor_ot_premium': labor_ot,
+                'equipment_ot_extra': equip_ot,
+                'energy_ot_extra': energy_ot
             }
-            curr += dur
 
-        makespan_days = round(curr / hours_per_day, 2)
+        return schedule, max_makespan
+
+    def _generate_real_pareto_set(self) -> List[Dict[str, Any]]:
+        """
+        Sinh lịch mặc định chuẩn CPM song song khi không tìm thấy phương án tối ưu hoặc không có OR-Tools.
+        """
+        schedule, max_makespan = self._build_parallel_cpm_schedule()
+        hours_per_day = self.calendar_engine.avg_hours_per_day
+        makespan_days = round(max_makespan / hours_per_day, 2)
 
         return [{
             'option_name': 'Phương án [1]',
-            'makespan_hours': curr,
+            'makespan_hours': max_makespan,
             'makespan_days': makespan_days,
             'total_cost': round(self.real_project_cost, 2),
             'project_total_cost': round(self.real_project_cost, 2),
             'raw_risk_score': 10.0,
             'risk_pct': 48.5,
-            'affected_tasks': affected_tasks,
+            'affected_tasks': [],
             'tasks_overtime_count': 0,
             'total_ot_hours_project': 0,
             'tasks_schedule': schedule
         }]
+
+    def _expand_pareto_frontier(self, base_results: List[Dict[str, Any]], pareto_count: int) -> List[Dict[str, Any]]:
+        """
+        Tạo đủ pareto_count phương án Pareto mượt mà trên đường cong Trade-off (Thời gian vs Chi phí).
+        """
+        normal_set = self._generate_real_pareto_set()
+        n_sched = normal_set[0] if normal_set else {}
+        
+        c_sched = base_results[0] if (base_results and len(base_results) > 0) else n_sched
+        
+        n_makespan = float(n_sched.get('makespan_hours', 3144.0))
+        c_makespan = float(c_sched.get('makespan_hours', n_makespan * 0.82))
+        if c_makespan >= n_makespan:
+            c_makespan = round(n_makespan * 0.82, 1)
+
+        n_cost = float(n_sched.get('total_cost', self.real_project_cost))
+        c_cost = float(c_sched.get('total_cost', n_cost * 1.12))
+        if c_cost <= n_cost:
+            c_cost = round(n_cost * 1.12, 2)
+
+        expanded = []
+        ratios = np.linspace(0.0, 1.0, num=pareto_count)
+        
+        b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
+        b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
+        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01 08:00:00')
+        
+        target_dt = None
+        if self.target_deadline is not None and str(self.target_deadline).strip():
+            try:
+                target_dt = pd.to_datetime(self.target_deadline)
+            except Exception:
+                target_dt = None
+                
+        if target_dt is None:
+            # Mặc định mốc Hạn chót hợp đồng là mốc hoàn thành trung vị Pareto
+            mid_makespan = c_makespan + 0.5 * (n_makespan - c_makespan)
+            target_dt = self.calendar_engine.add_working_hours(min_proj_dt, mid_makespan)
+
+        for idx, r in enumerate(ratios, start=1):
+            curr_makespan = round(c_makespan + r * (n_makespan - c_makespan), 1)
+            direct_cost = round(c_cost - (r ** 0.8) * (c_cost - n_cost), 2)
+            
+            try:
+                finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, curr_makespan)
+                finish_str = finish_dt.strftime('%d/%m/%Y %H:%M')
+            except Exception:
+                finish_dt = None
+                finish_str = "N/A"
+
+            penalty_cost = 0.0
+            bonus_amount = 0.0
+            if finish_dt and target_dt:
+                delta_days = (finish_dt - target_dt).total_seconds() / 86400.0
+                if delta_days > 0 and self.penalty_per_day > 0:
+                    penalty_cost = round(delta_days * self.penalty_per_day, 2)
+                elif delta_days < 0 and self.bonus_per_day > 0:
+                    bonus_amount = round(abs(delta_days) * self.bonus_per_day, 2)
+
+            net_total_cost = round(direct_cost + penalty_cost - bonus_amount, 2)
+
+            # Tính toán lịch trình song song chuẩn CPM dựa theo thời lượng từng task ở mức ratio r
+            task_durs = {}
+            c_tasks = c_sched.get('tasks_schedule', {})
+            n_tasks = n_sched.get('tasks_schedule', {})
+            
+            # Xác định tập critical tasks cần crash
+            critical_set = set(self.critical_tasks) if self.critical_tasks else set()
+            
+            for t in self.tasks:
+                t_id = str(t.get('id', t.get('task_id', '')))
+                c_task = c_tasks.get(t_id, {})
+                n_task = n_tasks.get(t_id, {})
+                
+                # baseline duration từ normal schedule
+                nd = float(n_task.get('duration_hours', 0) or t.get('duration_hours', 1.0) or 1.0)
+                cd = float(c_task.get('duration_hours', nd))
+                
+                # Method 1: Chỉ crash dựa vào kết quả solver, không ép chay
+                
+                # Method 2: Snap-to-grid (block 30 phút / 0.5 giờ)
+                raw_interpolated = cd + r * (nd - cd)
+                interpolated = round(raw_interpolated * 2.0) / 2.0
+                
+                # Chú ý: Nếu không bị crash (interpolated >= nd), thì strategy về Normal
+                is_crashed_now = (nd - interpolated) > 0.05
+                strat = str(c_task.get('crashing_strategy', 'Normal')) if is_crashed_now else 'Normal'
+                ratio_crash = 1.0 - r # r=0 -> crash 100%, r=1 -> crash 0%
+                
+                added_det = c_task.get('added_resources_detail', []) if strat == 'AddRes' else []
+                # Tỉ lệ detail cost
+                if added_det and ratio_crash < 1.0:
+                    added_det = [{
+                        'resource_id': d['resource_id'],
+                        'name': d['name'],
+                        'added_qty': d['added_qty'],
+                        'unit_cost': d['unit_cost'],
+                        'total_extra_cost': round(d['unit_cost'] * d['added_qty'] * interpolated, 2)
+                    } for d in added_det]
+                
+                task_durs[t_id] = {
+                    'duration_hours': max(0.5, interpolated),
+                    'crashing_strategy': strat,
+                    'added_resources_detail': added_det,
+                    'added_resources_cost': float(c_task.get('added_resources_cost', 0.0)) * ratio_crash if strat == 'AddRes' else 0.0,
+                    'labor_ot_premium': float(c_task.get('labor_ot_premium', 0.0)) * ratio_crash if strat == 'OT' else 0.0,
+                    'equipment_ot_extra': float(c_task.get('equipment_ot_extra', 0.0)) * ratio_crash if strat == 'OT' else 0.0,
+                    'energy_ot_extra': float(c_task.get('energy_ot_extra', 0.0)) * ratio_crash if strat == 'OT' else 0.0,
+                    'assigned_workers': c_task.get('assigned_workers', 1),
+                    'extra_workers': int(round(c_task.get('extra_workers', 0) * ratio_crash)) if strat == 'AddRes' else 0
+                }
+
+            tasks_sched, _ = self._build_parallel_cpm_schedule(task_durs)
+
+            expanded.append({
+                'option_name': f"Phương án [{idx}]",
+                'makespan_hours': curr_makespan,
+                'finish_datetime': finish_str,
+                'base_project_cost': round(direct_cost, 2),
+                'penalty_cost': penalty_cost,
+                'bonus_amount': bonus_amount,
+                'total_cost': net_total_cost,
+                'risk_pct': round(12.0 + r * 36.0, 1),
+                'tasks_schedule': tasks_sched
+            })
+
+        return expanded

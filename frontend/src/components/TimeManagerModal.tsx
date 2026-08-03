@@ -5,7 +5,7 @@ import { api } from '../services/api';
 interface TimeManagerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: number;
+  projectId: number | string;
   initialTimeConstraint: any;
 }
 
@@ -15,11 +15,51 @@ const DEFAULT_SCHEDULE = {
   wednesday: ["08:00-12:00", "13:00-17:00"],
   thursday: ["08:00-12:00", "13:00-17:00"],
   friday: ["08:00-12:00", "13:00-17:00"],
-  saturday: ["08:00-12:00"],
+  saturday: [],
   sunday: []
 };
 
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+const normalizeWeeklySchedule = (rawSchedule: any) => {
+  if (!rawSchedule || typeof rawSchedule !== 'object') return DEFAULT_SCHEDULE;
+  const result: Record<string, string[]> = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: []
+  };
+
+  DAYS.forEach(day => {
+    const titleKey = day.charAt(0).toUpperCase() + day.slice(1);
+    const dayData = rawSchedule[day] !== undefined ? rawSchedule[day] : rawSchedule[titleKey];
+
+    if (!dayData) return;
+
+    if (Array.isArray(dayData)) {
+      result[day] = dayData.map((item: any) => {
+        if (typeof item === 'string') return item;
+        if (item && item.start_time && item.end_time) return `${item.start_time}-${item.end_time}`;
+        return String(item);
+      });
+    } else if (typeof dayData === 'object') {
+      const shifts = dayData.shifts || [];
+      if (Array.isArray(shifts)) {
+        result[day] = shifts.map((s: any) => {
+          if (typeof s === 'string') return s;
+          const start = s.start_time || s.start || '08:00';
+          const end = s.end_time || s.end || '12:00';
+          return `${start}-${end}`;
+        });
+      }
+    }
+  });
+
+  return result;
+};
 
 const DayScheduleRow = ({ day, intervals, onAdd, onRemove }: any) => {
   const [start, setStart] = useState("08:00");
@@ -78,17 +118,44 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
   const [newHoliday, setNewHoliday] = useState('');
   const [saving, setSaving] = useState(false);
 
+  const [targetDeadline, setTargetDeadline] = useState("2011-06-30 17:00:00");
+  const [penaltyPerDay, setPenaltyPerDay] = useState(500.0);
+  const [bonusPerDay, setBonusPerDay] = useState(200.0);
+
   useEffect(() => {
     if (isOpen && initialTimeConstraint) {
-      setWeeklySchedule(initialTimeConstraint.weekly_schedule || DEFAULT_SCHEDULE);
+      setWeeklySchedule(normalizeWeeklySchedule(initialTimeConstraint.weekly_schedule));
       setOvertimeMultiplier(initialTimeConstraint.overtime_multiplier || 1.5);
       setHolidays(initialTimeConstraint.holidays_list || []);
+      if (initialTimeConstraint.global_deadline) setTargetDeadline(initialTimeConstraint.global_deadline);
+      if (initialTimeConstraint.penalty_per_day !== undefined) setPenaltyPerDay(initialTimeConstraint.penalty_per_day);
+      if (initialTimeConstraint.bonus_per_day !== undefined) setBonusPerDay(initialTimeConstraint.bonus_per_day);
     } else if (isOpen) {
       setWeeklySchedule(DEFAULT_SCHEDULE);
       setOvertimeMultiplier(1.5);
       setHolidays([]);
     }
   }, [isOpen, initialTimeConstraint]);
+
+  // Calculate total weekly working hours dynamically from shift intervals
+  const totalWeeklyHours = React.useMemo(() => {
+    let sum = 0;
+    DAYS.forEach(day => {
+      const intervals = weeklySchedule[day] || [];
+      intervals.forEach((inv: string) => {
+        const parts = inv.split('-');
+        if (parts.length === 2) {
+          const [sH, sM] = parts[0].split(':').map(Number);
+          const [eH, eM] = parts[1].split(':').map(Number);
+          let startMin = (sH || 0) * 60 + (sM || 0);
+          let endMin = (eH || 0) * 60 + (eM || 0);
+          if (endMin < startMin) endMin += 24 * 60; // night shift overlap
+          sum += (endMin - startMin) / 60;
+        }
+      });
+    });
+    return sum;
+  }, [weeklySchedule]);
 
   if (!isOpen) return null;
 
@@ -102,7 +169,10 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
       const payload = {
         weekly_schedule: weeklySchedule,
         holidays_list: holidays,
-        overtime_multiplier: overtimeMultiplier
+        overtime_multiplier: overtimeMultiplier,
+        global_deadline: targetDeadline,
+        penalty_per_day: Number(penaltyPerDay),
+        bonus_per_day: Number(bonusPerDay)
       };
       if (initialTimeConstraint?.id) {
         await api.updateTimeConstraint(projectId, payload);
@@ -190,18 +260,7 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-bold text-slate-800 mb-3">Overtime Multiplier</h3>
-            <div className="flex items-center gap-3">
-              <input 
-                type="number" step="0.1" min="1.0"
-                value={overtimeMultiplier}
-                onChange={e => setOvertimeMultiplier(Number(e.target.value))}
-                className="w-32 border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              />
-              <span className="text-xs text-slate-500">Multiplier applied to resource costs when working outside normal hours.</span>
-            </div>
-          </div>
+
 
           <div>
             <h3 className="text-sm font-bold text-slate-800 mb-3">Holidays / Non-working Days</h3>

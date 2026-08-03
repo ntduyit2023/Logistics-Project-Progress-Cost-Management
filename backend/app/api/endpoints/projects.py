@@ -153,7 +153,7 @@ async def delete_project_api(
 @router.post("/{project_id}/run-simulation", response_model=APIResponse, summary="Chạy mô phỏng tối ưu AI")
 async def run_simulation_api(
     background_tasks: BackgroundTasks,
-    project_id: int = Path(..., description="ID dự án"),
+    project_id: str = Path(..., description="ID dự án"),
     db: AsyncSession = Depends(get_db)
 ) -> APIResponse:
     """

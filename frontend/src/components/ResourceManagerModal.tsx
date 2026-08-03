@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Trash2, Plus, HardHat, Package } from 'lucide-react';
+import { X, Save, Trash2, Plus, HardHat, Package, Edit2, Check } from 'lucide-react';
 import { api } from '../services/api';
 
 interface ResourceManagerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  projectId: number;
+  projectId: number | string;
   initialResources: any[];
 }
 
@@ -15,16 +15,37 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
   
   // New resource form state
   const [name, setName] = useState('');
-  const [type, setType] = useState('Renewable');
-  const [maxAvail, setMaxAvail] = useState(1);
-  const [costPerUse, setCostPerUse] = useState(0);
-  const [costPerUnit, setCostPerUnit] = useState(0);
+  const [resCategory, setResCategory] = useState('Human');
+  const [maxAvail, setMaxAvail] = useState(10);
+  const [unitCost, setUnitCost] = useState(25.0);
+  const [energy, setEnergy] = useState(0.0);
+  const [overtimeMulti, setOvertimeMulti] = useState(1.5);
+  const [maxOtDay, setMaxOtDay] = useState(4.0);
+
+  // Inline edit state
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editRowData, setEditRowData] = useState<any>({});
+
+  const fetchResources = async () => {
+    if (!projectId) return;
+    try {
+      const res = await api.getResourceConstraints(projectId);
+      if (res && res.data) {
+        setResources(res.data);
+      } else {
+        setResources(initialResources || []);
+      }
+    } catch (err) {
+      console.error("Failed to fetch fresh resource constraints", err);
+      setResources(initialResources || []);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
-      setResources(initialResources || []);
+      fetchResources();
     }
-  }, [isOpen, initialResources]);
+  }, [isOpen, projectId, initialResources]);
 
   if (!isOpen) return null;
 
@@ -35,26 +56,72 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
     setLoading(true);
     try {
       const payload = {
-        resource_name: name,
-        resource_type: type,
+        resource_id: String(Date.now()),
+        name: name.trim(),
+        type: resCategory,
         max_availability: Number(maxAvail),
-        cost_per_use: Number(costPerUse),
-        cost_per_unit: Number(costPerUnit)
+        unit_cost: Number(unitCost),
+        energy: Number(energy),
+        overtime_multi: Number(overtimeMulti),
+        max_overtime_per_day: Number(maxOtDay)
       };
-      const res = await api.createResourceConstraint(projectId, payload);
+      await api.createResourceConstraint(projectId, payload);
       
-      // Update local state
-      setResources([...resources, res.data]);
+      // Refresh resource list
+      await fetchResources();
       
       // Reset form
       setName('');
-      setMaxAvail(1);
-      setCostPerUse(0);
-      setCostPerUnit(0);
+      setMaxAvail(10);
+      setUnitCost(25.0);
+      setEnergy(0.0);
+      setOvertimeMulti(1.5);
+      setMaxOtDay(4.0);
     } catch (err) {
       alert("Failed to add resource: " + (err as Error).message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const startEdit = (r: any) => {
+    setEditingId(r.id);
+    setEditRowData({
+      id: r.id,
+      resource_id: r.resource_id || String(r.id),
+      name: r.name || r.resource_name || r.resource_id || '',
+      type: r.type || r.resource_type || 'Human',
+      max_availability: r.max_availability ?? 1,
+      unit_cost: r.unit_cost ?? 0,
+      energy: r.energy ?? 0,
+      overtime_multi: r.overtime_multi ?? 1.5,
+      max_overtime_per_day: r.max_overtime_per_day ?? 4.0
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditRowData({});
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingId) return;
+    try {
+      const payload = {
+        resource_id: editRowData.resource_id || String(editingId),
+        name: editRowData.name,
+        type: editRowData.type,
+        max_availability: Number(editRowData.max_availability),
+        unit_cost: Number(editRowData.unit_cost),
+        energy: Number(editRowData.energy),
+        overtime_multi: Number(editRowData.overtime_multi),
+        max_overtime_per_day: Number(editRowData.max_overtime_per_day)
+      };
+      await api.updateResourceConstraint(projectId, editingId, payload);
+      await fetchResources();
+      setEditingId(null);
+    } catch (err) {
+      alert("Failed to update resource: " + (err as Error).message);
     }
   };
 
@@ -70,21 +137,21 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
 
   const handleFinish = () => {
     onClose();
-    window.location.reload(); // Reload to fetch fresh data in Workspace
+    window.location.reload();
   };
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50 shrink-0">
           <div>
             <h2 className="text-xl font-bold text-slate-800 flex items-center">
               <HardHat className="mr-2 text-amber-600" size={24} />
-              Project Resource Pool (Resource Constraints)
+              Project Resource Pool (Kho Tài nguyên Dự án)
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">Manage global resources (Renewable: Labor/Equipment, Consumable: Materials) available for this project.</p>
+            <p className="text-xs text-slate-500 mt-0.5">Quản lý kho tài nguyên dự án (Loại hình, Đơn giá/giờ, Năng lượng, Lương tăng ca OT).</p>
           </div>
           <button onClick={handleFinish} className="text-slate-400 hover:text-slate-700 transition p-1.5 rounded-md hover:bg-slate-200">
             <X size={22} />
@@ -95,52 +162,70 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
           
           {/* Add New Resource Form */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mb-6">
-            <h3 className="text-sm font-bold text-slate-800 mb-3">Add New Resource</h3>
-            <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3">
-              <div className="flex-1 min-w-[200px]">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Resource Name</label>
+            <h3 className="text-sm font-bold text-slate-800 mb-3">Thêm Tài nguyên Mới</h3>
+            <form onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
+              <div className="col-span-1 sm:col-span-2">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Tên tài nguyên</label>
                 <input 
-                  type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Tower Crane"
+                  type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="vd: Kỹ sư xây dựng / Máy đào"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
-              <div className="w-32">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Type</label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Phân loại (Type)</label>
                 <select 
-                  value={type} onChange={e => setType(e.target.value)}
+                  value={resCategory} onChange={e => setResCategory(e.target.value)}
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-amber-500/20"
                 >
-                  <option value="Renewable">Renewable</option>
-                  <option value="Consumable">Consumable</option>
+                  <option value="Human">Con người (Human)</option>
+                  <option value="Machine">Máy móc/Thiết bị (Machine)</option>
                 </select>
               </div>
-              <div className="w-24">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Max Avail</label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Số lượng tối đa (Capacity)</label>
                 <input 
-                  type="number" step="0.1" value={maxAvail} onChange={e => setMaxAvail(Number(e.target.value))} required min="0"
+                  type="number" step="1" value={maxAvail} onChange={e => setMaxAvail(Number(e.target.value))} required min="1"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
-              <div className="w-28">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Cost/Use</label>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Đơn giá ($/giờ)</label>
                 <input 
-                  type="number" step="0.01" value={costPerUse} onChange={e => setCostPerUse(Number(e.target.value))} min="0"
+                  type="number" step="0.5" value={unitCost} onChange={e => setUnitCost(Number(e.target.value))} required min="0"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
-              <div className="w-28">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Cost/Unit</label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Năng lượng/Nhiên liệu (kWh hoặc L/h)</label>
                 <input 
-                  type="number" step="0.01" value={costPerUnit} onChange={e => setCostPerUnit(Number(e.target.value))} min="0"
+                  type="number" step="0.1" value={energy} onChange={e => setEnergy(Number(e.target.value))} min="0"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
-              <button 
-                type="submit" disabled={loading}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md text-sm font-bold flex items-center transition h-[38px]"
-              >
-                <Plus size={16} className="mr-1" /> Add
-              </button>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Hệ số Lương Tăng ca (OT)</label>
+                <input 
+                  type="number" step="0.1" value={overtimeMulti} onChange={e => setOvertimeMulti(Number(e.target.value))} min="1.0"
+                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">OT Max/Ngày (giờ/ngày)</label>
+                <input 
+                  type="number" step="0.5" value={maxOtDay} onChange={e => setMaxOtDay(Number(e.target.value))} min="0"
+                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                />
+              </div>
+
+              <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end mt-2">
+                <button 
+                  type="submit" disabled={loading}
+                  className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 rounded-md text-sm font-bold flex items-center transition shadow-sm"
+                >
+                  <Plus size={16} className="mr-1" /> Thêm Tài nguyên
+                </button>
+              </div>
             </form>
           </div>
 
@@ -151,42 +236,148 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                 <tr>
                   <th className="px-4 py-3">Resource Name</th>
                   <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3 text-right">Max Availability</th>
-                  <th className="px-4 py-3 text-right">Cost / Use</th>
-                  <th className="px-4 py-3 text-right">Cost / Unit</th>
+                  <th className="px-4 py-3 text-right">Max Capacity</th>
+                  <th className="px-4 py-3 text-right">Unit Cost ($/h)</th>
+                  <th className="px-4 py-3 text-right">Energy / Fuel</th>
+                  <th className="px-4 py-3 text-right">OT Multi / Max OT</th>
                   <th className="px-4 py-3 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {resources.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-slate-400">
+                    <td colSpan={7} className="text-center py-8 text-slate-400">
                       <Package size={32} className="mx-auto mb-2 opacity-50" />
                       No resources configured for this project yet.
                     </td>
                   </tr>
                 ) : (
-                  resources.map(r => (
-                    <tr key={r.id} className="border-b border-slate-100 hover:bg-slate-50 transition">
-                      <td className="px-4 py-3 font-semibold text-slate-800">{r.resource_name}</td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded text-xs font-bold ${r.resource_type === 'Renewable' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                          {r.resource_type}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-slate-700">{r.max_availability}</td>
-                      <td className="px-4 py-3 text-right font-medium text-slate-700">${r.cost_per_use}</td>
-                      <td className="px-4 py-3 text-right font-medium text-slate-700">${r.cost_per_unit}</td>
-                      <td className="px-4 py-3 text-center">
-                        <button 
-                          onClick={() => handleDelete(r.id)}
-                          className="text-slate-400 hover:text-red-600 transition p-1.5 hover:bg-red-50 rounded"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  resources.map(r => {
+                    const isEditing = editingId === r.id;
+                    const resName = r.name || r.resource_name || r.resource_id;
+                    const resType = r.type || r.resource_type || 'Human';
+                    const maxCapacity = r.max_availability ?? 1;
+                    const costVal = r.unit_cost ?? 0;
+                    const energyVal = r.energy ?? 0;
+                    const otMulti = r.overtime_multi ?? 1.5;
+                    const maxOt = r.max_overtime_per_day ?? 4;
+
+                    if (isEditing) {
+                      return (
+                        <tr key={r.id} className="bg-amber-50/60 border-b border-amber-200">
+                          <td className="px-3 py-2">
+                            <input 
+                              type="text"
+                              value={editRowData.name}
+                              onChange={e => setEditRowData({ ...editRowData, name: e.target.value })}
+                              className="w-full border border-amber-400 rounded px-2 py-1 text-sm bg-white font-medium focus:outline-none"
+                            />
+                          </td>
+                          <td className="px-3 py-2">
+                            <select 
+                              value={editRowData.type}
+                              onChange={e => setEditRowData({ ...editRowData, type: e.target.value })}
+                              className="border border-amber-400 rounded px-2 py-1 text-xs bg-white font-medium focus:outline-none"
+                            >
+                              <option value="Human">Human</option>
+                              <option value="Machine">Machine</option>
+                            </select>
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            <input 
+                              type="number" step="1" min="1"
+                              value={editRowData.max_availability}
+                              onChange={e => setEditRowData({ ...editRowData, max_availability: e.target.value })}
+                              className="w-20 border border-amber-400 rounded px-2 py-1 text-sm text-right bg-white focus:outline-none"
+                            />
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            <input 
+                              type="number" step="0.5" min="0"
+                              value={editRowData.unit_cost}
+                              onChange={e => setEditRowData({ ...editRowData, unit_cost: e.target.value })}
+                              className="w-24 border border-amber-400 rounded px-2 py-1 text-sm text-right bg-white focus:outline-none"
+                            />
+                          </td>
+                          <td className="px-3 py-2 text-right">
+                            <input 
+                              type="number" step="0.1" min="0"
+                              value={editRowData.energy}
+                              onChange={e => setEditRowData({ ...editRowData, energy: e.target.value })}
+                              className="w-20 border border-amber-400 rounded px-2 py-1 text-sm text-right bg-white focus:outline-none"
+                            />
+                          </td>
+                          <td className="px-3 py-2 text-right flex items-center justify-end gap-1">
+                            <input 
+                              type="number" step="0.1" min="1.0" title="OT Multiplier"
+                              value={editRowData.overtime_multi}
+                              onChange={e => setEditRowData({ ...editRowData, overtime_multi: e.target.value })}
+                              className="w-14 border border-amber-400 rounded px-1 py-1 text-xs text-right bg-white focus:outline-none"
+                            />
+                            <span className="text-xs text-slate-500">x /</span>
+                            <input 
+                              type="number" step="0.5" min="0" title="Max OT hours/day"
+                              value={editRowData.max_overtime_per_day}
+                              onChange={e => setEditRowData({ ...editRowData, max_overtime_per_day: e.target.value })}
+                              className="w-14 border border-amber-400 rounded px-1 py-1 text-xs text-right bg-white focus:outline-none"
+                            />
+                            <span className="text-xs text-slate-500">h</span>
+                          </td>
+                          <td className="px-3 py-2 text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              <button 
+                                onClick={handleSaveEdit}
+                                title="Save"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white p-1 rounded transition"
+                              >
+                                <Check size={16} />
+                              </button>
+                              <button 
+                                onClick={cancelEdit}
+                                title="Cancel"
+                                className="bg-slate-300 hover:bg-slate-400 text-slate-700 p-1 rounded transition"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    }
+
+                    return (
+                      <tr key={r.id || r.resource_id} className="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td className="px-4 py-3 font-semibold text-slate-800">{resName}</td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${resType === 'Human' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                            {resType}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right font-medium text-slate-700">{maxCapacity}</td>
+                        <td className="px-4 py-3 text-right font-medium text-slate-700">${costVal}</td>
+                        <td className="px-4 py-3 text-right font-medium text-slate-700">{energyVal}</td>
+                        <td className="px-4 py-3 text-right font-medium text-slate-700">{otMulti}x ({maxOt}h/day)</td>
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button 
+                              onClick={() => startEdit(r)}
+                              title="Edit Resource"
+                              className="text-slate-400 hover:text-blue-600 transition p-1.5 hover:bg-blue-50 rounded"
+                            >
+                              <Edit2 size={15} />
+                            </button>
+                            <button 
+                              onClick={() => handleDelete(r.id)}
+                              title="Delete Resource"
+                              className="text-slate-400 hover:text-red-600 transition p-1.5 hover:bg-red-50 rounded"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

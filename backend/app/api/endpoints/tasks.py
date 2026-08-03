@@ -87,7 +87,7 @@ async def delete_task_api(
 
 @router.get("/{project_id}/tasks/{task_id}/resources", response_model=APIResponse[List[TaskResourceResponse]], summary="Lấy danh sách tài nguyên của Task")
 async def get_task_resources_api(
-    project_id: int = Path(...),
+    project_id: str = Path(...),
     task_id: str = Path(...),
     db: AsyncSession = Depends(get_db)
 ):
@@ -97,7 +97,7 @@ async def get_task_resources_api(
 
 @router.post("/{project_id}/tasks/{task_id}/resources", response_model=APIResponse[TaskResourceResponse], summary="Phân bổ tài nguyên cho Task")
 async def assign_task_resource_api(
-    project_id: int = Path(...),
+    project_id: str = Path(...),
     task_id: str = Path(...),
     resource_in: TaskResourceCreate = ...,
     db: AsyncSession = Depends(get_db)
@@ -110,7 +110,7 @@ async def assign_task_resource_api(
 
 @router.delete("/{project_id}/tasks/{task_id}/resources/{resource_tr_id}", response_model=APIResponse, summary="Xóa phân bổ tài nguyên")
 async def delete_task_resource_api(
-    project_id: int = Path(...),
+    project_id: str = Path(...),
     task_id: str = Path(...),
     resource_tr_id: int = Path(..., description="ID bản ghi phân bổ tài nguyên"),
     db: AsyncSession = Depends(get_db)

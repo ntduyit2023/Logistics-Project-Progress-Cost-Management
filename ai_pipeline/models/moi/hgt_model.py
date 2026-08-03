@@ -128,6 +128,7 @@ class HGTTaskPredictor(nn.Module):
             'expected_delay': expected_delay,
             'uncertainty_sigma': uncertainty_sigma,
             'task_embeddings': fused_task_embed,
+            'resource_embeddings': h_dict.get('resource'),
             'global_project_context': global_context,
             'reconstructed_x': reconstructed_x
         }

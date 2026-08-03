@@ -118,24 +118,20 @@ async def get_project_summary(db: AsyncSession, project_id: Any) -> ProjectSumma
     )
 
 
-async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail:
-    project = await project_repo.get_by_id(db, project_id)
-    if not project:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Không tìm thấy dự án với ID {project_id}"
-        )
+async def get_project_detail(db: AsyncSession, project_id: Any) -> ProjectDetail:
+    project = await get_project_by_identifier(db, project_id)
+    real_pid = project.id
         
-    tasks = await task_repo.get_by_project(db, project_id)
-    dependencies = await dependency_repo.get_by_project(db, project_id)
+    tasks = await task_repo.get_by_project(db, real_pid)
+    dependencies = await dependency_repo.get_by_project(db, real_pid)
     
     from sqlalchemy import select
     from app.models import Resource, ProjectCalendar
-    res_stmt = select(Resource).where(Resource.project_id == project_id)
+    res_stmt = select(Resource).where(Resource.project_id == real_pid)
     res_result = await db.execute(res_stmt)
     resources = res_result.scalars().all()
     
-    time_stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == project_id)
+    time_stmt = select(ProjectCalendar).where(ProjectCalendar.project_id == real_pid)
     time_result = await db.execute(time_stmt)
     time_constraint = time_result.scalars().first()
     
@@ -163,31 +159,18 @@ async def get_project_detail(db: AsyncSession, project_id: int) -> ProjectDetail
     )
 
 
-async def get_project_graph(db: AsyncSession, project_id: int) -> ProjectGraphResponse:
+async def get_project_graph(db: AsyncSession, project_id: Any) -> ProjectGraphResponse:
     """
     Lấy toàn bộ dữ liệu Đồ thị mạng lưới của một Dự án.
-
-    Args:
-        db (AsyncSession): Phiên kết nối DB.
-        project_id (int): ID dự án.
-
-    Returns:
-        ProjectGraphResponse: Mảng Nodes và Edges.
-
-    Raises:
-        HTTPException: Nếu không có dữ liệu Graph.
     """
-    tasks = await task_repo.get_by_project(db, project_id)
-    edges = await dependency_repo.get_by_project(db, project_id)
+    project = await get_project_by_identifier(db, project_id)
+    real_pid = project.id
+
+    tasks = await task_repo.get_by_project(db, real_pid)
+    edges = await dependency_repo.get_by_project(db, real_pid)
     
-    if not tasks and not edges:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Không tìm thấy dữ liệu Graph cho dự án có ID {project_id}."
-        )
-        
     return ProjectGraphResponse(
-        project_id=project_id,
+        project_id=real_pid,
         nodes=tasks,
         edges=edges
     )

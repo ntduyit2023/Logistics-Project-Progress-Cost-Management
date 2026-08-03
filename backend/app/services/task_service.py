@@ -31,12 +31,24 @@ async def get_project_tasks(db: AsyncSession, project_id_or_code: Any) -> List[D
     return res
 
 
+def _build_task_match_condition(project_id: str, task_id_str: str):
+    from sqlalchemy import or_, cast, String
+    s_val = str(task_id_str).strip()
+    conds = [
+        Task.task_id == s_val,
+        cast(Task.id, String) == s_val
+    ]
+    if "_" not in s_val:
+        conds.append(Task.task_id == f"{project_id}_{s_val}")
+    return or_(*conds)
+
+
 async def get_task_by_id(db: AsyncSession, project_id_or_code: Any, task_id_str: str) -> Dict[str, Any]:
     """
-    Lấy thông tin chi tiết của 1 Task theo task_id.
+    Lấy thông tin chi tiết của 1 Task theo task_id hoặc ID số.
     """
     project = await get_project_by_identifier(db, project_id_or_code)
-    stmt = select(Task).where(Task.project_id == project.id, Task.task_id == task_id_str)
+    stmt = select(Task).where(Task.project_id == project.id, _build_task_match_condition(project.id, task_id_str))
     result = await db.execute(stmt)
     task_obj = result.scalars().first()
     if not task_obj:
@@ -75,7 +87,7 @@ async def update_task(db: AsyncSession, project_id_or_code: Any, task_id_str: st
     Cập nhật thông tin của một công việc.
     """
     project = await get_project_by_identifier(db, project_id_or_code)
-    stmt = select(Task).where(Task.project_id == project.id, Task.task_id == task_id_str)
+    stmt = select(Task).where(Task.project_id == project.id, _build_task_match_condition(project.id, task_id_str))
     result = await db.execute(stmt)
     task_obj = result.scalars().first()
     if not task_obj:
@@ -97,7 +109,7 @@ async def delete_task(db: AsyncSession, project_id_or_code: Any, task_id_str: st
     Xóa một công việc khỏi Dự án.
     """
     project = await get_project_by_identifier(db, project_id_or_code)
-    stmt = delete(Task).where(Task.project_id == project.id, Task.task_id == task_id_str)
+    stmt = delete(Task).where(Task.project_id == project.id, _build_task_match_condition(project.id, task_id_str))
     result = await db.execute(stmt)
     await db.commit()
     if result.rowcount == 0:
@@ -107,25 +119,44 @@ async def delete_task(db: AsyncSession, project_id_or_code: Any, task_id_str: st
 
 async def get_task_resources(db: AsyncSession, project_id_or_code: Any, task_id_str: str) -> List[Dict[str, Any]]:
     """
-    Lấy danh sách phân bổ tài nguyên cho một Task.
+    Lấy danh sách phân bổ tài nguyên cho một Task (hỗ trợ cả task_id dạng chuỗi 'C2011-07_34' hoặc số).
     """
+    from sqlalchemy import or_, cast, String
     project = await get_project_by_identifier(db, project_id_or_code)
-    stmt = select(TaskResource, Resource).join(
-        Resource, (TaskResource.resource_id == Resource.resource_id) & (TaskResource.project_id == Resource.project_id)
-    ).where(TaskResource.project_id == project.id, TaskResource.task_id == task_id_str)
+    
+    task_id_conds = [TaskResource.task_id == task_id_str]
+    if "_" not in task_id_str:
+        task_id_conds.append(TaskResource.task_id == f"{project.id}_{task_id_str}")
+
+    stmt = select(TaskResource, Resource).outerjoin(
+        Resource,
+        or_(
+            TaskResource.resource_id == Resource.resource_id,
+            TaskResource.resource_id == Resource.name,
+            TaskResource.resource_id == cast(Resource.id, String)
+        )
+        & (TaskResource.project_id == Resource.project_id)
+    ).where(
+        TaskResource.project_id == project.id,
+        or_(*task_id_conds)
+    )
     
     result = await db.execute(stmt)
     items = []
     for tr, r in result.all():
+        res_name = r.name if (r and r.name and r.name != r.resource_id) else tr.resource_id
+        res_type = r.type if (r and r.type) else "Human"
+        unit_cost = r.unit_cost if (r and r.unit_cost is not None) else 0.0
+
         items.append({
             "id": tr.id,
             "project_id": tr.project_id,
             "task_id": tr.task_id,
             "resource_id": tr.resource_id,
-            "resource_name": r.name,
-            "resource_type": r.type,
+            "resource_name": res_name,
+            "resource_type": res_type,
             "request_quantity": tr.request_quantity,
-            "unit_cost": r.unit_cost
+            "unit_cost": unit_cost
         })
     return items
 

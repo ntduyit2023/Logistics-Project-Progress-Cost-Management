@@ -14,48 +14,70 @@ interface TaskFormModalProps {
   projectType?: string;
   onSave?: (data: any) => void;
   tasks?: any[];
-  projectId?: number;
+  projectId?: number | string;
 }
 
 const TABS = [
   { id: 'basic', label: 'Basic & Schedule', icon: Layers },
-  { id: 'resources', label: 'Resources', icon: HardHat },
-  { id: 'g1_direct', label: 'Resource Cost', icon: DollarSign },
-  { id: 'g2_indirect', label: 'Overhead Cost', icon: Briefcase },
-  { id: 'g4_contractual', label: 'Risk & Compliance Cost', icon: ShieldAlert },
-  { id: 'g6_logistics', label: 'Supply Chain & External Cost', icon: ArrowRight },
-  { id: 'g7_time', label: 'Time-dependent Cost', icon: Clock },
+  { id: 'resources', label: 'Resources & Logic', icon: HardHat },
+  { id: 'g1_direct', label: 'Direct Resource Cost', icon: DollarSign },
+  { id: 'g2_indirect', label: 'Overhead & Facility Cost', icon: Briefcase },
+  { id: 'g3_time', label: 'Time-dependent Cost', icon: Clock },
+  { id: 'g4_contractual', label: 'Risk & Legal Cost', icon: ShieldAlert },
+  { id: 'g5_logistics', label: 'Supply Chain & Freight', icon: ArrowRight },
+  { id: 'g6_financial', label: 'Financial & ESG Cost', icon: Leaf },
 ];
 
 const FIELD_GROUPS = {
   g1_direct: [
-    { key: 'internal_labor_cost', label: 'Internal Labor Cost' },
-    { key: 'overtime_cost', label: 'Overtime Cost' },
-    { key: 'equipment_fuel_cost', label: 'Equipment & Fuel Cost' },
-    { key: 'qa_qc_cost', label: 'QA/QC Cost' },
-    { key: 'material_cost', label: 'Material Cost' },
-    { key: 'outsourcing_cost', label: 'Outsourcing Cost' },
+    { key: 'labor', label: 'Labor Cost (Nhân công)' },
+    { key: 'material', label: 'Material Cost (Vật tư)' },
+    { key: 'equipment', label: 'Equipment Cost (Ca máy/thuyết bị)' },
+    { key: 'energy', label: 'Energy & Fuel Cost (Nhiên liệu)' },
+    { key: 'testing_inspection', label: 'Testing & Inspection (Kiểm định)' },
+    { key: 'project_management', label: 'Project Management (Ban QLDA)' },
   ],
   g2_indirect: [
-    { key: 'training_cost', label: 'Training Cost' },
-    { key: 'facility_rent', label: 'Facility Rent' },
-    { key: 'communication_cost', label: 'Communication Cost' },
-    { key: 'utilities_cost', label: 'Utilities Cost' },
+    { key: 'facility', label: 'Facility Rent (Lán trại mặt bằng)' },
+    { key: 'utilities', label: 'Utilities Cost (Điện nước)' },
+    { key: 'communication', label: 'Communication (Viễn thông)' },
+    { key: 'training', label: 'Training Cost (Đào tạo an toàn)' },
+    { key: 'quality_management', label: 'Quality Management (QA/QC)' },
+  ],
+  g3_time: [
+    { key: 'overtime', label: 'Overtime Cost (Lương tăng ca)' },
+    { key: 'delay_penalty', label: 'Delay Penalty (Phạt trễ hạn)' },
+    { key: 'inventory_holding', label: 'Inventory Holding (Lưu kho)' },
+    { key: 'waiting_cost', label: 'Waiting Cost (Tổn thất chờ)' },
+    { key: 'idle_resource', label: 'Idle Resource (Máy nhàn rỗi)' },
+    { key: 'revenue_delay', label: 'Revenue Delay (Chậm thu hồi)' },
+    { key: 'expediting', label: 'Expediting Cost (Thúc ép tiến độ)' },
   ],
   g4_contractual: [
-    { key: 'insurance_cost', label: 'Insurance Cost' },
-    { key: 'licensing_cost', label: 'Licensing Cost' },
-    { key: 'warranty_cost', label: 'Warranty Cost' },
+    { key: 'insurance', label: 'Insurance Cost (Bảo hiểm)' },
+    { key: 'rework', label: 'Rework Cost (Sửa chữa làm lại)' },
+    { key: 'warranty', label: 'Warranty Reserve (Bảo hành)' },
+    { key: 'litigation', label: 'Litigation & Legal (Pháp lý)' },
+    { key: 'regulatory_compliance', label: 'Regulatory Compliance (Cấp phép PCCC)' },
+    { key: 'contingency_reserve', label: 'Contingency Reserve (Dự phòng rủi ro)' },
+    { key: 'management_reserve', label: 'Management Reserve (Dự phòng quản lý)' },
   ],
-  g6_logistics: [
-    { key: 'holding_cost', label: 'Holding Cost' },
-    { key: 'international_freight', label: 'International Freight' },
-    { key: 'handling_cost', label: 'Handling Cost' },
-    { key: 'reverse_logistics', label: 'Reverse Logistics' },
-    { key: 'defect_cost', label: 'Defect Cost' },
+  g5_logistics: [
+    { key: 'transportation', label: 'Transportation (Vận chuyển)' },
+    { key: 'ordering', label: 'Ordering Cost (Đặt hàng)' },
+    { key: 'packaging', label: 'Packaging Cost (Đóng gói)' },
+    { key: 'reverse_logistics', label: 'Reverse Logistics (Thu hồi)' },
+    { key: 'customs', label: 'Customs & Tariff (Thông quan)' },
+    { key: 'supplier_coordination', label: 'Supplier Coordination (Nhà cung cấp)' },
   ],
-  g7_time: [
-    { key: 'overtime_hours', label: 'Overtime Hours' },
+  g6_financial: [
+    { key: 'opportunity_cost', label: 'Opportunity Cost (Cơ hội vốn)' },
+    { key: 'capital_cost', label: 'Capital Cost (Sử dụng vốn)' },
+    { key: 'financing_cost', label: 'Financing Interest (Lãi vay)' },
+    { key: 'npv_loss', label: 'NPV Loss (Tổn thất hiện giá)' },
+    { key: 'esg_cost', label: 'ESG Compliance (Môi trường)' },
+    { key: 'carbon_tax', label: 'Carbon Tax (Thuế phát thải)' },
+    { key: 'reputation_cost', label: 'Reputation Loss (Tổn thất uy tín)' },
   ]
 };
 
@@ -84,26 +106,29 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
       if (initialData) {
         setFormData({ ...initialData, baseline_start: initialData.baseline_start ? initialData.baseline_start.split('T')[0] : '' });
 
-        // Find existing Predecessors and Successors
-        const preds = constraintLogic.filter(c => c.successor_id === initialData.id);
-        const succs = constraintLogic.filter(c => c.predecessor_id === initialData.id);
+        // Find existing Predecessors and Successors using task_id field
+        const taskIdVal = String(initialData.task_id || initialData.id || '');
+        const preds = constraintLogic.filter(c => String(c.successor_id) === taskIdVal);
+        const succs = constraintLogic.filter(c => String(c.predecessor_id) === taskIdVal);
 
         // Map names
         setExistingPredecessors(preds.map(p => {
-          const t = availableTasks.find(x => x.id === p.predecessor_id);
+          const t = finalAvailableTasks.find(x => String(x.task_id) === String(p.predecessor_id) || String(x.id) === String(p.predecessor_id));
           return { ...p, name: t ? t.task_name : p.predecessor_id };
         }));
 
         setExistingSuccessors(succs.map(s => {
-          const t = availableTasks.find(x => x.id === s.successor_id);
+          const t = finalAvailableTasks.find(x => String(x.task_id) === String(s.successor_id) || String(x.id) === String(s.successor_id));
           return { ...s, name: t ? t.task_name : s.successor_id };
         }));
 
-        // Fetch assigned resources
+        // Fetch assigned resources using string projectId and task_id
         const fetchResources = async () => {
+          if (!effectiveProjectId) return;
           setLoadingRes(true);
           try {
-            const res = await api.getTaskResources(Number(effectiveProjectId), initialData.id);
+            const taskIdForApi = initialData.task_id || initialData.id;
+            const res = await api.getTaskResources(effectiveProjectId, String(taskIdForApi));
             setAssignedResources(res.data || []);
           } catch (err) {
             console.error("Failed to fetch task resources", err);
@@ -138,32 +163,33 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
 
   const handleAddResource = () => {
     if (!selectedResId) return;
-    const resIdNum = Number(selectedResId);
+    const resKey = String(selectedResId);
 
-    // Check if already assigned, if so just update qty
-    const existing = assignedResources.find(r => r.resource_id === resIdNum);
+    const projRes = projectResources.find(r => String(r.id) === resKey || String(r.resource_id) === resKey || String(r.name) === resKey);
+    const targetResId = projRes ? (projRes.resource_id || projRes.name || String(projRes.id)) : resKey;
+    const targetResName = projRes ? (projRes.name || projRes.resource_name || projRes.resource_id) : resKey;
+    const targetResType = projRes ? (projRes.type || projRes.resource_type || 'Human') : 'Human';
+
+    const existing = assignedResources.find(r => String(r.resource_id) === String(targetResId));
     if (existing) {
       setAssignedResources(prev => prev.map(r =>
-        r.resource_id === resIdNum ? { ...r, request_quantity: Number(reqQty) } : r
+        String(r.resource_id) === String(targetResId) ? { ...r, request_quantity: Number(reqQty) } : r
       ));
     } else {
-      const projRes = projectResources.find(r => r.id === resIdNum);
-      if (projRes) {
-        setAssignedResources([...assignedResources, {
-          resource_id: resIdNum,
-          resource_name: projRes.resource_name,
-          resource_type: projRes.resource_type,
-          request_quantity: Number(reqQty),
-          allocated_quantity: null
-        }]);
-      }
+      setAssignedResources([...assignedResources, {
+        resource_id: targetResId,
+        resource_name: targetResName,
+        resource_type: targetResType,
+        request_quantity: Number(reqQty),
+        allocated_quantity: null
+      }]);
     }
     setSelectedResId('');
     setReqQty(1);
   };
 
-  const handleRemoveResource = (resId: number) => {
-    setAssignedResources(prev => prev.filter(r => r.resource_id !== resId));
+  const handleRemoveResource = (resId: any) => {
+    setAssignedResources(prev => prev.filter(r => String(r.resource_id) !== String(resId)));
   };
 
 
@@ -201,58 +227,45 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
     finalOnSubmit(payload);
   };
 
+  // Read-only cost keys (tính từ tài nguyên / nhiên liệu / tăng ca, không sửa trực tiếp)
+  const READONLY_COST_KEYS = ['labor', 'equipment', 'energy', 'overtime'];
+
   const visibleTabIds = React.useMemo(() => {
     const baseTabs = ['basic', 'resources'];
-    if (projectType === 'ITLG') return [...baseTabs, 'g1_direct', 'g2_indirect', 'g5_risk', 'g7_time'];
-    if (projectType === 'PRO') return [...baseTabs, 'g1_direct', 'g2_indirect', 'g6_logistics', 'g7_time'];
-    return [...baseTabs, 'g1_direct', 'g2_indirect', 'g4_contractual', 'g5_risk', 'g6_logistics', 'g7_time'];
+    return [...baseTabs, 'g1_direct', 'g2_indirect', 'g3_time', 'g4_contractual', 'g5_logistics', 'g6_financial'];
   }, [projectType]);
 
   const visibleTabs = TABS.filter(t => visibleTabIds.includes(t.id));
 
-  const renderNumberFields = (groupId: string) => (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3">
-      {FIELD_GROUPS[groupId as keyof typeof FIELD_GROUPS].map(field => {
-        const isPercent = ['complexity', 'weather_contingency', 'general_contingency', 'rework_risk'].includes(field.key);
-        return (
-          <div key={field.key}>
-            <label className="block text-xs font-semibold text-slate-600 mb-1 line-clamp-1" title={field.label}>
-              {field.label} {isPercent && '(%)'}
-            </label>
-            {isPercent ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="range" min="0" max="100" step="1"
-                  value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
-                  onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
-                  className="flex-1 cursor-pointer accent-blue-600"
-                />
-                <input
-                  type="number" step="1" min="0" max="100"
-                  value={Math.round((parseFloat(formData[field.key]) || 0) * 100)}
-                  onChange={(e) => handleChange(field.key, Number(e.target.value) / 100)}
-                  className="w-16 border border-slate-300 rounded-md px-1 py-1.5 text-xs text-center focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-            ) : (
+  const renderNumberFields = (groupId: string) => {
+    const displayFields = FIELD_GROUPS[groupId as keyof typeof FIELD_GROUPS] || [];
+    return (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3">
+        {displayFields.map(field => {
+          const isReadOnly = READONLY_COST_KEYS.includes(field.key);
+          return (
+            <div key={field.key}>
+              <label className="block text-xs font-semibold text-slate-600 mb-1 line-clamp-1" title={field.label}>
+                {field.label}
+              </label>
               <input
                 type="number"
                 step="0.01"
                 value={formData[field.key] ?? 0}
                 onChange={(e) => handleChange(field.key, e.target.value)}
-                disabled={['internal_labor_cost', 'overtime_cost'].includes(field.key)}
-                className={`w-full border rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors ${['internal_labor_cost', 'overtime_cost'].includes(field.key)
-                    ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed'
-                    : 'bg-white border-slate-300'
+                readOnly={isReadOnly}
+                className={`w-full border rounded-md px-2 py-1.5 text-sm focus:outline-none transition-colors ${isReadOnly
+                    ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed font-semibold'
+                    : 'bg-white border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500'
                   }`}
-                title={['internal_labor_cost', 'overtime_cost'].includes(field.key) ? 'Calculated from assigned resources' : ''}
+                title={isReadOnly ? 'Tính từ phân bổ tài nguyên/nhiên liệu — không chỉnh sửa trực tiếp' : ''}
               />
-            )}
-          </div>
-        )
-      })}
-    </div>
-  );
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
@@ -294,12 +307,12 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-white">
             <form id="task-form-mega" onSubmit={handleSubmit} className="space-y-6">
 
-              {/* TAB 1: BASIC */}
+              {/* TAB 1: BASIC & SCHEDULE */}
               {activeTab === 'basic' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
                   <div>
                     <h3 className="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">Core Attributes</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-2">
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Task Name <span className="text-red-500">*</span></label>
                         <input
@@ -310,20 +323,6 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                           autoFocus
                           required
                         />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Task Type</label>
-                        <select
-                          value={formData.task_type || 'Construction'}
-                          onChange={(e) => handleChange('task_type', e.target.value)}
-                          className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
-                        >
-                          <option value="Construction">Construction</option>
-                          <option value="Design">Design</option>
-                          <option value="Procurement">Procurement</option>
-                          <option value="Management">Management</option>
-                          <option value="Other">Other</option>
-                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1">Status</label>
@@ -339,43 +338,11 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                         </select>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-slate-200">
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Base Cost ($)</label>
-                        <input
-                          type="number" step="0.01"
-                          value={formData.base_cost ?? 0}
-                          readOnly
-                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
-                          title="Auto-calculated from Direct, Indirect, Logistics and Contractual costs"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Total Cost ($)</label>
-                        <input
-                          type="number" step="0.01"
-                          value={formData.total_cost ?? 0}
-                          readOnly
-                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
-                          title="Auto-calculated (Base Cost * Risk Factor)"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">Risk Factor (Multiplier)</label>
-                        <input
-                          type="number" step="0.01"
-                          value={formData.risk_factor ?? 1.0}
-                          readOnly
-                          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
-                          title="Auto-calculated (1.0 + Risk Percentages)"
-                        />
-                      </div>
-                    </div>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">Scheduling (Duration)</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <h3 className="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4">Scheduling & Total Cost</h3>
+                    <div className="grid grid-cols-3 gap-4">
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">Baseline Start</label>
                         <input
@@ -386,34 +353,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Days (Req)</label>
-                        <input
-                          type="number"
-                          value={formData.duration_days || 1}
-                          onChange={(e) => handleChange('duration_days', e.target.value)}
-                          className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Months (Opt)</label>
-                        <input
-                          type="number" step="0.1"
-                          value={formData.duration_months || ''}
-                          onChange={(e) => handleChange('duration_months', e.target.value)}
-                          className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Weeks (Opt)</label>
-                        <input
-                          type="number" step="0.1"
-                          value={formData.duration_weeks || ''}
-                          onChange={(e) => handleChange('duration_weeks', e.target.value)}
-                          className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Hours (Opt)</label>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Duration (Hours)</label>
                         <input
                           type="number" step="0.5"
                           value={formData.duration_hours || ''}
@@ -421,18 +361,16 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                         />
                       </div>
-                    </div>
-                    <div className="mt-4">
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">Calendar Type</label>
-                      <select
-                        value={formData.calendar_type || 'Standard'}
-                        onChange={(e) => handleChange('calendar_type', e.target.value)}
-                        className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
-                      >
-                        <option value="Standard">Standard (5 Days/Week)</option>
-                        <option value="24/7">Continuous (24/7)</option>
-                        <option value="Night Shift">Night Shift</option>
-                      </select>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Total Cost ($)</label>
+                        <input
+                          type="number" step="0.01"
+                          value={formData.total_cost ?? 0}
+                          readOnly
+                          className="w-full border border-slate-200 rounded-md px-2 py-1.5 text-sm bg-slate-100 text-slate-500 font-bold cursor-not-allowed"
+                          title="Auto-calculated"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -483,8 +421,12 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                           className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
                         >
                           <option value="">None</option>
-                          {finalAvailableTasks.filter((t: any) => t.id !== initialData?.id && !existingPredecessors.some(p => p.predecessor_id === t.id)).map((t: any) => (
-                            <option key={t.id} value={t.id}>{t.task_name === t.id ? t.task_name : `${t.task_name} (${t.id})`}</option>
+                          {finalAvailableTasks.filter((t: any) => {
+                            const tTaskId = String(t.task_id || t.id);
+                            const myTaskId = String(initialData?.task_id || initialData?.id || '');
+                            return tTaskId !== myTaskId && !existingPredecessors.some(p => String(p.predecessor_id) === tTaskId);
+                          }).map((t: any) => (
+                            <option key={t.task_id || t.id} value={t.task_id || t.id}>{t.task_name} ({t.task_id || t.id})</option>
                           ))}
                         </select>
                       </div>
@@ -533,7 +475,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                         >
                           <option value="">-- Choose from Project Pool --</option>
                           {projectResources.map(r => (
-                            <option key={r.id} value={r.id}>{r.resource_name} ({r.resource_type})</option>
+                            <option key={r.id || r.resource_id} value={r.id || r.resource_id}>{r.name || r.resource_name || r.resource_id} ({r.type || r.resource_type || 'Unknown'})</option>
                           ))}
                         </select>
                       </div>
@@ -609,7 +551,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
               )}
 
               {/* DYNAMIC TABS FOR EXTENDED FEATURES */}
-              {['g1_direct', 'g2_indirect', 'g4_contractual', 'g5_risk', 'g6_logistics', 'g7_time'].includes(activeTab) && (
+              {['g1_direct', 'g2_indirect', 'g3_time', 'g4_contractual', 'g5_logistics', 'g6_financial'].includes(activeTab) && (
                 <div className="animate-in fade-in slide-in-from-right-4 duration-300">
                   {renderNumberFields(activeTab)}
                 </div>

@@ -14,7 +14,7 @@ export const api = {
     return res.json();
   },
 
-  async getProject(id: number) {
+  async getProject(id: number | string) {
     const res = await fetch(`${API_BASE_URL}/projects/${id}`);
     if (!res.ok) throw new Error('Failed to fetch project detail');
     return res.json();
@@ -55,7 +55,7 @@ export const api = {
   },
 
   // --- AI SIMULATION ---
-  async runAISimulation(projectId: number) {
+  async runAISimulation(projectId: number | string) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/run-simulation`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -68,12 +68,24 @@ export const api = {
   },
 
   // --- GLPO AI + OR + MC-CPM OPTIMIZATION ---
-  async runGLPOOptimization(projectCode: string, params?: { mc_iterations?: number; pareto_count?: number; overtime_multiplier?: number }) {
+  async runGLPOOptimization(projectCode: string, params?: { 
+    mc_iterations?: number; 
+    pareto_count?: number; 
+    overtime_multiplier?: number;
+    penalty_per_day?: number;
+    bonus_per_day?: number;
+    target_deadline?: string;
+    pareto_sort?: string;
+  }) {
     const url = new URL(`${API_BASE_URL}/ai/${projectCode}/glpo-optimize`);
     if (params) {
-      if (params.mc_iterations) url.searchParams.append('mc_iterations', params.mc_iterations.toString());
-      if (params.pareto_count) url.searchParams.append('pareto_count', params.pareto_count.toString());
-      if (params.overtime_multiplier) url.searchParams.append('overtime_multiplier', params.overtime_multiplier.toString());
+      if (params.mc_iterations !== undefined) url.searchParams.append('mc_iterations', params.mc_iterations.toString());
+      if (params.pareto_count !== undefined) url.searchParams.append('pareto_count', params.pareto_count.toString());
+      if (params.overtime_multiplier !== undefined) url.searchParams.append('overtime_multiplier', params.overtime_multiplier.toString());
+      if (params.penalty_per_day !== undefined) url.searchParams.append('penalty_per_day', params.penalty_per_day.toString());
+      if (params.bonus_per_day !== undefined) url.searchParams.append('bonus_per_day', params.bonus_per_day.toString());
+      if (params.target_deadline) url.searchParams.append('target_deadline', params.target_deadline);
+      if (params.pareto_sort) url.searchParams.append('pareto_sort', params.pareto_sort);
     }
     const res = await fetch(url.toString(), {
       method: 'POST',
@@ -86,8 +98,39 @@ export const api = {
     return res.json();
   },
 
+  async applyParetoOption(projectId: string | number, optionIndex: number, optionData: any) {
+    const res = await fetch(`${API_BASE_URL}/ai/${projectId}/apply-pareto`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        option_index: optionIndex,
+        option_name: optionData.option_name,
+        makespan_hours: optionData.makespan_hours,
+        total_cost: optionData.total_cost,
+        tasks_schedule: optionData.tasks_schedule || optionData.tasks || {}
+      }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to apply Pareto option: ${text}`);
+    }
+    return res.json();
+  },
+
+  async restoreBaseline(projectId: string | number) {
+    const res = await fetch(`${API_BASE_URL}/ai/${projectId}/restore-baseline`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to restore baseline: ${text}`);
+    }
+    return res.json();
+  },
+
   // --- TASKS ---
-  async createTask(projectId: number, data: any) {
+  async createTask(projectId: number | string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -97,7 +140,7 @@ export const api = {
     return res.json();
   },
 
-  async updateTask(projectId: number, taskId: string, data: any) {
+  async updateTask(projectId: number | string, taskId: string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks/${taskId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -107,7 +150,7 @@ export const api = {
     return res.json();
   },
 
-  async deleteTask(projectId: number, taskId: string) {
+  async deleteTask(projectId: number | string, taskId: string) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks/${taskId}`, {
       method: 'DELETE',
     });
@@ -116,13 +159,13 @@ export const api = {
   },
 
   // --- TASK RESOURCES (ASSIGNMENTS) ---
-  async getTaskResources(projectId: number, taskId: string) {
+  async getTaskResources(projectId: number | string, taskId: string) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks/${taskId}/resources`);
     if (!res.ok) throw new Error('Failed to fetch task resources');
     return res.json();
   },
 
-  async assignTaskResource(projectId: number, taskId: string, data: any) {
+  async assignTaskResource(projectId: number | string, taskId: string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks/${taskId}/resources`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -132,7 +175,7 @@ export const api = {
     return res.json();
   },
 
-  async removeTaskResource(projectId: number, taskId: string, resourceId: number) {
+  async removeTaskResource(projectId: number | string, taskId: string, resourceId: number) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks/${taskId}/resources/${resourceId}`, {
       method: 'DELETE',
     });
@@ -141,7 +184,7 @@ export const api = {
   },
 
   // --- LOGIC CONSTRAINTS (EDGES) ---
-  async createLogicConstraint(projectId: number, data: any) {
+  async createLogicConstraint(projectId: number | string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/logic`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -151,7 +194,7 @@ export const api = {
     return res.json();
   },
 
-  async deleteLogicConstraint(projectId: number, predecessorId: string, successorId: string) {
+  async deleteLogicConstraint(projectId: number | string, predecessorId: string, successorId: string) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/logic/${predecessorId}/${successorId}`, {
       method: 'DELETE',
     });
@@ -160,7 +203,7 @@ export const api = {
   },
 
   // --- TIME CONSTRAINTS ---
-  async createTimeConstraint(projectId: number, data: any) {
+  async createTimeConstraint(projectId: number | string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/time`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -173,7 +216,7 @@ export const api = {
     return res.json();
   },
 
-  async updateTimeConstraint(projectId: number, data: any) {
+  async updateTimeConstraint(projectId: number | string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/time`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -187,7 +230,13 @@ export const api = {
   },
 
   // --- RESOURCE CONSTRAINTS ---
-  async createResourceConstraint(projectId: number, data: any) {
+  async getResourceConstraints(projectId: number | string) {
+    const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/resources`);
+    if (!res.ok) throw new Error('Failed to fetch resource constraints');
+    return res.json();
+  },
+
+  async createResourceConstraint(projectId: number | string, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/resources`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -197,7 +246,7 @@ export const api = {
     return res.json();
   },
 
-  async updateResourceConstraint(projectId: number, resourceId: number, data: any) {
+  async updateResourceConstraint(projectId: number | string, resourceId: number, data: any) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/resources/${resourceId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -207,7 +256,7 @@ export const api = {
     return res.json();
   },
 
-  async deleteResourceConstraint(projectId: number, resourceId: number) {
+  async deleteResourceConstraint(projectId: number | string, resourceId: number) {
     const res = await fetch(`${API_BASE_URL}/projects/${projectId}/constraints/resources/${resourceId}`, {
       method: 'DELETE',
     });

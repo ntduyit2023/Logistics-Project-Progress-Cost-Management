@@ -98,7 +98,7 @@ async def run_ai_pipeline_workflow(
         run_obj.ai_predictions = safe_results.get("ai_predictions", {})
         run_obj.mc_results = safe_results.get("mc_results", {})
 
-        pareto_list = safe_results.get("pareto_solutions", [])
+        pareto_list = safe_results.get("pareto_options") or safe_results.get("pareto_solutions", [])
         for idx, sol in enumerate(pareto_list, 1):
             ps = ParetoSolution(
                 run_id=run_obj.id,
@@ -110,7 +110,8 @@ async def run_ai_pipeline_workflow(
                 penalty_cost=float(sol.get("penalty_cost", 0.0)),
                 bonus_amount=float(sol.get("bonus_amount", 0.0)),
                 total_cost=float(sol.get("total_cost", 0.0)),
-                task_schedule=sol.get("tasks", [])
+                risk_pct=float(sol.get("risk_pct", 0.0)),
+                tasks_schedule=sol.get("tasks", sol.get("tasks_schedule", {}))
             )
             db.add(ps)
 
@@ -123,6 +124,7 @@ async def run_ai_pipeline_workflow(
             "project_id": project_code,
             "status": "Completed",
             "pareto_solutions": pareto_list,
+            "pareto_options": pareto_list,
             "mc_summary": safe_results.get("mc_results", {}).get("summary", {})
         }
 

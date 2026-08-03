@@ -9,7 +9,7 @@ import ReactFlow, {
 } from 'reactflow';
 import dagre from '@dagrejs/dagre';
 import 'reactflow/dist/style.css';
-import { X, Clock, DollarSign, Calendar, Activity, AlertTriangle, Sliders } from 'lucide-react';
+import { X, Clock, DollarSign, Calendar, Activity, AlertTriangle, Sliders, SlidersHorizontal, Sparkles } from 'lucide-react';
 import TaskNode from '../components/graph/TaskNode';
 
 const nodeTypes = {
@@ -28,83 +28,17 @@ const getLayoutedElements = (
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  // Check if we have enough baseline_start data to do a time-based layout
-  const nodesWithTime = nodes.filter(n => n.data && n.data.baseline_start);
-  if (nodesWithTime.length > nodes.length * 0.2) {
-    // TIME-BASED GANTT LAYOUT
-    const PIXELS_PER_DAY = horizontalSpacing; // Control horizontal spacing directly
-    const NODE_WIDTH = 250;
-    const NODE_HEIGHT = 80;
-    const LANE_SPACING = Math.max(10, Math.round(verticalSpacing * 0.4)); // Scaled lane spacing
-
-    // Sort nodes topologically or by time to assign lanes properly
-    const sortedNodes = [...nodes].sort((a, b) => {
-      const timeA = a.data?.baseline_start ? new Date(a.data.baseline_start).getTime() : 0;
-      const timeB = b.data?.baseline_start ? new Date(b.data.baseline_start).getTime() : 0;
-      return timeA - timeB;
-    });
-
-    let minTime = Number.MAX_SAFE_INTEGER;
-    sortedNodes.forEach(n => {
-      if (n.data?.baseline_start) {
-        const t = new Date(n.data.baseline_start).getTime();
-        if (t < minTime) minTime = t;
-      }
-    });
-    if (minTime === Number.MAX_SAFE_INTEGER) minTime = 0;
-
-    const laneEnds: number[] = []; // Tracks the end X coordinate of each lane
-
-    sortedNodes.forEach(node => {
-      let x = 0;
-      if (node.data?.baseline_start) {
-        const t = new Date(node.data.baseline_start).getTime();
-        const days = (t - minTime) / (1000 * 60 * 60 * 24);
-        x = days * PIXELS_PER_DAY;
-      }
-
-      const durationDays = node.data?.duration || 1;
-      const estimatedEndX = x + NODE_WIDTH + (durationDays * 2); // Approximate space taken by this node horizontally
-
-      // Find an available lane
-      let assignedLane = -1;
-      for (let i = 0; i < laneEnds.length; i++) {
-        if (laneEnds[i] < x - 20) { // 20px padding between nodes in the same lane
-          assignedLane = i;
-          break;
-        }
-      }
-
-      if (assignedLane === -1) {
-        assignedLane = laneEnds.length;
-        laneEnds.push(estimatedEndX);
-      } else {
-        laneEnds[assignedLane] = estimatedEndX;
-      }
-
-      node.targetPosition = 'left';
-      node.sourcePosition = 'right';
-      node.position = {
-        x: x,
-        y: assignedLane * (NODE_HEIGHT + LANE_SPACING)
-      };
-    });
-
-    return { nodes, edges };
-  }
-
-  // FALLBACK TO DAGRE
   const isHorizontal = direction === 'LR';
   dagreGraph.setGraph({
     rankdir: direction,
-    nodesep: Math.max(20, Math.round(verticalSpacing * 1.8)), // Scaled nodesep
-    ranksep: Math.max(50, Math.round(horizontalSpacing + 150)), // Scaled ranksep
-    edgesep: 80,
+    nodesep: Math.max(30, Math.round(verticalSpacing * 1.5)),
+    ranksep: Math.max(80, Math.round(horizontalSpacing + 100)),
+    edgesep: 50,
     ranker: 'network-simplex'
   });
 
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: 208, height: 64 });
+    dagreGraph.setNode(node.id, { width: 220, height: 80 });
   });
 
   edges.forEach((edge) => {
@@ -115,14 +49,14 @@ const getLayoutedElements = (
 
   nodes.forEach((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
-    node.targetPosition = isHorizontal ? 'left' : 'top';
-    node.sourcePosition = isHorizontal ? 'right' : 'bottom';
-
-    node.position = {
-      x: nodeWithPosition.x - 208 / 2,
-      y: nodeWithPosition.y - 64 / 2,
-    };
-    return node;
+    if (nodeWithPosition) {
+      node.targetPosition = isHorizontal ? 'left' : 'top';
+      node.sourcePosition = isHorizontal ? 'right' : 'bottom';
+      node.position = {
+        x: nodeWithPosition.x - 220 / 2,
+        y: nodeWithPosition.y - 80 / 2,
+      };
+    }
   });
 
   return { nodes, edges };
@@ -137,13 +71,16 @@ interface AirflowGraphProps {
   onEditTask?: (task: any) => void;
   selectedOptionModes?: number[];
   criticalityIndices?: Record<string, number>;
+  appliedTaskIds?: string[];
+  appliedTaskDetails?: Record<string, any>;
 }
 
 const AirflowGraph: React.FC<AirflowGraphProps> = ({
-  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, criticalityIndices
+  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}
 }) => {
   const [horizSpacing, setHorizSpacing] = useState(300);
   const [vertSpacing, setVertSpacing] = useState(80);
+  const [showSpacingConfig, setShowSpacingConfig] = useState(false);
 
   // Extract real features from task schema
   const getTaskGroups = (task: any) => {
@@ -215,13 +152,37 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
   const { initialNodesLayout, initialEdgesLayout } = useMemo(() => {
     if (!tasks || tasks.length === 0) return { initialNodesLayout: [], initialEdgesLayout: [] };
 
+    const normalizeId = (val: any): string => {
+      if (val === undefined || val === null) return '';
+      let str = String(val).trim();
+      if (str.endsWith('.0')) str = str.slice(0, -2);
+      return str;
+    };
+
+    const getCanonicalId = (t: any): string => {
+      if (!t) return '';
+      return normalizeId(t.task_id || t.wbs || t.task_code || t.id);
+    };
+
     const displayTasks = tasks;
-    const displayTaskIds = new Set(displayTasks.map((t: any) => String(t.id)));
+
+    // Build dictionary mapping any task identifier (id, task_id, wbs) -> canonical string ID
+    const taskIdToCanonicalMap = new Map<string, string>();
+    displayTasks.forEach((t: any) => {
+      const canonical = getCanonicalId(t);
+      if (t.id !== undefined && t.id !== null) taskIdToCanonicalMap.set(normalizeId(t.id), canonical);
+      if (t.task_id) taskIdToCanonicalMap.set(normalizeId(t.task_id), canonical);
+      if (t.wbs) taskIdToCanonicalMap.set(normalizeId(t.wbs), canonical);
+      if (t.task_code) taskIdToCanonicalMap.set(normalizeId(t.task_code), canonical);
+    });
+
+    const displayTaskIds = new Set(Array.from(taskIdToCanonicalMap.values()));
 
     const rawNodes = displayTasks.map((task: any, idx: number) => {
       const mode = selectedOptionModes && selectedOptionModes[idx] !== undefined ? selectedOptionModes[idx] : 0;
-      const wbs = task.wbs || task.id.split("_")[1] || task.id;
-      const isCritical = (criticalityIndices && criticalityIndices[task.id] > 0.75) || task.duration_days > 50;
+      const canonicalId = getCanonicalId(task);
+      const wbs = task.wbs || (canonicalId.includes("_") ? canonicalId.split("_")[1] : canonicalId);
+      const isCritical = (criticalityIndices && (criticalityIndices[canonicalId] > 0.75 || criticalityIndices[task.id] > 0.75)) || task.duration_days > 50;
 
       let baseTaskDuration = 10;
       if (task.duration_hours !== undefined && task.duration_hours !== null && parseFloat(task.duration_hours) > 0) {
@@ -258,33 +219,47 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           ? (task.outsource_cost || baseTaskCost * 1.5)
           : baseTaskCost;
 
+      const optDetail = appliedTaskDetails?.[canonicalId] || appliedTaskDetails?.[String(task.id)] || appliedTaskDetails?.[String(task.task_id)];
+
       return {
-        id: String(task.id),
+        id: canonicalId,
         type: 'taskNode',
         position: { x: 0, y: 0 },
         data: {
-          task_id: task.id,
-          task_label: task.id,
+          task_id: task.task_id || task.id,
+          task_label: canonicalId,
           wbs,
-          task_name: task.task_name || task.name || task.id,
-          duration: duration,
+          task_name: task.task_name || task.name || canonicalId,
+          duration: optDetail ? optDetail.new_duration : duration,
           total_cost: cost,
-          base_duration: baseTaskDuration,
+          base_duration: optDetail ? optDetail.old_duration : baseTaskDuration,
           base_cost: baseTaskCost,
           is_critical: isCritical,
-          is_ai_optimized: Boolean(task.is_ai_optimized || (task.overtime_hours && parseFloat(task.overtime_hours) > 0)),
+          is_ai_optimized: Boolean(task.is_ai_optimized || (task.overtime && parseFloat(task.overtime) > 0) || appliedTaskIds.includes(canonicalId) || appliedTaskIds.includes(String(task.id)) || appliedTaskIds.includes(String(task.task_id))),
+          overtime_cost: optDetail ? optDetail.overtime_cost : parseFloat(task.overtime || task.overtime_cost || 0),
+          overtime_hours_per_day: optDetail ? optDetail.overtime_hours_per_day : parseFloat(task.overtime_hours_per_day || task.overtime_hours || 0),
           resources: task.resources || [],
           features: getTaskGroups(task),
-          baseline_start: task.baseline_start
+          baseline_start: optDetail ? optDetail.baseline_start : task.baseline_start,
+          baseline_end: optDetail ? optDetail.baseline_end : task.baseline_end,
+          // === FIELDS MỚI ===
+          base_effort_hours: optDetail?.base_effort_hours ?? parseFloat(task.duration_hours || 0),
+          extra_workers: optDetail?.extra_workers ?? 0,
+          crashing_strategy: optDetail?.crashing_strategy ?? 'Normal',
+          labor_ot_premium: optDetail?.labor_ot_premium ?? 0,
+          equipment_ot_extra: optDetail?.equipment_ot_extra ?? 0,
+          energy_ot_extra: optDetail?.energy_ot_extra ?? 0,
+          added_resources_cost: optDetail?.added_resources_cost ?? 0
         },
       };
     });
 
     const rawEdges = dependencies
       .map((dep: any) => {
-        // Handle both object format (from API) and array format (from mocks)
-        const sourceId = String(dep.predecessor_id || dep.source_id || dep.source || dep.pred || (Array.isArray(dep) ? dep[0] : '')).trim();
-        const targetId = String(dep.successor_id || dep.target_id || dep.target || dep.succ || (Array.isArray(dep) ? dep[1] : '')).trim();
+        const rawSource = dep.predecessor_id || dep.source_id || dep.source || dep.pred || (Array.isArray(dep) ? dep[0] : '');
+        const rawTarget = dep.successor_id || dep.target_id || dep.target || dep.succ || (Array.isArray(dep) ? dep[1] : '');
+        const sourceId = taskIdToCanonicalMap.get(normalizeId(rawSource)) || normalizeId(rawSource);
+        const targetId = taskIdToCanonicalMap.get(normalizeId(rawTarget)) || normalizeId(rawTarget);
         return { sourceId, targetId };
       })
       .filter((dep) => dep.sourceId && dep.targetId && displayTaskIds.has(dep.sourceId) && displayTaskIds.has(dep.targetId))
@@ -305,7 +280,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
 
     const layouted = getLayoutedElements(rawNodes, rawEdges, 'LR', horizSpacing, vertSpacing);
     return { initialNodesLayout: layouted.nodes, initialEdgesLayout: layouted.edges };
-  }, [tasks, dependencies, selectedOptionModes, criticalityIndices, horizSpacing, vertSpacing]);
+  }, [tasks, dependencies, selectedOptionModes, criticalityIndices, horizSpacing, vertSpacing, appliedTaskIds, appliedTaskDetails]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesLayout);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdgesLayout);
@@ -328,9 +303,10 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
   }, [onConnectEdge]);
 
   return (
-    <div className="w-full h-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex animate-fadeIn">
-      <div className="flex-1 relative">
+    <div className="w-full h-full min-h-[550px] bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative flex flex-col animate-fadeIn">
+      <div className="w-full h-full min-h-[550px] flex-1 relative" style={{ width: '100%', height: '100%', minHeight: '550px' }}>
         <ReactFlow
+          style={{ width: '100%', height: '100%', minHeight: '550px' }}
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
@@ -371,40 +347,64 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
             </p>
           </Panel>
 
-          <Panel position="top-right" className="bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-md border border-slate-200 text-xs m-4 z-10 w-60 space-y-3">
-            <h4 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
-              <Sliders size={14} className="text-blue-600" />
-              Cấu hình Giãn cách Node
-            </h4>
-            <div className="space-y-1">
-              <div className="flex justify-between text-slate-600 font-medium">
-                <span>Khoảng cách Ngang:</span>
-                <span className="font-bold font-mono text-blue-600">{horizSpacing}px</span>
-              </div>
-              <input
-                type="range"
-                min="100"
-                max="600"
-                step="20"
-                value={horizSpacing}
-                onChange={(e) => setHorizSpacing(Number(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-              />
-            </div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-slate-600 font-medium">
-                <span>Khoảng cách Dọc:</span>
-                <span className="font-bold font-mono text-blue-600">{vertSpacing}px</span>
-              </div>
-              <input
-                type="range"
-                min="20"
-                max="300"
-                step="10"
-                value={vertSpacing}
-                onChange={(e) => setVertSpacing(Number(e.target.value))}
-                className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-              />
+          <Panel position="bottom-right" className="flex items-center gap-2 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-xl border border-slate-200/80 mb-4 mr-4">
+            <div className="relative">
+              <button
+                onClick={() => setShowSpacingConfig(!showSpacingConfig)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm ${
+                  showSpacingConfig ? 'bg-indigo-600 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                }`}
+                title="Cấu hình khoảng cách giữa các Node"
+              >
+                <SlidersHorizontal size={14} />
+                <span>Khoảng cách Node</span>
+              </button>
+
+              {showSpacingConfig && (
+                <div className="absolute bottom-full right-0 mb-3 w-64 bg-white p-4 rounded-2xl shadow-2xl border border-slate-200 space-y-3.5 text-xs animate-fadeIn z-50">
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <h4 className="font-extrabold text-slate-800 flex items-center gap-1.5">
+                      <SlidersHorizontal size={14} className="text-indigo-600" />
+                      Giãn cách Sơ đồ Network
+                    </h4>
+                    <button onClick={() => setShowSpacingConfig(false)} className="text-slate-400 hover:text-slate-600">
+                      <X size={14} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-slate-600 font-medium">
+                      <span>Khoảng cách Ngang:</span>
+                      <span className="font-bold font-mono text-indigo-600">{horizSpacing}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="100"
+                      max="600"
+                      step="20"
+                      value={horizSpacing}
+                      onChange={(e) => setHorizSpacing(Number(e.target.value))}
+                      className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-slate-600 font-medium">
+                      <span>Khoảng cách Dọc:</span>
+                      <span className="font-bold font-mono text-indigo-600">{vertSpacing}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="20"
+                      max="300"
+                      step="10"
+                      value={vertSpacing}
+                      onChange={(e) => setVertSpacing(Number(e.target.value))}
+                      className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </Panel>
         </ReactFlow>
@@ -476,17 +476,24 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                 <div className="mb-6 flex gap-3">
                   {onEditTask && <button
                     onClick={() => {
-                      const t = tasks.find(x => String(x.id) === selectedTask.task_label || String(x.id) === selectedTask.task_id);
+                      const selId = String(selectedTask.task_id || selectedTask.task_label || '');
+                      const selWbs = String(selectedTask.wbs || '');
+                      const t = tasks.find(x => 
+                        String(x.id) === selId || 
+                        String(x.task_id) === selId || 
+                        String(x.wbs) === selId ||
+                        (selWbs && String(x.wbs) === selWbs)
+                      ) || selectedTask;
                       if (t) onEditTask(t);
                     }}
-                    className="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2 rounded-lg border border-blue-200 transition-colors"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors shadow-sm text-xs"
                   >
                     Edit Node
                   </button>}
                   {onDeleteTask && <button
                     onClick={async () => {
                       if (window.confirm("Delete this node?")) {
-                        onDeleteTask(selectedTask.task_label || selectedTask.task_id);
+                        onDeleteTask(selectedTask.task_id || selectedTask.task_label || selectedTask.id);
                       }
                     }}
                     className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-lg border border-red-200 transition-colors"
@@ -511,6 +518,67 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                         </span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Optimization Details Panel */}
+              {(selectedTask.is_ai_optimized || selectedTask.crashing_strategy !== 'Normal') && (
+                <div className="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-16 h-16 bg-amber-100 rounded-bl-full -mr-4 -mt-4 opacity-50 pointer-events-none"></div>
+                  
+                  <h3 className="text-sm font-black text-amber-800 mb-3 flex items-center border-b border-amber-200/60 pb-2 relative z-10">
+                    <Sparkles size={16} className="mr-2 text-amber-500" />
+                    Optimization Details (CP-SAT)
+                  </h3>
+                  
+                  <div className="space-y-2 relative z-10 text-xs">
+                    <div className="flex justify-between items-center bg-white/60 p-1.5 rounded border border-amber-100">
+                      <span className="text-amber-700 font-medium">Crashing Strategy:</span>
+                      <span className="font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded">{selectedTask.crashing_strategy}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center bg-white/60 p-1.5 rounded border border-amber-100">
+                      <span className="text-amber-700 font-medium">Base Effort:</span>
+                      <span className="font-bold text-slate-800">{selectedTask.base_effort_hours}h</span>
+                    </div>
+                    
+                    {selectedTask.extra_workers > 0 && (
+                      <div className="flex justify-between items-center bg-emerald-50 p-1.5 rounded border border-emerald-100">
+                        <span className="text-emerald-700 font-medium">Extra Workers:</span>
+                        <span className="font-bold text-emerald-800">+{selectedTask.extra_workers}</span>
+                      </div>
+                    )}
+                    
+                    {(selectedTask.added_resources_cost > 0 || selectedTask.labor_ot_premium > 0 || selectedTask.equipment_ot_extra > 0 || selectedTask.energy_ot_extra > 0) && (
+                      <div className="mt-2 pt-2 border-t border-amber-200/50">
+                        <p className="text-[10px] font-bold text-amber-800/70 mb-1 uppercase tracking-wider">Chi phí phát sinh</p>
+                        {selectedTask.added_resources_cost > 0 && (
+                          <div className="flex justify-between items-center py-0.5">
+                            <span className="text-slate-600">Thuê thêm (Added Res):</span>
+                            <span className="font-bold text-rose-600">+${Number(selectedTask.added_resources_cost).toFixed(0)}</span>
+                          </div>
+                        )}
+                        {selectedTask.labor_ot_premium > 0 && (
+                          <div className="flex justify-between items-center py-0.5">
+                            <span className="text-slate-600">OT Labor:</span>
+                            <span className="font-bold text-rose-600">+${Number(selectedTask.labor_ot_premium).toFixed(0)}</span>
+                          </div>
+                        )}
+                        {selectedTask.equipment_ot_extra > 0 && (
+                          <div className="flex justify-between items-center py-0.5">
+                            <span className="text-slate-600">OT Equip:</span>
+                            <span className="font-bold text-rose-600">+${Number(selectedTask.equipment_ot_extra).toFixed(0)}</span>
+                          </div>
+                        )}
+                        {selectedTask.energy_ot_extra > 0 && (
+                          <div className="flex justify-between items-center py-0.5">
+                            <span className="text-slate-600">OT Energy:</span>
+                            <span className="font-bold text-rose-600">+${Number(selectedTask.energy_ot_extra).toFixed(0)}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

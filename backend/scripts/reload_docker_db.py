@@ -63,14 +63,15 @@ async def reload_docker_database_rigorous():
             
             pinfo_csv = os.path.join(proj_path, 'project_info.csv')
             tasks_csv = os.path.join(proj_path, 'tasks.csv')
-            edges_csv = os.path.join(proj_path, 'predecessors.csv')
+            edges_csv = os.path.join(proj_path, 'logic.csv')
+            if not os.path.exists(edges_csv):
+                edges_csv = os.path.join(proj_path, 'predecessors.csv')
+                
             res_csv = os.path.join(proj_path, 'resources.csv')
             tr_csv = os.path.join(proj_path, 'task_resources.csv')
             sched_csv = os.path.join(proj_path, 'task_schedules.csv')
             
-            hours_csv = os.path.join(proj_path, 'agenda_working_hours.csv')
-            days_csv = os.path.join(proj_path, 'agenda_working_days.csv')
-            holidays_csv = os.path.join(proj_path, 'agenda_holidays.csv')
+            agenda_json_file = os.path.join(proj_path, 'agenda.json')
             
             if not os.path.exists(tasks_csv):
                 print(f"[SKIP] Bo qua {proj_folder}: Khong tim thay tasks.csv")
@@ -83,10 +84,6 @@ async def reload_docker_database_rigorous():
             df_res = _safe_read_csv(res_csv)
             df_tr = _safe_read_csv(tr_csv)
             df_sched = _safe_read_csv(sched_csv)
-            
-            df_hours = _safe_read_csv(hours_csv)
-            df_days = _safe_read_csv(days_csv)
-            df_holidays = _safe_read_csv(holidays_csv)
 
             # Extract project_info & Agenda
             if not df_pinfo.empty:
@@ -110,26 +107,30 @@ async def reload_docker_database_rigorous():
 
             # Insert project record
             res_proj = await conn.execute(
-                text("INSERT INTO projects (project_name, type, num_tasks, num_edges, network_density, base_cost, total_cost, status, created_at, updated_at) VALUES (:p_name, :p_type, :n_tasks, :n_edges, 0.0, :b_cost, :t_cost, 'Planning', NOW(), NOW()) RETURNING id"),
-                {"p_name": p_name, "p_type": p_type, "n_tasks": n_tasks, "n_edges": n_edges, "b_cost": base_cost_pinfo, "t_cost": total_cost_pinfo}
+                text("INSERT INTO projects (id, project_name, project_type, penalty_per_day, bonus_per_day, num_tasks, num_edges, base_cost, total_cost, status, metadata_json, created_at, updated_at) VALUES (:pid, :p_name, :p_type, 0.0, 0.0, :n_tasks, :n_edges, :b_cost, :t_cost, 'Planning', '{}', NOW(), NOW()) RETURNING id"),
+                {"pid": proj_folder, "p_name": p_name, "p_type": p_type, "n_tasks": n_tasks, "n_edges": n_edges, "b_cost": base_cost_pinfo, "t_cost": total_cost_pinfo}
             )
             p_id = res_proj.fetchone()[0]
             print(f"\n---> [LOAD PROJECT #{p_id}] '{p_name}' (Folder: {proj_folder}, Type: {p_type})")
 
-            # Build Agenda JSON & Insert Time Constraints with 1.4 Overtime Multiplier
-            working_hours_list = df_hours[df_hours['Working'].astype(str).str.lower() == 'yes']['Time Range'].tolist() if not df_hours.empty and 'Working' in df_hours.columns else []
-            working_days_list = df_days[df_days['Working'].astype(str).str.lower() == 'yes']['Day'].tolist() if not df_days.empty and 'Working' in df_days.columns else []
-            holidays_list = df_holidays.iloc[:, 0].tolist() if not df_holidays.empty else []
-
+            # Build Agenda JSON & Insert Time Constraints
             sched_data = {
                 "hours_per_day": h_per_day,
-                "days_per_week": d_per_week,
-                "working_hours": working_hours_list,
-                "working_days": working_days_list
+                "days_per_week": d_per_week
             }
+            holidays_list = []
+            if os.path.exists(agenda_json_file):
+                try:
+                    with open(agenda_json_file, 'r', encoding='utf-8') as f:
+                        ag_json = json.load(f)
+                        sched_data = ag_json.get('weekly_schedule', sched_data)
+                        holidays_list = ag_json.get('holidays', [])
+                except Exception as e:
+                    print(f"  [WARN] Khong doc duoc agenda.json: {e}")
+
             await conn.execute(
-                text("INSERT INTO project_constraint_time (project_id, weekly_schedule, holidays_list, overtime_multiplier) VALUES (:p_id, :sched, :holidays, :ot_mult)"),
-                {"p_id": p_id, "sched": json.dumps(sched_data), "holidays": json.dumps(holidays_list), "ot_mult": 1.4}
+                text("INSERT INTO project_calendars (project_id, weekly_schedule, holidays_list, created_at, updated_at) VALUES (:p_id, :sched, :holidays, NOW(), NOW())"),
+                {"p_id": p_id, "sched": json.dumps(sched_data), "holidays": json.dumps(holidays_list)}
             )
 
             # Parse baseline_start from task_schedules.csv
@@ -174,8 +175,8 @@ async def reload_docker_database_rigorous():
                     r_cap = float(r_row.get(r_cap_col, 10.0) or 10.0)
                     
                     res_r = await conn.execute(
-                        text("INSERT INTO project_constraint_resource (project_id, resource_name, resource_type, cost_per_unit, max_availability) VALUES (:p_id, :r_name, :r_type, :r_cost, :r_cap) RETURNING id"),
-                        {"p_id": p_id, "r_name": r_name, "r_type": r_type, "r_cost": r_cost, "r_cap": r_cap}
+                        text("INSERT INTO resources (project_id, resource_id, name, type, unit_cost, max_availability, energy, overtime_multi, max_overtime_per_day, created_at, updated_at) VALUES (:p_id, :r_id, :r_name, :r_type, :r_cost, :r_cap, 0.0, 1.5, 4.0, NOW(), NOW()) RETURNING id"),
+                        {"p_id": p_id, "r_id": orig_r_id, "r_name": r_name, "r_type": r_type, "r_cost": r_cost, "r_cap": r_cap}
                     )
                     db_r_id = res_r.fetchone()[0]
                     res_id_db_map[orig_r_id] = db_r_id
@@ -258,6 +259,11 @@ async def reload_docker_database_rigorous():
                 reputation_cost = float(row.get('reputation_cost', 0.0) or 0.0)
 
                 b_start = schedule_map.get(raw_id) or schedule_map.get(db_t_id)
+                if not b_start and pd.notna(row.get('baseline_start')):
+                    try:
+                        b_start = pd.to_datetime(row.get('baseline_start')).to_pydatetime()
+                    except Exception:
+                        b_start = None
 
                 # Base cost is sum of all 38 cost sub-groups
                 task_base = float(row.get('base_cost', 0.0) or 0.0)
@@ -280,31 +286,28 @@ async def reload_docker_database_rigorous():
 
                 await conn.execute(
                     text(
-                        "INSERT INTO tasks (id, project_id, task_name, duration_months, duration_weeks, duration_days, duration_hours, overtime_hours, baseline_start, "
+                        "INSERT INTO tasks (project_id, task_id, task_name, duration_hours, baseline_start, "
                         "labor, material, equipment, energy, testing_inspection, project_management, facility, utilities, communication, training, quality_management, "
                         "overtime, delay_penalty, inventory_holding, waiting_cost, idle_resource, revenue_delay, expediting, insurance, rework, warranty, litigation, "
                         "regulatory_compliance, contingency_reserve, management_reserve, transportation, ordering, packaging, reverse_logistics, customs, supplier_coordination, "
                         "opportunity_cost, capital_cost, financing_cost, npv_loss, esg_cost, carbon_tax, reputation_cost, "
-                        "complexity, weather_contingency, general_contingency, rework_risk, risk_factor, base_cost, total_cost, status) "
-                        "VALUES (:id, :project_id, :task_name, :duration_months, :duration_weeks, :duration_days, :duration_hours, :overtime_hours, :baseline_start, "
+                        "created_at, updated_at) "
+                        "VALUES (:project_id, :task_id, :task_name, :duration_hours, :baseline_start, "
                         ":labor, :material, :equipment, :energy, :testing_inspection, :project_management, :facility, :utilities, :communication, :training, :quality_management, "
                         ":overtime, :delay_penalty, :inventory_holding, :waiting_cost, :idle_resource, :revenue_delay, :expediting, :insurance, :rework, :warranty, :litigation, "
                         ":regulatory_compliance, :contingency_reserve, :management_reserve, :transportation, :ordering, :packaging, :reverse_logistics, :customs, :supplier_coordination, "
                         ":opportunity_cost, :capital_cost, :financing_cost, :npv_loss, :esg_cost, :carbon_tax, :reputation_cost, "
-                        ":complexity, :weather_contingency, :general_contingency, :rework_risk, :risk_factor, :base_cost, :total_cost, :status)"
+                        "NOW(), NOW())"
                     ),
                     {
-                        "id": db_t_id, "project_id": p_id, "task_name": t_name,
-                        "duration_months": dur_m, "duration_weeks": dur_w, "duration_days": dur_d,
-                        "duration_hours": dur_h, "overtime_hours": ot_h, "baseline_start": b_start,
+                        "project_id": p_id, "task_id": db_t_id, "task_name": t_name,
+                        "duration_hours": dur_h, "baseline_start": b_start,
                         "labor": labor, "material": material, "equipment": equipment, "energy": energy, "testing_inspection": testing_inspection,
                         "project_management": project_management, "facility": facility, "utilities": utilities, "communication": communication, "training": training, "quality_management": quality_management,
                         "overtime": overtime, "delay_penalty": delay_penalty, "inventory_holding": inventory_holding, "waiting_cost": waiting_cost, "idle_resource": idle_resource, "revenue_delay": revenue_delay, "expediting": expediting,
                         "insurance": insurance, "rework": rework, "warranty": warranty, "litigation": litigation, "regulatory_compliance": regulatory_compliance, "contingency_reserve": contingency_reserve, "management_reserve": management_reserve,
                         "transportation": transportation, "ordering": ordering, "packaging": packaging, "reverse_logistics": reverse_logistics, "customs": customs, "supplier_coordination": supplier_coordination,
-                        "opportunity_cost": opportunity_cost, "capital_cost": capital_cost, "financing_cost": financing_cost, "npv_loss": npv_loss, "esg_cost": esg_cost, "carbon_tax": carbon_tax, "reputation_cost": reputation_cost,
-                        "complexity": g5_comp, "weather_contingency": g5_weat, "general_contingency": g5_cont, "rework_risk": g5_rewo,
-                        "risk_factor": r_factor, "base_cost": task_base, "total_cost": task_total, "status": "Pending"
+                        "opportunity_cost": opportunity_cost, "capital_cost": capital_cost, "financing_cost": financing_cost, "npv_loss": npv_loss, "esg_cost": esg_cost, "carbon_tax": carbon_tax, "reputation_cost": reputation_cost
                     }
                 )
                 task_id_db_map[raw_id] = db_t_id
@@ -336,10 +339,10 @@ async def reload_docker_database_rigorous():
                     db_t = task_id_db_map.get(orig_t) or task_id_db_map.get(f"{proj_folder}_{orig_t}")
                     db_r = res_id_db_map.get(orig_r) or res_name_db_map.get(orig_r.lower())
                     
-                    if db_t and db_r:
+                    if db_t:
                         await conn.execute(
-                            text("INSERT INTO task_resources (task_id, resource_id, request_quantity) VALUES (:task_id, :resource_id, :request_quantity)"),
-                            {"task_id": db_t, "resource_id": db_r, "request_quantity": qty}
+                            text("INSERT INTO task_resources (project_id, task_id, resource_id, request_quantity, created_at) VALUES (:p_id, :task_id, :resource_id, :request_quantity, NOW())"),
+                            {"p_id": p_id, "task_id": db_t, "resource_id": str(orig_r), "request_quantity": qty}
                         )
                         tr_inserted += 1
                 print(f"     [OK] Chen {tr_inserted} phan bo task_resources thanh cong!")
@@ -365,8 +368,8 @@ async def reload_docker_database_rigorous():
                     
                     if db_p and db_s:
                         await conn.execute(
-                            text("INSERT INTO project_constraint_logic (project_id, predecessor_id, successor_id, dependency_type, lag_months, lag_weeks, lag_days, lag_hours) VALUES (:p_id, :pred, :succ, :dep, :lag_m, :lag_w, :lag_d, :lag_h)"),
-                            {"p_id": p_id, "pred": db_p, "succ": db_s, "dep": dep, "lag_m": lag_m, "lag_w": lag_w, "lag_d": lag_d, "lag_h": lag_h}
+                            text("INSERT INTO task_logic (project_id, predecessor_id, successor_id, dependency_type, lag_hours, created_at) VALUES (:p_id, :pred, :succ, :dep, :lag_h, NOW())"),
+                            {"p_id": p_id, "pred": db_p, "succ": db_s, "dep": dep, "lag_h": lag_h}
                         )
                         edges_inserted += 1
                 print(f"     [OK] Chen {edges_inserted} lien ket canh logic (predecessors) thanh cong!")
