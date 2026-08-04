@@ -690,7 +690,7 @@ class CPSATParetoSolver:
             bonus_amount = round(abs(delta_days) * self.bonus_per_day, 2)
 
         final_cost = round(res_cost + penalty_cost - bonus_amount, 2)
-        actual_finish_str = actual_finish_dt.strftime('%d/%m/%Y %H:%M')
+        actual_finish_str = actual_finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
 
         return {
             'option_name': cfg['name'],
@@ -818,8 +818,8 @@ class CPSATParetoSolver:
             try:
                 task_start_dt = self.calendar_engine.add_working_hours(min_proj_dt, start_h)
                 task_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, finish_h)
-                start_str = task_start_dt.strftime('%d/%m/%Y %H:%M')
-                finish_str = task_finish_dt.strftime('%d/%m/%Y %H:%M')
+                start_str = task_start_dt.strftime('%Y-%m-%dT%H:%M:%S')
+                finish_str = task_finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
             except Exception:
                 start_str = None
                 finish_str = None
@@ -925,7 +925,7 @@ class CPSATParetoSolver:
             
             try:
                 finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, curr_makespan)
-                finish_str = finish_dt.strftime('%d/%m/%Y %H:%M')
+                finish_str = finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
             except Exception:
                 finish_dt = None
                 finish_str = "N/A"

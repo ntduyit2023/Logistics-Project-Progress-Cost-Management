@@ -7,6 +7,7 @@ class TaskBase(BaseModel):
     task_id: Optional[str] = Field(None, max_length=100, description="Mã công việc (ví dụ C2011-07_1). Tự động sinh nếu để trống.")
     task_name: str = Field(..., max_length=255, description="Tên hiển thị công việc")
     baseline_start: Optional[datetime] = Field(None, description="Mốc thời gian bắt đầu thi công (Datetime)")
+    baseline_end: Optional[datetime] = Field(None, description="Mốc thời gian kết thúc thi công (Datetime)")
     duration_hours: float = Field(0.0, ge=0, description="Thời gian thi công thực tế (giờ)")
     total_cost: Optional[float] = Field(0.0, ge=0, description="Tổng chi phí của Task ($)")
     
@@ -69,6 +70,7 @@ class TaskUpdate(BaseModel):
     task_id: Optional[str] = Field(None, max_length=100)
     task_name: Optional[str] = Field(None, max_length=255)
     baseline_start: Optional[datetime] = Field(None)
+    baseline_end: Optional[datetime] = Field(None)
     duration_hours: Optional[float] = Field(None, ge=0)
     total_cost: Optional[float] = Field(None, ge=0)
     

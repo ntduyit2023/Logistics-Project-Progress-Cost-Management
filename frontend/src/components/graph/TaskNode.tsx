@@ -35,8 +35,33 @@ const TaskNode = ({ data }: any) => {
     cardClass = 'bg-rose-50 border-2 border-rose-500 text-rose-950 shadow-rose-100 hover:shadow-rose-200';
   }
 
-  const startDateStr = data.baseline_start ? new Date(data.baseline_start).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'TBD';
-  const endDateStr = data.baseline_end ? new Date(data.baseline_end).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'TBD';
+  const formatDateTimeShort = (dateStr: any) => {
+    if (!dateStr) return 'TBD';
+    let d = new Date(dateStr);
+    
+    // Fallback for old DD/MM/YYYY HH:MM format if Invalid Date
+    if (isNaN(d.getTime()) && typeof dateStr === 'string' && dateStr.includes('/')) {
+      const parts = dateStr.split(' ');
+      const dateParts = parts[0].split('/');
+      if (dateParts.length === 3) {
+        // Rearrange to YYYY-MM-DD
+        const timePart = parts[1] || '00:00';
+        d = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${timePart}:00`);
+      }
+    }
+    
+    if (isNaN(d.getTime())) return 'TBD';
+    
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    const hh = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${dd}/${mm}/${yy} ${hh}:${min}`;
+  };
+
+  const startDateStr = formatDateTimeShort(data.baseline_start);
+  const endDateStr = formatDateTimeShort(data.baseline_end);
 
   const tooltipText = `${data.wbs} - ${data.task_name}\n` +
     `• Thời gian: ${startDateStr} ➔ ${endDateStr}\n` +
@@ -102,9 +127,9 @@ const TaskNode = ({ data }: any) => {
 
         <div className="flex items-center justify-between mt-0.5 text-[9px] text-slate-400 font-medium border-t border-slate-100 pt-1">
           <div className="flex items-center gap-0.5 text-[8px]" title={`Start: ${startDateStr}\nEnd: ${endDateStr}`}>
-            <Calendar size={10} className="text-slate-400" />
-            <span className="truncate max-w-[80px]">
-              {startDateStr.slice(0,5)}➔{endDateStr.slice(0,5)}
+            <Calendar size={10} className="text-slate-400 shrink-0" />
+            <span className="truncate max-w-[130px]">
+              {startDateStr}➔{endDateStr}
             </span>
           </div>
           <div className="flex items-center gap-0.5" title="Duration">

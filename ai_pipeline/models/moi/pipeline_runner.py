@@ -175,6 +175,7 @@ def run_new_pipeline(
         capacities[r_id] = cap
         capacities[r_name] = cap
         resources_dict[r_id] = r.to_dict()
+        resources_dict[r_name] = r.to_dict()
 
     task_resource_reqs = {}
     task_labor_rates = {}

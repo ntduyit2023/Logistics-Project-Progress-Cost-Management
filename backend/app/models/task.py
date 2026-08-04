@@ -26,6 +26,7 @@ class Task(Base):
     task_id: Mapped[str] = mapped_column(String(100), nullable=False)
     task_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     baseline_start: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    baseline_end: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     duration_hours: Mapped[float] = mapped_column(Numeric(10, 2), default=0.0)
     
     # 38 Cột chi phí vật lý (Physical SQL Columns)

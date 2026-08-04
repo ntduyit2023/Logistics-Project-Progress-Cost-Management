@@ -133,19 +133,30 @@ async def reload_docker_database_rigorous():
                 {"p_id": p_id, "sched": json.dumps(sched_data), "holidays": json.dumps(holidays_list)}
             )
 
-            # Parse baseline_start from task_schedules.csv
+            # Parse baseline_start and baseline_end from task_schedules.csv
             schedule_map = {}
             if not df_sched.empty:
                 t_col_sched = 'task_id' if 'task_id' in df_sched.columns else df_sched.columns[0]
                 start_col = 'baseline_start' if 'baseline_start' in df_sched.columns else df_sched.columns[1]
+                end_col = 'baseline_end'
                 for _, s_row in df_sched.iterrows():
                     t_id_str = str(s_row[t_col_sched])
                     st_val = s_row.get(start_col)
+                    end_val = s_row.get(end_col) if end_col in df_sched.columns else None
+                    
+                    st_dt, end_dt = None, None
                     if pd.notna(st_val):
                         try:
-                            schedule_map[t_id_str] = pd.to_datetime(st_val).to_pydatetime()
+                            st_dt = pd.to_datetime(st_val).to_pydatetime()
                         except Exception:
-                            schedule_map[t_id_str] = None
+                            pass
+                    if pd.notna(end_val):
+                        try:
+                            end_dt = pd.to_datetime(end_val).to_pydatetime()
+                        except Exception:
+                            pass
+                            
+                    schedule_map[t_id_str] = (st_dt, end_dt)
 
             # Insert resources from resources.csv
             res_id_db_map = {}
@@ -258,12 +269,23 @@ async def reload_docker_database_rigorous():
                 carbon_tax = float(row.get('carbon_tax', 0.0) or 0.0)
                 reputation_cost = float(row.get('reputation_cost', 0.0) or 0.0)
 
-                b_start = schedule_map.get(raw_id) or schedule_map.get(db_t_id)
+                b_start = None
+                b_end = None
+                sched_data = schedule_map.get(raw_id) or schedule_map.get(db_t_id)
+                if sched_data:
+                    b_start, b_end = sched_data
+                    
                 if not b_start and pd.notna(row.get('baseline_start')):
                     try:
                         b_start = pd.to_datetime(row.get('baseline_start')).to_pydatetime()
                     except Exception:
                         b_start = None
+                        
+                if not b_end and pd.notna(row.get('baseline_end')):
+                    try:
+                        b_end = pd.to_datetime(row.get('baseline_end')).to_pydatetime()
+                    except Exception:
+                        b_end = None
 
                 # Base cost is sum of all 38 cost sub-groups
                 task_base = float(row.get('base_cost', 0.0) or 0.0)
@@ -286,13 +308,13 @@ async def reload_docker_database_rigorous():
 
                 await conn.execute(
                     text(
-                        "INSERT INTO tasks (project_id, task_id, task_name, duration_hours, baseline_start, "
+                        "INSERT INTO tasks (project_id, task_id, task_name, duration_hours, baseline_start, baseline_end, "
                         "labor, material, equipment, energy, testing_inspection, project_management, facility, utilities, communication, training, quality_management, "
                         "overtime, delay_penalty, inventory_holding, waiting_cost, idle_resource, revenue_delay, expediting, insurance, rework, warranty, litigation, "
                         "regulatory_compliance, contingency_reserve, management_reserve, transportation, ordering, packaging, reverse_logistics, customs, supplier_coordination, "
                         "opportunity_cost, capital_cost, financing_cost, npv_loss, esg_cost, carbon_tax, reputation_cost, "
                         "created_at, updated_at) "
-                        "VALUES (:project_id, :task_id, :task_name, :duration_hours, :baseline_start, "
+                        "VALUES (:project_id, :task_id, :task_name, :duration_hours, :baseline_start, :baseline_end, "
                         ":labor, :material, :equipment, :energy, :testing_inspection, :project_management, :facility, :utilities, :communication, :training, :quality_management, "
                         ":overtime, :delay_penalty, :inventory_holding, :waiting_cost, :idle_resource, :revenue_delay, :expediting, :insurance, :rework, :warranty, :litigation, "
                         ":regulatory_compliance, :contingency_reserve, :management_reserve, :transportation, :ordering, :packaging, :reverse_logistics, :customs, :supplier_coordination, "
@@ -301,7 +323,7 @@ async def reload_docker_database_rigorous():
                     ),
                     {
                         "project_id": p_id, "task_id": db_t_id, "task_name": t_name,
-                        "duration_hours": dur_h, "baseline_start": b_start,
+                        "duration_hours": dur_h, "baseline_start": b_start, "baseline_end": b_end,
                         "labor": labor, "material": material, "equipment": equipment, "energy": energy, "testing_inspection": testing_inspection,
                         "project_management": project_management, "facility": facility, "utilities": utilities, "communication": communication, "training": training, "quality_management": quality_management,
                         "overtime": overtime, "delay_penalty": delay_penalty, "inventory_holding": inventory_holding, "waiting_cost": waiting_cost, "idle_resource": idle_resource, "revenue_delay": revenue_delay, "expediting": expediting,
