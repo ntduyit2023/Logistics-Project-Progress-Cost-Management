@@ -24,6 +24,21 @@ from torch_geometric.nn import HGTConv, Linear
 class HGTTaskPredictor(nn.Module):
     """
     Mô hình Native Heterogeneous Graph Transformer (HGTConv).
+
+    Mô hình này áp dụng kiến trúc Transformer chuyên biệt cho đồ thị đa hình.
+    Nó thực hiện Message Passing (Truyền tin) qua các nút (Task, Resource, Shift)
+    để học biểu diễn không gian nhúng (Embeddings) của toàn bộ dự án.
+
+    Kiến trúc gồm:
+        1. Projection Layers: Đưa các features đầu vào thô về cùng chiều hidden_dim (128).
+        2. HGT Layers: Nhiều lớp Graph Transformer kết nối các nút lại với nhau.
+        3. Global Context Pooling (Mean + Max): Trích xuất bối cảnh (Context) chung của cả dự án.
+        4. Prediction Heads (MLP): Đưa ra 3 dự báo chính cho TỪNG công việc.
+
+    Dự báo đầu ra:
+        - duration_factor (Scale thay đổi thời lượng thi công).
+        - expected_delay (Thời gian trễ hạn tính bằng Log-hours).
+        - uncertainty_sigma (Mức độ bất định/rủi ro biến động).
     """
     def __init__(self, in_channels_dict, hidden_dim=128, num_heads=4, num_layers=2):
         super().__init__()
@@ -49,14 +64,18 @@ class HGTTaskPredictor(nn.Module):
                 nn.GELU()
             )
             
-        # 2. Native HGTConv Layers (Chuyên biệt cho Heterogeneous Graph Transformer)
+        # =========================================================================
+        # BƯỚC 2: MESSAGE PASSING QUA CÁC TẦNG HETEROGENEOUS GRAPH TRANSFORMER
+        # ========================================================================= (Chuyên biệt cho Heterogeneous Graph Transformer)
         self.hgt_layers = nn.ModuleList()
         for _ in range(num_layers):
             self.hgt_layers.append(
                 HGTConv(hidden_dim, hidden_dim, metadata=self.metadata, heads=num_heads)
             )
             
-        # 3. Layer Fusion kết hợp Task Embeddings với Global Project Context (Hybrid Mean + Max Pooling)
+        # =========================================================================
+        # BƯỚC 3: HYBRID READOUT POOLING (TẠO NGỮ CẢNH GLOBAL CHO DỰ ÁN)
+        # ========================================================================= (Hybrid Mean + Max Pooling)
         self.fusion_layer = nn.Sequential(
             Linear(hidden_dim * 3, hidden_dim),
             nn.LayerNorm(hidden_dim),
@@ -83,7 +102,19 @@ class HGTTaskPredictor(nn.Module):
         )
 
     def forward(self, x_dict, edge_index_dict):
-        # 1. Biến đổi tuyến tính ban đầu cho từng loại nút
+        """
+        Forward Pass (Truyền xuôi) của mô hình HGT.
+
+        Args:
+            x_dict (Dict[str, Tensor]): Từ điển chứa tensor đặc trưng của từng loại Node.
+            edge_index_dict (Dict[Tuple, Tensor]): Từ điển chứa ma trận cạnh giữa các loại Node.
+
+        Returns:
+            Dict[str, Tensor]: Từ điển kết quả dự báo và Embeddings trích xuất (Dùng cho Botttleneck Attention).
+        """
+        # =========================================================================
+        # BƯỚC 1: CHIẾU (PROJECTION) CÁC NODE VỀ CÙNG SỐ CHIỀU (128-DIM)
+        # ========================================================================= đầu cho từng loại nút
         h_dict = {}
         for node_type, x in x_dict.items():
             if node_type in self.proj_dict:

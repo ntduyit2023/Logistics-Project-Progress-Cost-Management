@@ -58,7 +58,28 @@ def run_new_pipeline(
     output_json: Optional[str] = None
 ) -> Dict[str, Any]:
     """
-    Chạy quy trình pipeline hoàn chỉnh từ đầu đến cuối.
+    Chạy quy trình pipeline hoàn chỉnh từ đầu đến cuối (End-to-End).
+
+    Quy trình 5 bước:
+        - Bước 1: Dựng đồ thị đa hình HeteroGraph từ dữ liệu CSV.
+        - Bước 2: Khởi tạo/Tải HGT Pretrainer (nếu chưa có sẽ tự động train).
+        - Bước 3: Đưa đồ thị qua mô hình HGT để lấy dự báo (Duration Factor, Delay, B bottleneck attention).
+        - Bước 4: Chạy mô phỏng Monte Carlo CPM (xác suất rủi ro Delay).
+        - Bước 5: Đưa vào CP-SAT Solver để tối ưu hóa đa mục tiêu (Makespan, Cost, Risk) -> Tìm mảng Pareto.
+
+    Args:
+        project_id (str): Mã dự án.
+        mc_iterations (int): Số vòng lặp Monte Carlo CPM (khuyến nghị 1000 - 10000).
+        pareto_sort_by (str): Tiêu chí sắp xếp danh sách kết quả.
+        pareto_count (int): Số lượng phương án Pareto cần xuất ra.
+        overtime_multiplier (float): Hệ số chi phí tăng ca (mặc định 1.5).
+        target_deadline (Optional[float]): Mốc thời gian (giờ) yêu cầu hoàn thành.
+        penalty_per_day (float): Mức phạt trễ hạn.
+        bonus_per_day (float): Tiền thưởng sớm.
+        output_json (Optional[str]): Đường dẫn lưu file kết quả.
+
+    Returns:
+        Dict[str, Any]: Object JSON chứa kết quả Pipeline (kịch bản tối ưu, các chỉ số rủi ro, log Monte Carlo).
     """
     print("================================================================================")
     print(f"[START] KHOI DONG HE THONG PIPELINE MOI (AI + OR + MC-CPM) CHO DU AN: {project_id}")
@@ -137,10 +158,8 @@ def run_new_pipeline(
 
     # 4. Mô phỏng Monte Carlo CPM dựa trên Lịch Agenda
     print(f"\n[BUOC 4] Mo phong Monte Carlo CPM voi {mc_iterations:,} vong chay...")
-    tasks_df = pd.read_csv(os.path.join(project_dir, 'tasks.csv'))
-    logic_df = pd.read_csv(os.path.join(project_dir, 'logic.csv'))
-    res_df = pd.read_csv(os.path.join(project_dir, 'resources.csv'))
-    task_res_df = pd.read_csv(os.path.join(project_dir, 'task_resources.csv'))
+    from ai_pipeline.models.moi.utils.data_loader import load_project_data
+    tasks_df, logic_df, res_df, task_res_df, _, _, _, _ = load_project_data(project_dir)
 
     tasks = tasks_df.to_dict(orient='records')
     for t in tasks:

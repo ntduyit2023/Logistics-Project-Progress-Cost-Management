@@ -19,7 +19,19 @@ from typing import Dict, List, Tuple, Any, Optional
 
 def sample_beta_pert(a: float, m: float, b: float) -> float:
     """
-    Lấy mẫu giá trị từ phân phối Beta-PERT.
+    Lấy mẫu giá trị từ phân phối xác suất Beta-PERT.
+    
+    Phân phối Beta-PERT là xương sống của quản trị rủi ro dự án, 
+    giúp mô phỏng thời lượng thi công dựa trên 3 điểm ước lượng:
+    Lạc quan (Optimistic), Khả dĩ nhất (Most Likely), và Bi quan (Pessimistic).
+
+    Args:
+        a (float): Cận dưới - Thời gian lạc quan nhất (Optimistic).
+        m (float): Đỉnh phân phối - Thời gian khả dĩ nhất (Most Likely).
+        b (float): Cận trên - Thời gian bi quan nhất (Pessimistic).
+
+    Returns:
+        float: Giá trị thời lượng được lấy mẫu ngẫu nhiên.
     """
     if a >= b:
         return a
@@ -29,12 +41,20 @@ def sample_beta_pert(a: float, m: float, b: float) -> float:
     return a + (b - a) * sample
 
 
-from ai_pipeline.models.moi.domain_normalizers import WorkingCalendarEngine, calculate_task_total_hours
+from ai_pipeline.models.moi.utils.calendar_engine import WorkingCalendarEngine, calculate_task_total_hours
 
 
 class MonteCarloCPMEngine:
     """
-    Bộ mô phỏng Monte Carlo kết hợp CPM cho dự án dựa trên Lịch Agenda.
+    Bộ mô phỏng Monte Carlo kết hợp CPM (Critical Path Method) cho dự án.
+
+    Nhiệm vụ của module này là chạy giả lập (Simulation) hàng nghìn kịch bản (vòng lặp) 
+    tiến độ thi công. Trong mỗi vòng lặp, thời lượng của từng công việc sẽ bị "làm nhiễu"
+    dựa trên dự báo của AI (Sigma/Delay) thông qua phân phối Beta-PERT.
+    
+    Sau Hàng nghìn lần tính toán CPM Forward-Pass, hệ thống sẽ thống kê:
+        - Criticality Index (CI%): Tỷ lệ % số lần một công việc trở thành Nút thắt (Nằm trên Đường găng).
+        - Phân phối độ trễ toàn dự án (P50, P80, P90, P95).
     """
     def __init__(
         self,
@@ -70,8 +90,19 @@ class MonteCarloCPMEngine:
         ai_preds: Optional[Dict[str, Dict[str, float]]] = None
     ) -> Dict[str, Any]:
         """
-        Chạy N vòng mô phỏng Monte Carlo.
+        Khởi chạy tiến trình mô phỏng Monte Carlo đa vòng lặp.
+
+        Args:
+            num_iterations (int): Số lượng vòng lặp giả lập (khuyến nghị >= 1000).
+            ai_preds (Optional[Dict]): Dự báo nhiễu từ AI (expected_delay, uncertainty_sigma).
+
+        Returns:
+            Dict[str, Any]: Object chứa mảng mẫu makespan `samples`, Criticality Index `ci`, 
+                            và các ngưỡng rủi ro xác suất P50, P80, P95.
         """
+        # =========================================================================
+        # BƯỚC 1: KHỞI TẠO BỘ BIẾN ĐẾM
+        # =========================================================================
         num_iterations = max(100, int(num_iterations))
         task_ids = list(self.graph.nodes())
         
@@ -81,7 +112,10 @@ class MonteCarloCPMEngine:
         
         topo_order = list(nx.topological_sort(self.graph))
         
-        for run in range(num_iterations):
+        # =========================================================================
+        # BƯỚC 2: VÒNG LẶP MONTE CARLO CHÍNH (SIMULATION LOOP)
+        # =========================================================================
+        for _ in range(num_iterations):
             # 1. Lấy mẫu thời lượng cho từng task
             sampled_durations = {}
             for t_id in task_ids:
@@ -104,7 +138,10 @@ class MonteCarloCPMEngine:
                 sampled_durations[t_id] = sample_beta_pert(a, m, b)
                 
             # 2. Tính Forward Pass (Early Start/Finish)
-            es = {t_id: 0.0 for t_id in task_ids}
+            # =========================================================================
+            # BƯỚC 2.1: TÍNH TOÁN CPM FORWARD PASS CHO 1 VÒNG LẶP
+            # =========================================================================
+            es = {node: 0.0 for node in topo_order}
             ef = {t_id: 0.0 for t_id in task_ids}
             
             for t_id in topo_order:

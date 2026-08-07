@@ -26,7 +26,11 @@ from torch_geometric.data import HeteroData
 
 class HeteroGraphBuilder:
     """
-    Bộ dựng đồ thị 4 loại nút (HeteroData) cho hệ thống Hybrid AI Pipeline.
+    Bộ dựng đồ thị đa hình (HeteroData) cho hệ thống Hybrid AI Pipeline.
+
+    Đóng vai trò là cầu nối giữa dữ liệu thô dạng bảng (CSV/JSON) và mô hình Neural Network (HGT).
+    Nó trích xuất các thực thể (Entities) và các mối quan hệ (Relationships) 
+    chuyển thành cấu trúc Nodes và Edges cho Pytorch Geometric.
     """
     def __init__(self, project_dir: str):
         self.project_dir = project_dir
@@ -37,34 +41,39 @@ class HeteroGraphBuilder:
         self.agenda_id_map = {}
 
     def build(self) -> HeteroData:
+    def build(self) -> HeteroData:
         """
-        Nạp dữ liệu từ các file CSV/JSON tiêu chuẩn và dựng đối tượng HeteroData.
+        Nạp dữ liệu từ các file tiêu chuẩn qua DataLoader và dựng đối tượng HeteroData.
+
+        Các bước thực hiện:
+            1. Tạo Node 'task': Mã hóa thông tin 38 loại chi phí và 1 thời gian.
+            2. Tạo Node 'resource': Mã hóa năng lực tài nguyên, chi phí cơ sở.
+            3. Tạo Node 'shift': Mã hóa lịch làm việc thực tế từ Agenda.
+            4. Khởi tạo Edge 'task -> precedes -> task': Mạng lưới phụ thuộc Precedence logic.
+            5. Khởi tạo Edge 'task -> uses -> resource': Phân bổ tài nguyên vào công việc.
+            6. Khởi tạo Edge 'task -> constrained_by -> shift': Ràng buộc ca làm việc đối với task.
+
+        Returns:
+            HeteroData: Đối tượng đồ thị dùng để đưa thẳng vào HGT Pretrainer / Model.
         """
         data = HeteroData()
         
-        # 1. Nạp trực tiếp 5 File Dữ liệu Tiêu chuẩn
-        tasks_df = pd.read_csv(os.path.join(self.project_dir, 'tasks.csv'))
-        edges_df = pd.read_csv(os.path.join(self.project_dir, 'logic.csv'))
-        res_df = pd.read_csv(os.path.join(self.project_dir, 'resources.csv'))
-        task_res_df = pd.read_csv(os.path.join(self.project_dir, 'task_resources.csv'))
-        info_df = pd.read_csv(os.path.join(self.project_dir, 'project_info.csv'))
+        # =========================================================================
+        # BƯỚC 1: LOAD DỮ LIỆU THÔNG QUA DATA LOADER & NORMALIZER
+        # =========================================================================
         
-        project_type = str(info_df['project_type'].iloc[0]) if 'project_type' in info_df.columns else 'ITLG'
-
-        # Nạp Lịch Agenda từ agenda.json
-        weekly_schedule = {}
-        holidays_list = []
-        agenda_json_path = os.path.join(self.project_dir, 'agenda.json')
-        if os.path.exists(agenda_json_path):
-            with open(agenda_json_path, 'r', encoding='utf-8') as f:
-                ag_data = json.load(f)
-                weekly_schedule = ag_data.get('weekly_schedule', {})
-                holidays_list = ag_data.get('holidays_list', [])
+        from ai_pipeline.models.moi.utils.data_loader import load_project_data
+        tasks_df, edges_df, res_df, task_res_df, info_df, project_type, weekly_schedule, holidays_list = load_project_data(self.project_dir)
                 
-        from ai_pipeline.models.moi.domain_normalizers import WorkingCalendarEngine, NormalizerRegistry
+        from ai_pipeline.models.moi.utils.calendar_engine import WorkingCalendarEngine
+        from ai_pipeline.models.moi.domain_normalizers import NormalizerRegistry
+        
         self.calendar_engine = WorkingCalendarEngine(weekly_schedule=weekly_schedule, holidays_list=holidays_list)
         self.normalizer = NormalizerRegistry.get_normalizer(project_type=project_type)
         
+        # =========================================================================
+        # BƯỚC 2: KHỞI TẠO CÁC NÚT (NODES) CỦA ĐỒ THỊ
+        # =========================================================================
         # --- NÚT 1: TASK NODES (39 Features) ---
         for idx, row in tasks_df.iterrows():
             t_id = str(row['task_id'])
@@ -155,7 +164,11 @@ class HeteroGraphBuilder:
         if weekly_working_hours <= 0.0:
             weekly_working_hours = 40.0
         
-        # --- CẠNH 1: TASK PRECEDENCE ('task', 'precedes', 'task') ---
+        # =========================================================================
+        # BƯỚC 3: KHỞI TẠO CÁC CẠNH (EDGES) CỦA ĐỒ THỊ
+        # =========================================================================
+        
+        # --- CẠNH 1: TASK -> PRECEDES -> TASK ---('task', 'precedes', 'task') ---
         src_tasks, dst_tasks, edge_attrs = [], [], []
         for _, row in edges_df.iterrows():
             p_id = str(row['predecessor_id'])

@@ -22,208 +22,15 @@ import torch
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, Tuple, Optional
-
-
-class WorkingCalendarEngine:
-    """
-    Động cơ Lịch Agenda tính toán thời gian động chi tiết theo ca làm việc của từng Thứ (Thứ 2 -> Chủ Nhật)
-    và danh sách ngày nghỉ lễ (holidays_list). Tuyệt đối không dùng số giờ khóa cứng!
-    """
-    def __init__(
-        self,
-        weekly_schedule: Optional[Dict[Any, float]] = None,
-        holidays_list: Optional[list] = None,
-        default_hours_per_day: float = 8.0,
-        default_days_per_week: float = 5.0
-    ):
-        self.weekly_schedule = {}
-        self.shifts_by_day = {}
-        day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
-        
-        if weekly_schedule and isinstance(weekly_schedule, dict):
-            for k, v in weekly_schedule.items():
-                k_lower = str(k).strip().lower()
-                day_idx = day_map.get(k_lower)
-                if day_idx is None:
-                    try:
-                        day_idx = int(k) % 7
-                    except (ValueError, TypeError):
-                        continue
-                
-                # Tính tổng số giờ từ số hoặc cấu trúc shifts dict
-                if isinstance(v, (int, float)):
-                    self.weekly_schedule[day_idx] = max(0.0, float(v))
-                    self.shifts_by_day[day_idx] = [(8.0, 8.0 + max(0.0, float(v)))]
-                elif isinstance(v, dict):
-                    if not v.get('is_working', True):
-                        self.weekly_schedule[day_idx] = 0.0
-                        self.shifts_by_day[day_idx] = []
-                    else:
-                        shifts = v.get('shifts', [])
-                        parsed_shifts = []
-                        if shifts:
-                            total_h = 0.0
-                            for s in shifts:
-                                if isinstance(s, dict):
-                                    h = float(s.get('hours', 0.0))
-                                    total_h += h
-                                    start_str = s.get('start_time', '08:00')
-                                    try:
-                                        sh, sm = map(int, start_str.split(':'))
-                                        start_float = sh + sm/60.0
-                                    except Exception:
-                                        start_float = 8.0
-                                    parsed_shifts.append((start_float, start_float + h))
-                            self.weekly_schedule[day_idx] = max(0.0, total_h)
-                            # Sort shifts chronologically
-                            parsed_shifts.sort(key=lambda x: x[0])
-                            self.shifts_by_day[day_idx] = parsed_shifts
-                        else:
-                            self.weekly_schedule[day_idx] = default_hours_per_day
-                            self.shifts_by_day[day_idx] = [(8.0, 8.0 + default_hours_per_day)]
-        if not self.shifts_by_day:
-            for i in range(7):
-                if i < default_days_per_week:
-                    self.weekly_schedule[i] = default_hours_per_day
-                    self.shifts_by_day[i] = [(8.0, 8.0 + default_hours_per_day)]
-                else:
-                    self.weekly_schedule[i] = 0.0
-                    self.shifts_by_day[i] = []
-
-        self.holidays_set = set(holidays_list or [])
-        self.hours_per_week = sum(self.weekly_schedule.values())
-        if self.hours_per_week <= 0:
-            self.hours_per_week = max(1.0, default_hours_per_day * default_days_per_week)
-
-        self.hours_per_month = round(self.hours_per_week * 4.33, 2)
-        self.working_days_per_week = sum(1 for h in self.weekly_schedule.values() if h > 0)
-        self.avg_hours_per_day = round(self.hours_per_week / max(1.0, float(self.working_days_per_week or 5.0)), 2)
-
-    def get_shift_hours(self, weekday: int) -> float:
-        """Lấy số giờ ca làm việc của 1 Thứ trong tuần (0=Thứ 2, ..., 6=Chủ Nhật)."""
-        return self.weekly_schedule.get(int(weekday) % 7, 0.0)
-
-    def calculate_task_total_hours(self, task_data: Dict[str, Any]) -> float:
-        """
-        Quy đổi tổng số giờ thi công thực tế của công việc dựa trên duration_hours hoặc lịch ca làm việc.
-        """
-        d_h = float(task_data.get('duration_hours', task_data.get('duration', 0.0)) or 0.0)
-        if d_h > 0.0:
-            return max(0.1, d_h)
-            
-        d_m = float(task_data.get('duration_months', 0.0) or 0.0)
-        d_w = float(task_data.get('duration_weeks', 0.0) or 0.0)
-        d_d = float(task_data.get('duration_days', 0.0) or 0.0)
-        
-        total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.avg_hours_per_day
-        return max(0.1, total_hours)
-
-    def get_expanded_shifts(self, weekday: int, ot_hours: float) -> list:
-        shifts = self.shifts_by_day.get(weekday, [])
-        if not shifts or ot_hours <= 0:
-            return shifts
-        
-        expanded = [list(s) for s in shifts]
-        last_shift = expanded[-1]
-        available_at_end = 24.0 - last_shift[1]
-        
-        if ot_hours <= available_at_end:
-            last_shift[1] += ot_hours
-        else:
-            half = ot_hours / 2.0
-            first_shift = expanded[0]
-            available_at_start = first_shift[0] - 0.0
-            add_before = min(half, available_at_start)
-            add_after = ot_hours - add_before
-            
-            if add_after > available_at_end:
-                add_after = available_at_end
-                add_before = ot_hours - add_after
-                if add_before > available_at_start:
-                    add_before = available_at_start
-            
-            first_shift[0] -= add_before
-            last_shift[1] += add_after
-            
-        return expanded
-
-    def add_working_hours(self, start_dt: Any, working_hours: float, is_start_time: bool = False, ot_hours: float = 0.0) -> pd.Timestamp:
-        """
-        Cộng số giờ làm việc (working_hours) vào mốc thời gian start_dt.
-        Hỗ trợ dời ca khi is_start_time=True và giãn ca khi ot_hours > 0.
-        """
-        if working_hours < 0:
-            return pd.to_datetime(start_dt)
-        if working_hours == 0 and not is_start_time:
-            return pd.to_datetime(start_dt)
-
-        rem_h = float(working_hours)
-        curr_dt = pd.to_datetime(start_dt)
-        curr_hour = curr_dt.hour + curr_dt.minute / 60.0 + curr_dt.second / 3600.0
-        
-        if working_hours == 0 and is_start_time:
-            rem_h = 0.0
-            
-        max_safety = 10000
-        step = 0
-        while step < max_safety:
-            step += 1
-            weekday = curr_dt.weekday()
-            date_str = curr_dt.strftime('%Y-%m-%d')
-            
-            if date_str in self.holidays_set:
-                shifts = []
-            else:
-                shifts = self.get_expanded_shifts(weekday, ot_hours)
-                
-            for start_h, end_h in shifts:
-                if rem_h > 0:
-                    if curr_hour < start_h:
-                        add_h = start_h - curr_hour
-                        curr_dt = curr_dt + pd.Timedelta(hours=add_h)
-                        curr_hour = start_h
-                        
-                    if curr_hour < end_h:
-                        avail_h = end_h - curr_hour
-                        if rem_h <= avail_h:
-                            curr_dt = curr_dt + pd.Timedelta(hours=rem_h)
-                            curr_hour += rem_h
-                            rem_h = 0
-                        else:
-                            rem_h -= avail_h
-                            curr_dt = curr_dt + pd.Timedelta(hours=avail_h)
-                            curr_hour = end_h
-                
-                if rem_h == 0:
-                    if is_start_time:
-                        if start_h <= curr_hour < end_h:
-                            return curr_dt
-                        elif curr_hour < start_h:
-                            add_h = start_h - curr_hour
-                            return curr_dt + pd.Timedelta(hours=add_h)
-                    else:
-                        return curr_dt
-                        
-            if rem_h > 0 or (rem_h == 0 and is_start_time):
-                add_h = 24.0 - curr_hour
-                curr_dt = (curr_dt + pd.Timedelta(hours=add_h)).replace(hour=0, minute=0, second=0, microsecond=0)
-                curr_hour = 0.0
-                
-        return curr_dt
-
-
-def calculate_task_total_hours(
-    task_data: Dict[str, Any],
-    hours_per_day: float = 8.0,
-    days_per_week: float = 5.0
-) -> float:
-    engine = WorkingCalendarEngine(default_hours_per_day=hours_per_day, default_days_per_week=days_per_week)
-    return engine.calculate_task_total_hours(task_data)
-
+from ai_pipeline.models.moi.utils.calendar_engine import WorkingCalendarEngine, calculate_task_total_hours
 
 class BaseProjectNormalizer:
     """
     Lớp chuẩn hóa & giải mã cơ sở cho từng loại hình dự án.
+    
+    Quy định cách thức chuyển đổi các giá trị thô (raw values) như thời lượng thi công, 
+    chi phí từ file CSV thành Tensors chuẩn hóa [0, 1] cho mô hình Neural Network HGT.
+    Đồng thời đảm nhận chức năng Giải mã (Decode) đầu ra của AI trả về giá trị thực tế.
     """
     def __init__(
         self,
@@ -241,7 +48,18 @@ class BaseProjectNormalizer:
 
     def encode_task_df(self, tasks_df: pd.DataFrame) -> torch.Tensor:
         """
-        Chuyển đổi DataFrame tasks.csv thành Tensor [N, 39] chuẩn hóa gồm 1 chỉ số thời gian duration_hours + 38 cột chi phí chuẩn.
+        Chuyển đổi DataFrame tasks.csv thành Tensor biểu diễn Node Task.
+
+        Tensor kết quả có shape [N, 39], trong đó N là số lượng công việc.
+        Bao gồm 1 đặc trưng thời gian (duration_hours) và 38 đặc trưng chi phí
+        dàn trải qua 9 nhóm (Group 0 -> Group 8). Các chi phí được Normalize
+        thông qua hàm Log-scale theo hệ số quy mô s_domain của từng dự án.
+
+        Args:
+            tasks_df (pd.DataFrame): DataFrame nạp từ tasks.csv.
+
+        Returns:
+            torch.Tensor: FloatTensor [N, 39].
         """
         features_list = []
         
@@ -316,13 +134,21 @@ class BaseProjectNormalizer:
         return norm_tensor_x
 
 
-    def decode_predictions(self, preds_dict: Dict[str, torch.Tensor]) -> Dict[str, np.ndarray]:
+    def decode_predictions(self, preds: Dict[str, torch.Tensor]) -> Dict[str, np.ndarray]:
         """
-        Giải mã các thông số AI đầu ra ra đúng đơn vị thực tế (giờ, hệ số rủi ro).
+        Giải mã Tensor kết quả dự đoán của mô hình HGT về lại đơn vị thực tế.
+
+        Args:
+            preds (Dict[str, torch.Tensor]): Từ điển chứa kết quả đầu ra của mô hình 
+                                             (duration_factor, expected_delay, uncertainty_sigma).
+
+        Returns:
+            Dict[str, np.ndarray]: Từ điển kết quả đã được chuyển đổi về Numpy Array gốc.
+                                   Ví dụ: expected_delay_hours theo định dạng thời gian thực tế.
         """
-        duration_factor = preds_dict['duration_factor'].cpu().numpy()
-        expected_delay_norm = preds_dict['expected_delay'].cpu().numpy()
-        sigma_norm = preds_dict['uncertainty_sigma'].cpu().numpy()
+        duration_factor = preds['duration_factor'].cpu().numpy()
+        expected_delay_norm = preds['expected_delay'].cpu().numpy()
+        sigma_norm = preds['uncertainty_sigma'].cpu().numpy()
         
         # Decode expected delay từ log-space sang số giờ thực tế
         expected_delay_hours = np.expm1(expected_delay_norm)
@@ -352,8 +178,8 @@ class BaseProjectNormalizer:
 
 class CivilConstructionNormalizer(BaseProjectNormalizer):
     """
-    Normalizer chuyên biệt cho Xây dựng công trình (CON).
-    Scale chi phí s_domain = $100,000.
+    Bộ chuẩn hóa chuyên biệt cho dự án Xây dựng (Civil Construction - CON).
+    Đặc tính: Scale chi phí s_domain cực lớn (100,000 USD).
     """
     def __init__(self, hours_per_day: float = 8.0, days_per_week: float = 5.0):
         super().__init__(project_type="CON", s_domain=100000.0, hours_per_day=hours_per_day, days_per_week=days_per_week)
@@ -361,8 +187,8 @@ class CivilConstructionNormalizer(BaseProjectNormalizer):
 
 class ITLogisticsNormalizer(BaseProjectNormalizer):
     """
-    Normalizer chuyên biệt cho IT & Logistics (ITLG).
-    Scale chi phí s_domain = $10,000.
+    Bộ chuẩn hóa chuyên biệt cho dự án Công nghệ Thông tin & Logistics (ITLG).
+    Đặc tính: Scale chi phí s_domain vừa phải (10,000 USD). Nhạy cảm với chậm trễ (Agile/Sprint).
     """
     def __init__(self, hours_per_day: float = 8.0, days_per_week: float = 5.0):
         super().__init__(project_type="ITLG", s_domain=10000.0, hours_per_day=hours_per_day, days_per_week=days_per_week)
@@ -370,8 +196,8 @@ class ITLogisticsNormalizer(BaseProjectNormalizer):
 
 class ProfessionalServicesNormalizer(BaseProjectNormalizer):
     """
-    Normalizer chuyên biệt cho Dịch vụ Chuyên môn (PRO).
-    Scale chi phí s_domain = $5,000.
+    Bộ chuẩn hóa chuyên biệt cho dự án Dịch vụ / Tư vấn (Professional Services - PRO).
+    Đặc tính: Scale chi phí s_domain nhỏ (5,000 USD). Phụ thuộc nhiều vào chi phí tư vấn.
     """
     def __init__(self, hours_per_day: float = 8.0, days_per_week: float = 5.0):
         super().__init__(project_type="PRO", s_domain=5000.0, hours_per_day=hours_per_day, days_per_week=days_per_week)
@@ -379,7 +205,8 @@ class ProfessionalServicesNormalizer(BaseProjectNormalizer):
 
 class NormalizerRegistry:
     """
-    Registry Factory nạp đúng Normalizer theo mã project_type.
+    Nhà máy (Factory Pattern) sinh các lớp Normalizer tùy theo mã loại hình dự án.
+    Nếu mã không nhận diện được, tự động Fallback về IT Logistics Normalizer.
     """
     _normalizers = {
         'con': CivilConstructionNormalizer,

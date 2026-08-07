@@ -33,7 +33,14 @@ def compute_r2_score(y_true: torch.Tensor, y_pred: torch.Tensor) -> float:
 
 class HGTPretrainer:
     """
-    Trình quản lý Pretraining tự động cho HGT dùng Smooth L1 Reconstruction Loss.
+    Trình quản lý Huấn luyện Tự giám sát (Self-Supervised Pretraining) cho HGT.
+
+    Giai đoạn Phase 0: Mô hình được huấn luyện bằng cách che (Mask) ngẫu nhiên các 
+    đặc trưng của nút (Task), sau đó buộc mô hình phải tái tạo (Reconstruct) lại
+    đặc trưng đó dựa vào ngữ cảnh từ các nút lân cận thông qua Graph Transformer.
+
+    Mục tiêu: Giúp mạng Neural Network "hiểu" được bản chất tương quan của đồ thị 
+    tiến độ thi công trước khi đem đi dự báo rủi ro thực. Sử dụng Smooth L1 Loss.
     """
     def __init__(self, model: HGTTaskPredictor, checkpoint_dir: str = "checkpoints"):
         self.model = model
@@ -53,6 +60,25 @@ class HGTPretrainer:
     ) -> Dict[str, Any]:
         """
         Huấn luyện Pretraining tự giám sát với Train/Val Mask Split và Smooth L1 Loss.
+
+        Quá trình huấn luyện áp dụng kỹ thuật Node Masking:
+            1. Chia tỷ lệ tập Train/Val (vd: 80% train, 20% val).
+            2. Che giấu (set về 0) một phần đặc trưng của tập Train.
+            3. Cho chạy qua mạng HGT và thu về Feature Reconstruction.
+            4. So sánh với đặc trưng gốc bằng Loss Function (Smooth L1) và Backpropagation.
+            5. Kích hoạt Early Stopping nếu Val Loss không cải thiện sau n vòng (Patience).
+
+        Args:
+            hetero_data_list (List[Any]): Danh sách đối tượng HeteroData của nhiều dự án.
+            project_ids (List[str]): Danh sách mã dự án tương ứng.
+            max_epochs (int): Số epoch tối đa để huấn luyện.
+            patience (int): Số epoch giới hạn cho Early Stopping.
+            mask_rate (float): Tỷ lệ các tính năng bị che đi trong mỗi epoch.
+            val_ratio (float): Tỷ lệ chia Validation Data so với Train Data.
+            lr (float): Tốc độ học (Learning Rate).
+
+        Returns:
+            Dict[str, Any]: Nhật ký đào tạo (Lịch sử Loss, MAE, RMSE, R2...).
         """
         if not hetero_data_list:
             print("[Pretrainer] Danh sach do thi rong!")
