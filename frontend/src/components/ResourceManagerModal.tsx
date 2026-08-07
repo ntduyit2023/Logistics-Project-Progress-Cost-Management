@@ -21,6 +21,7 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
   const [energy, setEnergy] = useState(0.0);
   const [overtimeMulti, setOvertimeMulti] = useState(1.5);
   const [maxOtDay, setMaxOtDay] = useState(4.0);
+  const [addresEff, setAddresEff] = useState(0.7);
 
   // Inline edit state
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -63,7 +64,8 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
         unit_cost: Number(unitCost),
         energy: Number(energy),
         overtime_multi: Number(overtimeMulti),
-        max_overtime_per_day: Number(maxOtDay)
+        max_overtime_per_day: Number(maxOtDay),
+        addres_efficiency: Number(addresEff)
       };
       await api.createResourceConstraint(projectId, payload);
       
@@ -77,6 +79,7 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
       setEnergy(0.0);
       setOvertimeMulti(1.5);
       setMaxOtDay(4.0);
+      setAddresEff(0.7);
     } catch (err) {
       alert("Failed to add resource: " + (err as Error).message);
     } finally {
@@ -95,7 +98,8 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
       unit_cost: r.unit_cost ?? 0,
       energy: r.energy ?? 0,
       overtime_multi: r.overtime_multi ?? 1.5,
-      max_overtime_per_day: r.max_overtime_per_day ?? 4.0
+      max_overtime_per_day: r.max_overtime_per_day ?? 4.0,
+      addres_efficiency: r.addres_efficiency ?? 0.7
     });
   };
 
@@ -115,7 +119,8 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
         unit_cost: Number(editRowData.unit_cost),
         energy: Number(editRowData.energy),
         overtime_multi: Number(editRowData.overtime_multi),
-        max_overtime_per_day: Number(editRowData.max_overtime_per_day)
+        max_overtime_per_day: Number(editRowData.max_overtime_per_day),
+        addres_efficiency: Number(editRowData.addres_efficiency)
       };
       await api.updateResourceConstraint(projectId, editingId, payload);
       await fetchResources();
@@ -217,6 +222,13 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Hiệu suất (AddRes Eff)</label>
+                <input 
+                  type="number" step="0.1" value={addresEff} onChange={e => setAddresEff(Number(e.target.value))} min="0.1" max="1.0"
+                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                />
+              </div>
 
               <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end mt-2">
                 <button 
@@ -240,6 +252,7 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                   <th className="px-4 py-3 text-right">Unit Cost ($/h)</th>
                   <th className="px-4 py-3 text-right">Energy / Fuel</th>
                   <th className="px-4 py-3 text-right">OT Multi / Max OT</th>
+                  <th className="px-4 py-3 text-right">AddRes Eff</th>
                   <th className="px-4 py-3 text-center">Action</th>
                 </tr>
               </thead>
@@ -261,6 +274,7 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                     const energyVal = r.energy ?? 0;
                     const otMulti = r.overtime_multi ?? 1.5;
                     const maxOt = r.max_overtime_per_day ?? 4;
+                    const eff = r.addres_efficiency ?? 0.7;
 
                     if (isEditing) {
                       return (
@@ -323,6 +337,14 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                             />
                             <span className="text-xs text-slate-500">h</span>
                           </td>
+                          <td className="px-3 py-2 text-right">
+                            <input 
+                              type="number" step="0.1" min="0.1" max="1.0"
+                              value={editRowData.addres_efficiency}
+                              onChange={e => setEditRowData({ ...editRowData, addres_efficiency: e.target.value })}
+                              className="w-16 border border-amber-400 rounded px-2 py-1 text-sm text-right bg-white focus:outline-none"
+                            />
+                          </td>
                           <td className="px-3 py-2 text-center">
                             <div className="flex items-center justify-center gap-1">
                               <button 
@@ -357,6 +379,7 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                         <td className="px-4 py-3 text-right font-medium text-slate-700">${costVal}</td>
                         <td className="px-4 py-3 text-right font-medium text-slate-700">{energyVal}</td>
                         <td className="px-4 py-3 text-right font-medium text-slate-700">{otMulti}x ({maxOt}h/day)</td>
+                        <td className="px-4 py-3 text-right font-medium text-slate-700">{eff}</td>
                         <td className="px-4 py-3 text-center">
                           <div className="flex items-center justify-center gap-1">
                             <button 

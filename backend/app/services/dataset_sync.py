@@ -81,7 +81,7 @@ async def export_project_dataset(db: AsyncSession, project_id_or_code: str, targ
 
     tasks_rows = []
     for t in tasks:
-        b_start_str = t.baseline_start.strftime("%Y-%m-%d %H:%M:%S") if t.baseline_start else ""
+        b_start_str = t.baseline_start.isoformat() if t.baseline_start else ""
         row = {
             "task_id": t.task_id,
             "baseline_start": b_start_str,
@@ -103,8 +103,8 @@ async def export_project_dataset(db: AsyncSession, project_id_or_code: str, targ
     res_rows = []
     for idx, r in enumerate(resources, 1):
         res_rows.append({
-            "ID": idx,
-            "name": r.resource_id,
+            "ID": r.resource_id or idx,
+            "name": r.name or r.resource_id,
             "type": r.type,
             "max_availability": float(r.max_availability or 1.0),
             "unit_cost": float(r.unit_cost or 0.0),

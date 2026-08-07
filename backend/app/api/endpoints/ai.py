@@ -299,6 +299,8 @@ async def apply_pareto_option_api(
                             "added_resources_cost": s_data.get("added_resources_cost", 0),
                             "baseline_start": s_data.get("baseline_start"),
                             "baseline_end": s_data.get("baseline_end"),
+                            "ot_resource_breakdown": s_data.get("ot_resource_breakdown", []),
+                            "added_resources_detail": s_data.get("added_resources_detail", []),
                             "is_crashed": True
                         }
                     updated_count += 1

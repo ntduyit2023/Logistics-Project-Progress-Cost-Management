@@ -240,8 +240,8 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           overtime_hours_per_day: optDetail ? optDetail.overtime_hours_per_day : parseFloat(task.overtime_hours_per_day || task.overtime_hours || 0),
           resources: task.resources || [],
           features: getTaskGroups(task),
-          baseline_start: optDetail ? optDetail.baseline_start : task.baseline_start,
-          baseline_end: optDetail ? optDetail.baseline_end : task.baseline_end,
+          baseline_start: optDetail?.baseline_start || task.baseline_start,
+          baseline_end: optDetail?.baseline_end || task.baseline_end,
           // === FIELDS MỚI ===
           base_effort_hours: optDetail?.base_effort_hours ?? parseFloat(task.duration_hours || 0),
           extra_workers: optDetail?.extra_workers ?? 0,
@@ -249,7 +249,8 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           labor_ot_premium: optDetail?.labor_ot_premium ?? 0,
           equipment_ot_extra: optDetail?.equipment_ot_extra ?? 0,
           energy_ot_extra: optDetail?.energy_ot_extra ?? 0,
-          added_resources_cost: optDetail?.added_resources_cost ?? 0
+          added_resources_cost: optDetail?.added_resources_cost ?? 0,
+          ot_resource_breakdown: optDetail?.ot_resource_breakdown ?? task.ot_resource_breakdown ?? []
         },
       };
     });
@@ -550,32 +551,59 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                       </div>
                     )}
                     
-                    {(selectedTask.added_resources_cost > 0 || selectedTask.labor_ot_premium > 0 || selectedTask.equipment_ot_extra > 0 || selectedTask.energy_ot_extra > 0) && (
+                    {(selectedTask.extra_workers > 0 || selectedTask.added_resources_cost > 0 || selectedTask.labor_ot_premium > 0 || selectedTask.equipment_ot_extra > 0 || selectedTask.energy_ot_extra > 0) && (
                       <div className="mt-2 pt-2 border-t border-amber-200/50">
-                        <p className="text-[10px] font-bold text-amber-800/70 mb-1 uppercase tracking-wider">Chi phí phát sinh</p>
-                        {selectedTask.added_resources_cost > 0 && (
-                          <div className="flex justify-between items-center py-0.5">
-                            <span className="text-slate-600">Thuê thêm (Added Res):</span>
-                            <span className="font-bold text-rose-600">+${Number(selectedTask.added_resources_cost).toFixed(0)}</span>
-                          </div>
+                        <p className="text-[10px] font-bold text-amber-800/70 mb-1 uppercase tracking-wider">Chi tiết Chiến lược</p>
+                        {selectedTask.extra_workers > 0 && (
+                          <>
+                            <div className="flex justify-between text-sm py-1">
+                              <span className="text-slate-600">Thêm nhân sự:</span>
+                              <span className="font-bold">+{selectedTask.extra_workers || 0} người</span>
+                            </div>
+                            {selectedTask.added_resources_detail && selectedTask.added_resources_detail.length > 0 && (
+                              <div className="mt-1 pl-2 border-l-2 border-amber-200">
+                                {selectedTask.added_resources_detail.map((res: any, i: number) => (
+                                  <div key={i} className="flex justify-between items-center py-0.5">
+                                    <span className="text-slate-500 text-xs truncate">Thêm {res.name} ({res.added_qty} người):</span>
+                                    <span className="font-bold text-xs text-rose-600">+${Number(res.total_extra_cost).toFixed(0)}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            <div className="flex justify-between text-sm py-1 border-t border-amber-100 mt-1">
+                              <span className="text-slate-600">Tổng chi phí thêm:</span>
+                              <span className="font-bold text-rose-600">+${Number(selectedTask.added_resources_cost || 0).toFixed(0)}</span>
+                            </div>
+                          </>
                         )}
-                        {selectedTask.labor_ot_premium > 0 && (
-                          <div className="flex justify-between items-center py-0.5">
-                            <span className="text-slate-600">OT Labor:</span>
-                            <span className="font-bold text-rose-600">+${Number(selectedTask.labor_ot_premium).toFixed(0)}</span>
-                          </div>
-                        )}
-                        {selectedTask.equipment_ot_extra > 0 && (
-                          <div className="flex justify-between items-center py-0.5">
-                            <span className="text-slate-600">OT Equip:</span>
-                            <span className="font-bold text-rose-600">+${Number(selectedTask.equipment_ot_extra).toFixed(0)}</span>
-                          </div>
-                        )}
-                        {selectedTask.energy_ot_extra > 0 && (
-                          <div className="flex justify-between items-center py-0.5">
-                            <span className="text-slate-600">OT Energy:</span>
-                            <span className="font-bold text-rose-600">+${Number(selectedTask.energy_ot_extra).toFixed(0)}</span>
-                          </div>
+                        {selectedTask.ot_resource_breakdown && selectedTask.ot_resource_breakdown.length > 0 ? (
+                          selectedTask.ot_resource_breakdown.map((res: any, i: number) => (
+                            <div key={i} className="flex justify-between items-center py-0.5">
+                              <span className="text-slate-600 truncate">OT {res.resource_name} ({res.ot_hours}h):</span>
+                              <span className="font-bold text-rose-600">+${Number(res.ot_cost).toFixed(0)}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <>
+                            {selectedTask.labor_ot_premium > 0 && (
+                              <div className="flex justify-between items-center py-0.5">
+                                <span className="text-slate-600">OT Labor:</span>
+                                <span className="font-bold text-rose-600">+${Number(selectedTask.labor_ot_premium).toFixed(0)}</span>
+                              </div>
+                            )}
+                            {selectedTask.equipment_ot_extra > 0 && (
+                              <div className="flex justify-between items-center py-0.5">
+                                <span className="text-slate-600">OT Equip:</span>
+                                <span className="font-bold text-rose-600">+${Number(selectedTask.equipment_ot_extra).toFixed(0)}</span>
+                              </div>
+                            )}
+                            {selectedTask.energy_ot_extra > 0 && (
+                              <div className="flex justify-between items-center py-0.5">
+                                <span className="text-slate-600">OT Energy:</span>
+                                <span className="font-bold text-rose-600">+${Number(selectedTask.energy_ot_extra).toFixed(0)}</span>
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     )}

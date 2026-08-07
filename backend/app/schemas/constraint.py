@@ -25,6 +25,7 @@ class ConstraintResourceBase(BaseModel):
     energy: float = Field(0.0, ge=0)
     overtime_multi: float = Field(1.5, ge=1.0)
     max_overtime_per_day: float = Field(4.0, ge=0)
+    addres_efficiency: float = Field(0.7, ge=0.1, le=1.0)
 
 
 class ConstraintResourceResponse(ConstraintResourceBase):

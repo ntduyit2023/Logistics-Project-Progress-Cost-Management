@@ -37,6 +37,7 @@ class WorkingCalendarEngine:
         default_days_per_week: float = 5.0
     ):
         self.weekly_schedule = {}
+        self.shifts_by_day = {}
         day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
         
         if weekly_schedule and isinstance(weekly_schedule, dict):
@@ -52,28 +53,42 @@ class WorkingCalendarEngine:
                 # Tính tổng số giờ từ số hoặc cấu trúc shifts dict
                 if isinstance(v, (int, float)):
                     self.weekly_schedule[day_idx] = max(0.0, float(v))
+                    self.shifts_by_day[day_idx] = [(8.0, 8.0 + max(0.0, float(v)))]
                 elif isinstance(v, dict):
                     if not v.get('is_working', True):
                         self.weekly_schedule[day_idx] = 0.0
+                        self.shifts_by_day[day_idx] = []
                     else:
                         shifts = v.get('shifts', [])
+                        parsed_shifts = []
                         if shifts:
-                            total_h = sum(float(s.get('hours', 0.0)) for s in shifts if isinstance(s, dict))
+                            total_h = 0.0
+                            for s in shifts:
+                                if isinstance(s, dict):
+                                    h = float(s.get('hours', 0.0))
+                                    total_h += h
+                                    start_str = s.get('start_time', '08:00')
+                                    try:
+                                        sh, sm = map(int, start_str.split(':'))
+                                        start_float = sh + sm/60.0
+                                    except Exception:
+                                        start_float = 8.0
+                                    parsed_shifts.append((start_float, start_float + h))
                             self.weekly_schedule[day_idx] = max(0.0, total_h)
+                            # Sort shifts chronologically
+                            parsed_shifts.sort(key=lambda x: x[0])
+                            self.shifts_by_day[day_idx] = parsed_shifts
                         else:
                             self.weekly_schedule[day_idx] = default_hours_per_day
-
-        if not self.weekly_schedule or sum(self.weekly_schedule.values()) <= 0:
-            # Lịch mặc định tiêu chuẩn: T2->T6: 8h, T7/CN: 0h
-            self.weekly_schedule = {
-                0: default_hours_per_day,
-                1: default_hours_per_day,
-                2: default_hours_per_day,
-                3: default_hours_per_day,
-                4: default_hours_per_day,
-                5: 0.0,
-                6: 0.0
-            }
+                            self.shifts_by_day[day_idx] = [(8.0, 8.0 + default_hours_per_day)]
+        if not self.shifts_by_day:
+            for i in range(7):
+                if i < default_days_per_week:
+                    self.weekly_schedule[i] = default_hours_per_day
+                    self.shifts_by_day[i] = [(8.0, 8.0 + default_hours_per_day)]
+                else:
+                    self.weekly_schedule[i] = 0.0
+                    self.shifts_by_day[i] = []
 
         self.holidays_set = set(holidays_list or [])
         self.hours_per_week = sum(self.weekly_schedule.values())
@@ -103,42 +118,97 @@ class WorkingCalendarEngine:
         total_hours = d_m * self.hours_per_month + d_w * self.hours_per_week + d_d * self.avg_hours_per_day
         return max(0.1, total_hours)
 
-    def add_working_hours(self, start_dt: Any, working_hours: float) -> pd.Timestamp:
+    def get_expanded_shifts(self, weekday: int, ot_hours: float) -> list:
+        shifts = self.shifts_by_day.get(weekday, [])
+        if not shifts or ot_hours <= 0:
+            return shifts
+        
+        expanded = [list(s) for s in shifts]
+        last_shift = expanded[-1]
+        available_at_end = 24.0 - last_shift[1]
+        
+        if ot_hours <= available_at_end:
+            last_shift[1] += ot_hours
+        else:
+            half = ot_hours / 2.0
+            first_shift = expanded[0]
+            available_at_start = first_shift[0] - 0.0
+            add_before = min(half, available_at_start)
+            add_after = ot_hours - add_before
+            
+            if add_after > available_at_end:
+                add_after = available_at_end
+                add_before = ot_hours - add_after
+                if add_before > available_at_start:
+                    add_before = available_at_start
+            
+            first_shift[0] -= add_before
+            last_shift[1] += add_after
+            
+        return expanded
+
+    def add_working_hours(self, start_dt: Any, working_hours: float, is_start_time: bool = False, ot_hours: float = 0.0) -> pd.Timestamp:
         """
-        Cộng số giờ làm việc (working_hours) vào mốc thời gian start_dt,
-        tính toán chính xác các ngày nghỉ cuối tuần và ngày lễ theo agenda.json.
+        Cộng số giờ làm việc (working_hours) vào mốc thời gian start_dt.
+        Hỗ trợ dời ca khi is_start_time=True và giãn ca khi ot_hours > 0.
         """
-        if working_hours <= 0:
+        if working_hours < 0:
+            return pd.to_datetime(start_dt)
+        if working_hours == 0 and not is_start_time:
             return pd.to_datetime(start_dt)
 
         rem_h = float(working_hours)
         curr_dt = pd.to_datetime(start_dt)
-        curr_hour = curr_dt.hour + curr_dt.minute / 60.0
+        curr_hour = curr_dt.hour + curr_dt.minute / 60.0 + curr_dt.second / 3600.0
         
+        if working_hours == 0 and is_start_time:
+            rem_h = 0.0
+            
         max_safety = 10000
         step = 0
-        while rem_h > 0 and step < max_safety:
+        while step < max_safety:
             step += 1
             weekday = curr_dt.weekday()
             date_str = curr_dt.strftime('%Y-%m-%d')
             
-            shift_h = 0.0 if date_str in self.holidays_set else self.get_shift_hours(weekday)
-            
-            if shift_h > 0:
-                avail_h_today = max(0.0, shift_h - max(0.0, curr_hour - 8.0))
-                if avail_h_today <= 0:
-                    avail_h_today = shift_h
-                    
-                if rem_h <= avail_h_today:
-                    curr_dt = curr_dt + pd.Timedelta(hours=rem_h)
-                    rem_h = 0
-                    break
-                else:
-                    rem_h -= avail_h_today
-                    
-            curr_dt = (curr_dt + pd.Timedelta(days=1)).replace(hour=8, minute=0, second=0)
-            curr_hour = 8.0
-            
+            if date_str in self.holidays_set:
+                shifts = []
+            else:
+                shifts = self.get_expanded_shifts(weekday, ot_hours)
+                
+            for start_h, end_h in shifts:
+                if rem_h > 0:
+                    if curr_hour < start_h:
+                        add_h = start_h - curr_hour
+                        curr_dt = curr_dt + pd.Timedelta(hours=add_h)
+                        curr_hour = start_h
+                        
+                    if curr_hour < end_h:
+                        avail_h = end_h - curr_hour
+                        if rem_h <= avail_h:
+                            curr_dt = curr_dt + pd.Timedelta(hours=rem_h)
+                            curr_hour += rem_h
+                            rem_h = 0
+                        else:
+                            rem_h -= avail_h
+                            curr_dt = curr_dt + pd.Timedelta(hours=avail_h)
+                            curr_hour = end_h
+                
+                if rem_h == 0:
+                    if is_start_time:
+                        if start_h <= curr_hour < end_h:
+                            return curr_dt
+                        elif curr_hour < start_h:
+                            add_h = start_h - curr_hour
+                            return curr_dt + pd.Timedelta(hours=add_h)
+                    else:
+                        return curr_dt
+                        
+            if rem_h > 0 or (rem_h == 0 and is_start_time):
+                add_h = 24.0 - curr_hour
+                curr_dt = (curr_dt + pd.Timedelta(hours=add_h)).replace(hour=0, minute=0, second=0, microsecond=0)
+                curr_hour = 0.0
+                
         return curr_dt
 
 

@@ -302,26 +302,54 @@ class CPSATParetoSolver:
                 dur_1 = max(1, int(round(base_effort_h * self.hours_per_day / new_h_per_day)))
 
                 # Human: Labor giữ nguyên, chỉ tính OT Premium
-                # OT Premium = ot_hours × (labor_rate_per_worker_per_h) × (multi - 1.0)
-                if human_resources and human_labor_rate_total > 0:
-                    labor_rate_per_h = human_labor_rate_total / max(1, base_workers)
-                    ot_premium_human = round(ot_hours_total * labor_rate_per_h * (human_ot_multi - 1.0), 2)
+                ot_breakdown = []
+                ot_premium_human = 0.0
+                equipment_ot_extra = 0.0
+                energy_ot_extra = 0.0
+
+                if human_resources:
+                    for r_info, qty in human_resources:
+                        labor_rate = float(r_info.get('unit_cost', 25.0))
+                        multi = float(r_info.get('overtime_multi', self.overtime_multiplier))
+                        r_ot_premium = round(ot_hours_total * qty * labor_rate * (multi - 1.0), 2)
+                        ot_premium_human += r_ot_premium
+                        if r_ot_premium > 0:
+                            ot_breakdown.append({
+                                'resource_id': str(r_info.get('ID', r_info.get('name'))),
+                                'resource_name': str(r_info.get('name', 'Unknown')),
+                                'type': 'Human',
+                                'ot_hours': float(ot_hours_total),
+                                'ot_cost': float(r_ot_premium)
+                            })
                 else:
                     labor_rate_per_h = cost_meta.get('labor_rate_per_h', 25.0)
                     ot_premium_human = round(ot_hours_total * labor_rate_per_h * (self.overtime_multiplier - 1.0), 2)
 
-                # Machine: Equipment + Energy tăng thẳng theo giờ chạy thêm
-                # Machine chạy thêm = ot_hours_total (vì max_ot bottleneck áp dụng cho cả machine)
                 if machine_resources:
-                    equip_rate_per_h = machine_equip_rate_total / max(1.0, dur_0) * dur_0 / max(1.0, base_effort_h)
-                    energy_rate_per_h = machine_energy_rate_total / max(1.0, dur_0) * dur_0 / max(1.0, base_effort_h)
-                    equipment_ot_extra = round(ot_hours_total * equip_rate_per_h, 2)
-                    energy_ot_extra = round(ot_hours_total * energy_rate_per_h, 2)
-                else:
-                    equipment_ot_extra = 0.0
-                    energy_ot_extra = 0.0
+                    for r_info, qty in machine_resources:
+                        equip_rate = float(r_info.get('unit_cost', 10.0))
+                        energy_rate = float(r_info.get('energy', 0.0))
+                        
+                        r_equip_ot = round(ot_hours_total * qty * equip_rate, 2)
+                        r_energy_ot = round(ot_hours_total * qty * energy_rate, 2)
+                        
+                        equipment_ot_extra += r_equip_ot
+                        energy_ot_extra += r_energy_ot
+                        
+                        r_ot_extra = r_equip_ot + r_energy_ot
+                        if r_ot_extra > 0:
+                            ot_breakdown.append({
+                                'resource_id': str(r_info.get('ID', r_info.get('name'))),
+                                'resource_name': str(r_info.get('name', 'Unknown')),
+                                'type': 'Machine',
+                                'ot_cost': r_ot_extra
+                            })
 
-                total_ot_extra = ot_premium_human + equipment_ot_extra + energy_ot_extra
+                ot_premium_human = round(ot_premium_human, 2)
+                equipment_ot_extra = round(equipment_ot_extra, 2)
+                energy_ot_extra = round(energy_ot_extra, 2)
+                total_ot_extra = round(ot_premium_human + equipment_ot_extra + energy_ot_extra, 2)
+
                 cost_1 = round(base_cost + total_ot_extra, 2)
                 risk_1 = ci_score * 0.75
 
@@ -339,14 +367,15 @@ class CPSATParetoSolver:
                     'ot_hours_per_day': task_max_ot_per_day,
                     'ot_extra_cost': total_ot_extra,
                     'base_cost': base_cost,
-                    'base_labor': base_labor,        # KHÔNG ĐỔI
+                    'base_labor': base_labor,
                     'base_equipment': base_equipment,
                     'base_energy': base_energy,
-                    'labor_ot_cost': ot_premium_human,      # Phần bù phụ trội Human
-                    'equipment_ot_cost': equipment_ot_extra, # Machine chạy thêm giờ
-                    'energy_ot_cost': energy_ot_extra,       # Machine chạy thêm giờ
+                    'labor_ot_cost': ot_premium_human,
+                    'equipment_ot_cost': equipment_ot_extra,
+                    'energy_ot_cost': energy_ot_extra,
                     'added_res_cost': 0.0,
                     'added_resources_detail': [],
+                    'ot_resource_breakdown': ot_breakdown,
                     'crashing_strategy': 'OT'
                 })
 
@@ -392,21 +421,34 @@ class CPSATParetoSolver:
                 # Nếu có thể thêm ít nhất 1 người
                 actual_extra_workers = extra_workers_needed - workers_to_add
                 if actual_extra_workers > 0:
-                    new_workers = base_workers + actual_extra_workers
-                    dur_2_actual = max(1, int(round(base_effort_h * base_workers / new_workers)))
+                    effective_workers = base_workers
+                    for d in added_detail:
+                        r_info = self.resources_dict.get(d['resource_id'], {})
+                        eff = float(r_info.get('addres_efficiency', 0.7))
+                        effective_workers += d['added_qty'] * eff
+                        
+                    dur_2_actual = max(1, int(round(base_effort_h * base_workers / effective_workers)))
                     
                     added_res_cost = 0.0
                     for d in added_detail:
                         d['total_extra_cost'] = d['added_qty'] * d['unit_cost'] * dur_2_actual
                         added_res_cost += d['total_extra_cost']
                         
-                    # Calculate net cost increase. AddRes saves time for base workers.
-                    labor_rate_h = base_labor / max(1.0, dur_0)
-                    savings = labor_rate_h * (dur_0 - dur_2_actual)
-                    # Giả định thêm người sẽ tốn 10% chi phí quản lý cho phần thêm
-                    net_cost_increase = max(0, added_res_cost * 1.1 - savings)
+                    # Thêm người sẽ tốn 10% chi phí quản lý cho phần thêm
+                    net_cost_increase = added_res_cost * 1.1
                     
-                    cost_2 = round(base_cost + net_cost_increase, 2)
+                    # Savings từ việc base workers giảm số giờ làm
+                    labor_rate_h = base_labor / max(1.0, dur_0)
+                    equip_rate_h = base_equipment / max(1.0, dur_0)
+                    energy_rate_h = base_energy / max(1.0, dur_0)
+                    
+                    new_base_labor = round(labor_rate_h * dur_2_actual, 2)
+                    new_base_equip = round(equip_rate_h * dur_2_actual, 2)
+                    new_base_energy = round(energy_rate_h * dur_2_actual, 2)
+                    new_base_cost = round(new_base_labor + new_base_equip + new_base_energy, 2)
+                    
+                    # Tổng chi phí mới
+                    cost_2 = round(new_base_cost + net_cost_increase, 2)
                     risk_2 = ci_score * 0.85 # Rủi ro thấp hơn OT một chút nhưng cao hơn bình thường
                     
                     modes.append({
@@ -422,10 +464,10 @@ class CPSATParetoSolver:
                         'ot_hours': 0,
                         'ot_hours_per_day': 0.0,
                         'ot_extra_cost': 0.0,
-                        'base_cost': base_cost,
-                        'base_labor': base_labor,
-                        'base_equipment': base_equipment,
-                        'base_energy': base_energy,
+                        'base_cost': new_base_cost,
+                        'base_labor': new_base_labor,
+                        'base_equipment': new_base_equip,
+                        'base_energy': new_base_energy,
                         'labor_ot_cost': 0.0,
                         'equipment_ot_cost': 0.0,
                         'energy_ot_cost': 0.0,
@@ -433,6 +475,106 @@ class CPSATParetoSolver:
                         'added_resources_detail': added_detail,
                         'crashing_strategy': 'AddRes'
                     })
+
+                    # ========== MODE 3: Hybrid (AddRes + OT) ==========
+                    if allow_ot:
+                        dur_days_after_add = dur_2_actual / self.hours_per_day
+                        total_ot_hours_hybrid = round(dur_days_after_add * task_max_ot_per_day, 1)
+                        
+                        new_h_per_day = self.hours_per_day + task_max_ot_per_day
+                        dur_3 = max(1, int(round(dur_2_actual * self.hours_per_day / new_h_per_day)))
+                        
+                        # OT Cost for Base Workers
+                        ot_premium_base = 0.0
+                        equipment_ot_extra_3 = 0.0
+                        energy_ot_extra_3 = 0.0
+                        ot_breakdown_3 = []
+                        
+                        if human_resources:
+                            for r_info, qty in human_resources:
+                                labor_rate = float(r_info.get('unit_cost', 25.0))
+                                multi = float(r_info.get('overtime_multi', self.overtime_multiplier))
+                                r_ot_premium = round(total_ot_hours_hybrid * qty * labor_rate * (multi - 1.0), 2)
+                                ot_premium_base += r_ot_premium
+                                if r_ot_premium > 0:
+                                    ot_breakdown_3.append({
+                                        'resource_id': str(r_info.get('ID', r_info.get('name'))),
+                                        'resource_name': str(r_info.get('name', 'Unknown')),
+                                        'type': 'Human (Base)',
+                                        'ot_hours': float(total_ot_hours_hybrid),
+                                        'ot_cost': float(r_ot_premium)
+                                    })
+                        else:
+                            labor_rate_per_h = cost_meta.get('labor_rate_per_h', 25.0)
+                            ot_premium_base = round(total_ot_hours_hybrid * labor_rate_per_h * (self.overtime_multiplier - 1.0), 2)
+                            
+                        # OT Cost for Added Workers
+                        ot_premium_added = 0.0
+                        for d in added_detail:
+                            r_info = self.resources_dict.get(d['resource_id'], {})
+                            multi = float(r_info.get('overtime_multi', self.overtime_multiplier))
+                            r_ot_premium = round(total_ot_hours_hybrid * d['added_qty'] * d['unit_cost'] * (multi - 1.0), 2)
+                            ot_premium_added += r_ot_premium
+                            if r_ot_premium > 0:
+                                ot_breakdown_3.append({
+                                    'resource_id': d['resource_id'],
+                                    'resource_name': d['name'],
+                                    'type': 'Human (Added)',
+                                    'ot_hours': float(total_ot_hours_hybrid),
+                                    'ot_cost': float(r_ot_premium)
+                                })
+                        
+                        if machine_resources:
+                            for r_info, qty in machine_resources:
+                                equip_rate = float(r_info.get('unit_cost', 10.0))
+                                energy_rate = float(r_info.get('energy', 0.0))
+                                r_equip_ot = round(total_ot_hours_hybrid * qty * equip_rate, 2)
+                                r_energy_ot = round(total_ot_hours_hybrid * qty * energy_rate, 2)
+                                equipment_ot_extra_3 += r_equip_ot
+                                energy_ot_extra_3 += r_energy_ot
+                                r_ot_extra = r_equip_ot + r_energy_ot
+                                if r_ot_extra > 0:
+                                    ot_breakdown_3.append({
+                                        'resource_id': str(r_info.get('ID', r_info.get('name'))),
+                                        'resource_name': str(r_info.get('name', 'Unknown')),
+                                        'type': 'Machine',
+                                        'ot_cost': r_ot_extra
+                                    })
+                                    
+                        total_ot_premium_3 = round(ot_premium_base + ot_premium_added, 2)
+                        equipment_ot_extra_3 = round(equipment_ot_extra_3, 2)
+                        energy_ot_extra_3 = round(energy_ot_extra_3, 2)
+                        total_ot_extra_3 = round(total_ot_premium_3 + equipment_ot_extra_3 + energy_ot_extra_3, 2)
+                        
+                        # Total cost
+                        cost_3 = round(new_base_cost + net_cost_increase + total_ot_extra_3, 2)
+                        risk_3 = ci_score * 0.90
+                        
+                        modes.append({
+                            'mode': 3,
+                            'name': 'Hybrid',
+                            'dur': dur_3,
+                            'cost': cost_3,
+                            'risk': risk_3,
+                            'normal_dur': dur_0,
+                            'base_effort_h': base_effort_h,
+                            'workers': base_workers,
+                            'extra_workers': actual_extra_workers,
+                            'ot_hours': int(round(total_ot_hours_hybrid)),
+                            'ot_hours_per_day': task_max_ot_per_day,
+                            'ot_extra_cost': total_ot_extra_3,
+                            'base_cost': new_base_cost,
+                            'base_labor': new_base_labor,
+                            'base_equipment': new_base_equip,
+                            'base_energy': new_base_energy,
+                            'labor_ot_cost': total_ot_premium_3,
+                            'equipment_ot_cost': equipment_ot_extra_3,
+                            'energy_ot_cost': energy_ot_extra_3,
+                            'added_res_cost': round(net_cost_increase, 2),
+                            'added_resources_detail': added_detail,
+                            'ot_resource_breakdown': ot_breakdown_3,
+                            'crashing_strategy': 'Hybrid'
+                        })
 
             task_modes[t_id] = modes
             
@@ -576,7 +718,25 @@ class CPSATParetoSolver:
         hours_per_week = self.calendar_engine.hours_per_week
         hours_per_month = self.calendar_engine.hours_per_month
 
-        for t_id, t_var in task_vars.items():
+        # Mốc bắt đầu dự án ban đầu
+        b_start_series = [t.get('baseline_start', '2010-01-01T08:00:00Z') for t in self.tasks]
+        b_dt = pd.to_datetime(b_start_series, errors='coerce', utc=True).dropna()
+        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01T08:00:00Z', utc=True)
+        
+        # Build predecessor map for topological date resolution
+        pred_map = {t_id: [] for t_id in task_vars.keys()}
+        for pred, succ, attr in self.dependencies:
+            p_id, s_id = str(pred), str(succ)
+            if s_id in pred_map and p_id in task_vars:
+                pred_map[s_id].append(p_id)
+                
+        # Forward pass to calculate actual real-world dates
+        real_start_dts = {}
+        real_finish_dts = {}
+        sorted_t_ids = sorted(task_vars.keys(), key=lambda x: solver.Value(task_vars[x]['start']))
+
+        for t_id in sorted_t_ids:
+            t_var = task_vars[t_id]
             sel_mode = 0
             for idx, b_var in enumerate(t_var['presence_vars']):
                 if solver.Value(b_var) == 1:
@@ -625,10 +785,35 @@ class CPSATParetoSolver:
             tot_equipment = round(base_equipment + ot_equip_c, 2)
             tot_energy = round(base_energy + ot_energy_c, 2)
 
+            try:
+                # Resolve true start time considering predecessors' true finish times
+                base_start_dt = self.calendar_engine.add_working_hours(min_proj_dt, st_val, is_start_time=True)
+                preds = pred_map.get(t_id, [])
+                if preds:
+                    max_pred_finish = max((real_finish_dts.get(p_id, base_start_dt) for p_id in preds), default=base_start_dt)
+                    if max_pred_finish > base_start_dt:
+                        base_start_dt = max_pred_finish
+                real_start_dts[t_id] = base_start_dt
+                
+                # Resolve true finish time using custom OT shifts
+                base_effort_h = float(m_info.get('base_effort_h', norm_dur_h))
+                ot_hours_per_day = float(m_info.get('ot_hours_per_day', 0.0))
+                finish_dt = self.calendar_engine.add_working_hours(base_start_dt, base_effort_h, is_start_time=False, ot_hours=ot_hours_per_day)
+                real_finish_dts[t_id] = finish_dt
+                
+                start_str = base_start_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+                finish_str = finish_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+            except Exception as e:
+                print("DATETIME EXCEPTION:", repr(e))
+                start_str = None
+                finish_str = None
+
             schedule[t_id] = {
                 'task_id': t_id,
                 'start_hours': st_val,
                 'finish_hours': end_val,
+                'baseline_start': start_str,
+                'baseline_end': finish_str,
                 'duration_hours': dur_h,
                 'base_duration_hours': norm_dur_h,
                 'base_effort_hours': float(m_info.get('base_effort_h', norm_dur_h)),
@@ -656,15 +841,12 @@ class CPSATParetoSolver:
                 'labor_ot_premium': float(m_info.get('labor_ot_cost', 0.0)),
                 'equipment_ot_extra': float(m_info.get('equipment_ot_cost', 0.0)),
                 'energy_ot_extra': float(m_info.get('energy_ot_cost', 0.0)),
-                'added_resources_detail': m_info.get('added_resources_detail', [])
+                'added_resources_detail': m_info.get('added_resources_detail', []),
+                'ot_resource_breakdown': m_info.get('ot_resource_breakdown', [])
             }
 
         makespan_days = round(res_makespan / hours_per_day, 2)
 
-        # Mốc bắt đầu dự án ban đầu
-        b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
-        b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
-        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01 08:00:00')
         actual_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, res_makespan)
 
         penalty_cost = 0.0
@@ -690,7 +872,7 @@ class CPSATParetoSolver:
             bonus_amount = round(abs(delta_days) * self.bonus_per_day, 2)
 
         final_cost = round(res_cost + penalty_cost - bonus_amount, 2)
-        actual_finish_str = actual_finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
+        actual_finish_str = actual_finish_dt.isoformat()
 
         return {
             'option_name': cfg['name'],
@@ -755,9 +937,9 @@ class CPSATParetoSolver:
         max_makespan = max(ef.values()) if ef else 0.0
         hours_per_day = self.calendar_engine.avg_hours_per_day
         
-        b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
-        b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
-        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01 08:00:00')
+        b_start_series = [t.get('baseline_start', '2010-01-01T08:00:00Z') for t in self.tasks]
+        b_dt = pd.to_datetime(b_start_series, errors='coerce', utc=True).dropna()
+        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01T08:00:00Z', utc=True)
 
         schedule = {}
         for t_id in G.nodes():
@@ -816,11 +998,17 @@ class CPSATParetoSolver:
             total_c = round(base_c + ot_cost + added_res_cost, 2)
             
             try:
-                task_start_dt = self.calendar_engine.add_working_hours(min_proj_dt, start_h)
-                task_finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, finish_h)
-                start_str = task_start_dt.strftime('%Y-%m-%dT%H:%M:%S')
-                finish_str = task_finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
-            except Exception:
+                task_start_dt = self.calendar_engine.add_working_hours(min_proj_dt, start_h, is_start_time=True)
+                task_finish_dt = self.calendar_engine.add_working_hours(task_start_dt, float(base_dur), is_start_time=False, ot_hours=ot_hrs_per_day)
+                if task_start_dt.tzinfo is None:
+                    task_start_dt = task_start_dt.tz_localize('UTC')
+                if task_finish_dt.tzinfo is None:
+                    task_finish_dt = task_finish_dt.tz_localize('UTC')
+                
+                start_str = task_start_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+                finish_str = task_finish_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+            except Exception as e:
+                print("DATETIME EXCEPTION:", repr(e))
                 start_str = None
                 finish_str = None
 
@@ -854,7 +1042,8 @@ class CPSATParetoSolver:
                 'crashing_strategy': strat,
                 'labor_ot_premium': labor_ot,
                 'equipment_ot_extra': equip_ot,
-                'energy_ot_extra': energy_ot
+                'energy_ot_extra': energy_ot,
+                'ot_resource_breakdown': t_val.get('ot_resource_breakdown', []) if task_durations and t_id in task_durations and isinstance(task_durations[t_id], dict) else []
             }
 
         return schedule, max_makespan
@@ -903,14 +1092,15 @@ class CPSATParetoSolver:
         expanded = []
         ratios = np.linspace(0.0, 1.0, num=pareto_count)
         
-        b_start_series = [t.get('baseline_start', '2010-01-01 08:00:00') for t in self.tasks]
-        b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
-        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01 08:00:00')
-        
+        b_start_series = [t.get('baseline_start', '2010-01-01T08:00:00Z') for t in self.tasks]
+        b_dt = pd.to_datetime(b_start_series, errors='coerce', utc=True).dropna()
+        min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01T08:00:00Z', utc=True)
         target_dt = None
         if self.target_deadline is not None and str(self.target_deadline).strip():
             try:
                 target_dt = pd.to_datetime(self.target_deadline)
+                if target_dt.tzinfo is None:
+                    target_dt = target_dt.tz_localize('UTC')
             except Exception:
                 target_dt = None
                 
@@ -918,6 +1108,8 @@ class CPSATParetoSolver:
             # Mặc định mốc Hạn chót hợp đồng là mốc hoàn thành trung vị Pareto
             mid_makespan = c_makespan + 0.5 * (n_makespan - c_makespan)
             target_dt = self.calendar_engine.add_working_hours(min_proj_dt, mid_makespan)
+            if target_dt.tzinfo is None:
+                target_dt = target_dt.tz_localize('UTC')
 
         for idx, r in enumerate(ratios, start=1):
             curr_makespan = round(c_makespan + r * (n_makespan - c_makespan), 1)
@@ -925,8 +1117,11 @@ class CPSATParetoSolver:
             
             try:
                 finish_dt = self.calendar_engine.add_working_hours(min_proj_dt, curr_makespan)
-                finish_str = finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
-            except Exception:
+                if finish_dt.tzinfo is None:
+                    finish_dt = finish_dt.tz_localize('UTC')
+                finish_str = finish_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+            except Exception as e:
+                print("DATETIME EXCEPTION 2:", repr(e))
                 finish_dt = None
                 finish_str = "N/A"
 
@@ -979,11 +1174,21 @@ class CPSATParetoSolver:
                         'unit_cost': d['unit_cost'],
                         'total_extra_cost': round(d['unit_cost'] * d['added_qty'] * interpolated, 2)
                     } for d in added_det]
-                
+                ot_breakdown = c_task.get('ot_resource_breakdown', []) if strat == 'OT' else []
+                if ot_breakdown and ratio_crash < 1.0:
+                    ot_breakdown = [{
+                        'resource_id': b['resource_id'],
+                        'resource_name': b['resource_name'],
+                        'type': b['type'],
+                        'ot_hours': round(b['ot_hours'] * ratio_crash, 1),
+                        'ot_cost': round(b['ot_cost'] * ratio_crash, 2)
+                    } for b in ot_breakdown]
+
                 task_durs[t_id] = {
                     'duration_hours': max(0.5, interpolated),
                     'crashing_strategy': strat,
                     'added_resources_detail': added_det,
+                    'ot_resource_breakdown': ot_breakdown,
                     'added_resources_cost': float(c_task.get('added_resources_cost', 0.0)) * ratio_crash if strat == 'AddRes' else 0.0,
                     'labor_ot_premium': float(c_task.get('labor_ot_premium', 0.0)) * ratio_crash if strat == 'OT' else 0.0,
                     'equipment_ot_extra': float(c_task.get('equipment_ot_extra', 0.0)) * ratio_crash if strat == 'OT' else 0.0,

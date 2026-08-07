@@ -4,6 +4,7 @@ import sys
 import json
 import pandas as pd
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # Add backend directory to sys.path
 backend_dir = Path(__file__).resolve().parent.parent
@@ -133,6 +134,17 @@ async def reload_docker_database_rigorous():
                 {"p_id": p_id, "sched": json.dumps(sched_data), "holidays": json.dumps(holidays_list)}
             )
 
+            # Helper to parse local time
+            def parse_local_time(val):
+                if pd.isna(val): return None
+                try:
+                    dt = pd.to_datetime(val)
+                    if dt.tzinfo is None:
+                        dt = dt.tz_localize(ZoneInfo('Asia/Ho_Chi_Minh'))
+                    return dt.to_pydatetime()
+                except Exception:
+                    return None
+                    
             # Parse baseline_start and baseline_end from task_schedules.csv
             schedule_map = {}
             if not df_sched.empty:
@@ -144,17 +156,8 @@ async def reload_docker_database_rigorous():
                     st_val = s_row.get(start_col)
                     end_val = s_row.get(end_col) if end_col in df_sched.columns else None
                     
-                    st_dt, end_dt = None, None
-                    if pd.notna(st_val):
-                        try:
-                            st_dt = pd.to_datetime(st_val).to_pydatetime()
-                        except Exception:
-                            pass
-                    if pd.notna(end_val):
-                        try:
-                            end_dt = pd.to_datetime(end_val).to_pydatetime()
-                        except Exception:
-                            pass
+                    st_dt = parse_local_time(st_val)
+                    end_dt = parse_local_time(end_val)
                             
                     schedule_map[t_id_str] = (st_dt, end_dt)
 
@@ -275,17 +278,11 @@ async def reload_docker_database_rigorous():
                 if sched_data:
                     b_start, b_end = sched_data
                     
-                if not b_start and pd.notna(row.get('baseline_start')):
-                    try:
-                        b_start = pd.to_datetime(row.get('baseline_start')).to_pydatetime()
-                    except Exception:
-                        b_start = None
+                if not b_start:
+                    b_start = parse_local_time(row.get('baseline_start'))
                         
-                if not b_end and pd.notna(row.get('baseline_end')):
-                    try:
-                        b_end = pd.to_datetime(row.get('baseline_end')).to_pydatetime()
-                    except Exception:
-                        b_end = None
+                if not b_end:
+                    b_end = parse_local_time(row.get('baseline_end'))
 
                 # Base cost is sum of all 38 cost sub-groups
                 task_base = float(row.get('base_cost', 0.0) or 0.0)

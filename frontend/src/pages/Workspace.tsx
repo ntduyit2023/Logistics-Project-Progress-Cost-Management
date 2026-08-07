@@ -373,8 +373,8 @@ const Workspace = () => {
   const simulationResults = useMemo(() => projectData?.metadata_json?.simulation_results || {}, [projectData]);
   const paretoOptions = useMemo(() => simulationResults?.pareto_nsga2?.options || [], [simulationResults]);
   const allParetoOptions = useMemo(() => {
-    return glpoResult?.pareto_options || glpoResult?.pareto_solutions || paretoOptions || [];
-  }, [glpoResult, paretoOptions]);
+    return glpoResult?.pareto_options || glpoResult?.pareto_solutions || projectData?.metadata_json?.pareto_options_data?.pareto_options || paretoOptions || [];
+  }, [glpoResult, paretoOptions, projectData]);
   const paretoBarData = useMemo(() => {
     return allParetoOptions.map((opt: any, idx: number) => ({
       name: opt.option_name || `PA ${idx + 1}`,
@@ -917,7 +917,7 @@ const Workspace = () => {
                             return (
                               <div className="bg-slate-900 text-white p-3 rounded-lg shadow-xl text-xs space-y-1 border border-slate-700">
                                 <p className="font-bold text-amber-400">{d.option_name}</p>
-                                <p>Thời gian: <span className="font-bold text-indigo-300">{d.makespan_hours}h</span> (Đến ngày: {d.finish_datetime || 'N/A'})</p>
+                                <p>Thời gian: <span className="font-bold text-indigo-300">{d.makespan_hours}h</span> (Đến ngày: {d.finish_datetime ? new Date(d.finish_datetime).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'})</p>
                                 <p>Chi phí gốc: <span className="text-slate-300">${Number(d.base_project_cost || d.cost || 0).toLocaleString()}</span></p>
                                 <p>Chi phí ròng: <span className="font-bold text-emerald-400">${Number(d.total_cost || d.cost || 0).toLocaleString()}</span></p>
                                 <p>Rủi ro trễ: <span className="font-bold text-rose-400">{d.risk_pct}%</span></p>
@@ -1034,7 +1034,7 @@ const Workspace = () => {
                           <td className="px-4 py-3 font-bold text-slate-500">#{idx + 1}</td>
                           <td className="px-4 py-3 font-bold text-slate-800">{opt.option_name || `Phương án ${idx + 1}`}</td>
                           <td className="px-4 py-3 text-right font-black text-indigo-600">{opt.makespan_hours || opt.makespan}h</td>
-                          <td className="px-4 py-3 text-right text-slate-600">{opt.finish_datetime || 'N/A'}</td>
+                          <td className="px-4 py-3 text-right text-slate-600">{opt.finish_datetime ? new Date(opt.finish_datetime).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</td>
                           <td className="px-4 py-3 text-right text-slate-600">${Number(baseCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
                           <td className={`px-4 py-3 text-right ${adjustClass}`}>{adjustStr}</td>
                           <td className="px-4 py-3 text-right font-extrabold text-emerald-600">${Number(netCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>

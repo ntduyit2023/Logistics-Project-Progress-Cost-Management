@@ -85,6 +85,7 @@ class Resource(Base):
     energy: Mapped[float] = mapped_column(Numeric(15, 2), default=0.0)
     overtime_multi: Mapped[float] = mapped_column(Numeric(5, 2), default=1.5)
     max_overtime_per_day: Mapped[float] = mapped_column(Numeric(5, 2), default=4.0)
+    addres_efficiency: Mapped[float] = mapped_column(Numeric(5, 2), default=0.7)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 

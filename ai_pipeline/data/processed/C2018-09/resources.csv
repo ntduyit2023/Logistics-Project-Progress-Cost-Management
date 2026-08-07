@@ -1,6 +1,6 @@
-ID,name,type,max_availability,unit_cost,energy,overtime_multi,max_overtime_per_day
-1,Project Leader,Human,1,30.0,0.0,1.5,4.0
-2,Engineer,Human,3,50.0,0.0,1.5,4.0
-3,Worker,Human,2,24.0,0.0,1.5,4.0
-4,Marketeer,Human,1,28.0,0.0,1.5,4.0
-5,Administrator,Human,1,30.0,0.0,1.5,4.0
+ID,name,type,max_availability,unit_cost,energy,overtime_multi,max_overtime_per_day,addres_efficiency
+1,Project Leader,Human,1,30.0,0.0,1.5,4.0,0.7
+2,Engineer,Human,3,50.0,0.0,1.5,4.0,0.7
+3,Worker,Human,2,24.0,0.0,1.5,4.0,0.7
+4,Marketeer,Human,1,28.0,0.0,1.5,4.0,0.7
+5,Administrator,Human,1,30.0,0.0,1.5,4.0,0.7

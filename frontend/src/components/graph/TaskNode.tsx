@@ -63,12 +63,18 @@ const TaskNode = ({ data }: any) => {
   const startDateStr = formatDateTimeShort(data.baseline_start);
   const endDateStr = formatDateTimeShort(data.baseline_end);
 
+  const otBreakdown = data.ot_resource_breakdown || [];
+  let otBreakdownText = '';
+  if (otBreakdown.length > 0) {
+    otBreakdownText = otBreakdown.map((r: any) => `    - ${r.resource_name} (${r.ot_hours}h): +$${Number(r.ot_cost).toFixed(0)}`).join('\n') + '\n';
+  }
+
   const tooltipText = `${data.wbs} - ${data.task_name}\n` +
     `• Thời gian: ${startDateStr} ➔ ${endDateStr}\n` +
     `• Khối lượng (Effort): ${baseEffort}h (Không đổi)\n` +
     `• Thời lượng (Duration): ${data.duration}h ${durDiff > 0 ? `(Rút ngắn -${durDiff}h)` : ''}\n` +
     (crashStrategy !== 'Normal' ? `• Chiến lược: ${crashStrategy}\n` : '') +
-    (laborOtPremium > 0 ? `• OT Premium (Nhân công): +$${laborOtPremium.toFixed(0)}\n` : '') +
+    (laborOtPremium > 0 ? `• OT Premium (Nhân công): +$${laborOtPremium.toFixed(0)}\n${otBreakdownText}` : '') +
     (equipOtExtra > 0 ? `• Equipment tăng thêm: +$${equipOtExtra.toFixed(0)}\n` : '') +
     (energyOtExtra > 0 ? `• Energy tăng thêm: +$${energyOtExtra.toFixed(0)}\n` : '') +
     (addedResCost > 0 ? `• Thuê thêm nhân sự: +$${addedResCost.toFixed(0)}\n` : '') +
@@ -89,12 +95,14 @@ const TaskNode = ({ data }: any) => {
           </span>
           {isCritical && isCrashedTask && (
             <span className="text-[7.5px] font-black bg-rose-500 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm flex items-center gap-0.5">
-              GĂNG • TĂNG TỐC
+              GĂNG • {crashStrategy === 'AddRes' ? 'THÊM THỢ' : crashStrategy === 'Hybrid' ? 'HYBRID' : 'TĂNG CA'}
             </span>
           )}
           {isCrashedTask && !isCritical && (
             <span className="text-[8px] font-extrabold bg-amber-500 text-white px-1.5 py-0.5 rounded leading-none tracking-wide shadow-sm">
-              ⚡ TĂNG TỐC (OT)
+              {crashStrategy === 'AddRes' ? '➕ THÊM THỢ' : 
+               crashStrategy === 'Hybrid' ? '🔥 HYBRID' : 
+               '⚡ TĂNG CA (OT)'}
             </span>
           )}
           {isOutsourced && (
@@ -115,9 +123,9 @@ const TaskNode = ({ data }: any) => {
         {/* Real AI Optimization Details Badge Line */}
         {isCrashedTask && (
           <div className="flex items-center gap-1.5 text-[8.5px] font-extrabold text-amber-900 bg-amber-100/90 px-1.5 py-0.5 rounded border border-amber-200/80 my-0.5">
-            <span>⚡ {crashStrategy !== 'Normal' ? crashStrategy : 'Tối ưu AI'}</span>
-            {durDiff > 0 && <span>-{durDiff}h</span>}
-            {otHours > 0 && <span>OT {otHours}h/ngày</span>}
+            <span>⚡ {crashStrategy !== 'Normal' ? `Chiến lược: ${crashStrategy}` : 'Tối ưu AI'}</span>
+            {durDiff > 0 && <span>| Giảm {durDiff}h</span>}
+            {otHours > 0 && <span>| OT {otHours}h/ngày</span>}
             {extraWorkers > 0 && <span>+{extraWorkers} thợ</span>}
             {(laborOtPremium + equipOtExtra + energyOtExtra + addedResCost) > 0 && (
               <span>• +${(laborOtPremium + equipOtExtra + energyOtExtra + addedResCost).toFixed(0)}</span>

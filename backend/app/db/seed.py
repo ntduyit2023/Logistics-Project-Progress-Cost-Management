@@ -121,7 +121,8 @@ async def seed_project_data(session: AsyncSession, project_dir: Path):
                 unit_cost=float(row.get('unit_cost', 0.0) or 0.0),
                 energy=float(row.get('energy', 0.0) or 0.0),
                 overtime_multi=float(row.get('overtime_multi', 1.5) or 1.5),
-                max_overtime_per_day=float(row.get('max_overtime_per_day', 4.0) or 4.0)
+                max_overtime_per_day=float(row.get('max_overtime_per_day', 4.0) or 4.0),
+                addres_efficiency=float(row.get('addres_efficiency', 0.7) or 0.7)
             )
             session.add(res_obj)
         await session.flush()
