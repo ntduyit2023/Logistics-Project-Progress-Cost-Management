@@ -39,7 +39,6 @@ async def run_glpo_optimization(
     project_code: str = Path(..., alias="project_id", description="Mã dự án (ví dụ C2011-07)"),
     mc_iterations: int = 10000,
     pareto_count: int = 5,
-    overtime_multiplier: float = 1.5,
     target_deadline: Optional[str] = None,
     penalty_per_day: float = 0.0,
     bonus_per_day: float = 0.0,
@@ -59,7 +58,6 @@ async def run_glpo_optimization(
             project_id_or_code=project_code,
             mc_iterations=mc_iterations,
             pareto_count=pareto_count,
-            overtime_multiplier=overtime_multiplier,
             target_deadline=target_deadline,
             penalty_per_day=penalty_per_day,
             bonus_per_day=bonus_per_day

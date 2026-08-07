@@ -48,7 +48,6 @@ class CPSATParetoSolver:
         ai_task_preds: Optional[Dict[str, Dict[str, float]]] = None,
         task_labor_rates: Optional[Dict[str, float]] = None,
         resources_dict: Optional[Dict[str, Dict[str, Any]]] = None,
-        overtime_multiplier: float = 1.5,
         mc_samples: Optional[np.ndarray] = None,
         mc_iterations: int = 10000,
         target_deadline: Optional[float] = None,
@@ -68,7 +67,6 @@ class CPSATParetoSolver:
         self.ai_task_preds = ai_task_preds or {}
         self.task_labor_rates = task_labor_rates or {}
         self.ai_attention_scores = ai_attention_scores or {}
-        self.overtime_multiplier = float(overtime_multiplier)
         self.mc_samples = mc_samples
         self.mc_iterations = max(100, int(mc_iterations))
         self.target_deadline = target_deadline
@@ -227,8 +225,7 @@ class CPSATParetoSolver:
             task_labor_rates=self.task_labor_rates,
             ai_attention_scores=self.ai_attention_scores,
             hours_per_day=self.hours_per_day,
-            days_per_week=self.days_per_week,
-            overtime_multiplier=self.overtime_multiplier
+            days_per_week=self.days_per_week
         )
 
         horizon = sum(m[0]['dur'] for m in task_modes.values()) * 2

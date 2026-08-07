@@ -51,8 +51,7 @@ def run_new_pipeline(
     mc_iterations: int = 10000,
     pareto_sort_by: str = "makespan_hours",
     pareto_count: int = 5,
-    overtime_multiplier: float = 1.5,
-    target_deadline: Optional[float] = None,
+    target_deadline: Optional[str] = None,
     penalty_per_day: float = 0.0,
     bonus_per_day: float = 0.0,
     output_json: Optional[str] = None
@@ -72,7 +71,6 @@ def run_new_pipeline(
         mc_iterations (int): Số vòng lặp Monte Carlo CPM (khuyến nghị 1000 - 10000).
         pareto_sort_by (str): Tiêu chí sắp xếp danh sách kết quả.
         pareto_count (int): Số lượng phương án Pareto cần xuất ra.
-        overtime_multiplier (float): Hệ số chi phí tăng ca (mặc định 1.5).
         target_deadline (Optional[float]): Mốc thời gian (giờ) yêu cầu hoàn thành.
         penalty_per_day (float): Mức phạt trễ hạn.
         bonus_per_day (float): Tiền thưởng sớm.
@@ -159,7 +157,7 @@ def run_new_pipeline(
     # 4. Mô phỏng Monte Carlo CPM dựa trên Lịch Agenda
     print(f"\n[BUOC 4] Mo phong Monte Carlo CPM voi {mc_iterations:,} vong chay...")
     from ai_pipeline.models.moi.utils.data_loader import load_project_data
-    tasks_df, logic_df, res_df, task_res_df, _, _, _, _ = load_project_data(project_dir)
+    tasks_df, logic_df, res_df, task_res_df, info_df, project_type, weekly_schedule, holidays_list = load_project_data(project_dir)
 
     tasks = tasks_df.to_dict(orient='records')
     for t in tasks:
@@ -218,7 +216,6 @@ def run_new_pipeline(
         criticality_index=mc_results['criticality_index'],
         ai_task_preds=ai_task_preds,
         task_labor_rates=task_labor_rates,
-        overtime_multiplier=overtime_multiplier,
         mc_samples=mc_results.get('makespan_samples'),
         mc_iterations=mc_iterations,
         target_deadline=target_deadline,
@@ -287,7 +284,6 @@ if __name__ == "__main__":
         mc_iterations=args.mc_iterations,
         pareto_sort_by=args.pareto_sort,
         pareto_count=args.pareto_count,
-        overtime_multiplier=args.overtime_multiplier,
         target_deadline=args.target_deadline,
         penalty_per_day=args.penalty_per_day,
         bonus_per_day=args.bonus_per_day,

@@ -115,7 +115,7 @@ class MonteCarloCPMEngine:
         # =========================================================================
         # BƯỚC 2: VÒNG LẶP MONTE CARLO CHÍNH (SIMULATION LOOP)
         # =========================================================================
-        for _ in range(num_iterations):
+        for i in range(num_iterations):
             # 1. Lấy mẫu thời lượng cho từng task
             sampled_durations = {}
             for t_id in task_ids:
@@ -158,7 +158,7 @@ class MonteCarloCPMEngine:
                 ef[t_id] = es[t_id] + sampled_durations[t_id]
                 
             project_makespan = max(ef.values()) if ef else 0.0
-            makespan_samples[run] = project_makespan
+            makespan_samples[i] = project_makespan
             
             # 3. Tính Backward Pass tìm đường găng
             ls = {t_id: project_makespan for t_id in task_ids}

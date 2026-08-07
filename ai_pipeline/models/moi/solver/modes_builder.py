@@ -10,8 +10,7 @@ def build_task_modes(
     task_labor_rates: Dict[str, float],
     ai_attention_scores: Dict[str, Dict[str, float]],
     hours_per_day: float,
-    days_per_week: float,
-    overtime_multiplier: float
+    days_per_week: float
 ) -> Dict[str, List[Dict[str, Any]]]:
     """
     Xây dựng các kịch bản thực thi (Execution Modes) khả thi cho từng công việc (Task).
@@ -35,7 +34,6 @@ def build_task_modes(
         ai_attention_scores (Dict[str, Dict[str, float]]): Điểm chú ý HGT chỉ ra tài nguyên nào là nút thắt (bottleneck).
         hours_per_day (float): Số giờ làm việc tiêu chuẩn 1 ngày.
         days_per_week (float): Số ngày làm việc tiêu chuẩn 1 tuần.
-        overtime_multiplier (float): Hệ số lương ngoài giờ cơ sở (vd: 1.5).
 
     Returns:
         Dict[str, List[Dict[str, Any]]]: Từ điển ánh xạ ID công việc tới danh sách các Mode cấu hình thực thi.
@@ -80,11 +78,10 @@ def build_task_modes(
             task_max_ot_per_day = 0.0
 
         # ========== TÍNH ĐƠN GIÁ THEO LOẠI ==========
-        human_labor_rate_total = sum(qty * float(r.get('unit_cost', 25.0)) for r, qty in human_resources)
-        human_ot_multi = min(
-            (float(r.get('overtime_multi', overtime_multiplier)) for r, _ in human_resources),
-            default=overtime_multiplier
-        )
+        if human_resources:
+            human_ot_multi = min([float(r.get('overtime_multi', 1.5)) for r, _ in human_resources])
+        else:
+            human_ot_multi = 1.5
 
         machine_equip_rate_total = sum(qty * float(r.get('unit_cost', 10.0)) for r, qty in machine_resources)
         machine_energy_rate_total = sum(qty * float(r.get('energy', 0.0)) for r, qty in machine_resources)
@@ -147,7 +144,7 @@ def build_task_modes(
             if human_resources:
                 for r_info, qty in human_resources:
                     labor_rate = float(r_info.get('unit_cost', 25.0))
-                    multi = float(r_info.get('overtime_multi', overtime_multiplier))
+                    multi = float(r_info.get('overtime_multi', 1.5))
                     r_ot_premium = round(ot_hours_total * qty * labor_rate * (multi - 1.0), 2)
                     ot_premium_human += r_ot_premium
                     if r_ot_premium > 0:
@@ -160,7 +157,7 @@ def build_task_modes(
                         })
             else:
                 labor_rate_per_h = cost_meta.get('labor_rate_per_h', 25.0)
-                ot_premium_human = round(ot_hours_total * labor_rate_per_h * (overtime_multiplier - 1.0), 2)
+                ot_premium_human = round(ot_hours_total * labor_rate_per_h * (1.5 - 1.0), 2)
 
             if machine_resources:
                 for r_info, qty in machine_resources:
@@ -327,7 +324,7 @@ def build_task_modes(
                     if human_resources:
                         for r_info, qty in human_resources:
                             labor_rate = float(r_info.get('unit_cost', 25.0))
-                            multi = float(r_info.get('overtime_multi', overtime_multiplier))
+                            multi = float(r_info.get('overtime_multi', 1.5))
                             r_ot_premium = round(total_ot_hours_hybrid * qty * labor_rate * (multi - 1.0), 2)
                             ot_premium_base += r_ot_premium
                             if r_ot_premium > 0:
@@ -340,12 +337,12 @@ def build_task_modes(
                                 })
                     else:
                         labor_rate_per_h = cost_meta.get('labor_rate_per_h', 25.0)
-                        ot_premium_base = round(total_ot_hours_hybrid * labor_rate_per_h * (overtime_multiplier - 1.0), 2)
+                        ot_premium_base = round(total_ot_hours_hybrid * labor_rate_per_h * (1.5 - 1.0), 2)
                         
                     ot_premium_added = 0.0
                     for d in added_detail:
                         r_info = resources_dict.get(d['resource_id'], {})
-                        multi = float(r_info.get('overtime_multi', overtime_multiplier))
+                        multi = float(r_info.get('overtime_multi', 1.5))
                         r_ot_premium = round(total_ot_hours_hybrid * d['added_qty'] * d['unit_cost'] * (multi - 1.0), 2)
                         ot_premium_added += r_ot_premium
                         if r_ot_premium > 0:

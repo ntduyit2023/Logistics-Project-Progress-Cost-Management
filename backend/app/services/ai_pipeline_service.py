@@ -43,7 +43,6 @@ async def run_ai_pipeline_workflow(
     project_id_or_code: str,
     mc_iterations: int = 10000,
     pareto_count: int = 5,
-    overtime_multiplier: float = 1.5,
     target_deadline: Optional[str] = None,
     penalty_per_day: float = 0.0,
     bonus_per_day: float = 0.0
@@ -62,7 +61,6 @@ async def run_ai_pipeline_workflow(
         bonus_per_day=bonus_per_day,
         mc_iterations=mc_iterations,
         pareto_count=pareto_count,
-        overtime_multiplier=overtime_multiplier,
         created_at=datetime.utcnow()
     )
     db.add(run_obj)
@@ -83,7 +81,6 @@ async def run_ai_pipeline_workflow(
             project_id=project_code,
             mc_iterations=mc_iterations,
             pareto_count=pareto_count,
-            overtime_multiplier=overtime_multiplier,
             target_deadline=target_deadline,
             penalty_per_day=penalty_per_day,
             bonus_per_day=bonus_per_day,

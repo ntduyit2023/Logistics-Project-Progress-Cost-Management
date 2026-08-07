@@ -41,7 +41,6 @@ class HeteroGraphBuilder:
         self.agenda_id_map = {}
 
     def build(self) -> HeteroData:
-    def build(self) -> HeteroData:
         """
         Nạp dữ liệu từ các file tiêu chuẩn qua DataLoader và dựng đối tượng HeteroData.
 
