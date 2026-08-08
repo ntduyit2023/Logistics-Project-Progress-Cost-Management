@@ -59,9 +59,13 @@ def extract_solution_schedule(
     hours_per_month = calendar_engine.hours_per_month
 
     # Mốc bắt đầu dự án ban đầu
-    b_start_series = [t.get('baseline_start', '2010-01-01T08:00:00Z') for t in tasks]
-    b_dt = pd.to_datetime(b_start_series, errors='coerce', utc=True).dropna()
-    min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01T08:00:00Z', utc=True)
+    b_start_series = [t.get('baseline_start', '2010-01-01T08:00:00') for t in tasks]
+    b_dt = pd.to_datetime(b_start_series, errors='coerce').dropna()
+    min_proj_dt = b_dt.min() if len(b_dt) > 0 else pd.to_datetime('2010-01-01T08:00:00')
+    try:
+        min_proj_dt = min_proj_dt.tz_localize(None)
+    except Exception:
+        min_proj_dt = min_proj_dt.tz_convert(None)
     
     # =========================================================================
     # BƯỚC 2: XÂY DỰNG BẢN ĐỒ TIỀN NHIỆM (PREDECESSOR MAP)
@@ -137,17 +141,16 @@ def extract_solution_schedule(
             if preds:
                 max_pred_finish = max((real_finish_dts.get(p_id, base_start_dt) for p_id in preds), default=base_start_dt)
                 if max_pred_finish > base_start_dt:
-                    base_start_dt = max_pred_finish
+                    base_start_dt = calendar_engine.add_working_hours(max_pred_finish, 0.0, is_start_time=True)
             real_start_dts[t_id] = base_start_dt
             
             # Resolve true finish time using custom OT shifts
-            base_effort_h = float(m_info.get('base_effort_h', norm_dur_h))
             ot_hours_per_day = float(m_info.get('ot_hours_per_day', 0.0))
-            finish_dt = calendar_engine.add_working_hours(base_start_dt, base_effort_h, is_start_time=False, ot_hours=ot_hours_per_day)
+            finish_dt = calendar_engine.add_working_hours(base_start_dt, dur_h, is_start_time=False, ot_hours=ot_hours_per_day)
             real_finish_dts[t_id] = finish_dt
             
-            start_str = base_start_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
-            finish_str = finish_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
+            start_str = base_start_dt.strftime('%Y-%m-%dT%H:%M:%S')
+            finish_str = finish_dt.strftime('%Y-%m-%dT%H:%M:%S')
         except Exception as e:
             print("DATETIME EXCEPTION:", repr(e))
             start_str = None
@@ -204,6 +207,11 @@ def extract_solution_schedule(
     if target_deadline is not None and str(target_deadline).strip():
         try:
             target_dt = pd.to_datetime(target_deadline)
+            try:
+                target_dt = target_dt.tz_localize(None)
+            except Exception:
+                target_dt = target_dt.tz_convert(None)
+                
             if target_dt < min_proj_dt:
                 target_dt = target_dt.replace(year=min_proj_dt.year)
         except Exception:
@@ -224,6 +232,10 @@ def extract_solution_schedule(
         'option_name': cfg['name'],
         'makespan_hours': res_makespan,
         'makespan_days': makespan_days,
+        'finish_datetime': actual_finish_dt.strftime('%Y-%m-%dT%H:%M:%S'),
+        'base_project_cost': round(res_cost, 2),
+        'penalty_cost': penalty_cost,
+        'bonus_amount': bonus_amount,
         'total_cost': final_cost,
         'project_total_cost': final_cost,
         'raw_risk_score': round(res_risk, 2),

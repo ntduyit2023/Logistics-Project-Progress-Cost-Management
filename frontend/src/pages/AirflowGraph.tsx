@@ -70,13 +70,14 @@ interface AirflowGraphProps {
   onDeleteTask?: (taskId: string) => void;
   onEditTask?: (task: any) => void;
   selectedOptionModes?: number[];
+  selectedGlpoData?: Record<string, any>;
   criticalityIndices?: Record<string, number>;
   appliedTaskIds?: string[];
   appliedTaskDetails?: Record<string, any>;
 }
 
 const AirflowGraph: React.FC<AirflowGraphProps> = ({
-  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}
+  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, selectedGlpoData, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}
 }) => {
   const [horizSpacing, setHorizSpacing] = useState(300);
   const [vertSpacing, setVertSpacing] = useState(80);
@@ -219,7 +220,9 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           ? (task.outsource_cost || baseTaskCost * 1.5)
           : baseTaskCost;
 
+      const glpoDataRaw = selectedGlpoData ? (selectedGlpoData[canonicalId] || selectedGlpoData[String(task.id)] || selectedGlpoData[String(task.task_id)]) : null;
       const optDetail = appliedTaskDetails?.[canonicalId] || appliedTaskDetails?.[String(task.id)] || appliedTaskDetails?.[String(task.task_id)];
+      const activeData = glpoDataRaw || optDetail;
 
       return {
         id: canonicalId,
@@ -230,27 +233,28 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           task_label: canonicalId,
           wbs,
           task_name: task.task_name || task.name || canonicalId,
-          duration: optDetail ? optDetail.new_duration : duration,
-          total_cost: cost,
-          base_duration: optDetail ? optDetail.old_duration : baseTaskDuration,
+          duration: activeData ? (activeData.new_duration ?? activeData.duration_hours) : duration,
+          total_cost: activeData && activeData.total_cost ? activeData.total_cost : cost,
+          base_duration: activeData ? activeData.old_duration : baseTaskDuration,
           base_cost: baseTaskCost,
           is_critical: isCritical,
-          is_ai_optimized: Boolean(task.is_ai_optimized || (task.overtime && parseFloat(task.overtime) > 0) || appliedTaskIds.includes(canonicalId) || appliedTaskIds.includes(String(task.id)) || appliedTaskIds.includes(String(task.task_id))),
-          overtime_cost: optDetail ? optDetail.overtime_cost : parseFloat(task.overtime || task.overtime_cost || 0),
-          overtime_hours_per_day: optDetail ? optDetail.overtime_hours_per_day : parseFloat(task.overtime_hours_per_day || task.overtime_hours || 0),
+          is_ai_optimized: Boolean(task.is_ai_optimized || (task.overtime && parseFloat(task.overtime) > 0) || appliedTaskIds.includes(canonicalId) || appliedTaskIds.includes(String(task.id)) || appliedTaskIds.includes(String(task.task_id)) || glpoDataRaw),
+          overtime_cost: activeData ? (activeData.overtime_cost ?? activeData.overtime ?? 0) : parseFloat(task.overtime || task.overtime_cost || 0),
+          overtime_hours_per_day: activeData ? (activeData.overtime_hours_per_day ?? activeData.overtime_hours ?? 0) : parseFloat(task.overtime_hours_per_day || task.overtime_hours || 0),
           resources: task.resources || [],
           features: getTaskGroups(task),
-          baseline_start: optDetail?.baseline_start || task.baseline_start,
-          baseline_end: optDetail?.baseline_end || task.baseline_end,
+          baseline_start: activeData?.baseline_start || task.baseline_start,
+          baseline_end: activeData?.baseline_end || task.baseline_end,
           // === FIELDS MỚI ===
-          base_effort_hours: optDetail?.base_effort_hours ?? parseFloat(task.duration_hours || 0),
-          extra_workers: optDetail?.extra_workers ?? 0,
-          crashing_strategy: optDetail?.crashing_strategy ?? 'Normal',
-          labor_ot_premium: optDetail?.labor_ot_premium ?? 0,
-          equipment_ot_extra: optDetail?.equipment_ot_extra ?? 0,
-          energy_ot_extra: optDetail?.energy_ot_extra ?? 0,
-          added_resources_cost: optDetail?.added_resources_cost ?? 0,
-          ot_resource_breakdown: optDetail?.ot_resource_breakdown ?? task.ot_resource_breakdown ?? []
+          base_effort_hours: activeData?.base_effort_hours ?? parseFloat(task.duration_hours || 0),
+          extra_workers: activeData?.extra_workers ?? 0,
+          crashing_strategy: activeData?.crashing_strategy ?? 'Normal',
+          labor_ot_premium: activeData?.labor_ot_premium ?? 0,
+          equipment_ot_extra: activeData?.equipment_ot_extra ?? 0,
+          energy_ot_extra: activeData?.energy_ot_extra ?? 0,
+          added_resources_cost: activeData?.added_resources_cost ?? 0,
+          added_resources_detail: activeData?.added_resources_detail ?? [],
+          ot_resource_breakdown: activeData?.ot_resource_breakdown ?? task.ot_resource_breakdown ?? []
         },
       };
     });
@@ -281,7 +285,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
 
     const layouted = getLayoutedElements(rawNodes, rawEdges, 'LR', horizSpacing, vertSpacing);
     return { initialNodesLayout: layouted.nodes, initialEdgesLayout: layouted.edges };
-  }, [tasks, dependencies, selectedOptionModes, criticalityIndices, horizSpacing, vertSpacing, appliedTaskIds, appliedTaskDetails]);
+  }, [tasks, dependencies, selectedOptionModes, criticalityIndices, horizSpacing, vertSpacing, appliedTaskIds, appliedTaskDetails, selectedGlpoData]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesLayout);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdgesLayout);

@@ -1192,6 +1192,7 @@ const Workspace = () => {
                     tasks={tasks}
                     dependencies={dependencies}
                     selectedOptionModes={selectedOptionModes}
+                    selectedGlpoData={currentOption?.tasks_schedule || currentOption?.tasks || {}}
                     criticalityIndices={criticalityIndices}
                     appliedTaskIds={projectData?.metadata_json?.applied_task_ids || []}
                     appliedTaskDetails={projectData?.metadata_json?.applied_task_details || {}}

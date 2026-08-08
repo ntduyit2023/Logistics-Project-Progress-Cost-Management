@@ -17,6 +17,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from sqlalchemy import select, delete, desc
 from app.models.ai import AIPipelineRun, ParetoSolution
 from app.services.dataset_sync import export_project_dataset
 from app.services.project_service import get_project_by_identifier
@@ -115,6 +116,31 @@ async def run_ai_pipeline_workflow(
         await db.commit()
         await db.refresh(run_obj)
         print(f"   ✓ Đã lưu thành công {len(pareto_list)} phương án Pareto Frontier vào Database (Run ID: {run_obj.id})!")
+
+        # BƯỚC 3.5: Dọn dẹp Garbage Collection (Giữ lại tối đa 3 lần chạy gần nhất cho dự án này)
+        try:
+            q = select(AIPipelineRun.id).where(AIPipelineRun.project_id == project_code).order_by(desc(AIPipelineRun.created_at))
+            result = await db.execute(q)
+            run_ids = [row[0] for row in result.all()]
+            
+            if len(run_ids) > 3:
+                ids_to_delete = run_ids[3:]
+                print(f"   [Cleanup] Hệ thống phát hiện {len(run_ids)} lần chạy cho dự án {project_code}. Đang dọn dẹp {len(ids_to_delete)} lần chạy cũ nhất...")
+                
+                # Xóa dữ liệu cũ từ bảng pareto_solutions trước
+                del_ps = delete(ParetoSolution).where(ParetoSolution.run_id.in_(ids_to_delete))
+                await db.execute(del_ps)
+                
+                # Xóa các pipeline run từ bảng ai_pipeline_runs
+                del_run = delete(AIPipelineRun).where(AIPipelineRun.id.in_(ids_to_delete))
+                await db.execute(del_run)
+                
+                await db.commit()
+                print(f"   ✓ Đã dọn dẹp xong dữ liệu rác, tối ưu hóa dung lượng Database!")
+        except Exception as cleanup_err:
+            print(f"   [Cảnh báo] Lỗi trong quá trình dọn rác Database: {cleanup_err}")
+            # Dù lỗi cleanup cũng không được làm crash tiến trình chính
+            pass
 
         return {
             "run_id": run_obj.id,
