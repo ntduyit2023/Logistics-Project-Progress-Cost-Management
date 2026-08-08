@@ -8,6 +8,8 @@ import ProjectCard from '../components/ProjectCard';
 export default function ProjectList() {
   const [projects, setProjects] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterType, setFilterType] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   
   // Modal state
@@ -16,10 +18,10 @@ export default function ProjectList() {
 
   const navigate = useNavigate();
 
-  const fetchProjects = useCallback(async (query: string = '') => {
+  const fetchProjects = useCallback(async (query: string = '', status: string = '', type: string = '') => {
     try {
       setIsLoading(true);
-      const res = await api.getProjects({ q: query });
+      const res = await api.getProjects({ q: query, status: status || undefined, projectType: type || undefined });
       setProjects(res.data?.items || []);
     } catch (err) {
       console.error('Failed to fetch projects', err);
@@ -31,17 +33,17 @@ export default function ProjectList() {
   // Debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchProjects(searchQuery);
+      fetchProjects(searchQuery, filterStatus, filterType);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery, fetchProjects]);
+  }, [searchQuery, filterStatus, filterType, fetchProjects]);
 
   const handleDelete = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     if (!window.confirm('Are you sure you want to delete this project? All tasks and constraints will be lost.')) return;
     try {
       await api.deleteProject(id);
-      fetchProjects(searchQuery);
+      fetchProjects(searchQuery, filterStatus, filterType);
     } catch (err) {
       alert('Failed to delete project');
     }
@@ -61,25 +63,13 @@ export default function ProjectList() {
         await api.createProject(data);
       }
       setIsModalOpen(false);
-      fetchProjects(searchQuery);
+      fetchProjects(searchQuery, filterStatus, filterType);
     } catch (err) {
       alert('Failed to save project');
     }
   };
 
-  const handleRunAI = async (e: React.MouseEvent, id: number) => {
-    e.stopPropagation();
-    try {
-      // Create a temporary state for loading on the specific project button
-      // For simplicity, we just use global loading here, but you can refine it
-      setIsLoading(true);
-      await api.runAISimulation(id);
-      fetchProjects(searchQuery); // Refresh to get the new costs
-    } catch (err) {
-      alert('Failed to run AI Simulation');
-      setIsLoading(false);
-    }
-  };
+
 
   const openProjectModal = () => {
     setEditingProject(null);
@@ -112,6 +102,27 @@ export default function ProjectList() {
               className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-sm"
             />
           </div>
+          <select 
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="py-2 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-sm"
+          >
+            <option value="">All Statuses</option>
+            <option value="Planning">Planning</option>
+            <option value="Execution">Execution</option>
+            <option value="Completed">Completed</option>
+            <option value="On Hold">On Hold</option>
+          </select>
+          <select 
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="py-2 px-3 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all shadow-sm"
+          >
+            <option value="">All Types</option>
+            <option value="ITLG">IT & Logistics (ITLG)</option>
+            <option value="CON">Civil Construction (CON)</option>
+            <option value="PRO">Professional Services (PRO)</option>
+          </select>
           <button 
             onClick={openProjectModal}
             className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm shadow-violet-200 transition-all flex items-center"
@@ -141,7 +152,6 @@ export default function ProjectList() {
                 onClick={openWorkspace}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
-                onRunAI={handleRunAI}
               />
             ))}
           </div>

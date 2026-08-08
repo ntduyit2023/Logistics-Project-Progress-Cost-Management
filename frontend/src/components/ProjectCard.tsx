@@ -6,10 +6,9 @@ interface ProjectCardProps {
   onClick: (id: number) => void;
   onEdit: (e: React.MouseEvent, project: any) => void;
   onDelete: (e: React.MouseEvent, id: number) => void;
-  onRunAI: (e: React.MouseEvent, id: number) => void;
 }
 
-export default function ProjectCard({ project: p, onClick, onEdit, onDelete, onRunAI }: ProjectCardProps) {
+export default function ProjectCard({ project: p, onClick, onEdit, onDelete }: ProjectCardProps) {
   return (
     <div 
       onClick={() => onClick(p.id)}
@@ -20,13 +19,6 @@ export default function ProjectCard({ project: p, onClick, onEdit, onDelete, onR
           {p.project_name}
         </h3>
         <div className="flex gap-1 transition-opacity">
-          <button 
-            onClick={(e) => onRunAI(e, p.id)}
-            className="p-1.5 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-md transition-colors"
-            title="Run AI Simulation"
-          >
-            <Zap size={16} />
-          </button>
           <button 
             onClick={(e) => onEdit(e, p)}
             className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"

@@ -4,17 +4,18 @@ import { api } from '../services/api';
 
 interface TimeManagerModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (refresh?: boolean) => void;
   projectId: number | string;
   initialTimeConstraint: any;
+  projectData?: any;
 }
 
 const DEFAULT_SCHEDULE = {
-  monday: ["08:00-12:00", "13:00-17:00"],
-  tuesday: ["08:00-12:00", "13:00-17:00"],
-  wednesday: ["08:00-12:00", "13:00-17:00"],
-  thursday: ["08:00-12:00", "13:00-17:00"],
-  friday: ["08:00-12:00", "13:00-17:00"],
+  monday: [],
+  tuesday: [],
+  wednesday: [],
+  thursday: [],
+  friday: [],
   saturday: [],
   sunday: []
 };
@@ -61,79 +62,124 @@ const normalizeWeeklySchedule = (rawSchedule: any) => {
   return result;
 };
 
+const TimeInput = ({ value, onChange }: { value: string, onChange: (v: string) => void }) => {
+  const parts = value ? value.split(':') : ["08", "00"];
+  const [hour, setHour] = useState(parts[0] || "08");
+  const [minute, setMinute] = useState(parts[1] || "00");
+
+  useEffect(() => {
+    const p = value ? value.split(':') : ["08", "00"];
+    setHour(p[0]);
+    setMinute(p[1]);
+  }, [value]);
+
+  const handleBlur = () => {
+    let h = parseInt(hour || "0");
+    let m = parseInt(minute || "0");
+    if (isNaN(h)) h = 0;
+    if (isNaN(m)) m = 0;
+    if (h > 23) h = 23;
+    if (m > 59) m = 59;
+    const finalH = h.toString().padStart(2, '0');
+    const finalM = m.toString().padStart(2, '0');
+    setHour(finalH);
+    setMinute(finalM);
+    onChange(`${finalH}:${finalM}`);
+  };
+
+  return (
+    <div className="flex items-center w-full min-w-0 border border-slate-300 rounded-md bg-white focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 overflow-hidden">
+      <input
+        type="text"
+        value={hour}
+        onChange={e => setHour(e.target.value.replace(/\D/g, '').slice(0, 2))}
+        onBlur={handleBlur}
+        className="w-full text-center px-0.5 py-1.5 text-xs focus:outline-none bg-transparent"
+      />
+      <span className="text-slate-400 font-bold pb-0.5">:</span>
+      <input
+        type="text"
+        value={minute}
+        onChange={e => setMinute(e.target.value.replace(/\D/g, '').slice(0, 2))}
+        onBlur={handleBlur}
+        className="w-full text-center px-0.5 py-1.5 text-xs focus:outline-none bg-transparent"
+      />
+    </div>
+  );
+};
+
 const DayScheduleRow = ({ day, intervals, onAdd, onRemove }: any) => {
   const [start, setStart] = useState("08:00");
   const [end, setEnd] = useState("12:00");
 
   return (
-    <tr className="bg-white">
-      <td className="px-4 py-3 font-medium text-slate-700 capitalize w-1/5">{day}</td>
-      <td className="px-4 py-3">
+    <div className="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-md transition-all">
+      <div className="font-bold text-slate-800 capitalize mb-3 pb-2 border-b border-slate-100 flex items-center justify-between">
+        {day}
+        {Array.isArray(intervals) && intervals.length > 0 ? (
+          <span className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-medium">{intervals.length} shifts</span>
+        ) : (
+          <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-medium">Off</span>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3 flex-1">
+        {/* List of existing intervals */}
         <div className="flex flex-col gap-2">
-          {/* List of existing intervals */}
-          <div className="flex flex-wrap gap-2 items-center">
-            {Array.isArray(intervals) && intervals.map((interval: string, idx: number) => (
-              <div key={idx} className="bg-indigo-50 border border-indigo-100 px-2 py-1 rounded text-xs font-medium text-indigo-700 flex items-center shadow-sm">
+          {Array.isArray(intervals) && intervals.map((interval: string, idx: number) => (
+            <div key={idx} className="bg-indigo-50/50 border border-indigo-100/80 px-3 py-1.5 rounded-lg text-sm font-medium text-indigo-700 flex items-center justify-between shadow-sm">
+              <div className="flex items-center">
+                <Clock size={14} className="mr-2 text-indigo-400" />
                 {interval}
-                <button onClick={() => onRemove(idx)} className="ml-1.5 text-indigo-400 hover:text-red-500 transition focus:outline-none">
-                  <X size={12} strokeWidth={3} />
-                </button>
               </div>
-            ))}
-            {(!Array.isArray(intervals) || intervals.length === 0) && <span className="text-xs text-slate-400 italic">No shifts (Day off)</span>}
-          </div>
-          
-          {/* Add custom interval inline */}
-          <div className="flex items-center gap-2 mt-1 bg-slate-50 p-1.5 rounded-md border border-slate-200 w-fit">
-            <input 
-              type="time" 
-              value={start} 
-              onChange={e => setStart(e.target.value)} 
-              className="border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-indigo-500 bg-white" 
-            />
-            <span className="text-slate-400 text-xs font-medium">to</span>
-            <input 
-              type="time" 
-              value={end} 
-              onChange={e => setEnd(e.target.value)} 
-              className="border border-slate-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-indigo-500 bg-white" 
-            />
-            <button 
+              <button onClick={() => onRemove(idx)} className="text-indigo-300 hover:text-red-500 hover:bg-red-50 p-1 rounded transition focus:outline-none">
+                <X size={14} strokeWidth={2.5} />
+              </button>
+            </div>
+          ))}
+          {(!Array.isArray(intervals) || intervals.length === 0) && (
+            <div className="flex items-center justify-center py-4 bg-slate-50/50 rounded-lg border border-slate-100 border-dashed">
+              <span className="text-sm text-slate-400 italic">No shifts configured</span>
+            </div>
+          )}
+        </div>
+
+        {/* Add custom interval inline */}
+        <div className="mt-auto pt-3 border-t border-slate-100">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-1 w-full">
+              <TimeInput value={start} onChange={setStart} />
+              <span className="text-slate-400 text-xs font-medium">-</span>
+              <TimeInput value={end} onChange={setEnd} />
+            </div>
+            <button
               onClick={() => { onAdd(start, end); }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded text-xs font-bold transition-colors shadow-sm ml-1"
+              className="w-full shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-md text-xs font-bold transition-colors shadow-sm flex items-center justify-center"
             >
-              + Add Shift
+              <Plus size={14} className="mr-1" /> Add Shift
             </button>
           </div>
         </div>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 };
 
-const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, projectId, initialTimeConstraint }) => {
+const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, projectId, initialTimeConstraint, projectData }) => {
   const [weeklySchedule, setWeeklySchedule] = useState<any>(DEFAULT_SCHEDULE);
-  const [overtimeMultiplier, setOvertimeMultiplier] = useState(1.5);
   const [holidays, setHolidays] = useState<string[]>([]);
   const [newHoliday, setNewHoliday] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const [targetDeadline, setTargetDeadline] = useState("2011-06-30 17:00:00");
-  const [penaltyPerDay, setPenaltyPerDay] = useState(500.0);
-  const [bonusPerDay, setBonusPerDay] = useState(200.0);
-
   useEffect(() => {
-    if (isOpen && initialTimeConstraint) {
-      setWeeklySchedule(normalizeWeeklySchedule(initialTimeConstraint.weekly_schedule));
-      setOvertimeMultiplier(initialTimeConstraint.overtime_multiplier || 1.5);
-      setHolidays(initialTimeConstraint.holidays_list || []);
-      if (initialTimeConstraint.global_deadline) setTargetDeadline(initialTimeConstraint.global_deadline);
-      if (initialTimeConstraint.penalty_per_day !== undefined) setPenaltyPerDay(initialTimeConstraint.penalty_per_day);
-      if (initialTimeConstraint.bonus_per_day !== undefined) setBonusPerDay(initialTimeConstraint.bonus_per_day);
-    } else if (isOpen) {
-      setWeeklySchedule(DEFAULT_SCHEDULE);
-      setOvertimeMultiplier(1.5);
-      setHolidays([]);
+    if (isOpen) {
+      if (initialTimeConstraint) {
+        setWeeklySchedule(normalizeWeeklySchedule(initialTimeConstraint.weekly_schedule));
+        setHolidays(initialTimeConstraint.holidays_list || []);
+      } else {
+        setWeeklySchedule(DEFAULT_SCHEDULE);
+        setHolidays([]);
+      }
     }
   }, [isOpen, initialTimeConstraint]);
 
@@ -161,26 +207,18 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
 
   const handleSave = async () => {
     try {
-      if (overtimeMultiplier < 1.0 || isNaN(overtimeMultiplier)) {
-        alert("Overtime Multiplier must be at least 1.0");
-        return;
-      }
       setSaving(true);
       const payload = {
         weekly_schedule: weeklySchedule,
-        holidays_list: holidays,
-        overtime_multiplier: overtimeMultiplier,
-        global_deadline: targetDeadline,
-        penalty_per_day: Number(penaltyPerDay),
-        bonus_per_day: Number(bonusPerDay)
+        holidays_list: holidays
       };
       if (initialTimeConstraint?.id) {
         await api.updateTimeConstraint(projectId, payload);
       } else {
         await api.createTimeConstraint(projectId, payload);
       }
-      onClose();
-      window.location.reload();
+
+      onClose(true);
     } catch (err) {
       alert("Failed to save calendar: " + (err as Error).message);
     } finally {
@@ -201,11 +239,40 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
 
   const addSchedule = (day: string, start: string, end: string) => {
     if (!start || !end) return;
-    const interval = `${start}-${end}`;
-    const current = weeklySchedule[day] || [];
-    if (!current.includes(interval)) {
-      setWeeklySchedule({ ...weeklySchedule, [day]: [...current, interval] });
+
+    const parseTime = (t: string) => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + (m || 0);
+    };
+
+    const startMins = parseTime(start);
+    const endMins = parseTime(end);
+
+    if (startMins >= endMins) {
+      alert("Invalid Shift: End time must be after start time.");
+      return;
     }
+
+    const current = weeklySchedule[day] || [];
+
+    // Check for overlaps
+    for (const inv of current) {
+      const [invS, invE] = inv.split('-');
+      const invStartMins = parseTime(invS);
+      const invEndMins = parseTime(invE);
+
+      if (startMins < invEndMins && endMins > invStartMins) {
+        alert(`Overlap Error: This shift overlaps with existing shift (${inv}).`);
+        return;
+      }
+    }
+
+    const interval = `${start}-${end}`;
+    const newShifts = [...current, interval].sort((a, b) => {
+      return parseTime(a.split('-')[0]) - parseTime(b.split('-')[0]);
+    });
+
+    setWeeklySchedule({ ...weeklySchedule, [day]: newShifts });
   };
 
   const removeSchedule = (day: string, index: number) => {
@@ -215,15 +282,15 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-3xl rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white w-full max-w-6xl rounded-xl shadow-2xl flex flex-col max-h-[95vh] h-full">
         <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 rounded-t-xl shrink-0">
           <div className="flex items-center">
             <div className="bg-indigo-100 p-2 rounded-lg mr-3">
               <Calendar size={20} className="text-indigo-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">Project Calendar & Time Constraints</h2>
+              <h2 className="text-lg font-bold text-slate-800">Agenda</h2>
               <p className="text-xs text-slate-500">Configure working hours, holidays, and overtime rules.</p>
             </div>
           </div>
@@ -232,78 +299,68 @@ const TimeManagerModal: React.FC<TimeManagerModalProps> = ({ isOpen, onClose, pr
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 bg-white custom-scrollbar space-y-6">
-          <div>
-            <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center">
-              <Clock size={16} className="mr-2 text-slate-500" /> Weekly Working Hours
-            </h3>
-            <div className="bg-slate-50 border border-slate-200 rounded-lg overflow-hidden">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-slate-100 text-slate-600">
-                  <tr>
-                    <th className="px-4 py-2 font-semibold">Day</th>
-                    <th className="px-4 py-2 font-semibold">Working Intervals</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-200">
-                  {DAYS.map(day => (
-                    <DayScheduleRow 
-                      key={day}
-                      day={day}
-                      intervals={weeklySchedule[day] || []}
-                      onAdd={(start: string, end: string) => addSchedule(day, start, end)}
-                      onRemove={(idx: number) => removeSchedule(day, idx)}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-
-
-          <div>
-            <h3 className="text-sm font-bold text-slate-800 mb-3">Holidays / Non-working Days</h3>
-            <div className="flex gap-2 mb-3">
-              <input 
-                type="date" 
-                value={newHoliday}
-                onChange={e => setNewHoliday(e.target.value)}
-                className="border border-slate-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              />
-              <button 
-                onClick={handleAddHoliday}
-                className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded text-sm font-medium flex items-center transition"
-              >
-                <Plus size={14} className="mr-1" /> Add Holiday
-              </button>
-            </div>
-            
-            {holidays.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {holidays.sort().map(h => (
-                  <div key={h} className="bg-slate-100 border border-slate-200 px-3 py-1 rounded-full text-xs font-medium text-slate-700 flex items-center">
-                    {h}
-                    <button onClick={() => removeHoliday(h)} className="ml-2 text-slate-400 hover:text-red-500 transition">
-                      <X size={12} />
-                    </button>
-                  </div>
+        <div className="flex-1 overflow-y-auto p-6 bg-white custom-scrollbar">
+          <div className="grid grid-cols-5 gap-6">
+            <div className="col-span-4">
+              <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center">
+                <Clock size={16} className="mr-2 text-slate-500" /> Weekly Working Hours
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                {DAYS.map(day => (
+                  <DayScheduleRow
+                    key={day}
+                    day={day}
+                    intervals={weeklySchedule[day] || []}
+                    onAdd={(start: string, end: string) => addSchedule(day, start, end)}
+                    onRemove={(idx: number) => removeSchedule(day, idx)}
+                  />
                 ))}
               </div>
-            ) : (
-              <p className="text-xs text-slate-400 italic">No holidays configured.</p>
-            )}
+            </div>
+
+            <div className="col-span-1 border-l border-slate-200 pl-6">
+              <h3 className="text-sm font-bold text-slate-800 mb-3">Holidays</h3>
+              <div className="flex flex-col gap-2 mb-4">
+                <input
+                  type="date"
+                  value={newHoliday}
+                  onChange={e => setNewHoliday(e.target.value)}
+                  className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+                />
+                <button
+                  onClick={handleAddHoliday}
+                  className="w-full justify-center bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-2 rounded text-sm font-medium flex items-center transition"
+                >
+                  <Plus size={14} className="mr-1" /> Add
+                </button>
+              </div>
+
+              {holidays.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  {holidays.sort().map(h => (
+                    <div key={h} className="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 flex items-center justify-between">
+                      {h}
+                      <button onClick={() => removeHoliday(h)} className="ml-2 text-slate-400 hover:text-red-500 transition">
+                        <X size={14} strokeWidth={2.5} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 italic">No holidays.</p>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 bg-slate-50 rounded-b-xl shrink-0">
-          <button 
+          <button
             onClick={onClose}
             className="px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={handleSave}
             disabled={saving}
             className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm flex items-center disabled:opacity-50"

@@ -23,8 +23,8 @@ export const SelectionTab = ({
   return (
     <div className="space-y-6 animate-fadeIn max-w-4xl mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-black text-slate-800">Cấu hình Tối ưu Hóa AI (GLPO Configuration)</h2>
-        <p className="text-sm text-slate-500 mt-2">Thiết lập các tham số tài chính và thời gian để AI tìm ra phương án tối ưu nhất cho dự án của bạn.</p>
+        <h2 className="text-2xl font-black text-slate-800">GLPO Optimization Configuration</h2>
+        <p className="text-sm text-slate-500 mt-2">Set financial and time parameters for AI to find the optimal schedule for your project.</p>
       </div>
 
       <div className="bg-white border border-indigo-100 rounded-2xl shadow-sm overflow-hidden bg-gradient-to-br from-indigo-50/50 to-white">
@@ -33,7 +33,7 @@ export const SelectionTab = ({
             <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg">
               <Sliders size={20} />
             </div>
-            <h3 className="font-extrabold text-slate-800">Tham số Đầu vào</h3>
+            <h3 className="font-extrabold text-slate-800">Input Parameters</h3>
           </div>
           <span className="text-xs text-indigo-700 font-bold bg-indigo-100 px-3 py-1 rounded-full">
             HGT 3-Node + Hybrid Readout
@@ -42,9 +42,9 @@ export const SelectionTab = ({
 
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
-            <h4 className="font-bold text-sm text-slate-700 border-b pb-2">1. Ràng buộc Thời gian (Deadline)</h4>
+            <h4 className="font-bold text-sm text-slate-700 border-b pb-2">1. Time Constraints (Deadline)</h4>
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">Hạn chót Mục tiêu (Target Date & Time)</label>
+              <label className="block text-xs font-bold text-slate-600 mb-1.5">Target Deadline</label>
               <div className="flex gap-2">
                 <input
                   type="date"
@@ -67,10 +67,10 @@ export const SelectionTab = ({
           </div>
 
           <div className="space-y-6">
-            <h4 className="font-bold text-sm text-slate-700 border-b pb-2">2. Hợp đồng Tài chính (Financials)</h4>
+            <h4 className="font-bold text-sm text-slate-700 border-b pb-2">2. Financial Constraints</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1.5">Phạt Trễ ($/ngày)</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Delay Penalty ($/day)</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                   <input
@@ -82,7 +82,7 @@ export const SelectionTab = ({
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1.5">Thưởng Sớm ($/ngày)</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Early Finish Bonus ($/day)</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
                   <input
@@ -97,10 +97,10 @@ export const SelectionTab = ({
           </div>
 
           <div className="md:col-span-2 space-y-6">
-            <h4 className="font-bold text-sm text-slate-700 border-b pb-2">3. Tham số Thuật toán (Algorithm Config)</h4>
+            <h4 className="font-bold text-sm text-slate-700 border-b pb-2">3. Algorithm Configuration</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1.5">Vòng lặp Monte Carlo (Risk)</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Monte Carlo Iterations</label>
                 <input
                   type="number" step="100" min="100"
                   value={glpoMcIterations}
@@ -109,7 +109,7 @@ export const SelectionTab = ({
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1.5">Số lượng PA (Pareto Options)</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Max Pareto Options</label>
                 <input
                   type="number" step="1" min="1" max="50"
                   value={glpoParetoCount}
@@ -118,15 +118,15 @@ export const SelectionTab = ({
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1.5">Tiêu chí Ưu tiên (Sort By)</label>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Optimization Goal (Sort By)</label>
                 <select
                   value={glpoParetoSort}
                   onChange={e => setGlpoParetoSort(e.target.value)}
                   className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm font-semibold bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
                 >
-                  <option value="makespan_hours">Tối ưu Thời gian (Makespan)</option>
-                  <option value="total_cost">Tối ưu Chi phí (Net Cost)</option>
-                  <option value="risk_score">Tối thiểu Rủi ro (Risk)</option>
+                  <option value="makespan_hours">Minimize Makespan</option>
+                  <option value="total_cost">Minimize Net Cost</option>
+                  <option value="risk_score">Minimize Risk</option>
                 </select>
               </div>
             </div>
@@ -142,12 +142,12 @@ export const SelectionTab = ({
             {isGlpoLoading || projectData?.status === 'Simulating' ? (
               <div className="flex items-center gap-3">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                ĐANG PHÂN TÍCH...
+                ANALYZING...
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Zap size={20} />
-                CHẠY AI PIPELINE (START SIMULATION)
+                RUN AI PIPELINE
               </div>
             )}
           </button>
@@ -157,7 +157,7 @@ export const SelectionTab = ({
       <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3 shadow-sm">
         <CheckCircle className="text-emerald-600 shrink-0 mt-0.5" size={20} />
         <div>
-          <h4 className="font-bold text-emerald-800 text-sm">Hướng dẫn sử dụng</h4>
+          <h4 className="font-bold text-emerald-800 text-sm">Instructions</h4>
           <p className="text-xs text-emerald-700 mt-1">
             Sau khi điều chỉnh các thông số phạt/thưởng và bấm "Chạy AI", hệ thống sẽ tự động tổng hợp dữ liệu, 
             sử dụng mô hình HGT 3-Node để dự báo và tối ưu hóa bằng giải thuật OR.

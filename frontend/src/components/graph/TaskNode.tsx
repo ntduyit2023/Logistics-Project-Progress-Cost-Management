@@ -33,13 +33,13 @@ const TaskNode = ({ data }: any) => {
   }
 
   // Determine border and background based on Mode
-  let cardClass = 'bg-white border-slate-200 text-slate-800 hover:border-indigo-400';
+  let cardClass = 'bg-white border border-slate-300 shadow-md text-slate-800 hover:border-indigo-400 hover:shadow-lg';
   if (actualMode === 1) {
-    cardClass = 'bg-amber-50 border-2 border-amber-400 text-slate-900 shadow-sm';
+    cardClass = 'bg-amber-50 border-2 border-amber-400 text-slate-900 shadow-md';
   } else if (actualMode === 2) {
-    cardClass = 'bg-purple-50 border-2 border-purple-500 text-purple-950 shadow-sm';
+    cardClass = 'bg-purple-50 border-2 border-purple-500 text-purple-950 shadow-md';
   } else if (actualMode === 3) {
-    cardClass = 'bg-rose-50 border-2 border-rose-400 text-slate-900 shadow-sm';
+    cardClass = 'bg-rose-50 border-2 border-rose-400 text-slate-900 shadow-md';
   }
   
 
@@ -125,7 +125,12 @@ const TaskNode = ({ data }: any) => {
           )}
           {data.extra_workers > 0 && (
             <div className="flex items-center gap-1 text-[10px] font-bold text-purple-600 bg-purple-50 px-1 py-0.5 rounded w-fit">
-              + {data.extra_workers} nhân sự
+              + {data.extra_workers} workers
+            </div>
+          )}
+          {otHours > 0 && (
+            <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-1 py-0.5 rounded w-fit mt-0.5">
+              + {otHours}h OT/day
             </div>
           )}
         </div>

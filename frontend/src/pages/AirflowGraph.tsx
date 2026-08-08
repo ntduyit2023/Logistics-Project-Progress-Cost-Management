@@ -75,10 +75,11 @@ interface AirflowGraphProps {
   appliedTaskIds?: string[];
   appliedTaskDetails?: Record<string, any>;
   searchHighlight?: string;
+  earliestStartMs?: number;
 }
 
 const AirflowGraph: React.FC<AirflowGraphProps> = ({
-  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, selectedGlpoData, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}, searchHighlight = ""
+  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, selectedGlpoData, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}, searchHighlight = "", earliestStartMs = Infinity
 }) => {
   const [horizSpacing, setHorizSpacing] = useState(300);
   const [vertSpacing, setVertSpacing] = useState(80);
@@ -225,6 +226,24 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       const optDetail = appliedTaskDetails?.[canonicalId] || appliedTaskDetails?.[String(task.id)] || appliedTaskDetails?.[String(task.task_id)];
       const activeData = glpoDataRaw || optDetail;
 
+      const computedDuration = activeData ? (activeData.new_duration ?? activeData.duration_hours ?? duration) : duration;
+
+      // Priority 1: use pre-computed datetime from schedule_extractor (already calendar-aware)
+      // Priority 2: fall back to task DB values
+      // Priority 3 (last resort): compute from start_hours (wall-clock approximation)
+      let activeBaselineStart = activeData?.baseline_start || task.baseline_start;
+      let activeBaselineEnd = activeData?.baseline_end || task.baseline_end;
+      
+      // Only use start_hours fallback if we have NO datetime at all from the schedule
+      if (!activeBaselineStart && activeData && activeData.start_hours !== undefined && earliestStartMs !== undefined && earliestStartMs !== Infinity) {
+        const startMs = earliestStartMs + activeData.start_hours * 3600 * 1000;
+        activeBaselineStart = new Date(startMs).toISOString();
+        if (!activeBaselineEnd) {
+          const endMs = startMs + computedDuration * 3600 * 1000;
+          activeBaselineEnd = new Date(endMs).toISOString();
+        }
+      }
+
       return {
         id: canonicalId,
         type: 'taskNode',
@@ -234,7 +253,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           task_label: canonicalId,
           wbs,
           task_name: task.task_name || task.name || canonicalId,
-          duration: activeData ? (activeData.new_duration ?? activeData.duration_hours) : duration,
+          duration: computedDuration,
           total_cost: activeData && activeData.total_cost ? activeData.total_cost : cost,
           base_duration: activeData ? activeData.old_duration : baseTaskDuration,
           base_cost: baseTaskCost,
@@ -244,8 +263,8 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           overtime_hours_per_day: activeData ? (activeData.overtime_hours_per_day ?? activeData.overtime_hours ?? 0) : parseFloat(task.overtime_hours_per_day || task.overtime_hours || 0),
           resources: task.resources || [],
           features: getTaskGroups(task),
-          baseline_start: activeData?.baseline_start || task.baseline_start,
-          baseline_end: activeData?.baseline_end || task.baseline_end,
+          baseline_start: activeBaselineStart,
+          baseline_end: activeBaselineEnd,
           // === FIELDS MỚI ===
           base_effort_hours: activeData?.base_effort_hours ?? parseFloat(task.duration_hours || 0),
           extra_workers: activeData?.extra_workers ?? 0,
@@ -347,24 +366,24 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
             <div className="space-y-1.5">
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-white border border-slate-200 rounded-sm mr-2"></div>
-                    <span className="text-slate-700 text-xs font-medium">Mode 0: Tiêu chuẩn (Normal)</span>
+                    <span className="text-slate-700 text-xs font-medium">Mode 0: Normal</span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-amber-50 border border-amber-400 rounded-sm mr-2"></div>
-                    <span className="text-slate-700 text-xs font-medium">Mode 1: Tăng ca (Overtime)</span>
+                    <span className="text-slate-700 text-xs font-medium">Mode 1: Overtime</span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-purple-50 border border-purple-500 rounded-sm mr-2"></div>
-                    <span className="text-slate-700 text-xs font-medium">Mode 2: Thêm tài nguyên (Add-Res)</span>
+                    <span className="text-slate-700 text-xs font-medium">Mode 2: Add Resources</span>
                   </div>
                   <div className="flex items-center">
                     <div className="w-3 h-3 bg-rose-50 border border-rose-400 rounded-sm mr-2"></div>
-                    <span className="text-slate-700 text-xs font-medium">Mode 3: Kết hợp (Hybrid)</span>
+                    <span className="text-slate-700 text-xs font-medium">Mode 3: Hybrid</span>
                   </div>
 
                 </div>
             <p className="text-[10px] text-slate-400 mt-3 italic border-t pt-1.5">
-              * Hiển thị toàn bộ mạng lưới công việc của dự án
+              * Display the entire project task network
             </p>
           </Panel>
 
@@ -569,25 +588,25 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
                     
                     {(selectedTask.extra_workers > 0 || selectedTask.added_resources_cost > 0 || selectedTask.labor_ot_premium > 0 || selectedTask.equipment_ot_extra > 0 || selectedTask.energy_ot_extra > 0) && (
                       <div className="mt-2 pt-2 border-t border-amber-200/50">
-                        <p className="text-[10px] font-bold text-amber-800/70 mb-1 uppercase tracking-wider">Chi tiết Chiến lược</p>
+                        <p className="text-[10px] font-bold text-amber-800/70 mb-1 uppercase tracking-wider">Strategy Details</p>
                         {selectedTask.extra_workers > 0 && (
                           <>
                             <div className="flex justify-between text-sm py-1">
-                              <span className="text-slate-600">Thêm nhân sự:</span>
-                              <span className="font-bold">+{selectedTask.extra_workers || 0} người</span>
+                              <span className="text-slate-600">Add workers:</span>
+                              <span className="font-bold">+{selectedTask.extra_workers || 0} workers</span>
                             </div>
                             {selectedTask.added_resources_detail && selectedTask.added_resources_detail.length > 0 && (
                               <div className="mt-1 pl-2 border-l-2 border-amber-200">
                                 {selectedTask.added_resources_detail.map((res: any, i: number) => (
                                   <div key={i} className="flex justify-between items-center py-0.5">
-                                    <span className="text-slate-500 text-xs truncate">Thêm {res.name} ({res.added_qty} người):</span>
+                                    <span className="text-slate-500 text-xs truncate">Add {res.name} ({res.added_qty} workers):</span>
                                     <span className="font-bold text-xs text-rose-600">+${Number(res.total_extra_cost).toFixed(0)}</span>
                                   </div>
                                 ))}
                               </div>
                             )}
                             <div className="flex justify-between text-sm py-1 border-t border-amber-100 mt-1">
-                              <span className="text-slate-600">Tổng chi phí thêm:</span>
+                              <span className="text-slate-600">Total extra cost:</span>
                               <span className="font-bold text-rose-600">+${Number(selectedTask.added_resources_cost || 0).toFixed(0)}</span>
                             </div>
                           </>
@@ -631,10 +650,10 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
               <div>
                 <h3 className="text-sm font-bold text-slate-800 mb-2.5 flex items-center border-b pb-1">
                   <Activity size={16} className="mr-1.5 text-blue-600" />
-                  Thông tin chi tiết (Task Details)
+                  Task Details
                 </h3>
                 <p className="text-xs text-slate-500 mb-3 italic">
-                  Các chỉ số được lấy trực tiếp từ Pydantic Schema của Backend API. Click "Edit Node" để sửa.
+                  Metrics are taken directly from the Backend API Pydantic Schema. Click "Edit Node" to edit.
                 </p>
                 <div className="space-y-3">
                   {Object.entries(selectedTask.features || {}).map(([groupName, groupFeats]: any) => (

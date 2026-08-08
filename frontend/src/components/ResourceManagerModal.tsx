@@ -4,7 +4,7 @@ import { api } from '../services/api';
 
 interface ResourceManagerModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (refresh?: boolean) => void;
   projectId: number | string;
   initialResources: any[];
 }
@@ -141,8 +141,7 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
   };
 
   const handleFinish = () => {
-    onClose();
-    window.location.reload();
+    onClose(true);
   };
 
   return (
@@ -152,11 +151,11 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-slate-200 bg-slate-50 shrink-0">
           <div>
-            <h2 className="text-xl font-bold text-slate-800 flex items-center">
-              <HardHat className="mr-2 text-amber-600" size={24} />
-              Project Resource Pool (Kho Tài nguyên Dự án)
+            <h2 className="text-lg font-black text-slate-800 flex items-center">
+              <Users size={20} className="mr-2 text-blue-600" />
+              Project Resource Pool
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">Quản lý kho tài nguyên dự án (Loại hình, Đơn giá/giờ, Năng lượng, Lương tăng ca OT).</p>
+            <p className="text-xs text-slate-500 mt-0.5">Manage project resource inventory (Type, Unit Cost/hr, Energy Rate, Overtime Multiplier).</p>
           </div>
           <button onClick={handleFinish} className="text-slate-400 hover:text-slate-700 transition p-1.5 rounded-md hover:bg-slate-200">
             <X size={22} />
@@ -167,27 +166,30 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
           
           {/* Add New Resource Form */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mb-6">
-            <h3 className="text-sm font-bold text-slate-800 mb-3">Thêm Tài nguyên Mới</h3>
+            <h3 className="text-sm font-bold text-slate-800 mb-3">Add New Resource</h3>
             <form onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
               <div className="col-span-1 sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Tên tài nguyên</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Resource Name</label>
                 <input 
-                  type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="vd: Kỹ sư xây dựng / Máy đào"
+                  type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g., Civil Engineer / Excavator"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Phân loại (Type)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Type</label>
                 <select 
-                  value={resCategory} onChange={e => setResCategory(e.target.value)}
+                  value={resCategory} onChange={e => {
+                    setResCategory(e.target.value);
+                    if (e.target.value !== 'Machine') setEnergy(0.0);
+                  }}
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-amber-500/20"
                 >
-                  <option value="Human">Con người (Human)</option>
-                  <option value="Machine">Máy móc/Thiết bị (Machine)</option>
+                  <option value="Human">Human</option>
+                  <option value="Machine">Machine</option>
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Số lượng tối đa (Capacity)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Capacity</label>
                 <input 
                   type="number" step="1" value={maxAvail} onChange={e => setMaxAvail(Number(e.target.value))} required min="1"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -195,35 +197,36 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Đơn giá ($/giờ)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Unit Cost ($/hr)</label>
                 <input 
                   type="number" step="0.5" value={unitCost} onChange={e => setUnitCost(Number(e.target.value))} required min="0"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Năng lượng/Nhiên liệu (kWh hoặc L/h)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Energy Rate (kWh or L/h)</label>
                 <input 
                   type="number" step="0.1" value={energy} onChange={e => setEnergy(Number(e.target.value))} min="0"
-                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                  disabled={resCategory !== 'Machine'}
+                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Hệ số Lương Tăng ca (OT)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">OT Multiplier</label>
                 <input 
                   type="number" step="0.1" value={overtimeMulti} onChange={e => setOvertimeMulti(Number(e.target.value))} min="1.0"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">OT Max/Ngày (giờ/ngày)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Max OT (hrs/day)</label>
                 <input 
                   type="number" step="0.5" value={maxOtDay} onChange={e => setMaxOtDay(Number(e.target.value))} min="0"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Hiệu suất (AddRes Eff)</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Efficiency</label>
                 <input 
                   type="number" step="0.1" value={addresEff} onChange={e => setAddresEff(Number(e.target.value))} min="0.1" max="1.0"
                   className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
@@ -233,9 +236,9 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
               <div className="col-span-1 sm:col-span-2 md:col-span-4 flex justify-end mt-2">
                 <button 
                   type="submit" disabled={loading}
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 rounded-md text-sm font-bold flex items-center transition shadow-sm"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-md text-sm font-bold flex items-center transition shadow-sm"
                 >
-                  <Plus size={16} className="mr-1" /> Thêm Tài nguyên
+                  <Plus size={16} className="mr-1" /> Add Resource
                 </button>
               </div>
             </form>
@@ -290,7 +293,10 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                           <td className="px-3 py-2">
                             <select 
                               value={editRowData.type}
-                              onChange={e => setEditRowData({ ...editRowData, type: e.target.value })}
+                              onChange={e => {
+                                const newType = e.target.value;
+                                setEditRowData({ ...editRowData, type: newType, energy: newType !== 'Machine' ? 0 : editRowData.energy });
+                              }}
                               className="border border-amber-400 rounded px-2 py-1 text-xs bg-white font-medium focus:outline-none"
                             >
                               <option value="Human">Human</option>
@@ -318,7 +324,8 @@ export default function ResourceManagerModal({ isOpen, onClose, projectId, initi
                               type="number" step="0.1" min="0"
                               value={editRowData.energy}
                               onChange={e => setEditRowData({ ...editRowData, energy: e.target.value })}
-                              className="w-20 border border-amber-400 rounded px-2 py-1 text-sm text-right bg-white focus:outline-none"
+                              disabled={editRowData.type !== 'Machine'}
+                              className="w-20 border border-amber-400 rounded px-2 py-1 text-sm text-right bg-white focus:outline-none disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed"
                             />
                           </td>
                           <td className="px-3 py-2 text-right flex items-center justify-end gap-1">

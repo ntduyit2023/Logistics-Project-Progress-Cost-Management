@@ -23,9 +23,9 @@ export const EvaluationTab = ({
           <div>
             <h3 className="font-extrabold text-slate-800 text-sm flex items-center gap-2">
               <Sparkles className="text-amber-500" size={18} />
-              Biểu đồ Pareto Frontier (Thời gian vs Chi phí Ròng)
+              Pareto Frontier Chart (Makespan vs Net Cost)
             </h3>
-            <p className="text-xs text-slate-500">Mỗi điểm tròn đại diện cho 1 phương án tối ưu. Bấm vào điểm để chọn phương án.</p>
+            <p className="text-xs text-slate-500">Each point represents an optimal solution. Click a point to select.</p>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
@@ -34,13 +34,13 @@ export const EvaluationTab = ({
                 onClick={() => setParetoChartType('scatter')}
                 className={`px-3 py-1 text-xs font-bold rounded-md transition ${paretoChartType === 'scatter' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
               >
-                📈 Đồ thị Pareto
+                📈 Pareto Chart
               </button>
               <button
                 onClick={() => setParetoChartType('bar')}
                 className={`px-3 py-1 text-xs font-bold rounded-md transition ${paretoChartType === 'bar' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
               >
-                📊 Cột So sánh
+                📊 Comparison Bar Chart
               </button>
             </div>
             <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
@@ -58,7 +58,7 @@ export const EvaluationTab = ({
                   <XAxis
                     type="number"
                     dataKey="makespan_hours"
-                    name="Thời gian"
+                    name="Makespan"
                     unit="h"
                     stroke="#94a3b8"
                     fontSize={11}
@@ -68,7 +68,7 @@ export const EvaluationTab = ({
                   <YAxis
                     type="number"
                     dataKey="total_cost"
-                    name="Chi phí"
+                    name="Cost"
                     unit="$"
                     stroke="#94a3b8"
                     fontSize={11}
@@ -83,10 +83,10 @@ export const EvaluationTab = ({
                         return (
                           <div className="bg-slate-900 text-white p-3 rounded-lg shadow-xl text-xs space-y-1 border border-slate-700">
                             <p className="font-bold text-amber-400">{d.option_name}</p>
-                            <p>Thời gian: <span className="font-bold text-indigo-300">{d.makespan_hours}h</span></p>
-                            <p>Chi phí gốc: <span className="text-slate-300">${Number(d.base_project_cost || d.cost || 0).toLocaleString()}</span></p>
-                            <p>Chi phí ròng: <span className="font-bold text-emerald-400">${Number(d.total_cost || d.cost || 0).toLocaleString()}</span></p>
-                            <p>Rủi ro trễ: <span className="font-bold text-rose-400">{d.risk_pct}%</span></p>
+                            <p>Makespan: <span className="font-bold text-indigo-300">{d.makespan_hours}h</span></p>
+                            <p>Cost gốc: <span className="text-slate-300">${Number(d.base_project_cost || d.cost || 0).toLocaleString()}</span></p>
+                            <p>Cost ròng: <span className="font-bold text-emerald-400">${Number(d.total_cost || d.cost || 0).toLocaleString()}</span></p>
+                            <p>Delay Risk: <span className="font-bold text-rose-400">{d.risk_pct}%</span></p>
                           </div>
                         );
                       }
@@ -115,8 +115,8 @@ export const EvaluationTab = ({
                     cursor={{ strokeDasharray: '3 3' }}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     formatter={(value: any, name: string) => {
-                      if (name === 'cost') return [`$${(Number(value) * 1000).toLocaleString()}`, 'Chi phí Ròng'];
-                      if (name === 'makespan') return [`${Math.round(Number(value) / 8)} ngày (${value}h)`, 'Thời gian'];
+                      if (name === 'cost') return [`$${(Number(value) * 1000).toLocaleString()}`, 'Cost Ròng'];
+                      if (name === 'makespan') return [`${Math.round(Number(value) / 8)} ngày (${value}h)`, 'Makespan'];
                       return [`${value}%`, 'Rủi ro'];
                     }}
                   />
@@ -130,8 +130,8 @@ export const EvaluationTab = ({
         ) : (
           <div className="py-12 text-center text-slate-400">
             <Activity size={36} className="mx-auto mb-2 opacity-40" />
-            <p className="text-sm font-semibold">Chưa có dữ liệu biểu đồ Pareto.</p>
-            <p className="text-xs mt-1">Hãy chuyển sang tab "Lựa chọn" và bấm "Chạy AI" để tạo phương án.</p>
+            <p className="text-sm font-semibold">No Pareto chart data available.</p>
+            <p className="text-xs mt-1">Switch to "Selection" tab and click "Run AI" to generate solutions.</p>
           </div>
         )}
       </div>
@@ -139,17 +139,17 @@ export const EvaluationTab = ({
       {/* Pareto Comparison Table */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
         <div className="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center flex-wrap gap-2">
-          <h3 className="font-extrabold text-slate-800 text-sm">Bảng So sánh Chi tiết Các Phương án Pareto (Pareto Solutions Table)</h3>
+          <h3 className="font-extrabold text-slate-800 text-sm">Detailed Pareto Solutions Table</h3>
           <div className="flex items-center gap-3">
             <button
               onClick={handleRestoreBaseline}
               disabled={isApplyingOption}
               className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm"
-              title="Khôi phục dữ liệu ban đầu (Baseline Gốc) của dự án"
+              title="Restore original project baseline"
             >
-              🔄 Khôi phục Baseline Gốc
+              🔄 Restore Original Baseline
             </button>
-            <span className="text-xs text-slate-500 font-medium">Bấm "Áp dụng PA này" để áp dụng lên CSDL</span>
+            <span className="text-xs text-slate-500 font-medium">Click "Apply Solution" to apply to Database</span>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -157,21 +157,21 @@ export const EvaluationTab = ({
             <thead className="text-slate-600 bg-slate-100 uppercase font-bold border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3">STT</th>
-                <th className="px-4 py-3">Tên Phương án</th>
-                <th className="px-4 py-3 text-right">Thời gian (Ngày)</th>
-                <th className="px-4 py-3 text-right">Hoàn thành Ngày</th>
-                <th className="px-4 py-3 text-right">Chi phí Gốc ($)</th>
-                <th className="px-4 py-3 text-right">Thưởng / Phạt ($)</th>
-                <th className="px-4 py-3 text-right">Chi phí Ròng ($)</th>
-                <th className="px-4 py-3 text-right">Rủi ro Trễ</th>
-                <th className="px-4 py-3 text-center">Thao tác</th>
+                <th className="px-4 py-3">Solution Name</th>
+                <th className="px-4 py-3 text-right">Makespan</th>
+                <th className="px-4 py-3 text-right">Completion Date</th>
+                <th className="px-4 py-3 text-right">Cost Gốc ($)</th>
+                <th className="px-4 py-3 text-right">Bonus / Penalty ($)</th>
+                <th className="px-4 py-3 text-right">Cost Ròng ($)</th>
+                <th className="px-4 py-3 text-right">Delay Risk</th>
+                <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {allParetoOptions.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="text-center py-8 text-slate-400">
-                    Chưa có phương án tối ưu nào được tạo. Vui lòng chạy AI để tạo phương án.
+                    No optimal solutions generated. Please run AI to generate.
                   </td>
                 </tr>
               ) : (
@@ -186,10 +186,10 @@ export const EvaluationTab = ({
                   let adjustStr = "$0";
                   let adjustClass = "text-slate-500";
                   if (penCost > 0) {
-                    adjustStr = `+$${Number(penCost).toLocaleString()} (Phạt)`;
+                    adjustStr = `+$${Number(penCost).toLocaleString()} (Penalty)`;
                     adjustClass = "text-rose-600 font-bold";
                   } else if (bonusAmt > 0) {
-                    adjustStr = `-$${Number(bonusAmt).toLocaleString()} (Thưởng)`;
+                    adjustStr = `-$${Number(bonusAmt).toLocaleString()} (Bonus)`;
                     adjustClass = "text-emerald-600 font-bold";
                   }
 
@@ -199,10 +199,9 @@ export const EvaluationTab = ({
                       className={`border-b border-slate-100 transition ${isSelected ? 'bg-indigo-50/70 font-semibold border-l-4 border-l-indigo-600' : 'hover:bg-slate-50'}`}
                     >
                       <td className="px-4 py-3 font-bold text-slate-500">#{idx + 1}</td>
-                      <td className="px-4 py-3 font-bold text-slate-800">{opt.option_name || `Phương án ${idx + 1}`}</td>
+                      <td className="px-4 py-3 font-bold text-slate-800">{opt.option_name || `Solution ${idx + 1}`}</td>
                       <td className="px-4 py-3 text-right font-black text-indigo-600">
-                        {Math.round((opt.makespan_hours || opt.makespan) / 8)} ngày
-                        <span className="text-xs text-slate-400 font-normal block">({opt.makespan_hours || opt.makespan}h)</span>
+                        {opt.makespan_hours || opt.makespan}h
                       </td>
                       <td className="px-4 py-3 text-right text-slate-600">{opt.finish_datetime ? new Date(opt.finish_datetime).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</td>
                       <td className="px-4 py-3 text-right text-slate-600">${Number(baseCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
@@ -215,14 +214,14 @@ export const EvaluationTab = ({
                             onClick={() => setSelectedGlpoOptionIndex(idx)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm border flex items-center justify-center gap-1 ${isSelected ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
                           >
-                            {isSelected ? '👁️ Đang xem trước' : 'Xem trước'}
+                            {isSelected ? '👁️ Previewing' : 'Preview'}
                           </button>
                           <button
                             onClick={() => handleApplyParetoOption(idx, opt)}
                             disabled={isApplyingOption}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white w-full`}
                           >
-                            💾 Lưu phương án
+                            💾 Save Solution
                           </button>
                         </div>
                       </td>

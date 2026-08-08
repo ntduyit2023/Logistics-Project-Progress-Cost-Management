@@ -4,24 +4,27 @@ import { X, Save, FolderPlus, FolderEdit } from 'lucide-react';
 interface ProjectFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { project_name: string; status: string; type?: string }) => void;
-  initialData?: { project_name: string; status: string; type?: string } | null;
+  onSubmit: (data: { id?: string; project_name: string; status: string; type?: string }) => void;
+  initialData?: { id?: string; project_name: string; status: string; type?: string } | null;
 }
 
 export default function ProjectFormModal({ isOpen, onClose, onSubmit, initialData }: ProjectFormModalProps) {
+  const [projectId, setProjectId] = useState('');
   const [projectName, setProjectName] = useState('');
   const [status, setStatus] = useState('Planning');
-  const [projectType, setProjectType] = useState('Construction');
+  const [projectType, setProjectType] = useState('ITLG');
 
   useEffect(() => {
     if (initialData) {
+      setProjectId(initialData.id || '');
       setProjectName(initialData.project_name);
       setStatus(initialData.status || 'Planning');
-      setProjectType(initialData.type || 'Construction');
+      setProjectType(initialData.type || 'ITLG');
     } else {
+      setProjectId('');
       setProjectName('');
       setStatus('Planning');
-      setProjectType('Construction');
+      setProjectType('ITLG');
     }
   }, [initialData, isOpen]);
 
@@ -34,7 +37,7 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, initialDat
       alert("Project name must be at least 3 characters long.");
       return;
     }
-    onSubmit({ project_name: projectName, status, type: projectType });
+    onSubmit({ id: projectId.trim() || undefined, project_name: projectName, status, type: projectType });
   };
 
   return (
@@ -57,6 +60,18 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, initialDat
         <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-5">
             <div>
+              <label className="block text-sm font-bold text-slate-700 mb-1.5">Project ID (Optional)</label>
+              <input 
+                type="text" 
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                placeholder="e.g. PRJ-2024-01"
+                disabled={!!initialData}
+                className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all bg-slate-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+            </div>
+
+            <div>
               <label className="block text-sm font-bold text-slate-700 mb-1.5">Project Name <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
@@ -76,11 +91,9 @@ export default function ProjectFormModal({ isOpen, onClose, onSubmit, initialDat
                   onChange={(e) => setProjectType(e.target.value)}
                   className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all bg-slate-50 focus:bg-white"
                 >
-                  <option value="Construction">Construction</option>
-                  <option value="IT Software">IT Software</option>
-                  <option value="Logistics">Logistics</option>
-                  <option value="Research">Research</option>
-                  <option value="Other">Other</option>
+                  <option value="ITLG">IT & Logistics (ITLG)</option>
+                  <option value="CON">Civil Construction (CON)</option>
+                  <option value="PRO">Professional Services (PRO)</option>
                 </select>
               </div>
 

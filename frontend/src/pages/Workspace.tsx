@@ -151,18 +151,21 @@ const Workspace = () => {
   const handleSaveTask = async (data: any) => {
     try {
       if (!projectId) {
-        alert("Mã dự án không hợp lệ.");
+        alert("Invalid project ID.");
         return;
       }
-      const { predecessor_id, dependency_type, lag_days, stagedResources, ...taskData } = data;
+      const { predecessor_id, dependency_type, lag_days, stagedResources, stagedPredecessors, ...taskData } = data;
       let newTaskId = editingTask ? (editingTask.task_id || editingTask.id) : null;
 
       if (editingTask && newTaskId) {
         await api.updateTask(projectId, String(newTaskId), taskData);
       } else {
-        const randStr = Math.random().toString(36).substr(2, 6);
-        newTaskId = `${projectId}_T-${randStr}`;
-        await api.createTask(projectId, { id: newTaskId, ...taskData });
+        const createRes = await api.createTask(projectId, taskData);
+        if (createRes && createRes.data && (createRes.data.task_id || createRes.data.id)) {
+          newTaskId = createRes.data.task_id || createRes.data.id;
+        } else {
+          throw new Error("Failed to get task ID from server after creation.");
+        }
       }
 
       // Sync resources assigned to the task
@@ -209,33 +212,25 @@ const Workspace = () => {
       }
 
       if (newTaskId) {
-        const oldEdge = projectData?.constraint_logic?.find((e: any) => e.successor_id === newTaskId);
-        try {
-          if (predecessor_id) {
-            if (oldEdge && oldEdge.predecessor_id !== predecessor_id) {
-              await api.deleteLogicConstraint(projectId, oldEdge.predecessor_id, newTaskId);
-            }
-            if (!oldEdge || oldEdge.predecessor_id !== predecessor_id || oldEdge.dependency_type !== dependency_type || oldEdge.lag_days !== lag_days) {
-              if (oldEdge && oldEdge.predecessor_id === predecessor_id) {
-                await api.deleteLogicConstraint(projectId, oldEdge.predecessor_id, newTaskId);
-              }
+        // Handle staged predecessors (from the + button on new tasks)
+        if (stagedPredecessors && stagedPredecessors.length > 0) {
+          for (const p of stagedPredecessors) {
+            try {
               await api.createLogicConstraint(projectId, {
-                predecessor_id: predecessor_id,
+                predecessor_id: p.predecessor_id,
                 successor_id: newTaskId,
-                dependency_type: dependency_type || 'FS',
-                lag_days: lag_days || 0
+                dependency_type: p.dependency_type || 'FS',
+                lag_hours: p.lag_hours || 0
               });
+            } catch (e) {
+              console.error("Failed to save staged logic constraint", e);
             }
-          } else if (!predecessor_id && oldEdge) {
-            await api.deleteLogicConstraint(projectId, oldEdge.predecessor_id, newTaskId);
           }
-        } catch (e) {
-          console.error("Failed to sync logic constraint", e);
         }
       }
 
       setIsTaskModalOpen(false);
-      window.location.reload();
+      fetchProjectDetails();
     } catch (err) {
       alert('Failed to save task: ' + (err as Error).message);
     }
@@ -623,7 +618,14 @@ const Workspace = () => {
       const cost = glpoTask?.total_cost ? parseFloat(glpoTask.total_cost) : (mode === 1 ? (t.crash_cost || baseTaskCost * 1.25) : mode === 2 ? (t.outsource_cost || baseTaskCost * 1.5) : baseTaskCost);
 
       let taskStartMs = earliestStartMs;
-      if (t.baseline_start) {
+      if (glpoTask && glpoTask.baseline_start) {
+        // Use the pre-computed calendar-aware datetime from schedule_extractor directly
+        const parsedMs = new Date(glpoTask.baseline_start).getTime();
+        if (!isNaN(parsedMs)) taskStartMs = parsedMs;
+      } else if (glpoTask && glpoTask.start_hours !== undefined) {
+        // Fallback: offset from project start (approximate - only when no datetime available)
+        taskStartMs = earliestStartMs + glpoTask.start_hours * 3600 * 1000;
+      } else if (t.baseline_start) {
         const parsedMs = new Date(t.baseline_start).getTime();
         if (!isNaN(parsedMs)) taskStartMs = parsedMs;
       } else {
@@ -706,9 +708,9 @@ const Workspace = () => {
       let duration = getTaskDurationHours(t);
       const baseDuration = getBaseTaskDurationHours(t);
 
-      if (sched) {
-        start = sched.start;
-        duration = Math.max(1, sched.end - sched.start);
+      if (glpoTask && glpoTask.start_hours !== undefined) {
+        start = glpoTask.start_hours;
+        duration = glpoTask.new_duration ?? glpoTask.duration_hours ?? baseDuration;
       } else if (t.baseline_start) {
         const parsedMs = new Date(t.baseline_start).getTime();
         if (!isNaN(parsedMs)) {
@@ -733,6 +735,7 @@ const Workspace = () => {
         id: t.id,
         task_id: taskKey,
         name: t.name || t.task_name || `Task ${t.id}`,
+        status: t.status || 'Planning',
         start: Number(start.toFixed(1)),
         end: Number(end.toFixed(1)),
         duration: Number(duration.toFixed(1)),
@@ -809,14 +812,7 @@ const Workspace = () => {
             Manage Resources
           </button>
 
-          <button
-            onClick={handleRunAI}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all flex items-center"
-            disabled={projectData?.status === 'Simulating'}
-          >
-            <Zap className="mr-2" size={16} />
-            {projectData?.status === 'Simulating' ? 'AI is running...' : 'Run AI Pipeline'}
-          </button>
+
           <button
             onClick={() => {
               setEditingTask(null);
@@ -832,10 +828,10 @@ const Workspace = () => {
             {/* Main Navigation Tabs */}
       <div className="flex border-b border-slate-200 bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
         {[
-          { id: 'overview', label: '1. Tổng quan', icon: Layers },
-          { id: 'analysis', label: '2. Phân tích', icon: Activity },
-          { id: 'assignment', label: '3. Phân công', icon: GitCommit },
-          { id: 'ai_pipeline', label: '4. AI Pipeline (Lựa chọn & Đánh giá)', icon: Sparkles }
+          { id: 'overview', label: '1. Overview', icon: Layers },
+          { id: 'analysis', label: '2. Analysis', icon: Activity },
+          { id: 'assignment', label: '3. Assignment', icon: GitCommit },
+          { id: 'ai_pipeline', label: '4. AI Pipeline (Selection)', icon: Sparkles }
         ].map(tab => (
           <button
             key={tab.id}
@@ -886,6 +882,7 @@ const Workspace = () => {
             api={api}
             setEditingTask={setEditingTask}
             setIsTaskModalOpen={setIsTaskModalOpen}
+            onRefresh={fetchProjectDetails}
           />
         )}
         {workspaceTab === 'ai_pipeline' && (
@@ -959,7 +956,10 @@ const Workspace = () => {
       {isResourceModalOpen && (
         <ResourceManagerModal
           isOpen={isResourceModalOpen}
-          onClose={() => setIsResourceModalOpen(false)}
+          onClose={(refresh) => {
+            setIsResourceModalOpen(false);
+            if (refresh) fetchProjectDetails();
+          }}
           projectId={projectId || ''}
           initialResources={projectData?.constraint_resources || []}
         />
@@ -968,9 +968,13 @@ const Workspace = () => {
       {isTimeModalOpen && (
         <TimeManagerModal
           isOpen={isTimeModalOpen}
-          onClose={() => setIsTimeModalOpen(false)}
+          onClose={(refresh) => {
+            setIsTimeModalOpen(false);
+            if (refresh) fetchProjectDetails();
+          }}
           projectId={projectId || ''}
           initialTimeConstraint={projectData.constraint_time || {}}
+          projectData={projectData}
         />
       )}
 

@@ -2,14 +2,17 @@ const API_BASE_URL = `http://${window.location.hostname}:8000/api/v1`;
 
 export const api = {
   // --- PROJECTS ---
-  async getProjects(params?: { q?: string; skip?: number; limit?: number }) {
-    const url = new URL(`${API_BASE_URL}/projects`);
-    if (params) {
-      if (params.q) url.searchParams.append('q', params.q);
-      if (params.skip !== undefined) url.searchParams.append('skip', params.skip.toString());
-      if (params.limit !== undefined) url.searchParams.append('limit', params.limit.toString());
+  async getProjects(params?: { q?: string; status?: string; projectType?: string }) {
+    let url = `${API_BASE_URL}/projects`;
+    const searchParams = new URLSearchParams();
+    if (params?.q) searchParams.append('q', params.q);
+    if (params?.status) searchParams.append('status', params.status);
+    if (params?.projectType) searchParams.append('project_type', params.projectType);
+    
+    if (searchParams.toString()) {
+      url += `?${searchParams.toString()}`;
     }
-    const res = await fetch(url.toString());
+    const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch projects');
     return res.json();
   },
@@ -20,7 +23,7 @@ export const api = {
     return res.json();
   },
 
-  async createProject(data: { project_name: string; status?: string; metadata_json?: any }) {
+  async createProject(data: { id?: string; project_name: string; status?: string; metadata_json?: any }) {
     const res = await fetch(`${API_BASE_URL}/projects`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -106,7 +109,7 @@ export const api = {
         option_index: optionIndex,
         option_name: optionData.option_name,
         makespan_hours: optionData.makespan_hours,
-        total_cost: optionData.total_cost,
+        total_cost: optionData.total_cost || optionData.cost || 0,
         tasks_schedule: optionData.tasks_schedule || optionData.tasks || {}
       }),
     });

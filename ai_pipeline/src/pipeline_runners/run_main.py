@@ -308,6 +308,40 @@ def main():
     # Select best solution (min makespan that satisfies budget)
     if pareto_solutions:
         pareto_solutions.sort(key=lambda s: s['makespan'])
+        
+        # Bổ sung tasks_schedule cho các giải pháp Pareto
+        for opt in pareto_solutions[:4]:
+            tasks_with_modes = []
+            for idx, t in enumerate(tasks):
+                mode = opt['modes'][idx]
+                t_copy = t.copy()
+                d_val = float(t_copy.get('most_probable_duration', t_copy.get('duration', 0.0)))
+                if mode == 1:
+                    t_copy['most_probable_duration'] = max(1, int(round(d_val / 1.5)))
+                elif mode == 2:
+                    t_copy['most_probable_duration'] = max(1, int(round(d_val / 2.0)))
+                else:
+                    t_copy['most_probable_duration'] = max(1, int(round(d_val)))
+                t_copy['duration_hours'] = t_copy['most_probable_duration']
+                tasks_with_modes.append(t_copy)
+                
+            try:
+                G_opt = build_project_graph(tasks_with_modes, dependencies)
+                G_cpm_opt, _ = calculate_cpm(G_opt, hours_per_day=hours_per_day, days_per_week=days_per_week)
+                opt_sched = {}
+                for idx, t_copy in enumerate(tasks_with_modes):
+                    tid = t_copy['id']
+                    if G_cpm_opt.has_node(tid):
+                        nd = G_cpm_opt.nodes[tid]
+                        opt_sched[str(tid)] = {
+                            "task_id": str(tid),
+                            "start_hours": float(nd.get('es', 0.0)),
+                            "duration_hours": float(nd.get('most_probable_duration', 0.0)),
+                            "mode": opt['modes'][idx]
+                        }
+                opt['tasks_schedule'] = opt_sched
+            except Exception as e:
+                print(f"   [WARNING] Không thể tạo tasks_schedule cho giải pháp Pareto: {e}")
     best_sol = pareto_solutions[0] if pareto_solutions else None
     if best_sol:
         print(f"   • Lựa chọn giải pháp Pareto: Makespan={best_sol['makespan']:.1f}h | Cost={best_sol['cost']:.2f} | Risk={best_sol['risk']:.4f}")

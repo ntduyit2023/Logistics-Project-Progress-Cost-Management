@@ -9,6 +9,88 @@ from sqlalchemy import select, delete
 
 from app.models import Task, TaskResource, Resource, AppProject
 from app.schemas import TaskCreate, TaskUpdate, TaskResourceCreate
+from app.services.cost_calculator import CostCalculator, ProjectType
+
+
+from app.services.project_service import get_project_by_identifier
+
+async def get_project_tasks(db: AsyncSession, project_id_or_code: Any) -> List[Dict[str, Any]]:
+    """
+    Lấy danh sách tất cả các Tasks của một dự án (chấp nhận ID số hoặc mã C2011-07).
+    """
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = select(Task).where(Task.project_id == project.id).order_by(Task.id.asc())
+    result = await db.execute(stmt)
+    tasks = list(result.scalars().all())
+    
+    from app.schemas.task import TaskResponse
+    res = []
+    for t in tasks:
+        td = TaskResponse.model_validate(t).model_dump()
+        td["project_code"] = project.project_code
+        res.append(td)
+    return res
+
+
+def _build_task_match_condition(project_id: str, task_id_str: str):
+    from sqlalchemy import or_, cast, String
+    s_val = str(task_id_str).strip()
+    conds = [
+        Task.task_id == s_val,
+        cast(Task.id, String) == s_val
+    ]
+    if "_" not in s_val:
+        conds.append(Task.task_id == f"{project_id}_{s_val}")
+    return or_(*conds)
+
+
+async def get_task_by_id(db: AsyncSession, project_id_or_code: Any, task_id_str: str) -> Dict[str, Any]:
+    """
+    Lấy thông tin chi tiết của 1 Task theo task_id hoặc ID số.
+    """
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = select(Task).where(Task.project_id == project.id, _build_task_match_condition(project.id, task_id_str))
+    result = await db.execute(stmt)
+    task_obj = result.scalars().first()
+    if not task_obj:
+        raise HTTPException(status_code=404, detail="Task không tồn tại.")
+        
+    from app.schemas.task import TaskResponse
+    td = TaskResponse.model_validate(task_obj).model_dump()
+    td["project_code"] = project.project_code
+    return td
+
+
+async def create_task(db: AsyncSession, project_id_or_code: Any, task_in: TaskCreate) -> Dict[str, Any]:
+    """
+    Tạo mới một công việc (Task) và gắn vào Dự án.
+    """
+    project = await get_project_by_identifier(db, project_id_or_code)
+
+    task_dict = task_in.model_dump(exclude_unset=True)
+    task_dict["project_id"] = project.id
+    if "task_id" not in task_dict or not task_dict.get("task_id"):
+        import uuid
+        task_dict["task_id"] = f"{project.project_code}_NEW_{uuid.uuid4().hex[:6]}"
+
+    task_dict.pop("total_cost", None)
+    new_task = Task(**task_dict)
+    db.add(new_task)
+    await db.commit()
+    await db.refresh(new_task)
+    from app.schemas.task import TaskResponse
+    td = TaskResponse.model_validate(new_task).model_dump()
+    return td
+
+
+async def update_task(db: AsyncSession, project_id_or_code: Any, task_id_str: str, task_in: TaskUpdate) -> Dict[str, Any]:
+    """
+    Cập nhật thông tin của một công việc.
+    """
+    project = await get_project_by_identifier(db, project_id_or_code)
+    stmt = select(Task).where(Task.project_id == project.id, _build_task_match_condition(project.id, task_id_str))
+    result = await db.execute(stmt)
+from app.services.cost_calculator import CostCalculator, ProjectType
 
 
 from app.services.project_service import get_project_by_identifier
@@ -100,6 +182,12 @@ async def update_task(db: AsyncSession, project_id_or_code: Any, task_id_str: st
 
     await db.commit()
     await db.refresh(task_obj)
+    
+    # Nếu duration_hours thay đổi, cần tính lại chi phí nhân công/máy móc dựa trên tài nguyên
+    if "duration_hours" in update_data:
+        await recalculate_task_direct_costs(db, project.id, task_id_str)
+        await db.refresh(task_obj)
+        
     from app.schemas.task import TaskResponse
     return TaskResponse.model_validate(task_obj).model_dump()
 
@@ -175,6 +263,10 @@ async def assign_resource(db: AsyncSession, project_id_or_code: Any, task_id_str
     db.add(new_tr)
     await db.commit()
     await db.refresh(new_tr)
+    
+    # Tính lại chi phí trực tiếp của task
+    await recalculate_task_direct_costs(db, project.id, task_id_str)
+    
     return new_tr
 
 
@@ -190,4 +282,69 @@ async def remove_task_resource(db: AsyncSession, project_id_or_code: Any, task_i
     )
     await db.execute(stmt)
     await db.commit()
+    
+    # Tính lại chi phí trực tiếp của task
+    await recalculate_task_direct_costs(db, project.id, task_id_str)
+    
     return {"message": "Xóa phân bổ tài nguyên thành công."}
+
+async def recalculate_task_direct_costs(db: AsyncSession, project_id: str, task_id_str: str):
+    """
+    Tính toán lại chi phí labor, equipment, energy cho task dựa trên các tài nguyên được gán.
+    (Không tính material vì vật tư nhập tay không theo thời lượng).
+    """
+    from sqlalchemy import or_, cast, String
+    
+    # Lấy thông tin task để biết duration_hours
+    task_stmt = select(Task).where(Task.project_id == project_id, _build_task_match_condition(project_id, task_id_str))
+    task_res = await db.execute(task_stmt)
+    task_obj = task_res.scalars().first()
+    if not task_obj:
+        return
+        
+    duration = float(task_obj.duration_hours or 0)
+    
+    # Lấy danh sách tài nguyên đã gán
+    task_id_conds = [TaskResource.task_id == task_id_str]
+    if "_" not in task_id_str:
+        task_id_conds.append(TaskResource.task_id == f"{project_id}_{task_id_str}")
+
+    stmt = select(TaskResource, Resource).outerjoin(
+        Resource,
+        or_(
+            TaskResource.resource_id == Resource.resource_id,
+            TaskResource.resource_id == Resource.name,
+            TaskResource.resource_id == cast(Resource.id, String)
+        )
+        & (TaskResource.project_id == Resource.project_id)
+    ).where(
+        TaskResource.project_id == project_id,
+        or_(*task_id_conds)
+    )
+    
+    result = await db.execute(stmt)
+    
+    labor_cost = 0.0
+    equipment_cost = 0.0
+    energy_cost = 0.0
+    
+    for tr, r in result.all():
+        if not r:
+            continue
+        
+        qty = float(tr.request_quantity or 1)
+        unit_cost = float(r.unit_cost or 0)
+        energy_rate = float(r.energy or 0)
+        res_type = r.type if r.type else "Human"
+        
+        if res_type == "Human":
+            labor_cost += qty * unit_cost * duration
+        elif res_type in ["Machine", "Equipment"]:
+            equipment_cost += qty * unit_cost * duration
+            energy_cost += qty * energy_rate * duration
+            
+    task_obj.labor = labor_cost
+    task_obj.equipment = equipment_cost
+    task_obj.energy = energy_cost
+    
+    await db.commit()

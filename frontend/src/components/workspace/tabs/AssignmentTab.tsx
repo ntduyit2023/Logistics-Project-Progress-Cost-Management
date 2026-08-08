@@ -15,15 +15,21 @@ export const AssignmentTab = ({
   maxEndHour,
   api,
   setEditingTask,
-  setIsTaskModalOpen
+  setIsTaskModalOpen,
+  onRefresh
 }: any) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [taskFilter, setTaskFilter] = useState('');
 
-  // Lọc task cho biểu đồ Gantt
-  const filteredGantt = ganttData.filter((t: any) => 
-    t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    t.task_id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter tasks for Gantt chart
+  const filteredGantt = ganttData.filter((t: any) => {
+    const matchSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                        t.task_id.toLowerCase().includes(searchTerm.toLowerCase());
+    let matchType = true;
+    if (taskFilter === 'Critical') matchType = t.isCritical;
+    if (taskFilter === 'Optimized') matchType = t.isOptimized;
+    return matchSearch && matchType;
+  });
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -33,16 +39,25 @@ export const AssignmentTab = ({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input 
             type="text" 
-            placeholder="Tìm kiếm công việc (Tên, Mã WBS)..." 
+            placeholder="Search tasks (Name, WBS)..." 
             className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold transition">
-            <Filter size={16} /> Lọc trạng thái
-          </button>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 rounded-lg text-sm font-semibold transition focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+            <Filter size={16} className="text-slate-500" />
+            <select
+              value={taskFilter}
+              onChange={e => setTaskFilter(e.target.value)}
+              className="bg-transparent border-none outline-none text-sm font-semibold cursor-pointer py-1"
+            >
+              <option value="">All Tasks</option>
+              <option value="Critical">Critical Path</option>
+              <option value="Optimized">AI Optimized</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -76,7 +91,7 @@ export const AssignmentTab = ({
                     successor_id: target,
                     dependency_type: "FS"
                   });
-                  window.location.reload();
+                  if (onRefresh) onRefresh();
                 } catch (err: any) {
                   alert("Failed to connect nodes: " + err.message);
                 }
@@ -85,7 +100,7 @@ export const AssignmentTab = ({
                 try {
                   if (!projectId) return;
                   await api.deleteTask(projectId, taskId);
-                  window.location.reload();
+                  if (onRefresh) onRefresh();
                 } catch (err: any) {
                   alert("Failed to delete task: " + err.message);
                 }
@@ -104,10 +119,10 @@ export const AssignmentTab = ({
         <div className="mb-4 shrink-0 flex justify-between items-center">
           <div>
             <h3 className="font-bold text-slate-800">Project Gantt Chart</h3>
-            <p className="text-xs text-slate-500">Tiến độ thời gian thực hiện công việc</p>
+            <p className="text-xs text-slate-500">Task execution timeline progress</p>
           </div>
           <span className="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-bold">
-            Hiển thị {filteredGantt.length} công việc
+            Showing {filteredGantt.length} tasks
           </span>
         </div>
         <div className="overflow-x-auto relative w-full border border-slate-100 rounded-lg bg-slate-50 p-4">

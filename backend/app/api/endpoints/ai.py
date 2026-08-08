@@ -266,6 +266,7 @@ async def apply_pareto_option_api(
                     if "start_hours" in s_data and s_data["start_hours"] is not None:
                         offset_hrs = float(s_data["start_hours"])
                         matched_task.baseline_start = base_start_dt + timedelta(hours=offset_hrs)
+                        matched_task.baseline_end = matched_task.baseline_start + timedelta(hours=new_dur)
 
                     ot_cost = float(s_data.get("overtime_cost", s_data.get("overtime", 0.0)) or 0.0)
                     ot_hours_per_day = float(s_data.get("overtime_hours_per_day", s_data.get("overtime_hours", 0.0)) or 0.0)
@@ -313,6 +314,9 @@ async def apply_pareto_option_api(
         project.metadata_json = proj_meta
         from sqlalchemy.orm.attributes import flag_modified
         flag_modified(project, "metadata_json")
+
+        if payload.total_cost is not None:
+            project.total_cost = payload.total_cost
 
         await db.commit()
         
@@ -371,6 +375,8 @@ async def restore_baseline_api(
         proj_meta.pop("applied_task_ids", None)
         proj_meta.pop("applied_task_details", None)
         project.metadata_json = proj_meta
+        
+        project.total_cost = project.base_cost
 
         await db.commit()
         

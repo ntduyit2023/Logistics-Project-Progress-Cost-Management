@@ -30,54 +30,54 @@ const TABS = [
 
 const FIELD_GROUPS = {
   g1_direct: [
-    { key: 'labor', label: 'Labor Cost (Nhân công)' },
-    { key: 'material', label: 'Material Cost (Vật tư)' },
-    { key: 'equipment', label: 'Equipment Cost (Ca máy/thuyết bị)' },
-    { key: 'energy', label: 'Energy & Fuel Cost (Nhiên liệu)' },
-    { key: 'testing_inspection', label: 'Testing & Inspection (Kiểm định)' },
-    { key: 'project_management', label: 'Project Management (Ban QLDA)' },
+    { key: 'labor', label: 'Labor' },
+    { key: 'material', label: 'Material' },
+    { key: 'equipment', label: 'Equipment' },
+    { key: 'energy', label: 'Energy & Fuel' },
+    { key: 'testing_inspection', label: 'Testing & Inspection' },
+    { key: 'project_management', label: 'Project Management' },
   ],
   g2_indirect: [
-    { key: 'facility', label: 'Facility Rent (Lán trại mặt bằng)' },
-    { key: 'utilities', label: 'Utilities Cost (Điện nước)' },
-    { key: 'communication', label: 'Communication (Viễn thông)' },
-    { key: 'training', label: 'Training Cost (Đào tạo an toàn)' },
-    { key: 'quality_management', label: 'Quality Management (QA/QC)' },
+    { key: 'facility', label: 'Facility Rent' },
+    { key: 'utilities', label: 'Utilities' },
+    { key: 'communication', label: 'Communication' },
+    { key: 'training', label: 'Training' },
+    { key: 'quality_management', label: 'Quality Assurance' },
   ],
   g3_time: [
-    { key: 'overtime', label: 'Overtime Cost (Lương tăng ca)' },
-    { key: 'delay_penalty', label: 'Delay Penalty (Phạt trễ hạn)' },
-    { key: 'inventory_holding', label: 'Inventory Holding (Lưu kho)' },
-    { key: 'waiting_cost', label: 'Waiting Cost (Tổn thất chờ)' },
-    { key: 'idle_resource', label: 'Idle Resource (Máy nhàn rỗi)' },
-    { key: 'revenue_delay', label: 'Revenue Delay (Chậm thu hồi)' },
-    { key: 'expediting', label: 'Expediting Cost (Thúc ép tiến độ)' },
+    { key: 'overtime', label: 'Overtime' },
+    { key: 'delay_penalty', label: 'Delay Penalty' },
+    { key: 'inventory_holding', label: 'Inventory Holding' },
+    { key: 'waiting_cost', label: 'Waiting Time' },
+    { key: 'idle_resource', label: 'Idle Resource' },
+    { key: 'revenue_delay', label: 'Revenue Delay' },
+    { key: 'expediting', label: 'Expediting' },
   ],
   g4_contractual: [
-    { key: 'insurance', label: 'Insurance Cost (Bảo hiểm)' },
-    { key: 'rework', label: 'Rework Cost (Sửa chữa làm lại)' },
-    { key: 'warranty', label: 'Warranty Reserve (Bảo hành)' },
-    { key: 'litigation', label: 'Litigation & Legal (Pháp lý)' },
-    { key: 'regulatory_compliance', label: 'Regulatory Compliance (Cấp phép PCCC)' },
-    { key: 'contingency_reserve', label: 'Contingency Reserve (Dự phòng rủi ro)' },
-    { key: 'management_reserve', label: 'Management Reserve (Dự phòng quản lý)' },
+    { key: 'insurance', label: 'Insurance' },
+    { key: 'rework', label: 'Rework' },
+    { key: 'warranty', label: 'Warranty Reserve' },
+    { key: 'litigation', label: 'Litigation & Legal' },
+    { key: 'regulatory_compliance', label: 'Regulatory Compliance' },
+    { key: 'contingency_reserve', label: 'Contingency Reserve' },
+    { key: 'management_reserve', label: 'Management Reserve' },
   ],
   g5_logistics: [
-    { key: 'transportation', label: 'Transportation (Vận chuyển)' },
-    { key: 'ordering', label: 'Ordering Cost (Đặt hàng)' },
-    { key: 'packaging', label: 'Packaging Cost (Đóng gói)' },
-    { key: 'reverse_logistics', label: 'Reverse Logistics (Thu hồi)' },
-    { key: 'customs', label: 'Customs & Tariff (Thông quan)' },
-    { key: 'supplier_coordination', label: 'Supplier Coordination (Nhà cung cấp)' },
+    { key: 'transportation', label: 'Transportation' },
+    { key: 'ordering', label: 'Ordering' },
+    { key: 'packaging', label: 'Packaging' },
+    { key: 'reverse_logistics', label: 'Reverse Logistics' },
+    { key: 'customs', label: 'Customs & Tariff' },
+    { key: 'supplier_coordination', label: 'Supplier Coordination' },
   ],
   g6_financial: [
-    { key: 'opportunity_cost', label: 'Opportunity Cost (Cơ hội vốn)' },
-    { key: 'capital_cost', label: 'Capital Cost (Sử dụng vốn)' },
-    { key: 'financing_cost', label: 'Financing Interest (Lãi vay)' },
-    { key: 'npv_loss', label: 'NPV Loss (Tổn thất hiện giá)' },
-    { key: 'esg_cost', label: 'ESG Compliance (Môi trường)' },
-    { key: 'carbon_tax', label: 'Carbon Tax (Thuế phát thải)' },
-    { key: 'reputation_cost', label: 'Reputation Loss (Tổn thất uy tín)' },
+    { key: 'opportunity_cost', label: 'Opportunity Cost' },
+    { key: 'capital_cost', label: 'Cost of Capital' },
+    { key: 'financing_cost', label: 'Financing Interest' },
+    { key: 'npv_loss', label: 'NPV Loss' },
+    { key: 'esg_cost', label: 'ESG Compliance' },
+    { key: 'carbon_tax', label: 'Carbon Tax' },
+    { key: 'reputation_cost', label: 'Reputation Loss' },
   ]
 };
 
@@ -99,6 +99,29 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
   const [selectedResId, setSelectedResId] = useState('');
   const [reqQty, setReqQty] = useState(1);
   const [loadingRes, setLoadingRes] = useState(false);
+  const [stagedPredecessors, setStagedPredecessors] = useState<any[]>([]);
+
+  // Cycle detection (DFS): Checks if there is a path from startId to targetId
+  const hasPath = (startId: string, targetId: string, edges: any[]) => {
+    if (!startId || !targetId) return false;
+    const visited = new Set<string>();
+    const stack = [startId];
+    
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      if (current === targetId) return true;
+      if (!visited.has(current)) {
+        visited.add(current);
+        const successors = edges.filter(e => String(e.predecessor_id) === current).map(e => String(e.successor_id));
+        for (const succ of successors) {
+          if (!visited.has(succ)) {
+            stack.push(succ);
+          }
+        }
+      }
+    }
+    return false;
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -139,7 +162,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
         fetchResources();
 
       } else {
-        setFormData({ task_type: 'Construction', status: 'Pending', duration_days: 1 });
+        setFormData({ task_type: 'Construction', status: 'Pending', duration_hours: 1 });
         setAssignedResources([]);
         setExistingPredecessors([]);
         setExistingSuccessors([]);
@@ -150,6 +173,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
     } else {
       // Reset when closed
       setAssignedResources([]);
+      setStagedPredecessors([]);
       setPredecessor({ id: '', type: 'FS', lag: 0 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -169,6 +193,12 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
     const targetResId = projRes ? (projRes.resource_id || projRes.name || String(projRes.id)) : resKey;
     const targetResName = projRes ? (projRes.name || projRes.resource_name || projRes.resource_id) : resKey;
     const targetResType = projRes ? (projRes.type || projRes.resource_type || 'Human') : 'Human';
+    
+    const maxCap = projRes ? Number(projRes.max_availability ?? projRes.max_capacity ?? projRes.capacity) : null;
+    if (maxCap != null && !isNaN(maxCap) && Number(reqQty) > maxCap) {
+      alert(`Quantity cannot exceed maximum limit (${maxCap}) of this resource!`);
+      return;
+    }
 
     const existing = assignedResources.find(r => String(r.resource_id) === String(targetResId));
     if (existing) {
@@ -200,6 +230,16 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
       alert("Task Name is required!");
       return;
     }
+    if (!formData.baseline_start) {
+      alert("Baseline Start is required!");
+      return;
+    }
+    
+    const dur = formData.duration_hours != null ? Number(formData.duration_hours) : Number(formData.duration_days);
+    if (isNaN(dur) || dur <= 0) {
+      alert("Duration is required and must be greater than 0!");
+      return;
+    }
 
     const payload: any = { ...formData };
 
@@ -216,13 +256,18 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
       payload.baseline_start = new Date(payload.baseline_start).toISOString();
     }
 
+    let finalStaged = [...stagedPredecessors];
     if (predecessor.id) {
-      payload.predecessor_id = predecessor.id;
-      payload.dependency_type = predecessor.type;
-      payload.lag_days = Number(predecessor.lag);
+      finalStaged.push({
+        predecessor_id: predecessor.id,
+        dependency_type: predecessor.type,
+        lag_hours: Number(predecessor.lag),
+        isNew: true
+      });
     }
 
     payload.stagedResources = assignedResources;
+    payload.stagedPredecessors = finalStaged;
 
     finalOnSubmit(payload);
   };
@@ -232,13 +277,55 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
 
   const visibleTabIds = React.useMemo(() => {
     const baseTabs = ['basic', 'resources'];
+    if (projectType === 'PRO') {
+      return [...baseTabs, 'g1_direct', 'g2_indirect', 'g3_time', 'g4_contractual'];
+    }
     return [...baseTabs, 'g1_direct', 'g2_indirect', 'g3_time', 'g4_contractual', 'g5_logistics', 'g6_financial'];
   }, [projectType]);
 
   const visibleTabs = TABS.filter(t => visibleTabIds.includes(t.id));
 
+  const handleDeleteConstraint = async (predId: string, succId: string, type: 'pred' | 'succ', isStaged: boolean = false) => {
+    if (!window.confirm('Are you sure you want to delete this logic constraint?')) return;
+    if (isStaged) {
+      setStagedPredecessors(prev => prev.filter(p => String(p.predecessor_id) !== String(predId)));
+      return;
+    }
+    try {
+      if (effectiveProjectId) {
+        await api.deleteLogicConstraint(effectiveProjectId, predId, succId);
+        if (type === 'pred') {
+          setExistingPredecessors(prev => prev.filter(p => String(p.predecessor_id) !== String(predId)));
+        } else {
+          setExistingSuccessors(prev => prev.filter(s => String(s.successor_id) !== String(succId)));
+        }
+      }
+    } catch (err) {
+      alert("Failed to delete logic constraint: " + (err as Error).message);
+    }
+  };
+
+  const handleAddConstraint = async () => {
+    if (!predecessor.id) return;
+    const t = finalAvailableTasks.find(x => String(x.task_id) === String(predecessor.id) || String(x.id) === String(predecessor.id));
+    const newPred = {
+      predecessor_id: predecessor.id,
+      dependency_type: predecessor.type,
+      lag_hours: Number(predecessor.lag),
+      name: t ? t.task_name : predecessor.id,
+      isNew: true
+    };
+
+    setStagedPredecessors([...stagedPredecessors, newPred]);
+    setPredecessor({ id: '', type: 'FS', lag: 0 });
+  };
+
   const renderNumberFields = (groupId: string) => {
     const displayFields = FIELD_GROUPS[groupId as keyof typeof FIELD_GROUPS] || [];
+    
+    // Hardcoded readonly fields for direct costs calculated by backend
+    const READONLY_COST_KEYS = ['labor', 'equipment', 'energy'];
+    
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-3">
         {displayFields.map(field => {
@@ -258,7 +345,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     ? 'bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed font-semibold'
                     : 'bg-white border-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500'
                   }`}
-                title={isReadOnly ? 'Tính từ phân bổ tài nguyên/nhiên liệu — không chỉnh sửa trực tiếp' : ''}
+                title={isReadOnly ? 'Calculated automatically from assigned resources - do not edit directly' : ''}
               />
             </div>
           );
@@ -379,7 +466,7 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                     <p className="text-xs text-slate-500 mb-3">Edges connecting this node. (Drag-and-drop on graph to add, or select below).</p>
 
                     {/* Existing Logic */}
-                    {(existingPredecessors.length > 0 || existingSuccessors.length > 0) && (
+                    {(existingPredecessors.length > 0 || existingSuccessors.length > 0 || stagedPredecessors.length > 0) && (
                       <div className="mb-4 bg-white border border-slate-200 rounded-lg overflow-hidden">
                         <table className="w-full text-xs text-left">
                           <thead className="bg-slate-50 border-b border-slate-200 text-slate-600">
@@ -391,20 +478,32 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                             </tr>
                           </thead>
                           <tbody>
-                            {existingPredecessors.map(p => (
-                              <tr key={`p-${p.predecessor_id}`} className="border-b border-slate-100">
-                                <td className="px-3 py-1.5 text-amber-600 font-bold">← Predecessor</td>
+                            {[...existingPredecessors, ...stagedPredecessors].map((p, idx) => {
+                              const isStaged = idx >= existingPredecessors.length;
+                              return (
+                              <tr key={`p-${p.predecessor_id}-${idx}`} className="border-b border-slate-100 group">
+                                <td className="px-3 py-1.5 text-amber-600 font-bold">← Predecessor {isStaged && <span className="text-[10px] bg-amber-100 text-amber-800 px-1 py-0.5 rounded ml-1">New</span>}</td>
                                 <td className="px-3 py-1.5 font-medium">{p.name === p.predecessor_id ? p.name : `${p.name} (${p.predecessor_id})`}</td>
                                 <td className="px-3 py-1.5">{p.dependency_type}</td>
-                                <td className="px-3 py-1.5">{p.lag_days}</td>
+                                <td className="px-3 py-1.5 flex items-center justify-between">
+                                  <span>{p.lag_days}</span>
+                                  <button type="button" onClick={() => handleDeleteConstraint(p.predecessor_id, initialData?.task_id || initialData?.id, 'pred', isStaged)} className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                                    <Trash2 size={14} />
+                                  </button>
+                                </td>
                               </tr>
-                            ))}
+                            )})}
                             {existingSuccessors.map(s => (
-                              <tr key={`s-${s.successor_id}`} className="border-b border-slate-100">
+                              <tr key={`s-${s.successor_id}`} className="border-b border-slate-100 group">
                                 <td className="px-3 py-1.5 text-blue-600 font-bold">→ Successor</td>
                                 <td className="px-3 py-1.5 font-medium">{s.name === s.successor_id ? s.name : `${s.name} (${s.successor_id})`}</td>
                                 <td className="px-3 py-1.5">{s.dependency_type}</td>
-                                <td className="px-3 py-1.5">{s.lag_days}</td>
+                                <td className="px-3 py-1.5 flex items-center justify-between">
+                                  <span>{s.lag_days}</span>
+                                  <button type="button" onClick={() => handleDeleteConstraint(initialData?.task_id || initialData?.id, s.successor_id, 'succ', false)} className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                                    <Trash2 size={14} />
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -412,8 +511,8 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="col-span-3 md:col-span-1">
+                    <div className="grid grid-cols-4 gap-3 items-end">
+                      <div className="col-span-4 md:col-span-2">
                         <label className="block text-xs font-semibold text-slate-700 mb-1">+ Add Predecessor</label>
                         <select
                           value={predecessor.id}
@@ -425,9 +524,21 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                             const tTaskId = String(t.task_id || t.id);
                             const myTaskId = String(initialData?.task_id || initialData?.id || '');
                             return tTaskId !== myTaskId && !existingPredecessors.some(p => String(p.predecessor_id) === tTaskId);
-                          }).map((t: any) => (
-                            <option key={t.task_id || t.id} value={t.task_id || t.id}>{t.task_name} ({t.task_id || t.id})</option>
-                          ))}
+                          }).map((t: any) => {
+                            const tTaskId = String(t.task_id || t.id);
+                            const myTaskId = String(initialData?.task_id || initialData?.id || '');
+                            const createsCycle = myTaskId ? hasPath(myTaskId, tTaskId, constraintLogic) : false;
+                            
+                            return (
+                              <option 
+                                key={tTaskId} 
+                                value={tTaskId}
+                                disabled={createsCycle}
+                              >
+                                {t.task_name} ({tTaskId}) {createsCycle ? ' - [Vòng lặp]' : ''}
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
                       <div className="col-span-1">
@@ -444,15 +555,25 @@ export default function TaskFormModal({ isOpen, onClose, onSubmit, onSave, initi
                           <option value="SF">Start-to-Finish (SF)</option>
                         </select>
                       </div>
-                      <div className="col-span-1">
-                        <label className="block text-xs font-semibold text-slate-700 mb-1">Lag (days)</label>
-                        <input
-                          type="number"
-                          value={predecessor.lag}
-                          onChange={(e) => setPredecessor(p => ({ ...p, lag: Number(e.target.value) }))}
+                      <div className="col-span-1 flex gap-2">
+                        <div className="flex-1">
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">Lag (h)</label>
+                          <input
+                            type="number"
+                            value={predecessor.lag}
+                            onChange={(e) => setPredecessor(p => ({ ...p, lag: Number(e.target.value) }))}
+                            disabled={!predecessor.id}
+                            className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-50"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleAddConstraint}
                           disabled={!predecessor.id}
-                          className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 disabled:opacity-50"
-                        />
+                          className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center shrink-0"
+                        >
+                          <Plus size={16} />
+                        </button>
                       </div>
                     </div>
                   </div>

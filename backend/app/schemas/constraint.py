@@ -38,8 +38,6 @@ class ConstraintResourceResponse(ConstraintResourceBase):
 class ConstraintTimeBase(BaseModel):
     weekly_schedule: Dict[str, Any] = Field(..., description="Lịch làm việc chi tiết từng ngày")
     holidays_list: Optional[List[Any]] = Field(default_factory=list)
-    overtime_multiplier: Optional[float] = Field(1.5, ge=1.0)
-
 
 class ConstraintTimeResponse(ConstraintTimeBase):
     model_config = ConfigDict(from_attributes=True)
