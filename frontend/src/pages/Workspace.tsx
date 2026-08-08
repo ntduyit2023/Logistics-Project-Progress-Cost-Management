@@ -11,6 +11,12 @@ import TaskFormModal from '../components/TaskFormModal';
 import ResourceManagerModal from '../components/ResourceManagerModal';
 import TimeManagerModal from '../components/TimeManagerModal';
 
+import { OverviewTab } from '../components/workspace/tabs/OverviewTab';
+import { AnalysisTab } from '../components/workspace/tabs/AnalysisTab';
+import { AssignmentTab } from '../components/workspace/tabs/AssignmentTab';
+import { SelectionTab } from '../components/workspace/tabs/SelectionTab';
+import { EvaluationTab } from '../components/workspace/tabs/EvaluationTab';
+
 const StatCard = ({ title, value, icon: Icon, color }: any) => (
   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center transition-all hover:shadow-md">
     <div className={`p-3 rounded-lg mr-4 ${color}`}>
@@ -258,9 +264,10 @@ const Workspace = () => {
 
       if (res && res.success) {
         setGlpoResult(res.data);
-        setSelectedGlpoOptionIndex(0);
-        setActiveTab('pareto');
-        setMainPageTab('comparison');
+        setSelectedGlpoOptionIndex(-1);
+        if (res.data?.metadata_json?.simulation_results?.pareto_options) {
+          setWorkspaceTab('ai_pipeline');
+        }
         showToast('Tối ưu hóa GLPO AI + OR hoàn tất thành công!', 'success');
         await fetchProjectDetails();
       } else {
@@ -316,10 +323,10 @@ const Workspace = () => {
     }
   };
 
-  const [mainPageTab, setMainPageTab] = useState<'details' | 'comparison'>('details');
+  const [workspaceTab, setWorkspaceTab] = useState<'overview' | 'analysis' | 'assignment' | 'ai_pipeline'>('overview');
   const [paretoChartType, setParetoChartType] = useState<'scatter' | 'bar'>('scatter');
   const [glpoResult, setGlpoResult] = useState<any>(null);
-  const [selectedGlpoOptionIndex, setSelectedGlpoOptionIndex] = useState<number>(0);
+  const [selectedGlpoOptionIndex, setSelectedGlpoOptionIndex] = useState<number>(-1);
   const [isGlpoLoading, setIsGlpoLoading] = useState<boolean>(false);
 
   // Contract & AI Parameters State
@@ -353,7 +360,7 @@ const Workspace = () => {
       });
       if (res.success) {
         setGlpoResult(res.data);
-        setSelectedGlpoOptionIndex(0);
+        setSelectedGlpoOptionIndex(-1);
         setActiveTab('pareto');
         showToast('Tối ưu hóa GLPO AI + OR hoàn tất thành công!', 'success');
       }
@@ -366,7 +373,10 @@ const Workspace = () => {
 
   const tasks = useMemo(() => projectData?.tasks || [], [projectData]);
   const dependencies = useMemo(() => projectData?.constraint_logic || [], [projectData]);
-  const cpm_static_makespan = projectData?.metadata_json?.simulation_results?.cpm_static_makespan || (projectData?.tasks?.length * 5) || 0;
+  
+
+
+  const cpm_static_makespan = projectData?.metadata_json?.simulation_results?.cpm_static_makespan || 0;
   const budget = projectData?.metadata_json?.simulation_results?.budget || projectData?.tasks?.reduce((sum: number, t: any) => sum + (t.total_cost || t.internal_labor_cost || 0), 0) || 0;
   const deadline = projectData?.metadata_json?.simulation_results?.deadline || projectData?.constraint_time?.global_deadline_hours || (cpm_static_makespan * 1.2);
 
@@ -514,7 +524,10 @@ const Workspace = () => {
 
     const agendaHours = projectData?.constraint_time?.working_hours_per_day || 8;
 
-    const getTaskDurationHours = (t: any) => {
+    // GLPO preview schedule: when user clicks "Xem trước", use optimized task data
+    const glpoSchedule: Record<string, any> = currentOption?.tasks_schedule || currentOption?.tasks || {};
+
+    const getBaseTaskDurationHours = (t: any) => {
       if (t.duration_hours !== undefined && t.duration_hours !== null && parseFloat(t.duration_hours) > 0) {
         return parseFloat(t.duration_hours);
       }
@@ -523,6 +536,19 @@ const Workspace = () => {
       const d_h = parseFloat(t.duration_hours) || 0;
       const dur = d_d * agendaHours + d_h;
       return dur > 0 ? dur : agendaHours;
+    };
+
+    const getTaskDurationHours = (t: any) => {
+      // If a GLPO option is being previewed, use its optimized duration
+      const taskKey = String(t.task_id || t.id);
+      const glpoTask = glpoSchedule[taskKey] || glpoSchedule[String(t.id)];
+      if (glpoTask) {
+        const newDur = glpoTask.new_duration ?? glpoTask.duration_hours;
+        if (newDur !== undefined && newDur !== null && parseFloat(newDur) > 0) {
+          return parseFloat(newDur);
+        }
+      }
+      return getBaseTaskDurationHours(t);
     };
 
     // 1. Determine earliest project start timestamp
@@ -587,13 +613,14 @@ const Workspace = () => {
 
     tasks.forEach((t: any, idx: number) => {
       const mode = selectedOptionModes[idx] || 0;
-      const baseTaskDuration = getTaskDurationHours(t);
-      const durationHours = mode === 1 ? Math.round(baseTaskDuration / 1.5) : mode === 2 ? Math.round(baseTaskDuration / 2.0) : baseTaskDuration;
+      const taskKey = String(t.task_id || t.id);
+      const glpoTask = glpoSchedule[taskKey] || glpoSchedule[String(t.id)];
+      const durationHours = getTaskDurationHours(t);
 
       const baseTaskCost = (t.total_cost !== undefined && t.total_cost !== null)
         ? parseFloat(t.total_cost)
         : t.normal_cost || t.internal_labor_cost || 0;
-      const cost = mode === 1 ? (t.crash_cost || baseTaskCost * 1.25) : mode === 2 ? (t.outsource_cost || baseTaskCost * 1.5) : baseTaskCost;
+      const cost = glpoTask?.total_cost ? parseFloat(glpoTask.total_cost) : (mode === 1 ? (t.crash_cost || baseTaskCost * 1.25) : mode === 2 ? (t.outsource_cost || baseTaskCost * 1.5) : baseTaskCost);
 
       let taskStartMs = earliestStartMs;
       if (t.baseline_start) {
@@ -646,7 +673,7 @@ const Workspace = () => {
       if (tEnd > maxProjectHour) maxProjectHour = tEnd;
     });
 
-    const mean = monte_carlo?.mean_makespan || cpm_static_makespan || (maxProjectHour > 0 ? maxProjectHour : 500);
+    const mean = (currentOption ? displayMakespan : null) || monte_carlo?.mean_makespan || cpm_static_makespan || (maxProjectHour > 0 ? maxProjectHour : 500);
     const p90Val = monte_carlo?.P90 || (mean * 1.15);
     const stdDev = Math.max(5, (p90Val - mean) / 1.28 || mean * 0.08);
 
@@ -665,16 +692,19 @@ const Workspace = () => {
       });
     }
 
-    // 5. Gantt Chart (Top 20 Tasks)
+    // 5. Gantt Chart (All Tasks)
     const cpSatSchedule = simulationResults?.cp_sat_schedule?.schedule || {};
-    const displayGanttTasks = tasks.slice(0, 20);
+    const displayGanttTasks = tasks;
 
     let maxEnd = 1;
 
-    const gantt = displayGanttTasks.map((t: any) => {
+    const gantt = displayGanttTasks.map((t: any, originalIndex: number) => {
       const sched = cpSatSchedule[t.id] || cpSatSchedule[t.task_id];
+      const taskKey = String(t.task_id || t.id);
+      const glpoTask = glpoSchedule[taskKey] || glpoSchedule[String(t.id)];
       let start = 0;
       let duration = getTaskDurationHours(t);
+      const baseDuration = getBaseTaskDurationHours(t);
 
       if (sched) {
         start = sched.start;
@@ -693,13 +723,15 @@ const Workspace = () => {
 
       const appliedIds: string[] = projectData?.metadata_json?.applied_task_ids || [];
       const appliedDetails: Record<string, any> = projectData?.metadata_json?.applied_task_details || {};
-      const taskIdStr = String(t.task_id || t.id);
-      const isOpt = parseFloat(t.overtime || 0) > 0 || appliedIds.includes(taskIdStr) || appliedIds.includes(String(t.id));
-      const detail = appliedDetails[taskIdStr] || appliedDetails[String(t.id)] || null;
+      const detail = glpoTask || appliedDetails[taskKey] || appliedDetails[String(t.id)] || null;
+      
+      const mode = selectedOptionModes[originalIndex] || 0;
+      const durDiff = detail ? ((detail.old_duration || baseDuration) - (detail.new_duration ?? detail.duration_hours ?? baseDuration)) : 0;
+      const isOpt = mode > 0 || durDiff > 0.01 || (t.is_ai_optimized === true);
 
       return {
         id: t.id,
-        task_id: taskIdStr,
+        task_id: taskKey,
         name: t.name || t.task_name || `Task ${t.id}`,
         start: Number(start.toFixed(1)),
         end: Number(end.toFixed(1)),
@@ -714,7 +746,7 @@ const Workspace = () => {
     gantt.sort((a, b) => a.start - b.start || a.end - b.end);
 
     return { combinedData: combined, bellCurveData: bellCurve, ganttData: gantt, maxEndHour: maxEnd };
-  }, [tasks, selectedOptionModes, monte_carlo, cpm_static_makespan, projectData]);
+  }, [tasks, selectedOptionModes, monte_carlo, cpm_static_makespan, projectData, currentOption, displayMakespan]);
 
   if (loading) {
     return (
@@ -797,566 +829,118 @@ const Workspace = () => {
         </div>
       </div>
 
-      {/* Main Navigation Tabs (Trang 1 vs Trang 2) */}
+            {/* Main Navigation Tabs */}
       <div className="flex border-b border-slate-200 bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
-        <button
-          onClick={() => setMainPageTab('details')}
-          className={`flex-1 py-3.5 px-6 font-bold text-sm border-b-2 transition-all flex items-center justify-center gap-2 ${mainPageTab === 'details'
-              ? 'border-indigo-600 text-indigo-600 bg-indigo-50/50'
-              : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+        {[
+          { id: 'overview', label: '1. Tổng quan', icon: Layers },
+          { id: 'analysis', label: '2. Phân tích', icon: Activity },
+          { id: 'assignment', label: '3. Phân công', icon: GitCommit },
+          { id: 'ai_pipeline', label: '4. AI Pipeline (Lựa chọn & Đánh giá)', icon: Sparkles }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setWorkspaceTab(tab.id as any)}
+            className={`flex-1 py-3.5 px-2 sm:px-6 font-bold text-[10px] sm:text-sm border-b-2 transition-all flex items-center justify-center gap-1 sm:gap-2 ${
+              workspaceTab === tab.id
+                ? 'border-indigo-600 text-indigo-600 bg-indigo-50/50'
+                : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
             }`}
-        >
-          <Layers size={18} />
-          Trang 1: Chi tiết Dự án & Đồ thị
-        </button>
-        <button
-          onClick={() => setMainPageTab('comparison')}
-          className={`flex-1 py-3.5 px-6 font-bold text-sm border-b-2 transition-all flex items-center justify-center gap-2 ${mainPageTab === 'comparison'
-              ? 'border-indigo-600 text-indigo-600 bg-indigo-50/50'
-              : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
-            }`}
-        >
-          <Activity size={18} />
-          Trang 2: Bảng So sánh & Biểu đồ Phương án Tối ưu (Pareto)
-          {allParetoOptions.length > 0 && (
-            <span className="bg-indigo-600 text-white text-[11px] font-black px-2 py-0.5 rounded-full animate-pulse">
-              {allParetoOptions.length} PA
-            </span>
-          )}
-        </button>
+          >
+            <tab.icon size={16} />
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {mainPageTab === 'comparison' && (
-        <div className="space-y-6 animate-fadeIn mb-8">
-          {/* Header Banner */}
-          <div className="bg-white border border-indigo-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-indigo-50/70 to-white">
-            <div>
-              <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
-                <Activity className="text-indigo-600" size={22} />
-                Bảng So sánh Chi tiết & Biểu đồ Tối ưu Pareto Frontier (GLPO AI + OR)
-              </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Tự động tối ưu hóa 3 mục tiêu độc lập: Rút ngắn thời gian (Makespan), Giảm chi phí ròng (Net Cost) và Giảm rủi ro trễ hạn.
-              </p>
+      <div className="mb-8">
+        {workspaceTab === 'overview' && (
+          <OverviewTab 
+            tasks={tasks}
+            dependencies={dependencies}
+            displayMakespan={displayMakespan}
+            displayCost={displayCost}
+            projectData={projectData}
+            ganttData={ganttData}
+            maxEndHour={maxEndHour}
+          />
+        )}
+        {workspaceTab === 'analysis' && (
+          <AnalysisTab 
+            combinedData={combinedData}
+            bellCurveData={bellCurveData}
+            optionCost={optionCost}
+          />
+        )}
+        {workspaceTab === 'assignment' && (
+          <AssignmentTab 
+            tasks={tasks}
+            dependencies={dependencies}
+            projectData={projectData}
+            projectId={projectId}
+            optionLabel={optionLabel}
+            selectedOptionModes={selectedOptionModes}
+            currentOption={currentOption}
+            criticalityIndices={criticalityIndices}
+            ganttData={ganttData}
+            maxEndHour={maxEndHour}
+            api={api}
+            setEditingTask={setEditingTask}
+            setIsTaskModalOpen={setIsTaskModalOpen}
+          />
+        )}
+        {workspaceTab === 'ai_pipeline' && (
+          <div className="space-y-12">
+            {/* Phân vùng 1: Cấu hình AI */}
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-3xl bg-indigo-50/30 border border-indigo-100/50 -z-10"></div>
+              <SelectionTab 
+                glpoTargetDate={glpoTargetDate}
+                setGlpoTargetDate={setGlpoTargetDate}
+                glpoTargetHour={glpoTargetHour}
+                setGlpoTargetHour={setGlpoTargetHour}
+                glpoPenaltyPerDay={glpoPenaltyPerDay}
+                setGlpoPenaltyPerDay={setGlpoPenaltyPerDay}
+                glpoBonusPerDay={glpoBonusPerDay}
+                setGlpoBonusPerDay={setGlpoBonusPerDay}
+                glpoMcIterations={glpoMcIterations}
+                setGlpoMcIterations={setGlpoMcIterations}
+                glpoParetoCount={glpoParetoCount}
+                setGlpoParetoCount={setGlpoParetoCount}
+                glpoParetoSort={glpoParetoSort}
+                setGlpoParetoSort={setGlpoParetoSort}
+                handleRunAI={handleRunAI}
+                isGlpoLoading={isGlpoLoading}
+                projectData={projectData}
+              />
             </div>
-            <button
-              onClick={handleRunAI}
-              disabled={isGlpoLoading}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-2 shrink-0"
-            >
-              <Zap size={16} />
-              {isGlpoLoading ? 'Đang chạy AI...' : 'Chạy lại Tối ưu AI'}
-            </button>
-          </div>
-
-          {/* Pareto Frontier Scatter / Bar Chart */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-              <div>
-                <h3 className="font-extrabold text-slate-800 text-sm flex items-center gap-2">
-                  <Sparkles className="text-amber-500" size={18} />
-                  Biểu đồ Pareto Frontier (Thời gian vs Chi phí Ròng)
-                </h3>
-                <p className="text-xs text-slate-500">Mỗi điểm tròn đại diện cho 1 phương án tối ưu. Bấm vào điểm để chọn phương án.</p>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="bg-slate-100 p-1 rounded-lg flex gap-1">
-                  <button
-                    onClick={() => setParetoChartType('scatter')}
-                    className={`px-3 py-1 text-xs font-bold rounded-md transition ${paretoChartType === 'scatter' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                  >
-                    📈 Đồ thị Pareto
-                  </button>
-                  <button
-                    onClick={() => setParetoChartType('bar')}
-                    className={`px-3 py-1 text-xs font-bold rounded-md transition ${paretoChartType === 'bar' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
-                      }`}
-                  >
-                    📊 Cột So sánh
-                  </button>
-                </div>
-                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
-                  {allParetoOptions.length} PA
-                </span>
-              </div>
-            </div>
-
-            {allParetoOptions.length > 0 ? (
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  {paretoChartType === 'scatter' ? (
-                    <ScatterChart margin={{ top: 20, right: 30, bottom: 35, left: 25 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis
-                        type="number"
-                        dataKey="makespan_hours"
-                        name="Thời gian"
-                        unit="h"
-                        stroke="#94a3b8"
-                        fontSize={11}
-                        domain={['dataMin - 15', 'dataMax + 15']}
-                        tickFormatter={(v) => `${v}h`}
-                      />
-                      <YAxis
-                        type="number"
-                        dataKey="total_cost"
-                        name="Chi phí"
-                        unit="$"
-                        stroke="#94a3b8"
-                        fontSize={11}
-                        tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-                        domain={['dataMin - 3000', 'dataMax + 3000']}
-                      />
-                      <Tooltip
-                        cursor={{ strokeDasharray: '3 3' }}
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const d = payload[0].payload;
-                            return (
-                              <div className="bg-slate-900 text-white p-3 rounded-lg shadow-xl text-xs space-y-1 border border-slate-700">
-                                <p className="font-bold text-amber-400">{d.option_name}</p>
-                                <p>Thời gian: <span className="font-bold text-indigo-300">{d.makespan_hours}h</span> (Đến ngày: {d.finish_datetime ? new Date(d.finish_datetime).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'})</p>
-                                <p>Chi phí gốc: <span className="text-slate-300">${Number(d.base_project_cost || d.cost || 0).toLocaleString()}</span></p>
-                                <p>Chi phí ròng: <span className="font-bold text-emerald-400">${Number(d.total_cost || d.cost || 0).toLocaleString()}</span></p>
-                                <p>Rủi ro trễ: <span className="font-bold text-rose-400">{d.risk_pct}%</span></p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Scatter
-                        name="Pareto Trade-off"
-                        data={allParetoOptions}
-                        fill="#4f46e5"
-                        line={{ stroke: '#6366f1', strokeWidth: 2, strokeDasharray: '3 3' }}
-                        onClick={(point: any) => {
-                          if (!point) return;
-                          const idx = allParetoOptions.findIndex((x: any) => x.option_name === point.option_name || x.makespan_hours === point.makespan_hours);
-                          if (idx !== -1) setSelectedGlpoOptionIndex(idx);
-                        }}
-                      />
-                    </ScatterChart>
-                  ) : (
-                    <ComposedChart data={paretoBarData} margin={{ top: 20, right: 30, bottom: 40, left: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} angle={-25} textAnchor="end" height={50} />
-                      <YAxis yAxisId="cost" orientation="left" tickFormatter={(v) => `$${v}k`} stroke="#4f46e5" fontSize={11} domain={['dataMin - 10', 'dataMax + 10']} />
-                      <YAxis yAxisId="time" orientation="right" tickFormatter={(v) => `${v}h`} stroke="#059669" fontSize={11} domain={['dataMin - 50', 'dataMax + 50']} />
-                      <Tooltip
-                        formatter={(value: any, name: any) => {
-                          if (name === 'cost') return [`$${(value * 1000).toLocaleString()}`, 'Chi phí Ròng'];
-                          if (name === 'makespan') return [`${value}h`, 'Thời gian'];
-                          return [`${value}%`, 'Rủi ro'];
-                        }}
-                      />
-                      <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px' }} />
-                      <Bar yAxisId="cost" dataKey="cost" name="cost" fill="#818cf8" radius={[4, 4, 0, 0]} barSize={18} />
-                      <Line yAxisId="time" type="monotone" dataKey="makespan" name="makespan" stroke="#10b981" strokeWidth={3} dot={{ r: 3 }} />
-                    </ComposedChart>
-                  )}
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <div className="py-12 text-center text-slate-400">
-                <Activity size={36} className="mx-auto mb-2 opacity-40" />
-                <p className="text-sm font-semibold">Chưa có dữ liệu biểu đồ Pareto.</p>
-                <p className="text-xs mt-1">Hãy bấm nút "Run AI Pipeline" phía trên để tạo biểu đồ và bảng so sánh phương án.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Pareto Comparison Table */}
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center flex-wrap gap-2">
-              <h3 className="font-extrabold text-slate-800 text-sm">Bảng So sánh Chi tiết Các Phương án Pareto (Pareto Solutions Table)</h3>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleRestoreBaseline}
-                  disabled={isApplyingOption}
-                  className="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm"
-                  title="Khôi phục dữ liệu ban đầu (Baseline Gốc) của dự án"
-                >
-                  🔄 Khôi phục Baseline Gốc
-                </button>
-                <span className="text-xs text-slate-500 font-medium">Bấm "Áp dụng PA này" để áp dụng lên CSDL</span>
+            
+            {/* Đường phân cách */}
+            <div className="flex items-center justify-center relative mt-8 mb-4">
+              <div className="w-full h-px bg-gradient-to-r from-transparent via-indigo-200 to-transparent"></div>
+              <div className="absolute bg-slate-50 px-4 text-indigo-400 text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                <Sparkles size={14} /> KẾT QUẢ MÔ PHỎNG AI
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left">
-                <thead className="text-slate-600 bg-slate-100 uppercase font-bold border-b border-slate-200">
-                  <tr>
-                    <th className="px-4 py-3">STT</th>
-                    <th className="px-4 py-3">Tên Phương án</th>
-                    <th className="px-4 py-3 text-right">Thời gian (Hours)</th>
-                    <th className="px-4 py-3 text-right">Hoàn thành Ngày</th>
-                    <th className="px-4 py-3 text-right">Chi phí Gốc ($)</th>
-                    <th className="px-4 py-3 text-right">Thưởng / Phạt ($)</th>
-                    <th className="px-4 py-3 text-right">Chi phí Ròng ($)</th>
-                    <th className="px-4 py-3 text-right">Rủi ro Trễ</th>
-                    <th className="px-4 py-3 text-center">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {allParetoOptions.length === 0 ? (
-                    <tr>
-                      <td colSpan={9} className="text-center py-8 text-slate-400">
-                        Chưa có phương án tối ưu nào được tạo. Vui lòng bấm "Run AI Pipeline" để tạo phương án.
-                      </td>
-                    </tr>
-                  ) : (
-                    allParetoOptions.map((opt: any, idx: number) => {
-                      const isSelected = selectedGlpoOptionIndex === idx;
-                      const baseCost = opt.base_project_cost || opt.cost || 0;
-                      const penCost = opt.penalty_cost || 0;
-                      const bonusAmt = opt.bonus_amount || 0;
-                      const netCost = opt.total_cost || opt.cost || 0;
-                      const riskPct = opt.risk_pct !== undefined ? opt.risk_pct : (opt.risk ? opt.risk * 100 : 0);
 
-                      let adjustStr = "$0";
-                      let adjustClass = "text-slate-500";
-                      if (penCost > 0) {
-                        adjustStr = `+$${Number(penCost).toLocaleString()} (Phạt)`;
-                        adjustClass = "text-rose-600 font-bold";
-                      } else if (bonusAmt > 0) {
-                        adjustStr = `-$${Number(bonusAmt).toLocaleString()} (Thưởng)`;
-                        adjustClass = "text-emerald-600 font-bold";
-                      }
-
-                      return (
-                        <tr
-                          key={idx}
-                          className={`border-b border-slate-100 transition ${isSelected ? 'bg-indigo-50/70 font-semibold border-l-4 border-l-indigo-600' : 'hover:bg-slate-50'
-                            }`}
-                        >
-                          <td className="px-4 py-3 font-bold text-slate-500">#{idx + 1}</td>
-                          <td className="px-4 py-3 font-bold text-slate-800">{opt.option_name || `Phương án ${idx + 1}`}</td>
-                          <td className="px-4 py-3 text-right font-black text-indigo-600">{opt.makespan_hours || opt.makespan}h</td>
-                          <td className="px-4 py-3 text-right text-slate-600">{opt.finish_datetime ? new Date(opt.finish_datetime).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</td>
-                          <td className="px-4 py-3 text-right text-slate-600">${Number(baseCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                          <td className={`px-4 py-3 text-right ${adjustClass}`}>{adjustStr}</td>
-                          <td className="px-4 py-3 text-right font-extrabold text-emerald-600">${Number(netCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
-                          <td className="px-4 py-3 text-right font-bold text-rose-500">{Number(riskPct).toFixed(1)}%</td>
-                          <td className="px-4 py-3 text-center">
-                            <button
-                              onClick={() => handleApplyParetoOption(idx, opt)}
-                              disabled={isApplyingOption}
-                              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1 mx-auto ${isSelected
-                                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                                }`}
-                            >
-                              {isSelected ? '✓ Đã áp dụng' : 'Áp dụng PA này'}
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+            {/* Phân vùng 2: Đánh giá AI */}
+            <div className="relative pt-4">
+              <EvaluationTab 
+                allParetoOptions={allParetoOptions}
+                paretoChartType={paretoChartType}
+                setParetoChartType={setParetoChartType}
+                paretoBarData={paretoBarData}
+                selectedGlpoOptionIndex={selectedGlpoOptionIndex}
+                setSelectedGlpoOptionIndex={setSelectedGlpoOptionIndex}
+                isGlpoLoading={isGlpoLoading}
+                isApplyingOption={isApplyingOption}
+                handleRestoreBaseline={handleRestoreBaseline}
+                handleApplyParetoOption={handleApplyParetoOption}
+                handleRunAI={handleRunAI}
+              />
             </div>
           </div>
-        </div>
-      )}
-
-      {mainPageTab === 'details' && (
-        <>
-          {/* Contract & GLPO Configuration Panel */}
-          <div className="bg-white border border-indigo-100 rounded-xl p-4 shadow-sm mb-6 bg-gradient-to-r from-indigo-50/50 to-white">
-            <div className="flex items-center justify-between mb-3 border-b border-indigo-50 pb-2">
-              <div className="flex items-center gap-2">
-                <Sliders className="text-indigo-600" size={18} />
-                <h3 className="font-extrabold text-slate-800 text-sm">Cấu hình Tối ưu Hóa AI & Hợp đồng (GLPO Contract Parameters)</h3>
-              </div>
-              <span className="text-xs text-indigo-700 font-bold bg-indigo-100 px-2 py-0.5 rounded-full">
-                HGT 3-Node + Hybrid Readout
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-end text-xs">
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Hạn chót Mục tiêu (00-23h)</label>
-                <div className="flex gap-1">
-                  <input
-                    type="date"
-                    value={glpoTargetDate}
-                    onChange={e => setGlpoTargetDate(e.target.value)}
-                    className="w-3/5 border border-slate-300 rounded px-1.5 py-1.5 font-semibold text-xs focus:ring-1 focus:ring-indigo-500 bg-white text-slate-800 cursor-pointer"
-                  />
-                  <select
-                    value={glpoTargetHour}
-                    onChange={e => setGlpoTargetHour(e.target.value)}
-                    className="w-2/5 border border-slate-300 rounded px-1 py-1.5 font-semibold text-xs bg-white text-slate-800 cursor-pointer"
-                  >
-                    {Array.from({ length: 24 }, (_, i) => {
-                      const h = i < 10 ? `0${i}` : `${i}`;
-                      return <option key={h} value={`${h}:00`}>{h}:00</option>;
-                    })}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Phạt Trễ ($/ngày)</label>
-                <input
-                  type="number" step="50"
-                  value={glpoPenaltyPerDay}
-                  onChange={e => setGlpoPenaltyPerDay(Number(e.target.value))}
-                  className="w-full border border-slate-300 rounded px-2 py-1.5 font-semibold focus:ring-1 focus:ring-indigo-500 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Thưởng Sớm ($/ngày)</label>
-                <input
-                  type="number" step="50"
-                  value={glpoBonusPerDay}
-                  onChange={e => setGlpoBonusPerDay(Number(e.target.value))}
-                  className="w-full border border-slate-300 rounded px-2 py-1.5 font-semibold focus:ring-1 focus:ring-indigo-500 bg-white"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Số vòng Monte Carlo</label>
-                <input
-                  type="number" step="100" min="100"
-                  value={glpoMcIterations}
-                  onChange={e => setGlpoMcIterations(Math.max(1, Number(e.target.value)))}
-                  className="w-full border border-slate-300 rounded px-2 py-1.5 font-semibold focus:ring-1 focus:ring-indigo-500 bg-white"
-                  placeholder="1000"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Số PA Pareto</label>
-                <input
-                  type="number" step="1" min="1"
-                  value={glpoParetoCount}
-                  onChange={e => setGlpoParetoCount(Math.max(1, Number(e.target.value)))}
-                  className="w-full border border-slate-300 rounded px-2 py-1.5 font-semibold focus:ring-1 focus:ring-indigo-500 bg-white"
-                  placeholder="20"
-                />
-              </div>
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Sắp xếp Pareto</label>
-                <select
-                  value={glpoParetoSort}
-                  onChange={e => setGlpoParetoSort(e.target.value)}
-                  className="w-full border border-slate-300 rounded px-2 py-1.5 font-semibold bg-white"
-                >
-                  <option value="makespan_hours">Theo Thời gian</option>
-                  <option value="total_cost">Theo Chi phí</option>
-                  <option value="risk_score">Theo Rủi ro</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            {projectData?.status === 'Error' && (
-              <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 flex items-start gap-3 shadow-sm animate-fadeIn">
-                <AlertTriangle className="text-rose-600 shrink-0 mt-0.5" size={20} />
-                <div className="flex-1">
-                  <h4 className="font-bold text-rose-800 text-sm">Phát hiện lỗi trong quá trình chạy mô phỏng AI</h4>
-                  <p className="text-xs text-rose-600 mt-1">
-                    AI Pipeline đã dừng do lỗi tính toán hoặc cấu trúc đồ thị. Vui lòng kiểm tra lại ràng buộc logic và tài nguyên của dự án.
-                  </p>
-                  {projectData.metadata_json?.simulation_error && (
-                    <div className="mt-3 bg-slate-950 text-rose-400 font-mono text-[10px] p-3 rounded-lg border border-slate-800 max-h-32 overflow-y-auto whitespace-pre-wrap">
-                      {projectData.metadata_json.simulation_error}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <StatCard title="Số lượng Công việc" value={`${tasks.length} công việc`} icon={Layers} color="bg-blue-500" />
-              <StatCard title="Ràng buộc Phụ thuộc" value={`${dependencies.length} liên kết`} icon={GitCommit} color="bg-emerald-500" />
-              <StatCard title="Thời gian Hoàn thành (Makespan)" value={`${displayMakespan.toFixed(0)}h (~${(displayMakespan / 24).toFixed(0)} ngày)`} icon={Clock} color="bg-amber-500" />
-              <StatCard title="Tổng Chi phí Dự án (TGC)" value={`$${(displayCost / 1000).toFixed(1)}k`} icon={Activity} color="bg-purple-500" />
-            </div>
-
-            <div className="w-full h-[620px] bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden">
-              <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center z-10 shrink-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-700">Project Network Graph (Digital Twin DAG)</span>
-                  <span className="text-[10px] bg-blue-100 text-blue-700 font-extrabold px-2 py-0.5 rounded uppercase">
-                    {optionLabel}
-                  </span>
-                </div>
-              </div>
-              <div className="flex-1 relative min-h-0">
-                <div className="absolute inset-0">
-                  <AirflowGraph
-                    projectId={projectData.project_name}
-                    tasks={tasks}
-                    dependencies={dependencies}
-                    selectedOptionModes={selectedOptionModes}
-                    selectedGlpoData={currentOption?.tasks_schedule || currentOption?.tasks || {}}
-                    criticalityIndices={criticalityIndices}
-                    appliedTaskIds={projectData?.metadata_json?.applied_task_ids || []}
-                    appliedTaskDetails={projectData?.metadata_json?.applied_task_details || {}}
-                    onConnectEdge={async (source, target) => {
-                      try {
-                        if (!projectId) return;
-                        await api.createLogicConstraint(projectId, {
-                          predecessor_id: source,
-                          successor_id: target,
-                          dependency_type: "FS"
-                        });
-                        window.location.reload();
-                      } catch (err) {
-                        alert("Failed to connect nodes: " + (err as Error).message);
-                      }
-                    }}
-                    onDeleteTask={async (taskId) => {
-                      try {
-                        if (!projectId) return;
-                        await api.deleteTask(projectId, taskId);
-                        window.location.reload();
-                      } catch (err) {
-                        alert("Failed to delete task: " + (err as Error).message);
-                      }
-                    }}
-                    onEditTask={(task) => {
-                      setEditingTask(task);
-                      setIsTaskModalOpen(true);
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
-                <div className="mb-4 shrink-0 flex justify-between items-center">
-                  <div>
-                    <h3 className="font-bold text-slate-800">Financial S-Curve & Task Density</h3>
-                    <p className="text-xs text-slate-500">Chi tiêu lũy kế và mật độ công việc song song được cập nhật tự động</p>
-                  </div>
-                  <div className="text-right text-xs bg-emerald-50 px-2 py-1 border border-emerald-100 rounded text-emerald-700 font-bold">
-                    TGC: ${Number(optionCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                  </div>
-                </div>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ComposedChart data={combinedData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="colorCumulative" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                      <XAxis dataKey="date" tickFormatter={(tick) => `${tick.split('-')[2]}/${tick.split('-')[1]}`} minTickGap={25} stroke="#94a3b8" fontSize={11} />
-                      <YAxis yAxisId="cost" orientation="left" tickFormatter={(val) => `$${(val / 1000).toFixed(0)}k`} stroke="#3b82f6" fontSize={11} />
-                      <YAxis yAxisId="density" orientation="right" tickFormatter={(val) => `${val}`} stroke="#10b981" fontSize={11} />
-                      <Tooltip formatter={(value: any, name: any) => {
-                        if (name === 'dailyCost') return [`$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, 'Chi phí ngày'];
-                        if (name === 'cumulativeCost') return [`$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, 'Chi phí lũy kế'];
-                        return [`${value} công việc`, 'Số CV song song'];
-                      }} labelFormatter={(label) => `Ngày: ${label}`} />
-                      <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px' }} />
-                      <Bar yAxisId="cost" dataKey="dailyCost" name="dailyCost" fill="#cbd5e1" barSize={14} radius={[2, 2, 0, 0]} />
-                      <Area yAxisId="cost" type="monotone" dataKey="cumulativeCost" name="cumulativeCost" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorCumulative)" />
-                      <Line yAxisId="density" type="monotone" dataKey="activeCount" name="activeCount" stroke="#10b981" strokeWidth={2.5} dot={{ r: 2.5, fill: '#10b981' }} activeDot={{ r: 5 }} />
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="lg:col-span-1 bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-[400px] flex flex-col">
-                <div className="mb-4 shrink-0">
-                  <h3 className="font-bold text-slate-800">Monte Carlo Risk Analysis</h3>
-                  <p className="text-xs text-slate-500">Phân phối xác suất thời gian hoàn thành (Giờ)</p>
-                </div>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={bellCurveData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="colorBell" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.5} />
-                          <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                      <XAxis dataKey="days" stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}h`} />
-                      <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}%`} />
-                      <Tooltip
-                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                        formatter={(val: any) => [`${Number(val).toFixed(1)}%`, 'Mật độ xác suất']}
-                        labelFormatter={(val) => `Thời lượng: ${val}h (${(Number(val) / 8).toFixed(1)} ngày)`}
-                      />
-                      <Area type="monotone" dataKey="probability" stroke="#8b5cf6" strokeWidth={2} fillOpacity={1} fill="url(#colorBell)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-
-            {/* Gantt Chart Section */}
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mt-6">
-              <div className="mb-4 shrink-0">
-                <h3 className="font-bold text-slate-800">Project Gantt Chart (Top 20 Tasks)</h3>
-                <p className="text-xs text-slate-500">Tiến độ thời gian thực hiện công việc (Ước tính)</p>
-              </div>
-              <div className="overflow-x-auto relative w-full border border-slate-100 rounded-lg bg-slate-50 p-4">
-                <div className="min-w-[800px] relative" style={{ height: `${ganttData.length * 40 + 40}px` }}>
-                  {/* X-axis ticks (approximate based on maxEndHour) */}
-                  <div className="absolute top-0 left-0 right-0 h-6 border-b border-slate-200 flex text-[10px] text-slate-400">
-                    {[0, 0.25, 0.5, 0.75, 1].map(ratio => (
-                      <div key={ratio} className="absolute border-l border-slate-200 pl-1 h-full" style={{ left: `${ratio * 100}%` }}>
-                        {(maxEndHour * ratio).toFixed(0)}h
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Render Bars */}
-                  <div className="mt-8">
-                    {ganttData.map((task, index) => {
-                      const leftPercent = maxEndHour ? (task.start / maxEndHour) * 100 : 0;
-                      const widthPercent = maxEndHour ? (task.duration / maxEndHour) * 100 : 0;
-                      return (
-                        <div key={task.id} className={`relative h-8 mb-2 flex items-center group ${task.isOptimized ? 'bg-amber-50/60 rounded-lg border-l-4 border-l-amber-500' : ''}`}>
-                          <div className={`w-32 shrink-0 text-xs truncate pr-2 font-medium ${task.isOptimized ? 'text-amber-800 font-bold' : 'text-slate-600'}`} title={task.name}>
-                            {task.isOptimized && <span className="mr-0.5">⚡</span>}{task.name}
-                          </div>
-                          <div className="flex-1 relative h-full bg-slate-200/50 rounded-md">
-                            <div
-                              className={`absolute top-1 bottom-1 rounded-md shadow-sm transition-all duration-300 flex items-center px-2 overflow-hidden ${
-                                task.isOptimized
-                                  ? 'bg-amber-500 text-white ring-1 ring-amber-400'
-                                  : task.isCritical
-                                    ? 'bg-rose-500 text-white'
-                                    : 'bg-blue-500 text-white'
-                              }`}
-                              style={{ left: `${leftPercent}%`, width: `${Math.max(widthPercent, 1)}%` }}
-                            >
-                              {widthPercent > 5 && <span className="text-[10px] truncate">{task.duration.toFixed(1)}h</span>}
-                            </div>
-                          </div>
-
-                          {/* Tooltip */}
-                          <div className="absolute left-32 top-full mt-1 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none whitespace-nowrap">
-                            <strong>{task.name}</strong>{task.isOptimized && <span className="ml-1 text-amber-300 font-bold">⚡ AI Optimized</span>}<br />
-                            Start: {task.start.toFixed(1)}h | End: {task.end.toFixed(1)}h
-                            {task.optimizedDetail && (
-                              <><br />Baseline: {task.optimizedDetail.old_duration}h → {task.optimizedDetail.new_duration}h
-                              {task.optimizedDetail.overtime_hours_per_day > 0 && <> | OT: +{task.optimizedDetail.overtime_hours_per_day}h/ngày</>}
-                              {task.optimizedDetail.overtime_cost > 0 && <> | Chi phí OT: ${task.optimizedDetail.overtime_cost.toFixed(0)}</>}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+        )}
+      </div>
 
       {isTaskModalOpen && (
         <TaskFormModal

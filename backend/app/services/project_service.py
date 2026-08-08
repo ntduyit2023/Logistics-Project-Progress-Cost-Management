@@ -135,6 +135,48 @@ async def get_project_detail(db: AsyncSession, project_id: Any) -> ProjectDetail
     time_result = await db.execute(time_stmt)
     time_constraint = time_result.scalars().first()
     
+    meta = dict(project.metadata_json) if project.metadata_json else {}
+    if 'simulation_results' not in meta:
+        meta['simulation_results'] = {}
+        
+    if not meta['simulation_results'].get('cpm_static_makespan'):
+        try:
+            import networkx as nx
+            from ai_pipeline.models.moi.monte_carlo_cpm import MonteCarloCPMEngine
+            
+
+                    
+            tasks_list = []
+            for t in tasks:
+                dur_hours = getattr(t, 'duration_hours', None)
+                if dur_hours is not None:
+                    dur = float(dur_hours)
+                else:
+                    dur = float(getattr(t, 'duration_days', 0) or 0) * 8.0
+                
+                if not dur and getattr(t, 'most_probable_duration', None):
+                    dur = float(getattr(t, 'most_probable_duration', 0))
+                t_id_str = str(getattr(t, 'task_id', ''))
+                t_strip = t_id_str.split('_')[-1] if '_' in t_id_str else str(t.id)
+                tasks_list.append({"id": t_strip, "duration_hours": dur, "most_probable_duration": dur})
+            
+            deps_list = []
+            for d in dependencies:
+                s = str(getattr(d, 'successor_id', ''))
+                p = str(getattr(d, 'predecessor_id', ''))
+                s_strip = s.split('_')[-1]
+                p_strip = p.split('_')[-1]
+                
+                if s_strip and p_strip:
+                    lag = float(getattr(d, 'lag_hours', 0.0) or 0.0)
+                    deps_list.append((p_strip, s_strip, {"lag_hours": lag}))
+            
+            cpm = MonteCarloCPMEngine(tasks=tasks_list, dependencies=deps_list)
+            res = cpm.run_simulation(num_iterations=1000)
+            meta['simulation_results']['cpm_static_makespan'] = float(res['makespan_mean'])
+        except Exception as e:
+            print(f"Error calculating static makespan: {e}")
+    
     return ProjectDetail(
         id=project.id,
         project_code=project.project_code,
@@ -149,7 +191,7 @@ async def get_project_detail(db: AsyncSession, project_id: Any) -> ProjectDetail
         num_tasks=len(tasks),
         num_edges=len(dependencies),
         network_density=0.0,
-        metadata_json=project.metadata_json,
+        metadata_json=meta,
         created_at=project.created_at,
         updated_at=project.updated_at,
         tasks=tasks,

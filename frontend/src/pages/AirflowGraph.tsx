@@ -74,10 +74,11 @@ interface AirflowGraphProps {
   criticalityIndices?: Record<string, number>;
   appliedTaskIds?: string[];
   appliedTaskDetails?: Record<string, any>;
+  searchHighlight?: string;
 }
 
 const AirflowGraph: React.FC<AirflowGraphProps> = ({
-  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, selectedGlpoData, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}
+  projectId, tasks, dependencies, onConnectEdge, onDeleteTask, onEditTask, selectedOptionModes, selectedGlpoData, criticalityIndices, appliedTaskIds = [], appliedTaskDetails = {}, searchHighlight = ""
 }) => {
   const [horizSpacing, setHorizSpacing] = useState(300);
   const [vertSpacing, setVertSpacing] = useState(80);
@@ -183,7 +184,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       const mode = selectedOptionModes && selectedOptionModes[idx] !== undefined ? selectedOptionModes[idx] : 0;
       const canonicalId = getCanonicalId(task);
       const wbs = task.wbs || (canonicalId.includes("_") ? canonicalId.split("_")[1] : canonicalId);
-      const isCritical = (criticalityIndices && (criticalityIndices[canonicalId] > 0.75 || criticalityIndices[task.id] > 0.75)) || task.duration_days > 50;
+
 
       let baseTaskDuration = 10;
       if (task.duration_hours !== undefined && task.duration_hours !== null && parseFloat(task.duration_hours) > 0) {
@@ -237,7 +238,7 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
           total_cost: activeData && activeData.total_cost ? activeData.total_cost : cost,
           base_duration: activeData ? activeData.old_duration : baseTaskDuration,
           base_cost: baseTaskCost,
-          is_critical: isCritical,
+
           is_ai_optimized: Boolean(task.is_ai_optimized || (task.overtime && parseFloat(task.overtime) > 0) || appliedTaskIds.includes(canonicalId) || appliedTaskIds.includes(String(task.id)) || appliedTaskIds.includes(String(task.task_id)) || glpoDataRaw),
           overtime_cost: activeData ? (activeData.overtime_cost ?? activeData.overtime ?? 0) : parseFloat(task.overtime || task.overtime_cost || 0),
           overtime_hours_per_day: activeData ? (activeData.overtime_hours_per_day ?? activeData.overtime_hours ?? 0) : parseFloat(task.overtime_hours_per_day || task.overtime_hours || 0),
@@ -258,6 +259,20 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
         },
       };
     });
+
+    if (searchHighlight) {
+      const lowerSearch = searchHighlight.toLowerCase();
+      rawNodes.forEach((node: any) => {
+        const match = node.data.task_name.toLowerCase().includes(lowerSearch) || 
+                      node.data.wbs.toLowerCase().includes(lowerSearch) ||
+                      node.data.task_label.toLowerCase().includes(lowerSearch);
+        if (!match) {
+          node.style = { opacity: 0.15, filter: 'grayscale(100%)' };
+        } else {
+          node.style = { opacity: 1, filter: 'drop-shadow(0 0 10px rgba(99, 102, 241, 0.5))', zIndex: 10 };
+        }
+      });
+    }
 
     const rawEdges = dependencies
       .map((dep: any) => {
@@ -330,23 +345,24 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
             <h3 className="font-bold text-slate-800 text-lg mb-1">{projectId || 'Project Graph'}</h3>
             <p className="text-slate-500 mb-3">{tasks.length} Tasks • {dependencies.length} Dependencies</p>
             <div className="space-y-1.5">
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-rose-50 border border-rose-500 rounded-sm mr-2"></div>
-                <span className="text-slate-700 text-xs font-medium">Critical Path Task (Găng)</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-amber-50 border border-amber-500 rounded-sm mr-2"></div>
-                <span className="text-slate-700 text-xs font-medium">Crashed Task (Tăng tốc)</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-violet-50 border border-violet-500 rounded-sm mr-2"></div>
-                <span className="text-slate-700 text-xs font-medium">Outsourced Task (Thuê ngoài)</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-white border border-slate-300 rounded-sm mr-2"></div>
-                <span className="text-slate-700 text-xs font-medium">Standard Task (Thường)</span>
-              </div>
-            </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-white border border-slate-200 rounded-sm mr-2"></div>
+                    <span className="text-slate-700 text-xs font-medium">Mode 0: Tiêu chuẩn (Normal)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-amber-50 border border-amber-400 rounded-sm mr-2"></div>
+                    <span className="text-slate-700 text-xs font-medium">Mode 1: Tăng ca (Overtime)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-purple-50 border border-purple-500 rounded-sm mr-2"></div>
+                    <span className="text-slate-700 text-xs font-medium">Mode 2: Thêm tài nguyên (Add-Res)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-rose-50 border border-rose-400 rounded-sm mr-2"></div>
+                    <span className="text-slate-700 text-xs font-medium">Mode 3: Kết hợp (Hybrid)</span>
+                  </div>
+
+                </div>
             <p className="text-[10px] text-slate-400 mt-3 italic border-t pt-1.5">
               * Hiển thị toàn bộ mạng lưới công việc của dự án
             </p>
@@ -422,17 +438,13 @@ const AirflowGraph: React.FC<AirflowGraphProps> = ({
       >
         {selectedTask && (
           <>
-            <div className={`p-4 flex justify-between items-start border-b ${selectedTask.is_critical ? 'bg-rose-50 border-rose-100' : 'bg-slate-50 border-slate-200'}`}>
+            <div className={`p-4 flex justify-between items-start border-b bg-slate-50 border-slate-200`}>
               <div>
                 <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                   <span className="px-2 py-0.5 bg-slate-200 text-slate-700 rounded text-xs font-bold">
                     WBS {selectedTask.wbs}
                   </span>
-                  {selectedTask.is_critical && (
-                    <span className="px-2 py-0.5 bg-rose-100 text-rose-600 rounded flex items-center text-xs font-bold border border-rose-200">
-                      <AlertTriangle size={11} className="mr-1 animate-pulse" /> Critical Path
-                    </span>
-                  )}
+
                   {selectedTask.mode === 1 && (
                     <span className="px-2 py-0.5 bg-amber-500 text-white rounded text-xs font-bold">
                       Crashed
