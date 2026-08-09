@@ -5,7 +5,7 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="L1_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="50" y="80" width="220" height="750" as="geometry" />
+          <mxGeometry x="45" y="80" width="230" height="760" as="geometry" />
         </mxCell>
         <mxCell id="L1_title" value="&lt;b&gt;1. Data &amp;amp; Hyperparameters&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
           <mxGeometry x="25" y="70" width="270" height="40" as="geometry" />
@@ -13,11 +13,11 @@
         <mxCell id="data_csv" value="&lt;b&gt;Raw Project Data&lt;/b&gt;&lt;br&gt;&lt;span&gt;Tasks.csv&lt;br&gt;Relations.csv&lt;br&gt;Resources.csv&lt;br&gt;Task Resources.csv&lt;br&gt;Agenda.json&lt;/span&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;size=20;" parent="1" vertex="1">
           <mxGeometry x="70" y="140" width="180" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="hyper_box" value="&lt;b style=&quot;color: rgb(204, 0, 0);&quot;&gt;Hyperparameters&lt;/b&gt;&lt;br&gt;&lt;div style=&quot;text-align: left; padding-left: 10px;&quot;&gt;&lt;br&gt;&lt;b&gt;HGT Model:&lt;/b&gt;&lt;br&gt;- Hidden Dim = 128&lt;br&gt;- Num Heads = 4&lt;br&gt;- Num Layers = 2&lt;br&gt;&lt;br&gt;&lt;b&gt;Monte Carlo:&lt;/b&gt;&lt;br&gt;- MC Iterations = 10,000&lt;br&gt;- Beta-PERT distribution&lt;br&gt;&lt;br&gt;&lt;b&gt;CP-SAT Solver:&lt;/b&gt;&lt;br&gt;- Pareto Count = 5&lt;br&gt;- Time Limit = 15.0s/scen&lt;br&gt;- penalty / bonus / day&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#e06666;strokeWidth=2;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=18;" parent="1" vertex="1">
-          <mxGeometry x="50" y="390" width="200" height="400" as="geometry" />
+        <mxCell id="hyper_box" value="&lt;b style=&quot;color: rgb(204, 0, 0);&quot;&gt;Hyperparameters&lt;/b&gt;&lt;br&gt;&lt;div style=&quot;text-align: left; padding-left: 10px;&quot;&gt;&lt;br&gt;&lt;b&gt;HGT Model:&lt;/b&gt;&lt;br&gt;- Hidden Dim = 128&lt;br&gt;- Num Heads = 4&lt;br&gt;- Num Layers = 2&lt;br&gt;&lt;br&gt;&lt;b&gt;Monte Carlo:&lt;/b&gt;&lt;br&gt;- MC Iterations = 10,000&lt;br&gt;- Beta-PERT distribution&lt;br&gt;&lt;br&gt;&lt;b&gt;CP-SAT Solver:&lt;/b&gt;&lt;br&gt;- Pareto Count = N&lt;br&gt;- Time Limit = 15.0s/scen&lt;br&gt;- penalty / bonus / day&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#e06666;strokeWidth=2;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="45" y="380" width="210" height="400" as="geometry" />
         </mxCell>
         <mxCell id="L2_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="320" y="80" width="660" height="820" as="geometry" />
+          <mxGeometry x="320" y="80" width="660" height="760" as="geometry" />
         </mxCell>
         <mxCell id="L2_title" value="&lt;b&gt;2. Hybrid AI-OR Optimization Engine&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
           <mxGeometry x="470" y="70" width="360" height="40" as="geometry" />
@@ -40,9 +40,10 @@
         <mxCell id="arr_p2_p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="phase2" target="phase3" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="arr_hyper_p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#cc0000;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" source="hyper_box" target="phase3" edge="1">
+        <mxCell id="arr_hyper_p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#cc0000;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;exitX=0.998;exitY=0.151;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="hyper_box" target="phase3" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
+              <mxPoint x="310" y="440" />
               <mxPoint x="310" y="435" />
             </Array>
           </mxGeometry>
@@ -67,7 +68,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="L3_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" vertex="1">
-          <mxGeometry x="1030" y="80" width="220" height="660" as="geometry" />
+          <mxGeometry x="1030" y="80" width="220" height="760" as="geometry" />
         </mxCell>
         <mxCell id="L3_title" value="&lt;b&gt;3. Final Outputs&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
           <mxGeometry x="1060" y="70" width="160" height="40" as="geometry" />

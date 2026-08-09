@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Trash2, Plus, HardHat, Package, Edit2, Check } from 'lucide-react';
+import { X, Save, Trash2, Plus, HardHat, Package, Edit2, Check, Users } from 'lucide-react';
 import { api } from '../services/api';
 
 interface ResourceManagerModalProps {

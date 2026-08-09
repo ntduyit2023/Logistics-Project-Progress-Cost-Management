@@ -1,0 +1,187 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.1.1 Chrome/132.0.6834.210 Electron/34.3.3 Safari/537.36" version="26.1.1">
+  <diagram name="Page-1" id="0">
+    <mxGraphModel dx="1289" dy="745" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1340" pageHeight="830" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="browser" value="&lt;b&gt;Browser&lt;/b&gt;&lt;br&gt;URL: /projects/:id/workspace" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontFamily=Times New Roman;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="45" y="20" width="200" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="router" value="&lt;b&gt;App.tsx&lt;/b&gt;&lt;br&gt;(BrowserRouter + Routes)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontFamily=Times New Roman;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="326" y="20" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ws_page" value="&lt;b&gt;Workspace.tsx&lt;/b&gt;&lt;br&gt;(Main Page Component)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontFamily=Times New Roman;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="740" y="20" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="layout" value="&lt;b&gt;MainLayout.tsx&lt;/b&gt;&lt;br&gt;(Sidebar + Topbar + Outlet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontFamily=Times New Roman;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="1075" y="20" width="230" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" value="" style="html=1;strokeColor=#000000;strokeWidth=2;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" edge="1" target="router" source="browser">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="245" y="45" as="sourcePoint" />
+            <mxPoint x="315" y="47" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2" value="Route match /projects/:id/workspace" style="html=1;strokeColor=#000000;strokeWidth=2;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" edge="1" target="ws_page" source="router">
+          <mxGeometry x="-0.0271" y="15" relative="1" as="geometry">
+            <mxPoint x="535" y="47" as="sourcePoint" />
+            <mxPoint x="605" y="47" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r3" value="wraps" style="html=1;dashed=1;strokeColor=#d79b00;strokeWidth=2;endArrow=open;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" target="layout" source="ws_page">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="715" y="75" as="sourcePoint" />
+            <mxPoint x="895" y="75" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="state_bg" value="" style="rounded=1;fillColor=#f0f8ff;strokeColor=#6c8ebf;strokeWidth=1.5;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="90" width="1270" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="state_lbl" value="&lt;b&gt;Workspace.tsx — useState State Variables (prop drilling to child tabs)&lt;/b&gt;" style="text;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="495" y="90" width="700" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="st1" value="&lt;b&gt;projectData&lt;br&gt;(ProjectDetail)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffde7;strokeColor=#f0a500;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="45" y="122" width="230" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="st2" value="&lt;b&gt;glpoResult&lt;br&gt;{pareto_options,&lt;br&gt;mc_results,&lt;br&gt;ai_predictions}&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#4caf50;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="293" y="122" width="230" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="st3" value="&lt;b&gt;selectedPareto&lt;br&gt;(chosen option)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#e91e63;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="541" y="122" width="230" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="st4" value="&lt;b&gt;activeTab&lt;br&gt;(selection | analysis&lt;br&gt;| evaluation | assignment)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#9c27b0;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="789" y="122" width="230" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="st5" value="&lt;b&gt;isGlpoLoading&lt;br&gt;(boolean)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#2196f3;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="1037" y="122" width="230" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="api_bg" value="" style="rounded=1;fillColor=#fffde7;strokeColor=#f0a500;strokeWidth=1.5;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="250" width="1270" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="api_lbl" value="&lt;b&gt;Workspace.tsx — API Integration Layer&lt;/b&gt;" style="text;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="610" y="250" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="api1" value="&lt;b&gt;handleRunAI()&lt;/b&gt;&lt;br&gt;POST /glpo-optimize&lt;br&gt;(isGlpoLoading = true)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff8e1;strokeColor=#ffa000;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="55" y="280" width="260" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="api2" value="&lt;b&gt;EventSource&lt;/b&gt;&lt;br&gt;/simulation-stream&lt;br&gt;onmessage → progress %" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0e6ff;strokeColor=#7c5db7;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="355" y="280" width="240" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="api3" value="&lt;b&gt;handleApplyPareto()&lt;/b&gt;&lt;br&gt;POST /apply-pareto&lt;br&gt;{option_index, tasks_schedule}" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#f44336;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" parent="1" vertex="1">
+          <mxGeometry x="735" y="280" width="270" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="api4" value="&lt;b&gt;handleRestoreBaseline()&lt;/b&gt;&lt;br&gt;POST /restore-baseline" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#e91e63;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="1027" y="280" width="250" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="sa1" value="user triggers" style="html=1;strokeColor=#555;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=0.525;exitY=0.998;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.427;entryY=0.004;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" target="api1" source="st1">
+          <mxGeometry x="-0.2268" y="34" relative="1" as="geometry">
+            <mxPoint x="160" y="265" as="sourcePoint" />
+            <mxPoint x="185" y="330" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sa1b" value="→ setGlpoResult(data)" style="html=1;strokeColor=#4caf50;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=0.789;exitY=1.013;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" target="api2" source="st2">
+          <mxGeometry x="-0.3079" y="65" relative="1" as="geometry">
+            <mxPoint x="475" y="265" as="sourcePoint" />
+            <mxPoint x="475" y="330" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sa2" value="→ setIsLoading(false)" style="html=1;strokeColor=#2196f3;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" target="api4" source="st5">
+          <mxGeometry x="-0.2308" y="8" relative="1" as="geometry">
+            <mxPoint x="1080" y="265" as="sourcePoint" />
+            <mxPoint x="1080" y="330" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ha1" value="" style="html=1;strokeColor=#555;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="315" y="317" as="sourcePoint" />
+            <mxPoint x="355" y="317" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ha2" value="result → setGlpoResult" style="html=1;dashed=1;strokeColor=#4caf50;strokeWidth=1.5;endArrow=open;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" edge="1" target="api3" source="api2">
+          <mxGeometry x="-0.0714" y="18" relative="1" as="geometry">
+            <mxPoint x="595" y="335" as="sourcePoint" />
+            <mxPoint x="635" y="335" as="targetPoint" />
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="tabs_bg" value="" style="rounded=1;fillColor=#f5f5f5;strokeColor=#000;strokeWidth=1.5;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="445" width="1270" height="215" as="geometry" />
+        </mxCell>
+        <mxCell id="tab1" value="&lt;b&gt;SelectionTab.tsx&lt;/b&gt;&lt;br&gt;[activeTab=&amp;quot;selection&amp;quot;]&lt;br&gt;• Deadline, penalty, mc_iterations&lt;br&gt;• → handleRunAI()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#2196f3;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="45" y="490" width="275" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="tab2" value="&lt;b&gt;AnalysisTab.tsx&lt;/b&gt;&lt;br&gt;[activeTab=&amp;quot;analysis&amp;quot;]&lt;br&gt;• glpoResult.mc_results&lt;br&gt;• P50/P80/P95 bars, Criticality heatmap" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#4caf50;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="337.5" y="490" width="275" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="tab3" value="&lt;b&gt;EvaluationTab.tsx&lt;/b&gt;&lt;br&gt;[activeTab=&amp;quot;evaluation&amp;quot;]&lt;br&gt;• glpoResult.pareto_options&lt;br&gt;• ParetoMetricsChart scatter&lt;br&gt;• → setSelectedPareto()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#e91e63;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="650" y="490" width="275" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="tab4" value="&lt;b&gt;AssignmentTab.tsx&lt;/b&gt;&lt;br&gt;[activeTab=&amp;quot;assignment&amp;quot;]&lt;br&gt;• selectedPareto.tasks_schedule&lt;br&gt;• GanttChartVisualizer&lt;br&gt;• → handleApplyPareto()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#d6b656;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="955" y="490" width="275" height="155" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_arr" value="props" style="html=1;strokeColor=#2196f3;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" target="tab1" source="api1">
+          <mxGeometry x="-0.2857" y="15" relative="1" as="geometry">
+            <mxPoint x="265" y="405" as="sourcePoint" />
+            <mxPoint x="185" y="475" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t2_arr" value="props (glpoResult.mc_results)" style="html=1;strokeColor=#4caf50;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" edge="1" target="tab2" source="api2">
+          <mxGeometry x="-0.514" y="-78" relative="1" as="geometry">
+            <mxPoint x="478" y="405" as="sourcePoint" />
+            <mxPoint x="493" y="475" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t3_arr" value="props (glpoResult.pareto_options)" style="html=1;strokeColor=#e91e63;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=0.919;exitY=1.006;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" target="tab3" source="api2">
+          <mxGeometry x="0.1995" y="10" relative="1" as="geometry">
+            <mxPoint x="610" y="405" as="sourcePoint" />
+            <mxPoint x="788" y="475" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="t4_arr" value="props (selectedPareto)" style="html=1;strokeColor=#d6b656;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;exitX=0.5;exitY=1;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;entryX=0.53;entryY=-0.001;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1" target="tab4" source="api3">
+          <mxGeometry x="0.012" y="10" relative="1" as="geometry">
+            <mxPoint x="790" y="405" as="sourcePoint" />
+            <mxPoint x="1094" y="475" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="870" y="410" />
+              <mxPoint x="1101" y="410" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sub1" value="&lt;b&gt;ParetoMetricsChart.tsx&lt;/b&gt;&lt;br&gt;(Recharts Scatter Plot:&lt;br&gt;makespan vs cost, color=risk)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce4ec;strokeColor=#e91e63;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="645" y="690" width="285" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="sub2" value="&lt;b&gt;GanttChartVisualizer.tsx&lt;/b&gt;&lt;br&gt;(Timeline bars per task,&lt;br&gt;D3 / custom SVG)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#d6b656;strokeWidth=2;fontFamily=Times New Roman;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="947.5" y="690" width="290" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="sub1_arr" value="renders" style="html=1;strokeColor=#e91e63;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" edge="1" target="sub1" source="tab3">
+          <mxGeometry x="0.1111" y="33" relative="1" as="geometry">
+            <mxPoint x="788" y="630" as="sourcePoint" />
+            <mxPoint x="757" y="670" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sub2_arr" value="renders" style="html=1;strokeColor=#d6b656;strokeWidth=1.5;endArrow=block;startArrow=none;fontFamily=Times New Roman;fontSize=12;align=center;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" edge="1" target="sub2" source="tab4">
+          <mxGeometry x="0.1111" y="38" relative="1" as="geometry">
+            <mxPoint x="1094" y="630" as="sourcePoint" />
+            <mxPoint x="1075" y="670" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg" value="&lt;b&gt;Legend:&lt;/b&gt; ⟶ Black = navigation/renders &amp;nbsp;|&amp;nbsp; ⟶ Colored = data/props flow (color matches component) &amp;nbsp;|&amp;nbsp; ⇢ Dashed = response/callback &amp;nbsp;|&amp;nbsp; All state lives in Workspace.tsx (prop drilling)" style="text;html=1;rounded=1;fillColor=#f5f5f5;strokeColor=#000;fontFamily=Times New Roman;fontSize=13;align=left;" parent="1" vertex="1">
+          <mxGeometry x="30" y="780" width="1270" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tabs_lbl" value="&lt;b&gt;Workspace Tabs — Conditional Rendering (activeTab controls which tab is shown)&lt;/b&gt;" style="text;html=1;fontFamily=Times New Roman;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="495" y="445" width="700" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
