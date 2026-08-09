@@ -1,0 +1,89 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.1.1 Chrome/132.0.6834.210 Electron/34.3.3 Safari/537.36" version="26.1.1">
+  <diagram name="Page-1" id="0">
+    <mxGraphModel dx="1418" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1000" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="L1_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" vertex="1">
+          <mxGeometry x="50" y="80" width="220" height="750" as="geometry" />
+        </mxCell>
+        <mxCell id="L1_title" value="&lt;b&gt;1. Data &amp;amp; Hyperparameters&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
+          <mxGeometry x="25" y="70" width="270" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="data_csv" value="&lt;b&gt;Raw Project Data&lt;/b&gt;&lt;br&gt;&lt;span&gt;Tasks.csv&lt;br&gt;Relations.csv&lt;br&gt;Resources.csv&lt;br&gt;Task Resources.csv&lt;br&gt;Agenda.json&lt;/span&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;size=20;" parent="1" vertex="1">
+          <mxGeometry x="70" y="140" width="180" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="hyper_box" value="&lt;b style=&quot;color: rgb(204, 0, 0);&quot;&gt;Hyperparameters&lt;/b&gt;&lt;br&gt;&lt;div style=&quot;text-align: left; padding-left: 10px;&quot;&gt;&lt;br&gt;&lt;b&gt;HGT Model:&lt;/b&gt;&lt;br&gt;- Hidden Dim = 128&lt;br&gt;- Num Heads = 4&lt;br&gt;- Num Layers = 2&lt;br&gt;&lt;br&gt;&lt;b&gt;Monte Carlo:&lt;/b&gt;&lt;br&gt;- MC Iterations = 10,000&lt;br&gt;- Beta-PERT distribution&lt;br&gt;&lt;br&gt;&lt;b&gt;CP-SAT Solver:&lt;/b&gt;&lt;br&gt;- Pareto Count = 5&lt;br&gt;- Time Limit = 15.0s/scen&lt;br&gt;- penalty / bonus / day&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#e06666;strokeWidth=2;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="50" y="390" width="200" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="L2_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" vertex="1">
+          <mxGeometry x="320" y="80" width="660" height="820" as="geometry" />
+        </mxCell>
+        <mxCell id="L2_title" value="&lt;b&gt;2. Hybrid AI-OR Optimization Engine&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
+          <mxGeometry x="470" y="70" width="360" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="phase1" value="&lt;b&gt;HeteroGraph Builder&lt;/b&gt;&lt;br&gt;&lt;span&gt;Builds PyG HeteroData&lt;br&gt;3 Nodes: Task (39-dim), Res (6), Shift (5)&lt;br&gt;3 Edges: precedes, uses, Constrained By&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c9daf8;strokeColor=#3b78d8;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="350" y="140" width="600" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_data_p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="data_csv" target="phase1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="phase2" value="&lt;b&gt;Phase 0: Self-Supervised HGT Pretraining&lt;/b&gt;&lt;br&gt;&lt;span&gt;Masked Autoencoder (25% masking rate) → Smooth L1 Loss → Learn Graph Topology&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="350" y="270" width="600" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_p1_p2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="phase1" target="phase2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="phase3" value="&lt;b&gt;Phase 1: HGT Task Predictor (Inference)&lt;/b&gt;&lt;br&gt;&lt;span&gt;Global Readout (Mean + Max = 256-dim) + Task (128-dim) → Fusion (384-dim)&lt;br&gt;&lt;b style=&quot;color:#cc0000;&quot;&gt;Outputs:&lt;/b&gt; Duration Factor, Expected Delay, Uncertainty Sigma&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c9daf8;strokeColor=#3b78d8;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="350" y="390" width="600" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_p2_p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="phase2" target="phase3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_hyper_p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#cc0000;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" source="hyper_box" target="phase3" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="435" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="phase4" value="&lt;b&gt;Phase 2: Monte Carlo CPM Engine&lt;/b&gt;&lt;br&gt;&lt;span&gt;10,000 iterations × Beta-PERT (a, m, b)&lt;br&gt;&lt;b style=&quot;color:#cc0000;&quot;&gt;Outputs:&lt;/b&gt; Criticality Index (CI%), P50/P80/P95 Makespan Risks&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="350" y="530" width="600" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_p3_p4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="phase3" target="phase4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="phase5" value="&lt;b&gt;Phase 3: CP-SAT Pareto Optimization&lt;/b&gt;&lt;br&gt;&lt;span&gt;Builds crash modes for CI &amp;gt; 0%. Add cumulative constraints.&lt;br&gt;&lt;b style=&quot;color:#cc0000;&quot;&gt;Minimize&lt;/b&gt; = \(\alpha \cdot \text{Makespan} + \beta \cdot \text{Total Cost} + \gamma \cdot \text{Total Risk}\)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
+          <mxGeometry x="350" y="670" width="600" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_p4_p5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="phase4" target="phase5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_hyper_p5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#cc0000;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" source="hyper_box" target="phase5" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="715" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L3_bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#b3b3b3;strokeWidth=2;dashed=1;fontSize=18;fontFamily=Times New Roman;" parent="1" vertex="1">
+          <mxGeometry x="1030" y="80" width="220" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="L3_title" value="&lt;b&gt;3. Final Outputs&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
+          <mxGeometry x="1060" y="70" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="out_pareto" value="&lt;b style=&quot;font-size:16px;&quot;&gt;Pareto Options (N=Pareto Count)&lt;/b&gt;&lt;br&gt;&lt;div style=&quot;text-align:left; font-size:13px; padding-left:10px;&quot;&gt;&lt;br&gt;[1] Max Fast Track (Min Makespan)&lt;br&gt;[2] Fast Track (Balanced)&lt;br&gt;...&lt;br&gt;[N-1] Cost Saving (Balanced)&lt;br&gt;[N] Max Cost Saving (Min Cost)&lt;br&gt;&lt;br&gt;&lt;b&gt;Deliverables:&lt;/b&gt;&lt;br&gt;- Optimal Schedules.json&lt;br&gt;- Task Start End Dates&lt;br&gt;- Crashed Resources&lt;/div&gt;" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;align=center;verticalAlign=top;fontFamily=Arial;spacingTop=15;" parent="1" vertex="1">
+          <mxGeometry x="1050" y="200" width="180" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="arr_p5_out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="phase5" target="out_pareto" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="715" />
+              <mxPoint x="980" y="435" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
