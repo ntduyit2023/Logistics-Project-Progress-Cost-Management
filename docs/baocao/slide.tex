@@ -1,0 +1,67 @@
+% !TeX program = pdflatex
+% Đã cấu hình để biên dịch trực tiếp bằng pdfLaTeX
+\documentclass[aspectratio=169]{beamer}
+
+% Cài đặt tiếng Việt
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage{lmodern}
+\usepackage[vietnamese]{babel}
+
+% Theme & Color
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{} % Ẩn thanh điều hướng
+
+% Packages cho biểu đồ và code
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{tabularx}
+
+% Đường dẫn chứa ảnh (trỏ về thư mục img)
+\graphicspath{{img/}, {img/drawio-svg/}}
+
+% Cấu hình hiển thị code JSON
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue},
+    stringstyle=\color{green!50!black},
+    commentstyle=\color{gray},
+    showstringspaces=false,
+    breaklines=true
+}
+
+% Thông tin trang bìa
+\title{Xây dựng ứng dụng hỗ trợ quản lý tiến độ và chi phí dự án logistics}
+\author{Báo cáo Đồ án}
+\date{\today}
+
+\begin{document}
+
+% Slide Bìa
+\begin{frame}
+    \titlepage
+\end{frame}
+
+% Include các phần riêng biệt
+\input{slide/01_intro.tex}
+\input{slide/02_theory.tex}
+\input{slide/03_architecture.tex}
+\input{slide/04_datamodel.tex}
+\input{slide/05_aipipeline.tex}
+\input{slide/06_casestudy_benchmark.tex}
+\input{slide/07_conclusion.tex}
+\input{slide/08_references.tex}
+
+\begin{frame}
+    \centering
+    \Huge \textbf{CẢM ƠN HỘI ĐỒNG ĐÃ LẮNG NGHE!}
+    
+    \vspace{1cm}
+    \Large \textit{Q\&A}
+\end{frame}
+
+\end{document}

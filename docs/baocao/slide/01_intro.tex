@@ -1,0 +1,50 @@
+% -------------------------------------------------------------
+% PHẦN I: MỞ ĐẦU
+% -------------------------------------------------------------
+\section{Mở đầu}
+
+\begin{frame}{1. Bối cảnh \& Vấn đề (Problem Motivation)}
+    \textbf{Thực trạng quản lý dự án logistics hiện nay:}
+    \begin{itemize}
+        \item Chủ yếu sử dụng công cụ thủ công (MS Project, Excel) $\rightarrow$ Không phát hiện được rủi ro trễ hạn trước khi xảy ra.
+        \item \textbf{Số liệu:} 69\% dự án xây dựng bị trễ tiến độ (PMI, 2023 \cite{pmi2023}); chi phí trượt tăng 15–30\%.
+    \end{itemize}
+    \vspace{0.3cm}
+    \textbf{Ba thách thức cốt lõi:}
+    \begin{enumerate}
+        \item \textbf{Độ phức tạp cấu trúc:} Dự án là mạng lưới phụ thuộc phi tuyến $\rightarrow$ Cần biểu diễn dạng Đồ thị.
+        \item \textbf{Bất định ngẫu nhiên:} Thời gian thực thi là phân phối xác suất (Beta-PERT), không phải hằng số định định.
+        \item \textbf{Tối ưu đa mục tiêu:} Nén tiến độ (Crashing) mà vẫn phải tối thiểu hóa chi phí và rủi ro.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{2. Câu hỏi \& Mục tiêu Nghiên cứu}
+    \begin{block}{Câu hỏi nghiên cứu}
+        \textit{"Làm thế nào để hệ thống hoá và tự động hoá quá trình lập lịch, dự báo rủi ro, và tối ưu hoá đa mục tiêu một dự án logistics phức tạp bằng cách kết hợp Heterogeneous Graph Transformer, mô phỏng Beta-PERT Monte Carlo CPM, và Constraint Programming (CP-SAT)?"}
+    \end{block}
+    \vspace{0.2cm}
+    \textbf{3 Mục tiêu Khoa học:}
+    \begin{itemize}
+        \item Mô hình hoá dự án dạng \textbf{Heterogeneous Graph} với 3 loại node (Task, Resource, Shift).
+        \item Thiết kế pipeline AI: \textbf{HGT Pretraining $\rightarrow$ Inference $\rightarrow$ Beta-PERT MC $\rightarrow$ AI-Guided CP-SAT}.
+        \item Hiện thực hệ thống full-stack vận hành thực tế.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{3. Cấu trúc Báo cáo (Roadmap)}
+    \begin{columns}
+        \column{0.4\textwidth}
+        \textbf{Lộ trình trình bày:}
+        \begin{enumerate}
+            \item Cơ sở lý thuyết
+            \item Thiết kế Hệ thống \& Data
+            \item Mô hình Dữ liệu (Data Model)
+            \item AI Pipeline \& Thuật toán
+            \item Thực nghiệm \& Benchmark
+            \item Kết luận
+        \end{enumerate}
+        \column{0.6\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig1_pipeline_overview.drawio.png}
+    \end{columns}
+\end{frame}

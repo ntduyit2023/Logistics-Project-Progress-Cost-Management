@@ -1,0 +1,88 @@
+% -------------------------------------------------------------
+% PHẦN III-A & III-C: KIẾN TRÚC \& BE/FE
+% -------------------------------------------------------------
+\section{Kiến trúc \& Cấu trúc Hệ thống}
+
+\begin{frame}{9. Kiến trúc Tổng thể (System Architecture)}
+    \textbf{Kiến trúc Full-Stack tích hợp 4 Lớp qua Docker Compose:}
+    \vspace{0.2cm}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{itemize}
+            \item \textbf{Frontend (Port 5173):} React, Vite, React-Flow (Trực quan hóa DAG).
+            \item \textbf{Backend (Port 8000):} FastAPI (Async I/O), SQLAlchemy.
+            \item \textbf{AI Pipeline:} In-process (PyTorch, OR-Tools). Kết nối với FE thông qua Server-Sent Events (SSE) để truyền trạng thái mô phỏng.
+            \item \textbf{Database (Port 5432):} PostgreSQL 15, tối ưu hóa JSONB và Stored Procedures.
+        \end{itemize}
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig1_pipeline_overview.drawio.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{10. Thiết kế Cơ sở Dữ liệu (ERD)}
+    \textbf{Gồm 9 bảng chính với khoảng 80 cột cấu trúc:}
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabularx}{\textwidth}{@{}lX@{}}
+            \toprule
+            \textbf{Bảng (Table)} & \textbf{Vai trò \& Thiết kế đặc biệt} \\
+            \midrule
+            \texttt{projects} & Metadata dự án (penalty/bonus/day, số node, độ đặc của mạng lưới). \\
+            \texttt{tasks} & Định nghĩa \textbf{38 cột chi phí} (Tính tự động qua \texttt{GENERATED ALWAYS AS STORED}). \\
+            \texttt{project\_calendars} & Lịch thi công thực tế (JSONB: weekly\_schedule, holidays\_list). \\
+            \texttt{resources} & Thông số tài nguyên (unit\_cost, capacity, overtime\_multi). \\
+            \texttt{task\_logic} & Cạnh phụ thuộc mạng lưới DAG (FS/SS/FF/SF + lag\_hours). \\
+            \texttt{task\_resources} & Phân bổ tài nguyên thực thi. \\
+            \texttt{ai\_pipeline\_runs} & Log phiên AI tối ưu (ai\_predictions JSONB, mc\_results JSONB). \\
+            \texttt{pareto\_solutions} & Kết quả tối ưu từ CP-SAT (makespan\_hours, risk\_pct, tasks\_schedule). \\
+            \bottomrule
+        \end{tabularx}
+    \end{table}
+\end{frame}
+
+\begin{frame}{11. Kiến trúc Giao diện (Frontend)}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{4 Tabs Chính trong Workspace (\texttt{Workspace.tsx}):}
+        \begin{enumerate}
+            \item \textbf{Overview:} Tổng quan dự án, tiến độ.
+            \item \textbf{Analysis:} Phân tích dữ liệu bằng Network Graph \& Gantt Chart.
+            \item \textbf{Assignment:} Quản lý phân bổ tài nguyên.
+            \item \textbf{AI Pipeline:} Nơi kích hoạt luồng tối ưu GLPO, gồm các sub-tabs: \textit{Recommendations, Baseline, Pareto, PPO}.
+        \end{enumerate}
+        \vspace{0.2cm}
+        \textit{Tương tác Real-time:} Giao diện nhận trạng thái tối ưu AI thông qua \textbf{Server-Sent Events (SSE)} từ API \texttt{/simulation-stream}.
+        
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig10_frontend_rendering.drawio.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{12. Luồng Dữ liệu API (API Flow)}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Data \& Constraint Management:}
+        \begin{itemize}
+            \item \textbf{Lifecycle:} Frontend $\rightarrow$ FastAPI Router $\rightarrow$ Service Layer $\rightarrow$ PostgreSQL.
+            \item Cập nhật tự động các ràng buộc \texttt{task\_logic} (DAG) và \texttt{project\_calendars} (Lịch).
+        \end{itemize}
+        \centering
+        \vspace{0.2cm}
+        \includegraphics[width=0.8\linewidth]{fig9a.png}
+        
+        \column{0.5\textwidth}
+        \textbf{AI Optimization \& Streaming:}
+        \begin{itemize}
+            \item Frontend đẩy cấu hình \textit{(Pareto count, Iterations, Penalty)}.
+            \item \textbf{ai\_pipeline\_service} chạy ngầm (Background Task).
+            \item Phát luồng trạng thái (SSE) ngược lại cho Frontend để cập nhật Progress Bar theo thời gian thực.
+        \end{itemize}
+        \centering
+        \vspace{0.2cm}
+        \includegraphics[width=0.8\linewidth]{fig9b.png}
+    \end{columns}
+\end{frame}

@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+
+\bibitem{pmi2023}
+{Project Management Institute}, ``Pulse of the profession 2023: Power skills,
+  redefining project success,'' tech. rep., Project Management Institute (PMI),
+  2023.
+
+\bibitem{ortools}
+{Google Optimization Team}, ``Or-tools cp-sat solver,'' 2023.
+
+\bibitem{ga2023}
+T.~Nguyen {\em et~al.}, ``Hybrid ga-milp for logistics operations,'' {\em
+  Internal Logistics Project / Capstone}, 2023.
+
+\end{thebibliography}

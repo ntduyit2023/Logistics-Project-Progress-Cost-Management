@@ -1,0 +1,108 @@
+% -------------------------------------------------------------
+% PHẦN IV: AI PIPELINE (models/moi/)
+% -------------------------------------------------------------
+\section{AI Pipeline}
+
+\begin{frame}{16. Tổng quan Pipeline 5 Bước (End-to-End)}
+    \begin{enumerate}
+        \item \textbf{HeteroGraph Builder:} Trích xuất JSON/CSV thành \texttt{HeteroData} (Task 39-dim, Resource 6-dim, Shift 5-dim).
+        \item \textbf{HGT Pretrainer:} Self-Supervised Phase 0 (Masked Autoencoder).
+        \item \textbf{HGT Inference:} Dự báo Scale factor \& Trễ hạn, kết xuất Cosine Attention.
+        \item \textbf{Monte Carlo CPM:} Lấy mẫu Beta-PERT đa vòng $\rightarrow$ Tính \% Criticality Index.
+        \item \textbf{CP-SAT Pareto Solver:} Lập lịch tối ưu Đa mục tiêu dựa trên dẫn đường của AI (AI-Guided).
+    \end{enumerate}
+    \centering
+    \vspace{0.1cm}
+    \includegraphics[width=0.6\linewidth]{fig2_hgt_architecture.drawio.png}
+\end{frame}
+
+\begin{frame}{17. B2: HGT Pretraining \& B3: Inference}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Masked Autoencoder (Phase 0):}
+        \begin{itemize}
+            \item Mask 25\% Task node features.
+            \item Đầu ra: \texttt{reconstructed\_x}.
+            \item Tối ưu \textbf{Smooth L1 Loss}.
+        \end{itemize}
+        \centering
+        \vspace{0.1cm}
+        \includegraphics[width=0.85\linewidth]{fig7_pretraining_flow.drawio.png}
+        
+        \vspace{0.2cm}
+        \textbf{Inference (Dự báo):}
+        \begin{itemize}
+            \item \texttt{duration\_factor}: Softplus + 0.5
+            \item \texttt{expected\_delay}: ReLU
+            \item \texttt{uncertainty\_sigma}: Softplus + 0.01
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{Cosine Attention (Task - Resource):}
+        Giúp AI "nhìn" ra Task nào cần Resource nào nhất.
+        \begin{equation}
+            \text{sim}(t, r) = \frac{\mathbf{h}_t \cdot \mathbf{h}_r}{\|\mathbf{h}_t\| \|\mathbf{h}_r\|}
+        \end{equation}
+        \centering
+        \includegraphics[width=0.8\linewidth]{fig4_hgtconv_attention.drawio.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{18. B4: Mô phỏng Monte Carlo CPM}
+    \textbf{Tích hợp AI dự báo vào Beta-PERT:}
+    Hệ thống làm nhiễu $N$ vòng lặp (Iterations) bằng các tham số:
+    \begin{align}
+        m &= \text{duration} \times \text{duration\_factor} + \text{expected\_delay} \\
+        a &= \max(0.5, \; m \times (1 - 2\sigma)) \\
+        b &= m \times (1 + 3\sigma)
+    \end{align}
+    
+    \vspace{0.2cm}
+    \textbf{Tổng hợp chỉ số Thống kê Cốt lõi:}
+    \begin{itemize}
+        \item $P_{50}, P_{80}, P_{95}$: Các mốc thời gian hoàn thành theo độ tin cậy.
+        \item \textbf{Criticality Index ($CI_i$):} Tỷ lệ xác suất công việc $i$ trở thành nút thắt.
+    \end{itemize}
+    \textit{Ứng dụng:} Chỉ số CI\% và Delay sẽ làm kim chỉ nam để khoanh vùng không gian Crashing cho Solver.
+\end{frame}
+
+\begin{frame}{19. B5: CP-SAT AI-Guided Pareto Solver}
+    \textbf{Chiến lược "AI-Guided Critical Path Crashing":}
+    Chỉ áp dụng Crashing cho các công việc có $CI > \text{threshold}$ để tránh lãng phí chi phí.
+    
+    \vspace{0.2cm}
+    \textbf{4 Mode Thực thi (Alternative Execution Modes):}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{@{}llcc@{}}
+            \toprule
+            \textbf{Mode} & \textbf{Chiến lược} & \textbf{Thời gian} & \textbf{Chi phí} \\
+            \midrule
+            \textbf{0. Normal} & Giữ nguyên thiết kế ban đầu. & 100\% & 100\% \\
+            \textbf{1. Overtime} & Tăng ca ngoài giờ (CI > 0). & $\sim$66\% & +50\% (Hệ số 1.5x) \\
+            \textbf{2. AddRes} & Bổ sung tài nguyên (dựa vào Attention). & $\sim$70\% & +30\% \\
+            \textbf{3. Hybrid} & Kéo kiệt lực lượng (CI $> 90\%$). & $\sim$50\% & +80\% \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{20. B5: Hệ phương trình CP-SAT Constraints (5-Tier)}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Ràng buộc OR-Tools CP-SAT:}
+        \begin{enumerate}
+            \item \textbf{Precedence:} \texttt{AddEndBeforeStart} tuân thủ Logic Mạng.
+            \item \textbf{Resource:} \texttt{AddCumulative} giới hạn tổng sức chứa đồng thời.
+            \item \textbf{Deadline:} Tổng thời gian $\leq$ Target Deadline (nếu có).
+            \item \textbf{Penalty/Bonus:} Hàm trừng phạt tài chính.
+            \item \textbf{Multi-Objective:} Quét lưới (Grid Sweep) trọng số sinh các phương án Pareto.
+        \end{enumerate}
+        \vspace{0.1cm}
+        \textit{(Sử dụng bộ giải Google OR-Tools \cite{ortools} và \cite{ga2023})}
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig6_cpsat_pareto.drawio.png}
+    \end{columns}
+\end{frame}

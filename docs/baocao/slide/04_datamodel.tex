@@ -1,0 +1,81 @@
+% -------------------------------------------------------------
+% PHẦN III-B: MÔ HÌNH DỮ LIỆU
+% -------------------------------------------------------------
+\section{Mô hình Dữ liệu}
+
+\begin{frame}{12. Entity: TASK (Công việc) -- Node 39-dim}
+    \textbf{Task là Node trung tâm trong HeteroGraph \cite{hu2020hgt}:} Mã hóa thông qua vector 39 chiều.
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item \textbf{1 Chiều Thời gian:} \texttt{duration\_hours}.
+        \item \textbf{38 Chiều Chi phí (Nhóm theo TCO):}
+        \begin{itemize}
+            \item \textit{Trực tiếp (G1):} Nhân công, Vật tư, Thiết bị, Năng lượng...
+            \item \textit{Overhead (G2):} Tiện ích, Điện nước, Đào tạo...
+            \item \textit{Thời gian (G3):} Làm thêm giờ (OT), Chờ đợi, Trễ hạn...
+            \item \textit{Rủi ro (G4):} Làm lại (Rework), Bảo hiểm, Pháp lý...
+            \item \textit{Logistics (G5):} Vận tải, Đặt hàng, Hải quan...
+            \item \textit{ESG/Tài chính (G6):} Phạt Carbon, Lãi vay...
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.2cm}
+    \textit{Lưu ý:} Tổng 38 chi phí được lưu tại \texttt{total\_cost} qua Cột tự động \texttt{GENERATED ALWAYS}.
+    \centering
+    \vspace{0.1cm}
+    \includegraphics[width=0.45\linewidth]{fig3_heterograph_structure.drawio.png}
+\end{frame}
+
+\begin{frame}{13. Entity: RESOURCE (Tài nguyên) -- Node 6-dim}
+    \textbf{Tài nguyên (Nhân công/Máy móc):} Định hướng sức chứa và hiệu quả Crashing.
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabularx}{\textwidth}{@{}llX@{}}
+            \toprule
+            \textbf{Thuộc tính} & \textbf{Kiểu} & \textbf{Ý nghĩa} \\
+            \midrule
+            \texttt{type} & ENUM & \texttt{Human} hoặc \texttt{Machine} \\
+            \texttt{max\_availability} & NUMERIC & Sức chứa tối đa (Tránh Resource Contention) \\
+            \texttt{unit\_cost} & NUMERIC & Đơn giá thuê/hoạt động (\$/hr) \\
+            \texttt{energy} & NUMERIC & Mức tiêu thụ năng lượng/nhiên liệu \\
+            \texttt{overtime\_multi} & NUMERIC & Hệ số làm ngoài giờ (Thường là 1.5x - 2.0x) \\
+            \texttt{addres\_efficiency} & NUMERIC & Hiệu suất khi thuê thêm người lạ (VD: 0.7) \\
+            \bottomrule
+        \end{tabularx}
+    \end{table}
+    \textbf{Định dạng vector:} $\mathbf{x}^{(R)} \in \mathbb{R}^6$ (sau khi chuẩn hóa).
+\end{frame}
+
+\begin{frame}{14. Entity: AGENDA/SHIFT -- Node 5-dim}
+    \textbf{Ràng buộc Lịch làm việc thực tế (Calendar Constraints):}
+    \begin{itemize}
+        \item Không phải tất cả các giờ đều là Working Time.
+        \item Dữ liệu lưu dưới dạng \texttt{JSONB}: \texttt{weekly\_schedule} và \texttt{holidays\_list}.
+    \end{itemize}
+    \vspace{0.2cm}
+    \begin{block}{Cấu trúc ca thi công (Shift Vector 5-dim)}
+        $$\mathbf{x}^{(S)} = [\text{start\_h},\; \text{end\_h},\; \text{duration\_h},\; \text{day\_of\_week},\; \text{is\_working}] \in \mathbb{R}^5$$
+    \end{block}
+    Module \texttt{WorkingCalendarEngine} dùng dữ liệu này để chuyển đổi từ giờ làm việc thuần túy (Duration Hours) sang lịch thực tế (Calendar Dates) trong CPM Forward Pass.
+\end{frame}
+
+\begin{frame}{15. Entity: TASK LOGIC \& TASK RESOURCES}
+    \textbf{Cấu trúc Topology của Đồ thị (Edges):}
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item \textbf{Cạnh Phụ thuộc (Task $\rightarrow$ precedes $\rightarrow$ Task):}
+        \begin{itemize}
+            \item Thể hiện PDM logic: \texttt{dependency\_type} (FS, SS, FF, SF).
+            \item \texttt{lag\_hours}: Độ trễ hoặc Overlap.
+            \item Module Frontend có DFS Cycle Detection để bảo vệ Đồ thị dạng DAG.
+        \end{itemize}
+        \vspace{0.2cm}
+        \item \textbf{Cạnh Phân bổ (Task $\rightarrow$ uses $\rightarrow$ Resource):}
+        \begin{itemize}
+            \item Thể hiện mức tiêu thụ tài nguyên của công việc: \texttt{request\_quantity}.
+            \item Định nghĩa phương trình Cumulative Constraint trong CP-SAT:
+            $$\sum_{i \in Active(t)} D_{ir} \leq \text{max\_availability}_r \quad \forall t \in [0, C_{\max}]$$
+        \end{itemize}
+    \end{itemize}
+\end{frame}

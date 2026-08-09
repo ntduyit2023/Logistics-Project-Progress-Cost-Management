@@ -1,0 +1,110 @@
+% -------------------------------------------------------------
+% PHẦN II: CƠ SỞ LÝ THUYẾT
+% -------------------------------------------------------------
+\section{Cơ sở Lý thuyết}
+
+\begin{frame}{4. Critical Path Method (CPM) \& PDM}
+    \textbf{Phương pháp Đường găng (CPM) cổ điển:}
+    \begin{itemize}
+        \item Forward Pass: $ES_j = \max_{i \in pred(j)}(EF_i + lag_{ij})$, $EF_j = ES_j + d_j$
+        \item Backward Pass: $LF_j = \min_{k \in succ(j)}(LS_k - lag_{jk})$, $LS_j = LF_j - d_j$
+        \item Slack (Khoảng dự trữ): $TF_j = LS_j - ES_j = LF_j - EF_j$
+        \item Đường găng (Critical Path): Tập hợp các công việc có $TF_j = 0$
+    \end{itemize}
+    \vspace{0.2cm}
+    \textbf{4 loại quan hệ PDM (Precedence Diagramming Method):}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{@{}llp{6cm}@{}}
+            \toprule
+            \textbf{Type} & \textbf{Ý nghĩa} & \textbf{Tác động CPM} \\
+            \midrule
+            \textbf{FS} (Finish-to-Start) & B bắt đầu sau A kết thúc & $ES_B = EF_A + lag$ \\
+            \textbf{SS} (Start-to-Start) & B bắt đầu sau A bắt đầu & $ES_B = ES_A + lag$ \\
+            \textbf{FF} (Finish-to-Finish) & B kết thúc sau A kết thúc & $EF_B = EF_A + lag$ \\
+            \textbf{SF} (Start-to-Finish) & B kết thúc sau A bắt đầu & $EF_B = ES_A + lag$ \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{5. Heterogeneous Graph Transformer (HGT)}
+    \textbf{Tại sao cần Heterogeneous Graph?}
+    Đồ thị dự án chứa các node khác ngữ nghĩa (Task, Resource, Shift) $\rightarrow$ GCN đồng nhất không bảo toàn được đặc trưng riêng.
+    
+    \vspace{0.2cm}
+    \textbf{Kiến trúc HGTConv (PyTorch Geometric):}
+    \begin{equation}
+        \mathbf{h}^{(\ell+1)}_j = \text{Agg}_{i \in \mathcal{N}(j)} \text{HGTConv}(\mathbf{h}^{(\ell)}_i, \mathbf{h}^{(\ell)}_j, \tau(i), \phi(i,j), \tau(j))
+    \end{equation}
+    Sử dụng \textbf{type-specific linear projection} cho từng loại node về chung không gian nhúng $\mathbb{R}^{128}$.
+
+    \vspace{0.2cm}
+    \textbf{Hybrid Readout Pooling (Mean + Max):}
+    \begin{equation}
+        \mathbf{g} = [\text{Mean}_{i \in T}(\mathbf{h}_i) \,\|\, \text{Max}_{i \in T}(\mathbf{h}_i)] \in \mathbb{R}^{2 \times 128}
+    \end{equation}
+    Hợp nhất vào từng node: $\mathbf{h}'_i = \text{GELU}(\text{LayerNorm}(\mathbf{W}[\mathbf{h}_i \| \mathbf{g}]))$
+\end{frame}
+
+\begin{frame}{6. Masked Autoencoder SSL (Phase 0 Pretraining)}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Ý tưởng cốt lõi:}
+        \begin{itemize}
+            \item Không có nhãn delay thực tế $\rightarrow$ Huấn luyện tự giám sát (Self-Supervised Learning).
+            \item Che ngẫu nhiên \textbf{25\% node Task} $\rightarrow$ Buộc model tái tạo đặc trưng từ ngữ cảnh đồ thị.
+            \item Chia 80\% Train / 20\% Val để tránh rò rỉ dữ liệu (Data leakage).
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{Smooth L1 Loss (Huber Loss):}
+        \begin{equation}
+            \mathcal{L} = \frac{1}{|M|} \sum_{i \in M} \text{SmoothL1}(\hat{\mathbf{x}}_i, \mathbf{x}_i)
+        \end{equation}
+        $\text{SmoothL1}(x, y) = \begin{cases} \frac{1}{2}(x-y)^2 & |x-y| < 1 \\ |x-y| - \frac{1}{2} & \text{khác} \end{cases}$
+    \end{columns}
+\end{frame}
+
+\begin{frame}{7. Monte Carlo Beta-PERT CPM}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Tại sao Beta-PERT thay vì Normal?}
+        Delay thực tế bị \textbf{lệch phải} (right-skewed) $\rightarrow$ Phân phối Beta-PERT mô hình hóa đuôi rủi ro tốt hơn.
+        
+        \vspace{0.2cm}
+        \textbf{3-point estimate:} 
+        Lạc quan ($a$), Khả dĩ ($m$), Bi quan ($b$).
+        \begin{equation}
+            d_i^{(k)} \sim \text{Beta}(\alpha, \beta) \cdot (b-a) + a
+        \end{equation}
+        \textbf{Criticality Index (CI):}
+        Tỷ lệ \% số lần một task nằm trên Đường găng trong $N$ vòng lặp.
+        
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{fig5_monte_carlo_cpm.drawio.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{8. CP-SAT \& Bảng So sánh Các Công trình Liên quan}
+    \textbf{CP-SAT (Google OR-Tools):} Giải quyết bài toán RCPSP qua Branch-and-Bound và Constraint Programming.
+
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{@{}lcccc@{}}
+            \toprule
+            \textbf{Phương pháp} & \textbf{Đồ thị} & \textbf{Bất định} & \textbf{Đa mục tiêu} & \textbf{AI-Guided} \\
+            \midrule
+            CPM truyền thống & Không & Không & Không & Không \\
+            PERT 3-point & Không & Có (Beta) & Không & Không \\
+            GA/NSGA-II & Không & Một phần & Có & Không \\
+            GNN thuần & Có & Không & Không & Không \\
+            \textbf{GLPO (Đề tài)} & \textbf{Có (Hetero)} & \textbf{Có (Beta)} & \textbf{Có (CP-SAT)} & \textbf{Có (HGT)} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}

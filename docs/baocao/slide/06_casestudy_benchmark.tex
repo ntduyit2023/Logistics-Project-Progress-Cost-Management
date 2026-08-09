@@ -1,0 +1,105 @@
+% -------------------------------------------------------------
+% PHẦN V: THỰC NGHIỆM \& BENCHMARK
+% -------------------------------------------------------------
+\section{Thực nghiệm \& Benchmark}
+
+\begin{frame}{21. Case Study: Công trình MFET 3008/5040 (Mã C2011-07)}
+    \textbf{Tổng quan Dự án Thực nghiệm:}
+    \begin{itemize}
+        \item \textbf{Quy mô:} 49 công việc, 63 quan hệ phụ thuộc, 5 loại tài nguyên.
+        \item \textbf{Lịch thi công:} 8h/ngày, 5 ngày/tuần, Hệ số OT 1.5x.
+    \end{itemize}
+    \vspace{0.2cm}
+    \textbf{Ground Truth (Bài toán gốc 21 hoạt động cốt lõi):}
+    \begin{itemize}
+        \item Thời gian hoàn thành (Normal): \textbf{66 ngày (528 giờ)}.
+        \item Đường găng tĩnh: \textbf{A $\rightarrow$ C $\rightarrow$ G $\rightarrow$ I $\rightarrow$ J $\rightarrow$ N $\rightarrow$ R $\rightarrow$ T $\rightarrow$ U}.
+        \item Chi phí thầu phụ: \textbf{\$70,230}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{22. Kết quả AI Pipeline: Pretraining \& MC Simulation}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Kết quả HGT Pretraining:}
+        \begin{table}
+            \centering
+            \scriptsize
+            \begin{tabular}{@{}ll@{}}
+                \toprule
+                \textbf{Metric} & \textbf{Giá trị} \\
+                \midrule
+                Val Loss (Smooth L1) & $< 0.01$ \\
+                Val MAE & $< 0.05$ (Normalized) \\
+                Val $R^2$ Score & $> 0.85$ \\
+                Overfit Ratio & $\leq 1.2$ (Tốt) \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+        
+        \column{0.5\textwidth}
+        \textbf{Monte Carlo CPM (N=10,000):}
+        \begin{table}
+            \centering
+            \scriptsize
+            \begin{tabular}{@{}ll@{}}
+                \toprule
+                \textbf{Phân vị} & \textbf{Makespan (Kỳ vọng)} \\
+                \midrule
+                $P_{50}$ & $\sim$3,743 giờ \\
+                $P_{80}$ & $\sim$4,148 giờ \\
+                $P_{95}$ (Worst-case) & $\sim$4,548 giờ \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+        Phát hiện \textbf{12 Tasks} có $CI > 70\%$ (Đường găng ngầm định).
+    \end{columns}
+\end{frame}
+
+\begin{frame}{23. Kết quả CP-SAT Pareto (Top-3 Scenarios)}
+    Hệ thống cung cấp Tập hợp Pareto đa dạng, giúp quản lý chọn lựa dựa trên ngân sách và rủi ro:
+    \vspace{0.2cm}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{@{}lccc@{}}
+            \toprule
+            \textbf{Option} & \textbf{Thời gian (Makespan)} & \textbf{Chi phí Ròng (Cost)} & \textbf{Rủi ro Trễ (Risk)} \\
+            \midrule
+            Nhanh nhất (Nặng Hybrid) & $\sim$3,200 h & $\sim$\$95,000 & 8\% \\
+            Cân bằng (OT + AddRes) & $\sim$3,743 h & $\sim$\$72,000 & 20\% \\
+            Rẻ nhất (Normal) & $\sim$4,500 h & $\sim$\$55,000 & 42\% \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \centering
+    \includegraphics[width=0.45\linewidth]{pareto_frontier.png}
+\end{frame}
+
+\begin{frame}{24. Benchmark: Độ chính xác \& Khả năng Mở rộng (Scalability)}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Độ chính xác CPM (Static Base):}
+        \begin{itemize}
+            \item \textbf{Makespan:} 528 giờ (Sai số \textbf{0\%}).
+            \item \textbf{Đường găng:} Khớp 100\% Ground Truth.
+            \item \textbf{Cost Engine:} Chênh lệch $+2.6\%$ (Do chi tiết 38 nhóm).
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{Thời gian Thực thi (Latency):}
+        \begin{table}
+            \centering
+            \scriptsize
+            \begin{tabular}{@{}llcc@{}}
+                \toprule
+                \textbf{Module} & \textbf{Complexity} & \textbf{21 Tasks} & \textbf{49 Tasks} \\
+                \midrule
+                MC ($N=10K$) & $O(n \cdot N)$ & $\sim$3s & $\sim$8s \\
+                CP-SAT & $O(4^n)$ bounded & $\sim$5s & $\sim$15s \\
+                End-to-End & Tích hợp & \textbf{$\sim$10s} & \textbf{$\sim$25s} \\
+                \bottomrule
+            \end{tabular}
+        \end{table}
+    \end{columns}
+\end{frame}

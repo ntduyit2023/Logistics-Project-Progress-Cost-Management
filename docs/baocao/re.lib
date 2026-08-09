@@ -1,0 +1,35 @@
+@inproceedings{hu2020heterogeneous,
+  title={Heterogeneous graph transformer},
+  author={Hu, Ziniu and Dong, Yuxiao and Wang, Kuansan and Sun, Yizhou},
+  booktitle={Proceedings of The Web Conference 2020},
+  pages={2704--2710},
+  year={2020}
+}
+
+@techreport{pmi2023,
+  title={Pulse of the Profession 2023: Power Skills, Redefining Project Success},
+  author={{Project Management Institute}},
+  institution={Project Management Institute (PMI)},
+  year={2023}
+}
+
+@misc{ortools,
+  title={OR-Tools CP-SAT Solver},
+  author={{Google Optimization Team}},
+  year={2023},
+  url={https://developers.google.com/optimization/cp/cp_solver}
+}
+
+@article{shi2021gnn,
+  title={GNN-based RCPSP under Uncertainty},
+  author={Shi, M. and others},
+  journal={Project Management Journal / Preprint},
+  year={2021}
+}
+
+@article{ga2023,
+  title={Hybrid GA-MILP for Logistics Operations},
+  author={Nguyen, T. and others},
+  journal={Internal Logistics Project / Capstone},
+  year={2023}
+}

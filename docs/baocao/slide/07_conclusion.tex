@@ -1,0 +1,54 @@
+% -------------------------------------------------------------
+% PHẦN VI: KẾT LUẬN \& ĐỀ XUẤT PHÁT TRIỂN
+% -------------------------------------------------------------
+\section{Kết luận \& Hướng phát triển}
+
+\begin{frame}{25. Kết quả Đạt được \& Đóng góp Khoa học}
+    \textbf{Đóng góp Kỹ thuật:}
+    \begin{enumerate}
+        \item Khung mô hình hoá dự án \textbf{Heterogeneous Graph} với 3 Node Types (Task/Resource/Shift).
+        \item Áp dụng thành công \textbf{Masked Autoencoder SSL} (Phase 0) giải quyết bài toán thiếu nhãn.
+        \item Khai sinh khái niệm \textbf{AI-augmented Beta-PERT}: AI hiệu chỉnh tham số $(a, m, b)$ riêng biệt.
+        \item Lập lịch 4-Mode với \textbf{CP-SAT AI-Guided Pareto} giải quyết bài toán đa mục tiêu.
+        \item Phát triển hệ thống phần mềm Full-Stack (React/FastAPI) \textbf{có tính ứng dụng thực tiễn cao}.
+    \end{enumerate}
+    
+    \vspace{0.2cm}
+    \textbf{Đóng góp Học thuật:} 
+    Kết hợp 4 kỹ thuật (HGTConv + Masked Autoencoder + MC-PERT + CP-SAT) trong 1 Pipeline liền mạch.
+\end{frame}
+
+\begin{frame}{26. Phân tích Kỹ thuật: Nhược điểm Hệ thống Hiện tại}
+    Mặc dù đạt kết quả tốt, hệ thống vẫn mang các điểm nghẽn kỹ thuật:
+    \vspace{0.2cm}
+    \begin{itemize}
+        \item \textbf{HGT Pretraining:} Mới train trên 1 dự án (C2011-07) $\rightarrow$ Nguy cơ \textbf{Overfitting} cấu trúc, kém Generalization.
+        \item \textbf{Đồ thị Tĩnh (Static Graph):} Chỉ phản ánh Snapshot đầu dự án, chưa là Dynamic Graph.
+        \item \textbf{Monte Carlo:} Giả định các tasks chạy độc lập $\rightarrow$ Chưa mô hình hoá \textbf{Resource Contention} trong quá trình simulation.
+        \item \textbf{CP-SAT Crashing:} Assumption nén tuyến tính (Linear Crashing). Thực tế Diminishing Return (Làm thêm nhiều giờ càng kém hiệu quả).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{27. Lộ trình Phát triển (Roadmap 3 Giai đoạn)}
+    \begin{table}
+        \centering
+        \footnotesize
+        \begin{tabular}{@{}llp{7cm}@{}}
+            \toprule
+            \textbf{Giai đoạn} & \textbf{Vấn đề} & \textbf{Đề xuất Kỹ thuật} \\
+            \midrule
+            \textbf{GĐ1 (3-6 tháng)} & Overfit Dataset & Augmentation (Node/Edge Drop), 50+ Dự án. \\
+            & Phân phối MC & Mở rộng Log-Normal, Triangular. \\
+            & Resource Contention & Cài đặt Feasibility Check trong Vòng lặp MC. \\
+            \midrule
+            \textbf{GĐ2 (6-12 tháng)} & Đồ thị Tĩnh & Nâng cấp lên \textbf{Temporal HGT}. \\
+            & Unsupervised & Thu thập log $\rightarrow$ Labeled Data $\rightarrow$ Supervised Learning. \\
+            & Hyperparameters & Bayesian Optimization quét trọng số CP-SAT. \\
+            \midrule
+            \textbf{GĐ3 ($12^+$ tháng)} & Manual Input & Tích hợp \textbf{LLM + GNN Fusion} tự động đọc file Excel. \\
+            & Black-box & \textbf{GNNExplainer (XAI)} để giải thích vì sao Task rủi ro. \\
+            & Data Privacy & \textbf{Federated Learning HGT} cho các tập đoàn. \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
