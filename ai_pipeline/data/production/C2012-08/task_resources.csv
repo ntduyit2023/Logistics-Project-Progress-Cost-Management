@@ -1,0 +1,1213 @@
+task_id,resource_id,request_quantity
+C2012-08_3,Laborer,5.0
+C2012-08_3,Skipper,1.0
+C2012-08_3,Engineer,3.0
+C2012-08_3,Vessel Buzzard,1.0
+C2012-08_6,Laborer,5.0
+C2012-08_6,Skipper,1.0
+C2012-08_6,Vessel Pompei,1.0
+C2012-08_7,Laborer,22.0
+C2012-08_7,Skipper,1.0
+C2012-08_7,Engineer,6.0
+C2012-08_7,Vessel Pompei,1.0
+C2012-08_526,Laborer,5.0
+C2012-08_526,Skipper,0.5
+C2012-08_526,Vessel Maersk,0.5
+C2012-08_526,Crane,1.0
+C2012-08_527,Laborer,5.0
+C2012-08_527,Skipper,0.5
+C2012-08_527,Vessel Maersk,0.5
+C2012-08_527,Crane,1.0
+C2012-08_528,Laborer,5.0
+C2012-08_528,Skipper,0.5
+C2012-08_528,Vessel Maersk,0.5
+C2012-08_528,Crane,1.0
+C2012-08_529,Laborer,5.0
+C2012-08_529,Skipper,0.5
+C2012-08_529,Vessel Maersk,0.5
+C2012-08_529,Crane,1.0
+C2012-08_530,Laborer,5.0
+C2012-08_530,Skipper,0.5
+C2012-08_530,Vessel Maersk,0.5
+C2012-08_530,Crane,1.0
+C2012-08_531,Laborer,5.0
+C2012-08_531,Skipper,0.5
+C2012-08_531,Vessel Maersk,0.5
+C2012-08_531,Crane,1.0
+C2012-08_532,Laborer,5.0
+C2012-08_532,Skipper,0.5
+C2012-08_532,Vessel Maersk,0.5
+C2012-08_532,Crane,1.0
+C2012-08_533,Laborer,5.0
+C2012-08_533,Skipper,0.5
+C2012-08_533,Vessel Maersk,0.5
+C2012-08_533,Crane,1.0
+C2012-08_534,Laborer,5.0
+C2012-08_534,Skipper,0.5
+C2012-08_534,Vessel Maersk,0.5
+C2012-08_534,Crane,1.0
+C2012-08_535,Laborer,5.0
+C2012-08_535,Skipper,0.5
+C2012-08_535,Vessel Maersk,0.5
+C2012-08_535,Crane,1.0
+C2012-08_536,Laborer,5.0
+C2012-08_536,Skipper,0.5
+C2012-08_536,Vessel Maersk,0.5
+C2012-08_536,Crane,1.0
+C2012-08_537,Laborer,5.0
+C2012-08_537,Skipper,0.5
+C2012-08_537,Vessel Maersk,0.5
+C2012-08_537,Crane,1.0
+C2012-08_538,Laborer,5.0
+C2012-08_538,Skipper,0.5
+C2012-08_538,Vessel Maersk,0.5
+C2012-08_538,Crane,1.0
+C2012-08_539,Laborer,5.0
+C2012-08_539,Skipper,0.5
+C2012-08_539,Vessel Maersk,0.5
+C2012-08_539,Crane,1.0
+C2012-08_540,Laborer,5.0
+C2012-08_540,Skipper,0.5
+C2012-08_540,Vessel Maersk,0.5
+C2012-08_540,Crane,1.0
+C2012-08_541,Laborer,5.0
+C2012-08_541,Skipper,0.5
+C2012-08_541,Vessel Maersk,0.5
+C2012-08_541,Crane,1.0
+C2012-08_542,Laborer,5.0
+C2012-08_542,Skipper,0.5
+C2012-08_542,Vessel Maersk,0.5
+C2012-08_542,Crane,1.0
+C2012-08_543,Laborer,5.0
+C2012-08_543,Skipper,0.5
+C2012-08_543,Vessel Maersk,0.5
+C2012-08_543,Crane,1.0
+C2012-08_544,Laborer,5.0
+C2012-08_544,Skipper,0.5
+C2012-08_544,Vessel Maersk,0.5
+C2012-08_544,Crane,1.0
+C2012-08_545,Laborer,5.0
+C2012-08_545,Skipper,0.5
+C2012-08_545,Vessel Maersk,0.5
+C2012-08_545,Crane,1.0
+C2012-08_546,Laborer,5.0
+C2012-08_546,Skipper,0.5
+C2012-08_546,Vessel Maersk,0.5
+C2012-08_546,Crane,1.0
+C2012-08_547,Laborer,5.0
+C2012-08_547,Skipper,0.5
+C2012-08_547,Vessel Maersk,0.5
+C2012-08_547,Crane,1.0
+C2012-08_548,Laborer,5.0
+C2012-08_548,Skipper,0.5
+C2012-08_548,Vessel Maersk,0.5
+C2012-08_548,Crane,1.0
+C2012-08_549,Laborer,5.0
+C2012-08_549,Skipper,0.5
+C2012-08_549,Vessel Maersk,0.5
+C2012-08_549,Crane,1.0
+C2012-08_550,Laborer,5.0
+C2012-08_550,Skipper,0.5
+C2012-08_550,Vessel Maersk,0.5
+C2012-08_550,Crane,1.0
+C2012-08_12,Laborer,22.0
+C2012-08_12,Skipper,1.0
+C2012-08_12,Engineer,6.0
+C2012-08_12,Vessel Buzzard,1.0
+C2012-08_13,Laborer,22.0
+C2012-08_13,Skipper,1.0
+C2012-08_13,Engineer,6.0
+C2012-08_13,Vessel Buzzard,1.0
+C2012-08_14,Laborer,22.0
+C2012-08_14,Skipper,1.0
+C2012-08_14,Engineer,6.0
+C2012-08_14,Vessel Buzzard,1.0
+C2012-08_196,Laborer,22.0
+C2012-08_196,Skipper,1.0
+C2012-08_196,Engineer,6.0
+C2012-08_196,Vessel Buzzard,1.0
+C2012-08_197,Laborer,22.0
+C2012-08_197,Skipper,1.0
+C2012-08_197,Engineer,6.0
+C2012-08_197,Vessel Buzzard,1.0
+C2012-08_198,Laborer,22.0
+C2012-08_198,Skipper,1.0
+C2012-08_198,Engineer,6.0
+C2012-08_198,Vessel Buzzard,1.0
+C2012-08_199,Laborer,22.0
+C2012-08_199,Skipper,1.0
+C2012-08_199,Engineer,6.0
+C2012-08_199,Vessel Buzzard,1.0
+C2012-08_200,Laborer,22.0
+C2012-08_200,Skipper,1.0
+C2012-08_200,Engineer,6.0
+C2012-08_200,Vessel Buzzard,1.0
+C2012-08_201,Laborer,22.0
+C2012-08_201,Skipper,1.0
+C2012-08_201,Engineer,6.0
+C2012-08_201,Vessel Buzzard,1.0
+C2012-08_202,Laborer,22.0
+C2012-08_202,Skipper,1.0
+C2012-08_202,Engineer,6.0
+C2012-08_202,Vessel Buzzard,1.0
+C2012-08_203,Laborer,22.0
+C2012-08_203,Skipper,1.0
+C2012-08_203,Engineer,6.0
+C2012-08_203,Vessel Buzzard,1.0
+C2012-08_204,Laborer,22.0
+C2012-08_204,Skipper,1.0
+C2012-08_204,Engineer,6.0
+C2012-08_204,Vessel Buzzard,1.0
+C2012-08_205,Laborer,22.0
+C2012-08_205,Skipper,1.0
+C2012-08_205,Engineer,6.0
+C2012-08_205,Vessel Buzzard,1.0
+C2012-08_206,Laborer,22.0
+C2012-08_206,Skipper,1.0
+C2012-08_206,Engineer,6.0
+C2012-08_206,Vessel Buzzard,1.0
+C2012-08_207,Laborer,22.0
+C2012-08_207,Skipper,1.0
+C2012-08_207,Engineer,6.0
+C2012-08_207,Vessel Buzzard,1.0
+C2012-08_208,Laborer,22.0
+C2012-08_208,Skipper,1.0
+C2012-08_208,Engineer,6.0
+C2012-08_208,Vessel Buzzard,1.0
+C2012-08_209,Laborer,22.0
+C2012-08_209,Skipper,1.0
+C2012-08_209,Engineer,6.0
+C2012-08_209,Vessel Buzzard,1.0
+C2012-08_210,Laborer,22.0
+C2012-08_210,Skipper,1.0
+C2012-08_210,Engineer,6.0
+C2012-08_210,Vessel Buzzard,1.0
+C2012-08_211,Laborer,22.0
+C2012-08_211,Skipper,1.0
+C2012-08_211,Engineer,6.0
+C2012-08_211,Vessel Buzzard,1.0
+C2012-08_212,Laborer,22.0
+C2012-08_212,Skipper,1.0
+C2012-08_212,Engineer,6.0
+C2012-08_212,Vessel Buzzard,1.0
+C2012-08_213,Laborer,22.0
+C2012-08_213,Skipper,1.0
+C2012-08_213,Engineer,6.0
+C2012-08_213,Vessel Buzzard,1.0
+C2012-08_214,Laborer,22.0
+C2012-08_214,Skipper,1.0
+C2012-08_214,Engineer,6.0
+C2012-08_214,Vessel Buzzard,1.0
+C2012-08_215,Laborer,22.0
+C2012-08_215,Skipper,1.0
+C2012-08_215,Engineer,6.0
+C2012-08_215,Vessel Buzzard,1.0
+C2012-08_216,Laborer,22.0
+C2012-08_216,Skipper,1.0
+C2012-08_216,Engineer,6.0
+C2012-08_216,Vessel Buzzard,1.0
+C2012-08_217,Laborer,22.0
+C2012-08_217,Skipper,1.0
+C2012-08_217,Engineer,6.0
+C2012-08_217,Vessel Buzzard,1.0
+C2012-08_16,Laborer,18.0
+C2012-08_16,Skipper,1.0
+C2012-08_16,Engineer,6.0
+C2012-08_16,Vessel Pompei,1.0
+C2012-08_17,Laborer,20.0
+C2012-08_17,Skipper,1.0
+C2012-08_17,Engineer,6.0
+C2012-08_17,Vessel Buzzard,1.0
+C2012-08_162,Laborer,18.0
+C2012-08_162,Skipper,1.0
+C2012-08_162,Engineer,6.0
+C2012-08_162,Vessel Pompei,1.0
+C2012-08_218,Laborer,18.0
+C2012-08_218,Skipper,1.0
+C2012-08_218,Engineer,6.0
+C2012-08_218,Vessel Pompei,1.0
+C2012-08_219,Laborer,18.0
+C2012-08_219,Skipper,1.0
+C2012-08_219,Engineer,6.0
+C2012-08_219,Vessel Pompei,1.0
+C2012-08_220,Laborer,18.0
+C2012-08_220,Skipper,1.0
+C2012-08_220,Engineer,6.0
+C2012-08_220,Vessel Pompei,1.0
+C2012-08_221,Laborer,18.0
+C2012-08_221,Skipper,1.0
+C2012-08_221,Engineer,6.0
+C2012-08_221,Vessel Pompei,1.0
+C2012-08_222,Laborer,18.0
+C2012-08_222,Skipper,1.0
+C2012-08_222,Engineer,6.0
+C2012-08_222,Vessel Pompei,1.0
+C2012-08_223,Laborer,18.0
+C2012-08_223,Skipper,1.0
+C2012-08_223,Engineer,6.0
+C2012-08_223,Vessel Pompei,1.0
+C2012-08_224,Laborer,18.0
+C2012-08_224,Skipper,1.0
+C2012-08_224,Engineer,6.0
+C2012-08_224,Vessel Pompei,1.0
+C2012-08_225,Laborer,18.0
+C2012-08_225,Skipper,1.0
+C2012-08_225,Engineer,6.0
+C2012-08_225,Vessel Pompei,1.0
+C2012-08_226,Laborer,18.0
+C2012-08_226,Skipper,1.0
+C2012-08_226,Engineer,6.0
+C2012-08_226,Vessel Pompei,1.0
+C2012-08_227,Laborer,18.0
+C2012-08_227,Skipper,1.0
+C2012-08_227,Engineer,6.0
+C2012-08_227,Vessel Pompei,1.0
+C2012-08_228,Laborer,18.0
+C2012-08_228,Skipper,1.0
+C2012-08_228,Engineer,6.0
+C2012-08_228,Vessel Pompei,1.0
+C2012-08_229,Laborer,18.0
+C2012-08_229,Skipper,1.0
+C2012-08_229,Engineer,6.0
+C2012-08_229,Vessel Pompei,1.0
+C2012-08_230,Laborer,18.0
+C2012-08_230,Skipper,1.0
+C2012-08_230,Engineer,6.0
+C2012-08_230,Vessel Pompei,1.0
+C2012-08_231,Laborer,18.0
+C2012-08_231,Skipper,1.0
+C2012-08_231,Engineer,6.0
+C2012-08_231,Vessel Pompei,1.0
+C2012-08_232,Laborer,18.0
+C2012-08_232,Skipper,1.0
+C2012-08_232,Engineer,6.0
+C2012-08_232,Vessel Pompei,1.0
+C2012-08_233,Laborer,18.0
+C2012-08_233,Skipper,1.0
+C2012-08_233,Engineer,6.0
+C2012-08_233,Vessel Pompei,1.0
+C2012-08_234,Laborer,18.0
+C2012-08_234,Skipper,1.0
+C2012-08_234,Engineer,6.0
+C2012-08_234,Vessel Pompei,1.0
+C2012-08_235,Laborer,18.0
+C2012-08_235,Skipper,1.0
+C2012-08_235,Engineer,6.0
+C2012-08_235,Vessel Pompei,1.0
+C2012-08_236,Laborer,18.0
+C2012-08_236,Skipper,1.0
+C2012-08_236,Engineer,6.0
+C2012-08_236,Vessel Pompei,1.0
+C2012-08_237,Laborer,18.0
+C2012-08_237,Skipper,1.0
+C2012-08_237,Engineer,6.0
+C2012-08_237,Vessel Pompei,1.0
+C2012-08_238,Laborer,18.0
+C2012-08_238,Skipper,1.0
+C2012-08_238,Engineer,6.0
+C2012-08_238,Vessel Pompei,1.0
+C2012-08_239,Laborer,18.0
+C2012-08_239,Skipper,1.0
+C2012-08_239,Engineer,6.0
+C2012-08_239,Vessel Pompei,1.0
+C2012-08_240,Laborer,18.0
+C2012-08_240,Skipper,1.0
+C2012-08_240,Engineer,6.0
+C2012-08_240,Vessel Pompei,1.0
+C2012-08_241,Laborer,20.0
+C2012-08_241,Skipper,1.0
+C2012-08_241,Engineer,6.0
+C2012-08_241,Vessel Buzzard,1.0
+C2012-08_242,Laborer,20.0
+C2012-08_242,Skipper,1.0
+C2012-08_242,Engineer,6.0
+C2012-08_242,Vessel Buzzard,1.0
+C2012-08_243,Laborer,20.0
+C2012-08_243,Skipper,1.0
+C2012-08_243,Engineer,6.0
+C2012-08_243,Vessel Buzzard,1.0
+C2012-08_244,Laborer,20.0
+C2012-08_244,Skipper,1.0
+C2012-08_244,Engineer,6.0
+C2012-08_244,Vessel Buzzard,1.0
+C2012-08_245,Laborer,20.0
+C2012-08_245,Skipper,1.0
+C2012-08_245,Engineer,6.0
+C2012-08_245,Vessel Buzzard,1.0
+C2012-08_246,Laborer,20.0
+C2012-08_246,Skipper,1.0
+C2012-08_246,Engineer,6.0
+C2012-08_246,Vessel Buzzard,1.0
+C2012-08_247,Laborer,20.0
+C2012-08_247,Skipper,1.0
+C2012-08_247,Engineer,6.0
+C2012-08_247,Vessel Buzzard,1.0
+C2012-08_248,Laborer,20.0
+C2012-08_248,Skipper,1.0
+C2012-08_248,Engineer,6.0
+C2012-08_248,Vessel Buzzard,1.0
+C2012-08_249,Laborer,20.0
+C2012-08_249,Skipper,1.0
+C2012-08_249,Engineer,6.0
+C2012-08_249,Vessel Buzzard,1.0
+C2012-08_250,Laborer,20.0
+C2012-08_250,Skipper,1.0
+C2012-08_250,Engineer,6.0
+C2012-08_250,Vessel Buzzard,1.0
+C2012-08_251,Laborer,20.0
+C2012-08_251,Skipper,1.0
+C2012-08_251,Engineer,6.0
+C2012-08_251,Vessel Buzzard,1.0
+C2012-08_252,Laborer,20.0
+C2012-08_252,Skipper,1.0
+C2012-08_252,Engineer,6.0
+C2012-08_252,Vessel Buzzard,1.0
+C2012-08_253,Laborer,20.0
+C2012-08_253,Skipper,1.0
+C2012-08_253,Engineer,6.0
+C2012-08_253,Vessel Buzzard,1.0
+C2012-08_254,Laborer,20.0
+C2012-08_254,Skipper,1.0
+C2012-08_254,Engineer,6.0
+C2012-08_254,Vessel Buzzard,1.0
+C2012-08_255,Laborer,20.0
+C2012-08_255,Skipper,1.0
+C2012-08_255,Engineer,6.0
+C2012-08_255,Vessel Buzzard,1.0
+C2012-08_256,Laborer,20.0
+C2012-08_256,Skipper,1.0
+C2012-08_256,Engineer,6.0
+C2012-08_256,Vessel Buzzard,1.0
+C2012-08_257,Laborer,20.0
+C2012-08_257,Skipper,1.0
+C2012-08_257,Engineer,6.0
+C2012-08_257,Vessel Buzzard,1.0
+C2012-08_258,Laborer,20.0
+C2012-08_258,Skipper,1.0
+C2012-08_258,Engineer,6.0
+C2012-08_258,Vessel Buzzard,1.0
+C2012-08_259,Laborer,20.0
+C2012-08_259,Skipper,1.0
+C2012-08_259,Engineer,6.0
+C2012-08_259,Vessel Buzzard,1.0
+C2012-08_260,Laborer,20.0
+C2012-08_260,Skipper,1.0
+C2012-08_260,Engineer,6.0
+C2012-08_260,Vessel Buzzard,1.0
+C2012-08_261,Laborer,20.0
+C2012-08_261,Skipper,1.0
+C2012-08_261,Engineer,6.0
+C2012-08_261,Vessel Buzzard,1.0
+C2012-08_262,Laborer,20.0
+C2012-08_262,Skipper,1.0
+C2012-08_262,Engineer,6.0
+C2012-08_262,Vessel Buzzard,1.0
+C2012-08_263,Laborer,20.0
+C2012-08_263,Skipper,1.0
+C2012-08_263,Engineer,6.0
+C2012-08_263,Vessel Buzzard,1.0
+C2012-08_264,Laborer,20.0
+C2012-08_264,Skipper,1.0
+C2012-08_264,Engineer,6.0
+C2012-08_264,Vessel Buzzard,1.0
+C2012-08_313,Laborer,6.0
+C2012-08_313,Skipper,1.0
+C2012-08_313,Towning tugs,1.0
+C2012-08_313,Transport barges,1.0
+C2012-08_313,Crane,2.0
+C2012-08_314,Laborer,6.0
+C2012-08_314,Skipper,1.0
+C2012-08_314,Towning tugs,1.0
+C2012-08_314,Transport barges,1.0
+C2012-08_314,Crane,2.0
+C2012-08_315,Laborer,6.0
+C2012-08_315,Skipper,1.0
+C2012-08_315,Towning tugs,1.0
+C2012-08_315,Transport barges,1.0
+C2012-08_315,Crane,2.0
+C2012-08_316,Laborer,6.0
+C2012-08_316,Skipper,1.0
+C2012-08_316,Towning tugs,1.0
+C2012-08_316,Transport barges,1.0
+C2012-08_316,Crane,2.0
+C2012-08_317,Laborer,6.0
+C2012-08_317,Skipper,1.0
+C2012-08_317,Towning tugs,1.0
+C2012-08_317,Transport barges,1.0
+C2012-08_317,Crane,2.0
+C2012-08_318,Laborer,6.0
+C2012-08_318,Skipper,1.0
+C2012-08_318,Towning tugs,1.0
+C2012-08_318,Transport barges,1.0
+C2012-08_318,Crane,2.0
+C2012-08_319,Laborer,6.0
+C2012-08_319,Skipper,1.0
+C2012-08_319,Towning tugs,1.0
+C2012-08_319,Transport barges,1.0
+C2012-08_319,Crane,2.0
+C2012-08_320,Laborer,6.0
+C2012-08_320,Skipper,1.0
+C2012-08_320,Towning tugs,1.0
+C2012-08_320,Transport barges,1.0
+C2012-08_320,Crane,2.0
+C2012-08_321,Laborer,6.0
+C2012-08_321,Skipper,1.0
+C2012-08_321,Towning tugs,1.0
+C2012-08_321,Transport barges,1.0
+C2012-08_321,Crane,2.0
+C2012-08_322,Laborer,6.0
+C2012-08_322,Skipper,1.0
+C2012-08_322,Towning tugs,1.0
+C2012-08_322,Transport barges,1.0
+C2012-08_322,Crane,2.0
+C2012-08_323,Laborer,6.0
+C2012-08_323,Skipper,1.0
+C2012-08_323,Towning tugs,1.0
+C2012-08_323,Transport barges,1.0
+C2012-08_323,Crane,2.0
+C2012-08_324,Laborer,6.0
+C2012-08_324,Skipper,1.0
+C2012-08_324,Towning tugs,1.0
+C2012-08_324,Transport barges,1.0
+C2012-08_324,Crane,2.0
+C2012-08_325,Laborer,6.0
+C2012-08_325,Skipper,1.0
+C2012-08_325,Towning tugs,1.0
+C2012-08_325,Transport barges,1.0
+C2012-08_325,Crane,2.0
+C2012-08_326,Laborer,6.0
+C2012-08_326,Skipper,1.0
+C2012-08_326,Towning tugs,1.0
+C2012-08_326,Transport barges,1.0
+C2012-08_326,Crane,2.0
+C2012-08_327,Laborer,6.0
+C2012-08_327,Skipper,1.0
+C2012-08_327,Towning tugs,1.0
+C2012-08_327,Transport barges,1.0
+C2012-08_327,Crane,2.0
+C2012-08_328,Laborer,6.0
+C2012-08_328,Skipper,1.0
+C2012-08_328,Towning tugs,1.0
+C2012-08_328,Transport barges,1.0
+C2012-08_328,Crane,2.0
+C2012-08_329,Laborer,6.0
+C2012-08_329,Skipper,1.0
+C2012-08_329,Towning tugs,1.0
+C2012-08_329,Transport barges,1.0
+C2012-08_329,Crane,2.0
+C2012-08_330,Laborer,6.0
+C2012-08_330,Skipper,1.0
+C2012-08_330,Towning tugs,1.0
+C2012-08_330,Transport barges,1.0
+C2012-08_330,Crane,2.0
+C2012-08_331,Laborer,6.0
+C2012-08_331,Skipper,1.0
+C2012-08_331,Towning tugs,1.0
+C2012-08_331,Transport barges,1.0
+C2012-08_331,Crane,2.0
+C2012-08_332,Laborer,6.0
+C2012-08_332,Skipper,1.0
+C2012-08_332,Towning tugs,1.0
+C2012-08_332,Transport barges,1.0
+C2012-08_332,Crane,2.0
+C2012-08_333,Laborer,6.0
+C2012-08_333,Skipper,1.0
+C2012-08_333,Towning tugs,1.0
+C2012-08_333,Transport barges,1.0
+C2012-08_333,Crane,2.0
+C2012-08_334,Laborer,6.0
+C2012-08_334,Skipper,1.0
+C2012-08_334,Towning tugs,1.0
+C2012-08_334,Transport barges,1.0
+C2012-08_334,Crane,2.0
+C2012-08_335,Laborer,6.0
+C2012-08_335,Skipper,1.0
+C2012-08_335,Towning tugs,1.0
+C2012-08_335,Transport barges,1.0
+C2012-08_335,Crane,2.0
+C2012-08_336,Laborer,6.0
+C2012-08_336,Skipper,1.0
+C2012-08_336,Towning tugs,1.0
+C2012-08_336,Transport barges,1.0
+C2012-08_336,Crane,2.0
+C2012-08_289,Laborer,22.0
+C2012-08_289,Skipper,1.0
+C2012-08_289,Engineer,6.0
+C2012-08_289,Vessel Rambiz,1.0
+C2012-08_290,Laborer,22.0
+C2012-08_290,Skipper,1.0
+C2012-08_290,Engineer,6.0
+C2012-08_290,Vessel Rambiz,1.0
+C2012-08_291,Laborer,22.0
+C2012-08_291,Skipper,1.0
+C2012-08_291,Engineer,6.0
+C2012-08_291,Vessel Rambiz,1.0
+C2012-08_292,Laborer,22.0
+C2012-08_292,Skipper,1.0
+C2012-08_292,Engineer,6.0
+C2012-08_292,Vessel Rambiz,1.0
+C2012-08_293,Laborer,22.0
+C2012-08_293,Skipper,1.0
+C2012-08_293,Engineer,6.0
+C2012-08_293,Vessel Rambiz,1.0
+C2012-08_294,Laborer,22.0
+C2012-08_294,Skipper,1.0
+C2012-08_294,Engineer,6.0
+C2012-08_294,Vessel Rambiz,1.0
+C2012-08_295,Laborer,22.0
+C2012-08_295,Skipper,1.0
+C2012-08_295,Engineer,6.0
+C2012-08_295,Vessel Rambiz,1.0
+C2012-08_296,Laborer,22.0
+C2012-08_296,Skipper,1.0
+C2012-08_296,Engineer,6.0
+C2012-08_296,Vessel Rambiz,1.0
+C2012-08_297,Laborer,22.0
+C2012-08_297,Skipper,1.0
+C2012-08_297,Engineer,6.0
+C2012-08_297,Vessel Rambiz,1.0
+C2012-08_298,Laborer,22.0
+C2012-08_298,Skipper,1.0
+C2012-08_298,Engineer,6.0
+C2012-08_298,Vessel Rambiz,1.0
+C2012-08_299,Laborer,22.0
+C2012-08_299,Skipper,1.0
+C2012-08_299,Engineer,6.0
+C2012-08_299,Vessel Rambiz,1.0
+C2012-08_300,Laborer,22.0
+C2012-08_300,Skipper,1.0
+C2012-08_300,Engineer,6.0
+C2012-08_300,Vessel Rambiz,1.0
+C2012-08_301,Laborer,22.0
+C2012-08_301,Skipper,1.0
+C2012-08_301,Engineer,6.0
+C2012-08_301,Vessel Rambiz,1.0
+C2012-08_302,Laborer,22.0
+C2012-08_302,Skipper,1.0
+C2012-08_302,Engineer,6.0
+C2012-08_302,Vessel Rambiz,1.0
+C2012-08_303,Laborer,22.0
+C2012-08_303,Skipper,1.0
+C2012-08_303,Engineer,6.0
+C2012-08_303,Vessel Rambiz,1.0
+C2012-08_304,Laborer,22.0
+C2012-08_304,Skipper,1.0
+C2012-08_304,Engineer,6.0
+C2012-08_304,Vessel Rambiz,1.0
+C2012-08_305,Laborer,22.0
+C2012-08_305,Skipper,1.0
+C2012-08_305,Engineer,6.0
+C2012-08_305,Vessel Rambiz,1.0
+C2012-08_306,Laborer,22.0
+C2012-08_306,Skipper,1.0
+C2012-08_306,Engineer,6.0
+C2012-08_306,Vessel Rambiz,1.0
+C2012-08_307,Laborer,22.0
+C2012-08_307,Skipper,1.0
+C2012-08_307,Engineer,6.0
+C2012-08_307,Vessel Rambiz,1.0
+C2012-08_308,Laborer,22.0
+C2012-08_308,Skipper,1.0
+C2012-08_308,Engineer,6.0
+C2012-08_308,Vessel Rambiz,1.0
+C2012-08_309,Laborer,22.0
+C2012-08_309,Skipper,1.0
+C2012-08_309,Engineer,6.0
+C2012-08_309,Vessel Rambiz,1.0
+C2012-08_310,Laborer,22.0
+C2012-08_310,Skipper,1.0
+C2012-08_310,Engineer,6.0
+C2012-08_310,Vessel Rambiz,1.0
+C2012-08_311,Laborer,22.0
+C2012-08_311,Skipper,1.0
+C2012-08_311,Engineer,6.0
+C2012-08_311,Vessel Rambiz,1.0
+C2012-08_312,Laborer,22.0
+C2012-08_312,Skipper,1.0
+C2012-08_312,Engineer,6.0
+C2012-08_312,Vessel Rambiz,1.0
+C2012-08_265,Laborer,12.0
+C2012-08_265,Skipper,1.0
+C2012-08_265,Engineer,6.0
+C2012-08_265,Diving team,1.0
+C2012-08_265,Vessel Rambiz,1.0
+C2012-08_266,Laborer,12.0
+C2012-08_266,Skipper,1.0
+C2012-08_266,Engineer,6.0
+C2012-08_266,Diving team,1.0
+C2012-08_266,Vessel Rambiz,1.0
+C2012-08_267,Laborer,12.0
+C2012-08_267,Skipper,1.0
+C2012-08_267,Engineer,6.0
+C2012-08_267,Diving team,1.0
+C2012-08_267,Vessel Rambiz,1.0
+C2012-08_268,Laborer,12.0
+C2012-08_268,Skipper,1.0
+C2012-08_268,Engineer,6.0
+C2012-08_268,Diving team,1.0
+C2012-08_268,Vessel Rambiz,1.0
+C2012-08_269,Laborer,12.0
+C2012-08_269,Skipper,1.0
+C2012-08_269,Engineer,6.0
+C2012-08_269,Diving team,1.0
+C2012-08_269,Vessel Rambiz,1.0
+C2012-08_270,Laborer,12.0
+C2012-08_270,Skipper,1.0
+C2012-08_270,Engineer,6.0
+C2012-08_270,Diving team,1.0
+C2012-08_270,Vessel Rambiz,1.0
+C2012-08_271,Laborer,12.0
+C2012-08_271,Skipper,1.0
+C2012-08_271,Engineer,6.0
+C2012-08_271,Diving team,1.0
+C2012-08_271,Vessel Rambiz,1.0
+C2012-08_272,Laborer,12.0
+C2012-08_272,Skipper,1.0
+C2012-08_272,Engineer,6.0
+C2012-08_272,Diving team,1.0
+C2012-08_272,Vessel Rambiz,1.0
+C2012-08_273,Laborer,12.0
+C2012-08_273,Skipper,1.0
+C2012-08_273,Engineer,6.0
+C2012-08_273,Diving team,1.0
+C2012-08_273,Vessel Rambiz,1.0
+C2012-08_274,Laborer,12.0
+C2012-08_274,Skipper,1.0
+C2012-08_274,Engineer,6.0
+C2012-08_274,Diving team,1.0
+C2012-08_274,Vessel Rambiz,1.0
+C2012-08_275,Laborer,12.0
+C2012-08_275,Skipper,1.0
+C2012-08_275,Engineer,6.0
+C2012-08_275,Diving team,1.0
+C2012-08_275,Vessel Rambiz,1.0
+C2012-08_276,Laborer,12.0
+C2012-08_276,Skipper,1.0
+C2012-08_276,Engineer,6.0
+C2012-08_276,Diving team,1.0
+C2012-08_276,Vessel Rambiz,1.0
+C2012-08_277,Laborer,12.0
+C2012-08_277,Skipper,1.0
+C2012-08_277,Engineer,6.0
+C2012-08_277,Diving team,1.0
+C2012-08_277,Vessel Rambiz,1.0
+C2012-08_278,Laborer,12.0
+C2012-08_278,Skipper,1.0
+C2012-08_278,Engineer,6.0
+C2012-08_278,Diving team,1.0
+C2012-08_278,Vessel Rambiz,1.0
+C2012-08_279,Laborer,12.0
+C2012-08_279,Skipper,1.0
+C2012-08_279,Engineer,6.0
+C2012-08_279,Diving team,1.0
+C2012-08_279,Vessel Rambiz,1.0
+C2012-08_280,Laborer,12.0
+C2012-08_280,Skipper,1.0
+C2012-08_280,Engineer,6.0
+C2012-08_280,Diving team,1.0
+C2012-08_280,Vessel Rambiz,1.0
+C2012-08_281,Laborer,12.0
+C2012-08_281,Skipper,1.0
+C2012-08_281,Engineer,6.0
+C2012-08_281,Diving team,1.0
+C2012-08_281,Vessel Rambiz,1.0
+C2012-08_282,Laborer,12.0
+C2012-08_282,Skipper,1.0
+C2012-08_282,Engineer,6.0
+C2012-08_282,Diving team,1.0
+C2012-08_282,Vessel Rambiz,1.0
+C2012-08_283,Laborer,12.0
+C2012-08_283,Skipper,1.0
+C2012-08_283,Engineer,6.0
+C2012-08_283,Diving team,1.0
+C2012-08_283,Vessel Rambiz,1.0
+C2012-08_284,Laborer,12.0
+C2012-08_284,Skipper,1.0
+C2012-08_284,Engineer,6.0
+C2012-08_284,Diving team,1.0
+C2012-08_284,Vessel Rambiz,1.0
+C2012-08_285,Laborer,12.0
+C2012-08_285,Skipper,1.0
+C2012-08_285,Engineer,6.0
+C2012-08_285,Diving team,1.0
+C2012-08_285,Vessel Rambiz,1.0
+C2012-08_286,Laborer,12.0
+C2012-08_286,Skipper,1.0
+C2012-08_286,Engineer,6.0
+C2012-08_286,Diving team,1.0
+C2012-08_286,Vessel Rambiz,1.0
+C2012-08_287,Laborer,12.0
+C2012-08_287,Skipper,1.0
+C2012-08_287,Engineer,6.0
+C2012-08_287,Diving team,1.0
+C2012-08_287,Vessel Rambiz,1.0
+C2012-08_288,Laborer,12.0
+C2012-08_288,Skipper,1.0
+C2012-08_288,Engineer,6.0
+C2012-08_288,Diving team,1.0
+C2012-08_288,Vessel Rambiz,1.0
+C2012-08_56,Laborer,32.0
+C2012-08_56,Engineer,6.0
+C2012-08_56,Crane,3.0
+C2012-08_57,Laborer,16.0
+C2012-08_57,Welder,1.0
+C2012-08_57,Engineer,3.0
+C2012-08_57,Crane,1.0
+C2012-08_58,Laborer,19.0
+C2012-08_58,Welder,1.0
+C2012-08_58,Engineer,3.0
+C2012-08_58,Crane,1.0
+C2012-08_502,Laborer,16.0
+C2012-08_502,Skipper,2.0
+C2012-08_502,Engineer,8.0
+C2012-08_502,Vessel Neptune,1.0
+C2012-08_502,Vessel Vagant,1.0
+C2012-08_502,Crane,1.0
+C2012-08_503,Laborer,16.0
+C2012-08_503,Skipper,2.0
+C2012-08_503,Engineer,8.0
+C2012-08_503,Vessel Neptune,1.0
+C2012-08_503,Vessel Vagant,1.0
+C2012-08_503,Crane,1.0
+C2012-08_504,Laborer,16.0
+C2012-08_504,Skipper,2.0
+C2012-08_504,Engineer,8.0
+C2012-08_504,Vessel Neptune,1.0
+C2012-08_504,Vessel Vagant,1.0
+C2012-08_504,Crane,1.0
+C2012-08_505,Laborer,16.0
+C2012-08_505,Skipper,2.0
+C2012-08_505,Engineer,8.0
+C2012-08_505,Vessel Neptune,1.0
+C2012-08_505,Vessel Vagant,1.0
+C2012-08_505,Crane,1.0
+C2012-08_506,Laborer,16.0
+C2012-08_506,Skipper,2.0
+C2012-08_506,Engineer,8.0
+C2012-08_506,Vessel Neptune,1.0
+C2012-08_506,Vessel Vagant,1.0
+C2012-08_506,Crane,1.0
+C2012-08_507,Laborer,16.0
+C2012-08_507,Skipper,2.0
+C2012-08_507,Engineer,8.0
+C2012-08_507,Vessel Neptune,1.0
+C2012-08_507,Vessel Vagant,1.0
+C2012-08_507,Crane,1.0
+C2012-08_508,Laborer,16.0
+C2012-08_508,Skipper,2.0
+C2012-08_508,Engineer,8.0
+C2012-08_508,Vessel Neptune,1.0
+C2012-08_508,Vessel Vagant,1.0
+C2012-08_508,Crane,1.0
+C2012-08_509,Laborer,16.0
+C2012-08_509,Skipper,2.0
+C2012-08_509,Engineer,8.0
+C2012-08_509,Vessel Neptune,1.0
+C2012-08_509,Vessel Vagant,1.0
+C2012-08_509,Crane,1.0
+C2012-08_510,Laborer,16.0
+C2012-08_510,Skipper,2.0
+C2012-08_510,Engineer,8.0
+C2012-08_510,Vessel Neptune,1.0
+C2012-08_510,Vessel Vagant,1.0
+C2012-08_510,Crane,1.0
+C2012-08_511,Laborer,16.0
+C2012-08_511,Skipper,2.0
+C2012-08_511,Engineer,8.0
+C2012-08_511,Vessel Neptune,1.0
+C2012-08_511,Vessel Vagant,1.0
+C2012-08_511,Crane,1.0
+C2012-08_512,Laborer,16.0
+C2012-08_512,Skipper,2.0
+C2012-08_512,Engineer,8.0
+C2012-08_512,Vessel Neptune,1.0
+C2012-08_512,Vessel Vagant,1.0
+C2012-08_512,Crane,1.0
+C2012-08_513,Laborer,16.0
+C2012-08_513,Skipper,2.0
+C2012-08_513,Engineer,8.0
+C2012-08_513,Vessel Neptune,1.0
+C2012-08_513,Vessel Vagant,1.0
+C2012-08_513,Crane,1.0
+C2012-08_514,Laborer,16.0
+C2012-08_514,Skipper,2.0
+C2012-08_514,Engineer,8.0
+C2012-08_514,Vessel Neptune,1.0
+C2012-08_514,Vessel Vagant,1.0
+C2012-08_514,Crane,1.0
+C2012-08_515,Laborer,16.0
+C2012-08_515,Skipper,2.0
+C2012-08_515,Engineer,8.0
+C2012-08_515,Vessel Neptune,1.0
+C2012-08_515,Vessel Vagant,1.0
+C2012-08_515,Crane,1.0
+C2012-08_516,Laborer,16.0
+C2012-08_516,Skipper,2.0
+C2012-08_516,Engineer,8.0
+C2012-08_516,Vessel Neptune,1.0
+C2012-08_516,Vessel Vagant,1.0
+C2012-08_516,Crane,1.0
+C2012-08_517,Laborer,16.0
+C2012-08_517,Skipper,2.0
+C2012-08_517,Engineer,8.0
+C2012-08_517,Vessel Neptune,1.0
+C2012-08_517,Vessel Vagant,1.0
+C2012-08_517,Crane,1.0
+C2012-08_518,Laborer,16.0
+C2012-08_518,Skipper,2.0
+C2012-08_518,Engineer,8.0
+C2012-08_518,Vessel Neptune,1.0
+C2012-08_518,Vessel Vagant,1.0
+C2012-08_518,Crane,1.0
+C2012-08_519,Laborer,16.0
+C2012-08_519,Skipper,2.0
+C2012-08_519,Engineer,8.0
+C2012-08_519,Vessel Neptune,1.0
+C2012-08_519,Vessel Vagant,1.0
+C2012-08_519,Crane,1.0
+C2012-08_520,Laborer,16.0
+C2012-08_520,Skipper,2.0
+C2012-08_520,Engineer,8.0
+C2012-08_520,Vessel Neptune,1.0
+C2012-08_520,Vessel Vagant,1.0
+C2012-08_520,Crane,1.0
+C2012-08_521,Laborer,16.0
+C2012-08_521,Skipper,2.0
+C2012-08_521,Engineer,8.0
+C2012-08_521,Vessel Neptune,1.0
+C2012-08_521,Vessel Vagant,1.0
+C2012-08_521,Crane,1.0
+C2012-08_522,Laborer,16.0
+C2012-08_522,Skipper,2.0
+C2012-08_522,Engineer,8.0
+C2012-08_522,Vessel Neptune,1.0
+C2012-08_522,Vessel Vagant,1.0
+C2012-08_522,Crane,1.0
+C2012-08_523,Laborer,16.0
+C2012-08_523,Skipper,2.0
+C2012-08_523,Engineer,8.0
+C2012-08_523,Vessel Neptune,1.0
+C2012-08_523,Vessel Vagant,1.0
+C2012-08_523,Crane,1.0
+C2012-08_524,Laborer,16.0
+C2012-08_524,Skipper,2.0
+C2012-08_524,Engineer,8.0
+C2012-08_524,Vessel Neptune,1.0
+C2012-08_524,Vessel Vagant,1.0
+C2012-08_524,Crane,1.0
+C2012-08_525,Laborer,16.0
+C2012-08_525,Skipper,2.0
+C2012-08_525,Engineer,8.0
+C2012-08_525,Vessel Neptune,1.0
+C2012-08_525,Vessel Vagant,1.0
+C2012-08_525,Crane,1.0
+C2012-08_478,Laborer,16.0
+C2012-08_478,Skipper,2.0
+C2012-08_478,Engineer,8.0
+C2012-08_478,Vessel Neptune,1.0
+C2012-08_478,Vessel Vagant,1.0
+C2012-08_479,Laborer,16.0
+C2012-08_479,Skipper,2.0
+C2012-08_479,Engineer,8.0
+C2012-08_479,Vessel Neptune,1.0
+C2012-08_479,Vessel Vagant,1.0
+C2012-08_480,Laborer,16.0
+C2012-08_480,Skipper,2.0
+C2012-08_480,Engineer,8.0
+C2012-08_480,Vessel Neptune,1.0
+C2012-08_480,Vessel Vagant,1.0
+C2012-08_481,Laborer,16.0
+C2012-08_481,Skipper,2.0
+C2012-08_481,Engineer,8.0
+C2012-08_481,Vessel Neptune,1.0
+C2012-08_481,Vessel Vagant,1.0
+C2012-08_482,Laborer,16.0
+C2012-08_482,Skipper,2.0
+C2012-08_482,Engineer,8.0
+C2012-08_482,Vessel Neptune,1.0
+C2012-08_482,Vessel Vagant,1.0
+C2012-08_483,Laborer,16.0
+C2012-08_483,Skipper,2.0
+C2012-08_483,Engineer,8.0
+C2012-08_483,Vessel Neptune,1.0
+C2012-08_483,Vessel Vagant,1.0
+C2012-08_484,Laborer,16.0
+C2012-08_484,Skipper,2.0
+C2012-08_484,Engineer,8.0
+C2012-08_484,Vessel Neptune,1.0
+C2012-08_484,Vessel Vagant,1.0
+C2012-08_485,Laborer,16.0
+C2012-08_485,Skipper,2.0
+C2012-08_485,Engineer,8.0
+C2012-08_485,Vessel Neptune,1.0
+C2012-08_485,Vessel Vagant,1.0
+C2012-08_486,Laborer,16.0
+C2012-08_486,Skipper,2.0
+C2012-08_486,Engineer,8.0
+C2012-08_486,Vessel Neptune,1.0
+C2012-08_486,Vessel Vagant,1.0
+C2012-08_487,Laborer,16.0
+C2012-08_487,Skipper,2.0
+C2012-08_487,Engineer,8.0
+C2012-08_487,Vessel Neptune,1.0
+C2012-08_487,Vessel Vagant,1.0
+C2012-08_488,Laborer,16.0
+C2012-08_488,Skipper,2.0
+C2012-08_488,Engineer,8.0
+C2012-08_488,Vessel Neptune,1.0
+C2012-08_488,Vessel Vagant,1.0
+C2012-08_489,Laborer,16.0
+C2012-08_489,Skipper,2.0
+C2012-08_489,Engineer,8.0
+C2012-08_489,Vessel Neptune,1.0
+C2012-08_489,Vessel Vagant,1.0
+C2012-08_490,Laborer,16.0
+C2012-08_490,Skipper,2.0
+C2012-08_490,Engineer,8.0
+C2012-08_490,Vessel Neptune,1.0
+C2012-08_490,Vessel Vagant,1.0
+C2012-08_491,Laborer,16.0
+C2012-08_491,Skipper,2.0
+C2012-08_491,Engineer,8.0
+C2012-08_491,Vessel Neptune,1.0
+C2012-08_491,Vessel Vagant,1.0
+C2012-08_492,Laborer,16.0
+C2012-08_492,Skipper,2.0
+C2012-08_492,Engineer,8.0
+C2012-08_492,Vessel Neptune,1.0
+C2012-08_492,Vessel Vagant,1.0
+C2012-08_493,Laborer,16.0
+C2012-08_493,Skipper,2.0
+C2012-08_493,Engineer,8.0
+C2012-08_493,Vessel Neptune,1.0
+C2012-08_493,Vessel Vagant,1.0
+C2012-08_494,Laborer,16.0
+C2012-08_494,Skipper,2.0
+C2012-08_494,Engineer,8.0
+C2012-08_494,Vessel Neptune,1.0
+C2012-08_494,Vessel Vagant,1.0
+C2012-08_495,Laborer,16.0
+C2012-08_495,Skipper,2.0
+C2012-08_495,Engineer,8.0
+C2012-08_495,Vessel Neptune,1.0
+C2012-08_495,Vessel Vagant,1.0
+C2012-08_496,Laborer,16.0
+C2012-08_496,Skipper,2.0
+C2012-08_496,Engineer,8.0
+C2012-08_496,Vessel Neptune,1.0
+C2012-08_496,Vessel Vagant,1.0
+C2012-08_497,Laborer,16.0
+C2012-08_497,Skipper,2.0
+C2012-08_497,Engineer,8.0
+C2012-08_497,Vessel Neptune,1.0
+C2012-08_497,Vessel Vagant,1.0
+C2012-08_498,Laborer,16.0
+C2012-08_498,Skipper,2.0
+C2012-08_498,Engineer,8.0
+C2012-08_498,Vessel Neptune,1.0
+C2012-08_498,Vessel Vagant,1.0
+C2012-08_499,Laborer,16.0
+C2012-08_499,Skipper,2.0
+C2012-08_499,Engineer,8.0
+C2012-08_499,Vessel Neptune,1.0
+C2012-08_499,Vessel Vagant,1.0
+C2012-08_500,Laborer,16.0
+C2012-08_500,Skipper,2.0
+C2012-08_500,Engineer,8.0
+C2012-08_500,Vessel Neptune,1.0
+C2012-08_500,Vessel Vagant,1.0
+C2012-08_501,Laborer,16.0
+C2012-08_501,Skipper,2.0
+C2012-08_501,Engineer,8.0
+C2012-08_501,Vessel Neptune,1.0
+C2012-08_501,Vessel Vagant,1.0
+C2012-08_454,Special team,1.0
+C2012-08_455,Special team,1.0
+C2012-08_456,Special team,1.0
+C2012-08_457,Special team,1.0
+C2012-08_458,Special team,1.0
+C2012-08_459,Special team,1.0
+C2012-08_460,Special team,1.0
+C2012-08_461,Special team,1.0
+C2012-08_462,Special team,1.0
+C2012-08_463,Special team,1.0
+C2012-08_464,Special team,1.0
+C2012-08_465,Special team,1.0
+C2012-08_466,Special team,1.0
+C2012-08_467,Special team,1.0
+C2012-08_468,Special team,1.0
+C2012-08_469,Special team,1.0
+C2012-08_470,Special team,1.0
+C2012-08_471,Special team,1.0
+C2012-08_472,Special team,1.0
+C2012-08_473,Special team,1.0
+C2012-08_474,Special team,1.0
+C2012-08_475,Special team,1.0
+C2012-08_476,Special team,1.0
+C2012-08_477,Special team,1.0
+C2012-08_430,Commissioning team,1.0
+C2012-08_431,Commissioning team,1.0
+C2012-08_432,Commissioning team,1.0
+C2012-08_433,Commissioning team,1.0
+C2012-08_434,Commissioning team,1.0
+C2012-08_435,Commissioning team,1.0
+C2012-08_436,Commissioning team,1.0
+C2012-08_437,Commissioning team,1.0
+C2012-08_438,Commissioning team,1.0
+C2012-08_439,Commissioning team,1.0
+C2012-08_440,Commissioning team,1.0
+C2012-08_441,Commissioning team,1.0
+C2012-08_442,Commissioning team,1.0
+C2012-08_443,Commissioning team,1.0
+C2012-08_444,Commissioning team,1.0
+C2012-08_445,Commissioning team,1.0
+C2012-08_446,Commissioning team,1.0
+C2012-08_447,Commissioning team,1.0
+C2012-08_448,Commissioning team,1.0
+C2012-08_449,Commissioning team,1.0
+C2012-08_450,Commissioning team,1.0
+C2012-08_451,Commissioning team,1.0
+C2012-08_452,Commissioning team,1.0
+C2012-08_453,Commissioning team,1.0
+C2012-08_406,Testing team,0.2
+C2012-08_407,Testing team,0.2
+C2012-08_408,Testing team,0.2
+C2012-08_409,Testing team,0.2
+C2012-08_410,Testing team,0.2
+C2012-08_411,Testing team,0.2
+C2012-08_412,Testing team,0.2
+C2012-08_413,Testing team,0.2
+C2012-08_414,Testing team,0.2
+C2012-08_415,Testing team,0.2
+C2012-08_416,Testing team,0.2
+C2012-08_417,Testing team,0.2
+C2012-08_418,Testing team,0.2
+C2012-08_419,Testing team,0.2
+C2012-08_421,Testing team,0.2
+C2012-08_420,Testing team,0.2
+C2012-08_422,Testing team,0.2
+C2012-08_423,Testing team,0.2
+C2012-08_424,Testing team,0.2
+C2012-08_425,Testing team,0.2
+C2012-08_426,Testing team,0.2
+C2012-08_427,Testing team,0.2
+C2012-08_428,Testing team,0.2
+C2012-08_429,Testing team,0.2
+C2012-08_77,Laborer,8.0
+C2012-08_77,Skipper,1.0
+C2012-08_77,Towning tugs,1.0
+C2012-08_77,Transport barges,1.0
+C2012-08_77,Crane,1.0
+C2012-08_82,Laborer,8.0
+C2012-08_82,Skipper,1.0
+C2012-08_82,Engineer,4.0
+C2012-08_82,Towning tugs,1.0
+C2012-08_82,Transport barges,1.0
+C2012-08_82,Crane,1.0
+C2012-08_81,Laborer,18.0
+C2012-08_81,Skipper,1.0
+C2012-08_81,Engineer,6.0
+C2012-08_81,Vessel Rambiz,1.0
+C2012-08_94,Laborer,4.0
+C2012-08_94,Skipper,1.0
+C2012-08_94,Engineer,1.0
+C2012-08_94,Towning tugs,1.0
+C2012-08_94,Transport barges,1.0
+C2012-08_94,Crane,1.0
+C2012-08_95,Laborer,18.0
+C2012-08_95,Skipper,1.0
+C2012-08_95,Engineer,6.0
+C2012-08_95,Vessel Rambiz,1.0
+C2012-08_100,Laborer,5.0
+C2012-08_100,Skipper,1.0
+C2012-08_100,Engineer,4.0
+C2012-08_100,Vessel Pompei,1.0
+C2012-08_101,Laborer,5.0
+C2012-08_101,Skipper,1.0
+C2012-08_101,Engineer,4.0
+C2012-08_101,Vessel Pompei,1.0
+C2012-08_102,Laborer,5.0
+C2012-08_102,Skipper,1.0
+C2012-08_102,Engineer,3.0
+C2012-08_102,Vessel Pompei,1.0
+C2012-08_105,Laborer,10.0
+C2012-08_105,Skipper,1.0
+C2012-08_105,Vessel Souverreign,1.0
+C2012-08_105,Crane,1.0
+C2012-08_106,Laborer,18.0
+C2012-08_106,Skipper,1.0
+C2012-08_106,Engineer,3.0
+C2012-08_106,Vessel Pompei,1.0
+C2012-08_107,Laborer,12.0
+C2012-08_107,Testing team,1.0
+C2012-08_108,Laborer,22.0
+C2012-08_108,Skipper,1.0
+C2012-08_108,Vessel Innovator,1.0
+C2012-08_109,Special team,2.0
+C2012-08_110,Laborer,22.0
+C2012-08_110,Skipper,1.0
+C2012-08_110,Engineer,4.0
+C2012-08_110,Vessel Innovator,1.0
+C2012-08_111,Engineer,4.0
+C2012-08_112,Laborer,22.0
+C2012-08_112,Skipper,1.0
+C2012-08_112,Engineer,4.0
+C2012-08_112,Vessel Innovator,1.0
+C2012-08_126,Laborer,5.0
+C2012-08_126,Skipper,1.0
+C2012-08_126,Engineer,3.0
+C2012-08_126,Vessel Pompei,1.0
+C2012-08_130,Laborer,6.0
+C2012-08_130,Skipper,1.0
+C2012-08_130,Vessel Sternat Spirit,1.0
+C2012-08_131,Laborer,6.0
+C2012-08_131,Skipper,1.0
+C2012-08_131,Vessel Sternat Spirit,1.0
+C2012-08_131,Crane,2.0
+C2012-08_133,Laborer,18.0
+C2012-08_133,Skipper,1.0
+C2012-08_133,Engineer,4.0
+C2012-08_133,Vessel Breughel,1.0
+C2012-08_134,Laborer,18.0
+C2012-08_134,Skipper,1.0
+C2012-08_134,Engineer,4.0
+C2012-08_134,Vessel Breughel,1.0
+C2012-08_193,Laborer,12.0
+C2012-08_193,Welder,8.0
+C2012-08_193,Crane,1.0
+C2012-08_193,Engineer,1.0
+C2012-08_137,Laborer,16.0
+C2012-08_137,Engineer,4.0
+C2012-08_137,Drilling machine,2.0
+C2012-08_138,Laborer,14.0
+C2012-08_138,Engineer,4.0
+C2012-08_138,Pulling machine,1.0
+C2012-08_139,Testing team,1.0
+C2012-08_140,Laborer,13.0
+C2012-08_140,Engineer,4.0
+C2012-08_140,Pulling machine,1.0
+C2012-08_140,Crane,1.0
+C2012-08_141,Disconnecting team,1.0
+C2012-08_194,Testing team,1.0
+C2012-08_149,Laborer,17.0
+C2012-08_149,Skipper,1.0
+C2012-08_149,Engineer,4.0
+C2012-08_149,Vessel Breydel,1.0
+C2012-08_150,Laborer,13.0
+C2012-08_150,Engineer,3.0
+C2012-08_150,Pulling machine,1.0
+C2012-08_195,Disconnecting team,1.0
+C2012-08_151,Laborer,12.0
+C2012-08_151,Skipper,1.0
+C2012-08_151,Engineer,6.0
+C2012-08_151,Vessel Pearl River,1.0
+C2012-08_152,Laborer,20.0
+C2012-08_152,Engineer,6.0
+C2012-08_153,Disconnecting team,1.0
+C2012-08_154,Testing team,1.0
+C2012-08_157,Laborer,5.0
+C2012-08_157,Skipper,1.0
+C2012-08_157,Vessel Pompei,1.0
+C2012-08_158,Laborer,5.0
+C2012-08_158,Skipper,1.0
+C2012-08_158,Vessel Pompei,1.0

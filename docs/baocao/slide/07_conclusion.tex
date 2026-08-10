@@ -3,7 +3,7 @@
 % -------------------------------------------------------------
 \section{Kết luận \& Hướng phát triển}
 
-\begin{frame}{25. Kết quả Đạt được \& Đóng góp Khoa học}
+\begin{frame}{27. Kết quả Đạt được \& Đóng góp Khoa học}
     \textbf{Đóng góp Kỹ thuật:}
     \begin{enumerate}
         \item Khung mô hình hoá dự án \textbf{Heterogeneous Graph} với 3 Node Types (Task/Resource/Shift).
@@ -18,36 +18,41 @@
     Kết hợp 4 kỹ thuật (HGTConv + Masked Autoencoder + MC-PERT + CP-SAT) trong 1 Pipeline liền mạch.
 \end{frame}
 
-\begin{frame}{26. Phân tích Kỹ thuật: Nhược điểm Hệ thống Hiện tại}
-    Mặc dù đạt kết quả tốt, hệ thống vẫn mang các điểm nghẽn kỹ thuật:
-    \vspace{0.2cm}
-    \begin{itemize}
-        \item \textbf{HGT Pretraining:} Mới train trên 1 dự án (C2011-07) $\rightarrow$ Nguy cơ \textbf{Overfitting} cấu trúc, kém Generalization.
-        \item \textbf{Đồ thị Tĩnh (Static Graph):} Chỉ phản ánh Snapshot đầu dự án, chưa là Dynamic Graph.
-        \item \textbf{Monte Carlo:} Giả định các tasks chạy độc lập $\rightarrow$ Chưa mô hình hoá \textbf{Resource Contention} trong quá trình simulation.
-        \item \textbf{CP-SAT Crashing:} Assumption nén tuyến tính (Linear Crashing). Thực tế Diminishing Return (Làm thêm nhiều giờ càng kém hiệu quả).
-    \end{itemize}
+\begin{frame}{28. Đánh giá Ưu \& Nhược điểm của Mô hình AI}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Ưu điểm kỹ thuật:}
+        \begin{itemize}
+            \item \textbf{Cải thiện độ chính xác (Mean R² = 0.3801):} Đạt mức hiệu suất cao hơn đáng kể so với mô hình Baseline tĩnh.
+            \item \textbf{Khả năng xử lý đồ thị quy mô lớn:} Đạt hiệu quả cao trên các mạng lưới phức tạp (VD: đồ thị >400 đỉnh, R² = 0.82).
+            \item \textbf{Khung huấn luyện linh hoạt:} Tích hợp quy trình tự động (Pretrain $\rightarrow$ Transductive $\rightarrow$ Optuna HPO) giúp rút ngắn thời gian tinh chỉnh tham số.
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{Hạn chế của hệ thống:}
+        \begin{itemize}
+            \item \textbf{Hạn chế về lượng mẫu dữ liệu:} Kích thước tập mẫu nhỏ ($N=5$) buộc phải áp dụng học chuyển nạp (Transductive Learning), giới hạn khả năng học quy nạp (Inductive Learning) trên các đồ thị mới.
+            \item \textbf{Hiệu năng giảm trên đồ thị thưa (Sparse Graph):} Các đồ thị $<50$ đỉnh hạn chế quá trình truyền thông điệp (Message Passing), ảnh hưởng đến mức độ hội tụ.
+            \item \textbf{Đồ thị tĩnh (Static Graph):} Dữ liệu hiện tại giới hạn ở mức biểu diễn không gian tĩnh, chưa mô hình hóa được diễn biến theo chuỗi thời gian thực.
+        \end{itemize}
+    \end{columns}
 \end{frame}
 
-\begin{frame}{27. Lộ trình Phát triển (Roadmap 3 Giai đoạn)}
+\begin{frame}{29. Định hướng nghiên cứu tiếp theo}
+    Từ các hạn chế hiện tại, một số hướng tiếp cận được đề xuất:
+    \vspace{0.2cm}
     \begin{table}
         \centering
         \footnotesize
-        \begin{tabular}{@{}llp{7cm}@{}}
+        \begin{tabular}{@{}llp{6.5cm}@{}}
             \toprule
-            \textbf{Giai đoạn} & \textbf{Vấn đề} & \textbf{Đề xuất Kỹ thuật} \\
+            \textbf{Vấn đề} & \textbf{Định hướng phát triển} & \textbf{Giải pháp Kỹ thuật} \\
             \midrule
-            \textbf{GĐ1 (3-6 tháng)} & Overfit Dataset & Augmentation (Node/Edge Drop), 50+ Dự án. \\
-            & Phân phối MC & Mở rộng Log-Normal, Triangular. \\
-            & Resource Contention & Cài đặt Feasibility Check trong Vòng lặp MC. \\
+            \textbf{Cấu trúc đồ thị thưa} & Tối ưu cơ chế truyền tin & Bổ sung cơ chế \textbf{Virtual Nodes} nhằm giảm độ dài đường đi trung bình và tăng hiệu suất Message Passing. \\
             \midrule
-            \textbf{GĐ2 (6-12 tháng)} & Đồ thị Tĩnh & Nâng cấp lên \textbf{Temporal HGT}. \\
-            & Unsupervised & Thu thập log $\rightarrow$ Labeled Data $\rightarrow$ Supervised Learning. \\
-            & Hyperparameters & Bayesian Optimization quét trọng số CP-SAT. \\
+            \textbf{Hạn chế tập dữ liệu} & Tăng cường tính khái quát hóa & Mở rộng quy mô tập dữ liệu (>100 dự án) nhằm hỗ trợ phương pháp học quy nạp (Inductive Learning) cho bài toán Zero-shot. \\
             \midrule
-            \textbf{GĐ3 ($12^+$ tháng)} & Manual Input & Tích hợp \textbf{LLM + GNN Fusion} tự động đọc file Excel. \\
-            & Black-box & \textbf{GNNExplainer (XAI)} để giải thích vì sao Task rủi ro. \\
-            & Data Privacy & \textbf{Federated Learning HGT} cho các tập đoàn. \\
+            \textbf{Đồ thị không gian tĩnh} & Biểu diễn chuỗi thời gian & Tích hợp \textbf{Temporal HGT (T-HGT)} để mô hình hóa các biến động tiến độ và tài nguyên theo trục thời gian thực. \\
             \bottomrule
         \end{tabular}
     \end{table}

@@ -6,15 +6,15 @@
 \begin{frame}{1. Bối cảnh \& Vấn đề (Problem Motivation)}
     \textbf{Thực trạng quản lý dự án logistics hiện nay:}
     \begin{itemize}
-        \item Chủ yếu sử dụng công cụ thủ công (MS Project, Excel) $\rightarrow$ Không phát hiện được rủi ro trễ hạn trước khi xảy ra.
-        \item \textbf{Số liệu:} 69\% dự án xây dựng bị trễ tiến độ (PMI, 2023 \cite{pmi2023}); chi phí trượt tăng 15–30\%.
+        \item Chủ yếu sử dụng các công cụ truyền thống (MS Project, Excel) $\rightarrow$ Hạn chế trong khả năng mô phỏng và dự báo rủi ro vượt tiến độ.
+        \item \textbf{Số liệu thực tiễn:} 69\% dự án xây dựng bị trễ tiến độ (PMI, 2023 \cite{pmi2023}); dẫn đến trượt chi phí 15–30\%.
     \end{itemize}
     \vspace{0.3cm}
-    \textbf{Ba thách thức cốt lõi:}
+    \textbf{Ba bài toán cốt lõi:}
     \begin{enumerate}
-        \item \textbf{Độ phức tạp cấu trúc:} Dự án là mạng lưới phụ thuộc phi tuyến $\rightarrow$ Cần biểu diễn dạng Đồ thị.
-        \item \textbf{Bất định ngẫu nhiên:} Thời gian thực thi là phân phối xác suất (Beta-PERT), không phải hằng số định định.
-        \item \textbf{Tối ưu đa mục tiêu:} Nén tiến độ (Crashing) mà vẫn phải tối thiểu hóa chi phí và rủi ro.
+        \item \textbf{Độ phức tạp cấu trúc:} Dự án là mạng lưới các quan hệ phụ thuộc phi tuyến $\rightarrow$ Yêu cầu mô hình hóa dưới dạng Đồ thị.
+        \item \textbf{Tính bất định ngẫu nhiên:} Thời gian thực thi tuân theo phân phối xác suất (Beta-PERT), không phải các hằng số định lượng tĩnh.
+        \item \textbf{Tối ưu đa mục tiêu:} Nén tiến độ (Crashing) đồng thời tối thiểu hóa tổng chi phí và rủi ro.
     \end{enumerate}
 \end{frame}
 

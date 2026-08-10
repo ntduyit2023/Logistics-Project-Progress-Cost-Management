@@ -12,6 +12,8 @@ Mô tả:
 """
 
 import shutil
+import asyncio
+from functools import partial
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
@@ -78,14 +80,19 @@ async def run_ai_pipeline_workflow(
 
         # BƯỚC 2: Đưa thư mục chuẩn đó vào xử lý qua AI Pipeline
         print(f"\n[AI WORKFLOW Step 2/4] Đưa thư mục chuẩn vào xử lý qua AI + OR + MC-CPM Pipeline...")
-        raw_results = run_new_pipeline(
-            project_id=project_code,
-            mc_iterations=mc_iterations,
-            pareto_count=pareto_count,
-            target_deadline=target_deadline,
-            penalty_per_day=penalty_per_day,
-            bonus_per_day=bonus_per_day,
-            output_json=False
+        loop = asyncio.get_running_loop()
+        raw_results = await loop.run_in_executor(
+            None,
+            partial(
+                run_new_pipeline,
+                project_id=project_code,
+                mc_iterations=mc_iterations,
+                pareto_count=pareto_count,
+                target_deadline=target_deadline,
+                penalty_per_day=penalty_per_day,
+                bonus_per_day=bonus_per_day,
+                output_json=False
+            )
         )
         safe_results = _convert_numpy(raw_results)
 

@@ -6,7 +6,7 @@ Thư mục: ai_pipeline/models/moi/hetero_graph_builder.py
 Chức năng:
     Xây dựng đối tượng HeteroData tinh gọn từ dữ liệu tiêu chuẩn (CSV / JSON) của dự án.
     Hỗ trợ 3 loại nút:
-        - task: Nút công việc (39-dim feature vector: 1 thời gian duration_hours + 38 chi phí chuẩn)
+        - task: Nút công việc (41-dim feature vector: 1 thời gian duration_hours + 38 chi phí chuẩn + 2 tỷ trọng)
         - resource: Nút tài nguyên (6-dim feature vector: unit_cost, capacity, type, energy, ot_multi, max_ot_day)
         - shift: Nút ca thi công thực tế (5-dim feature vector: start_h, end_h, dur, day_of_week, is_working)
 
@@ -73,7 +73,7 @@ class HeteroGraphBuilder:
         # =========================================================================
         # BƯỚC 2: KHỞI TẠO CÁC NÚT (NODES) CỦA ĐỒ THỊ
         # =========================================================================
-        # --- NÚT 1: TASK NODES (39 Features) ---
+        # --- NÚT 1: TASK NODES (41 Features) ---
         for idx, row in tasks_df.iterrows():
             t_id = str(row['task_id'])
             self.task_id_map[t_id] = idx

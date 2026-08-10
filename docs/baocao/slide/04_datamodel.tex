@@ -8,11 +8,12 @@
     \includegraphics[width=\textwidth, height=0.85\textheight, keepaspectratio]{fig3_heterograph_structure.drawio.png}
 \end{frame}
 
-\begin{frame}{12b. Entity: TASK (Công việc) -- Node 39-dim}
-    \textbf{Task là Node trung tâm trong HeteroGraph \cite{hu2020hgt}:} Mã hóa thông qua vector 39 chiều.
+\begin{frame}{12b. Entity: TASK (Công việc) -- Node 41-dim}
+    \textbf{Task là Node trung tâm trong HeteroGraph \cite{hu2020hgt}:} Mã hóa thông qua vector 41 chiều.
     \vspace{0.2cm}
     \begin{itemize}
         \item \textbf{1 Chiều Thời gian:} \texttt{duration\_hours}.
+        \item \textbf{2 Chiều Đặc trưng Tỷ trọng (Ratio Features):} Tỷ trọng Nhân công (\texttt{labor\_ratio}) và Vật tư \& Thiết bị (\texttt{mat\_eq\_ratio}).
         \item \textbf{38 Chiều Chi phí (Nhóm theo TCO):}
         \begin{itemize}
             \item \textit{Trực tiếp (G1):} Nhân công, Vật tư, Thiết bị, Năng lượng...
@@ -23,7 +24,7 @@
             \item \textit{ESG/Tài chính (G6):} Phạt Carbon, Lãi vay...
         \end{itemize}
     \end{itemize}
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     \textit{Lưu ý:} Tổng 38 chi phí được lưu tại \texttt{total\_cost} qua Cột tự động \texttt{GENERATED ALWAYS}.
 \end{frame}
 

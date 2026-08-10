@@ -191,7 +191,15 @@ class CPSATParetoSolver:
 
             res['risk_pct'] = min(95.0, max(5.0, mc_delay_prob))
 
-        return results[:pareto_count]
+        # Tắt lọc Dominated Solutions theo yêu cầu của người dùng để trải dài 20 phương án
+        pareto_front = results
+                
+        # Sắp xếp lại và đánh số Option Name
+        pareto_front.sort(key=lambda x: (x['makespan_hours'], x['total_cost']))
+        for idx, res in enumerate(pareto_front, start=1):
+            res['option_name'] = f"Phương án [{idx}]"
+
+        return pareto_front[:pareto_count]
 
     def _run_ai_guided_scenario(self, cfg: Dict[str, Any], time_limit_sec: float = 5.0) -> Optional[Dict[str, Any]]:
         """

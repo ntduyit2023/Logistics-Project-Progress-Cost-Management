@@ -3,24 +3,77 @@
 % -------------------------------------------------------------
 \section{Thực nghiệm \& Benchmark}
 
-\begin{frame}{21. Case Study: Công trình MFET 3008/5040 (Mã C2011-07)}
-    \textbf{Tổng quan Dự án Thực nghiệm:}
-    \begin{itemize}
-        \item \textbf{Quy mô:} 49 công việc, 63 quan hệ phụ thuộc, 5 loại tài nguyên.
-        \item \textbf{Lịch thi công:} 8h/ngày, 5 ngày/tuần, Hệ số OT 1.5x.
-    \end{itemize}
-    \vspace{0.2cm}
-    \textbf{Ground Truth (Bài toán gốc 21 hoạt động cốt lõi):}
-    \begin{itemize}
-        \item Thời gian hoàn thành (Normal): \textbf{66 ngày (528 giờ)}.
-        \item Đường găng tĩnh: \textbf{A $\rightarrow$ C $\rightarrow$ G $\rightarrow$ I $\rightarrow$ J $\rightarrow$ N $\rightarrow$ R $\rightarrow$ T $\rightarrow$ U}.
-        \item Chi phí thầu phụ: \textbf{\$70,230}.
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{22. Kết quả AI Pipeline: Pretraining \& MC Simulation}
+\begin{frame}{21. Đánh giá Mô hình AI: Tiến trình cải thiện R²}
     \begin{columns}
         \column{0.5\textwidth}
+        \textbf{Hạn chế ban đầu:}
+        \begin{itemize}
+            \item \textbf{Khối lượng dữ liệu:} Tập huấn luyện giới hạn ở 5 dự án.
+            \item \textbf{Baseline (Inductive):} Mean R² = -0.11 (Hiện tượng quá khớp do sai biệt cấu trúc đồ thị).
+        \end{itemize}
+        \vspace{0.2cm}
+        \textbf{Đề xuất cải tiến phương pháp huấn luyện:}
+        \begin{enumerate}
+            \item \textbf{Học chuyển nạp (Transductive Learning):} Cung cấp 20\% Context $\rightarrow$ Mean R² = 0.24.
+            \item \textbf{Pre-training + HPO (Optuna):} $\rightarrow$ Mean R² = 0.38.
+        \end{enumerate}
+        \textit{(Bảo toàn kiến trúc HGT, cải tiến cơ chế biểu diễn dữ liệu và tinh chỉnh tham số)}
+        
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{sosanh.jpg}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{22. Đánh giá Mô hình AI: Khảo sát quá trình hội tụ}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth, height=0.8\textheight, keepaspectratio]{epoch.jpg}
+        
+        \column{0.4\textwidth}
+        \textbf{Phân tích Hội tụ (Convergence):}
+        \begin{itemize}
+            \item \textbf{Đồ thị quy mô lớn (C2012-08, 437 tasks):} Mạng lưới liên kết dày $\rightarrow$ Hàm Loss giảm tiệm cận ổn định, chỉ số R² đạt mức hội tụ cao.
+            \item \textbf{Đồ thị quy mô nhỏ (C2011-07, 49 tasks):} Cấu trúc thưa (Sparse Graph) $\rightarrow$ Giới hạn không gian truyền thông điệp (Message Passing) dẫn đến mất ổn định trong hàm Loss và R² thấp.
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{23. Đánh giá Mô hình AI: Mối tương quan theo quy mô đồ thị}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{Sự phụ thuộc vào cấu trúc (Graph Structure Dependency):}
+        Hiệu năng của mô hình GNN/HGT thể hiện tính tuyến tính đối với quy mô mạng lưới.
+        \begin{itemize}
+            \item \textbf{C2012-08 (437 tasks):} Đạt hiệu suất mô phỏng tốt (R² = 0.82).
+            \item \textbf{C2019-16 (32 tasks):} Mô hình không hội tụ (R² < 0).
+        \end{itemize}
+        \vspace{0.2cm}
+        $\Rightarrow$ \textbf{Đánh giá:} Quy trình huấn luyện hiện tại đáp ứng tính khả thi trong việc hỗ trợ dự báo cho các mạng lưới Logistics quy mô lớn và phức tạp.
+        
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{ket_qua_r2.jpg}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{24. Case Study MFET 3008 \& Kết quả AI Pipeline}
+    \begin{columns}
+        \column{0.45\textwidth}
+        \textbf{Dự án MFET 3008/5040 (C2011-07):}
+        \begin{itemize}
+            \item \textbf{Quy mô:} 49 công việc, 5 loại tài nguyên.
+            \item \textbf{Lịch thi công:} 8h/ngày, 5 ngày/tuần.
+        \end{itemize}
+        \vspace{0.2cm}
+        \textbf{Ground Truth (21 công việc cốt lõi):}
+        \begin{itemize}
+            \item \textbf{Normal Makespan:} 66 ngày (528 giờ).
+            \item \textbf{Đường găng tĩnh:} A $\rightarrow$ C $\rightarrow$ G $\rightarrow$ I $\rightarrow$ J $\rightarrow$ N $\rightarrow$ R $\rightarrow$ T $\rightarrow$ U.
+        \end{itemize}
+        
+        \column{0.55\textwidth}
         \textbf{Kết quả HGT Pretraining:}
         \begin{table}
             \centering
@@ -35,8 +88,7 @@
                 \bottomrule
             \end{tabular}
         \end{table}
-        
-        \column{0.5\textwidth}
+        \vspace{0.1cm}
         \textbf{Monte Carlo CPM (N=10,000):}
         \begin{table}
             \centering
@@ -51,13 +103,13 @@
                 \bottomrule
             \end{tabular}
         \end{table}
-        Phát hiện \textbf{12 Tasks} có $CI > 70\%$ (Đường găng ngầm định).
+        \textit{Phát hiện 12 Tasks có $CI > 70\%$ (Đường găng ngầm định).}
     \end{columns}
 \end{frame}
 
-\begin{frame}{23. Kết quả CP-SAT Pareto (Top-3 Scenarios)}
+\begin{frame}{25. Kết quả CP-SAT Pareto (Top-3 Scenarios)}
     Hệ thống cung cấp Tập hợp Pareto đa dạng, giúp quản lý chọn lựa dựa trên ngân sách và rủi ro:
-    \vspace{0.2cm}
+    \vspace{0.1cm}
     \begin{table}
         \centering
         \footnotesize
@@ -71,14 +123,16 @@
             \bottomrule
         \end{tabular}
     \end{table}
+    \vspace{0.1cm}
     \centering
-    \includegraphics[width=0.45\linewidth]{pareto_frontier.png}
+    \includegraphics[width=0.6\linewidth, height=0.45\textheight, keepaspectratio]{pareto_frontier.png}
 \end{frame}
 
-\begin{frame}{24. Benchmark: Độ chính xác \& Khả năng Mở rộng (Scalability)}
+\begin{frame}{26. Benchmark: Độ chính xác \& Khả năng Mở rộng}
     \begin{columns}
         \column{0.5\textwidth}
         \textbf{Độ chính xác CPM (Static Base):}
+        \vspace{0.2cm}
         \begin{itemize}
             \item \textbf{Makespan:} 528 giờ (Sai số \textbf{0\%}).
             \item \textbf{Đường găng:} Khớp 100\% Ground Truth.
@@ -87,6 +141,7 @@
         
         \column{0.5\textwidth}
         \textbf{Thời gian Thực thi (Latency):}
+        \vspace{0.2cm}
         \begin{table}
             \centering
             \scriptsize
@@ -101,4 +156,6 @@
             \end{tabular}
         \end{table}
     \end{columns}
+    \vspace{0.5cm}
+    \textit{Lưu ý: Thời gian thực thi E2E phản ánh độ trễ có thể chấp nhận được trong ứng dụng web.}
 \end{frame}

@@ -5,44 +5,46 @@ Reallocating 'name_of_file' (item size: 1) to 7 items.
 The style file: ieeetr.bst
 Reallocating 'name_of_file' (item size: 1) to 3 items.
 Database file #1: re.bib
-You've used 4 entries,
+Warning--I didn't find a database entry for "hu2020hgt"
+You've used 3 entries,
             1876 wiz_defined-function locations,
-            495 strings with 3927 characters,
-and the built_in function-call counts, 818 in all, are:
-= -- 75
-> -- 30
+            490 strings with 3774 characters,
+and the built_in function-call counts, 408 in all, are:
+= -- 34
+> -- 16
 < -- 0
-+ -- 12
-- -- 8
-* -- 47
-:= -- 126
-add.period$ -- 4
-call.type$ -- 4
-change.case$ -- 5
++ -- 7
+- -- 4
+* -- 20
+:= -- 76
+add.period$ -- 3
+call.type$ -- 3
+change.case$ -- 4
 chr.to.int$ -- 0
-cite$ -- 4
-duplicate$ -- 42
-empty$ -- 88
-format.name$ -- 8
-if$ -- 195
+cite$ -- 3
+duplicate$ -- 19
+empty$ -- 48
+format.name$ -- 4
+if$ -- 93
 int.to.chr$ -- 0
-int.to.str$ -- 4
-missing$ -- 2
-newline$ -- 15
-num.names$ -- 4
-pop$ -- 20
+int.to.str$ -- 3
+missing$ -- 1
+newline$ -- 12
+num.names$ -- 3
+pop$ -- 13
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 25
+skip$ -- 7
 stack$ -- 0
-substring$ -- 40
-swap$ -- 12
+substring$ -- 0
+swap$ -- 1
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 7
-width$ -- 5
-write$ -- 35
+while$ -- 3
+width$ -- 4
+write$ -- 26
+(There was 1 warning)

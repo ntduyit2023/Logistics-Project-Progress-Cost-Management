@@ -100,7 +100,7 @@ class HGTTaskPredictor(nn.Module):
         )
         
         # 5. Feature Reconstruction Head cho Masked Autoencoder (Phase 0) với LayerNorm & GELU
-        task_in_dim = in_channels_dict.get('task', 39)
+        task_in_dim = in_channels_dict.get('task', 41)
         self.recon_head = nn.Sequential(
             Linear(hidden_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),
@@ -238,7 +238,7 @@ class HGTTaskPredictor(nn.Module):
         )
         
         # 5. Feature Reconstruction Head cho Masked Autoencoder (Phase 0) với LayerNorm & GELU
-        task_in_dim = in_channels_dict.get('task', 39)
+        task_in_dim = in_channels_dict.get('task', 41)
         self.recon_head = nn.Sequential(
             Linear(hidden_dim, hidden_dim),
             nn.LayerNorm(hidden_dim),

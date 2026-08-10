@@ -5,7 +5,7 @@
 
 \begin{frame}{16. Tổng quan Pipeline 5 Bước (End-to-End)}
     \begin{enumerate}
-        \item \textbf{HeteroGraph Builder:} Trích xuất JSON/CSV thành \texttt{HeteroData} (Task 39-dim, Resource 6-dim, Shift 5-dim).
+        \item \textbf{HeteroGraph Builder:} Trích xuất JSON/CSV thành \texttt{HeteroData} (Task 41-dim, Resource 6-dim, Shift 5-dim).
         \item \textbf{HGT Pretrainer:} Self-Supervised Phase 0 (Masked Autoencoder).
         \item \textbf{HGT Inference:} Dự báo Scale factor \& Trễ hạn, kết xuất Cosine Attention.
         \item \textbf{Monte Carlo CPM:} Lấy mẫu Beta-PERT đa vòng $\rightarrow$ Tính \% Criticality Index.
@@ -41,7 +41,7 @@
         
         \column{0.5\textwidth}
         \textbf{Cosine Attention (Task - Resource):}
-        Giúp AI "nhìn" ra Task nào cần Resource nào nhất.
+        Cơ chế Attention hỗ trợ mô hình nhận diện mức độ phụ thuộc giữa công việc và tài nguyên.
         \begin{equation}
             \text{sim}(t, r) = \frac{\mathbf{h}_t \cdot \mathbf{h}_r}{\|\mathbf{h}_t\| \|\mathbf{h}_r\|}
         \end{equation}
@@ -66,7 +66,7 @@
         \item $P_{50}, P_{80}, P_{95}$: Các mốc thời gian hoàn thành theo độ tin cậy.
         \item \textbf{Criticality Index ($CI_i$):} Tỷ lệ xác suất công việc $i$ trở thành nút thắt.
     \end{itemize}
-    \textit{Ứng dụng:} Chỉ số CI\% và Delay sẽ làm kim chỉ nam để khoanh vùng không gian Crashing cho Solver.
+    \textit{Ứng dụng:} Tham số CI\% và Delay đóng vai trò định hướng để thu hẹp không gian tìm kiếm (Search Space) trong quá trình tối ưu.
 \end{frame}
 
 \begin{frame}{19. B5: CP-SAT AI-Guided Pareto Solver}
@@ -83,9 +83,9 @@
             \textbf{Mode} & \textbf{Chiến lược} & \textbf{Thời gian} & \textbf{Chi phí} \\
             \midrule
             \textbf{0. Normal} & Giữ nguyên thiết kế ban đầu. & 100\% & 100\% \\
-            \textbf{1. Overtime} & Tăng ca ngoài giờ (CI > 0). & $\sim$66\% & +50\% (Hệ số 1.5x) \\
-            \textbf{2. AddRes} & Bổ sung tài nguyên (dựa vào Attention). & $\sim$70\% & +30\% \\
-            \textbf{3. Hybrid} & Kéo kiệt lực lượng (CI $> 90\%$). & $\sim$50\% & +80\% \\
+            \textbf{1. Overtime} & Khai thác ngoài giờ (CI > 0). & $\sim$66\% & +50\% (Hệ số 1.5x) \\
+            \textbf{2. AddRes} & Bổ sung tài nguyên (Dựa trên Attention). & $\sim$70\% & +30\% \\
+            \textbf{3. Hybrid} & Phối hợp tối đa hóa nguồn lực (CI $> 90\%$). & $\sim$50\% & +80\% \\
             \bottomrule
         \end{tabular}
     \end{table}

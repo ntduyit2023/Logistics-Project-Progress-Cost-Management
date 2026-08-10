@@ -108,8 +108,8 @@ def extract_solution_schedule(
         dur_w = round(dur_h / hours_per_week, 2)
         dur_m = round(dur_h / hours_per_month, 2)
         
-        daily_work_h = round(hours_per_day + (ot_hours / max(1.0, dur_d)), 2)
-        ot_h_per_day = round(ot_hours / max(1.0, dur_d), 2)
+        daily_work_h = round(hours_per_day + float(m_info.get('ot_hours_per_day', 0.0)), 2)
+        ot_h_per_day = float(m_info.get('ot_hours_per_day', 0.0))
         
         base_c = float(m_info.get('base_cost', m_info['cost']))
         ot_c = round(m_info['ot_extra_cost'], 2)
@@ -146,7 +146,8 @@ def extract_solution_schedule(
             
             # Resolve true finish time using custom OT shifts
             ot_hours_per_day = float(m_info.get('ot_hours_per_day', 0.0))
-            finish_dt = calendar_engine.add_working_hours(base_start_dt, dur_h, is_start_time=False, ot_hours=ot_hours_per_day)
+            physical_dur_h = round(dur_h * (1.0 + ot_hours_per_day / hours_per_day), 2)
+            finish_dt = calendar_engine.add_working_hours(base_start_dt, physical_dur_h, is_start_time=False, ot_hours=ot_hours_per_day)
             real_finish_dts[t_id] = finish_dt
             
             start_str = base_start_dt.strftime('%Y-%m-%dT%H:%M:%S')
@@ -162,7 +163,7 @@ def extract_solution_schedule(
             'finish_hours': end_val,
             'baseline_start': start_str,
             'baseline_end': finish_str,
-            'duration_hours': dur_h,
+            'duration_hours': physical_dur_h,
             'base_duration_hours': norm_dur_h,
             'base_effort_hours': float(m_info.get('base_effort_h', norm_dur_h)),
             'duration_days': dur_d,
@@ -206,7 +207,8 @@ def extract_solution_schedule(
     target_dt = None
     if target_deadline is not None and str(target_deadline).strip():
         try:
-            target_dt = pd.to_datetime(target_deadline)
+            target_deadline_str = str(target_deadline).replace('+', ' ')
+            target_dt = pd.to_datetime(target_deadline_str)
             try:
                 target_dt = target_dt.tz_localize(None)
             except Exception:
