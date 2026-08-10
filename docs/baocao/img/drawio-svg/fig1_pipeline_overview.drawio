@@ -22,7 +22,7 @@
         <mxCell id="L2_title" value="&lt;b&gt;2. Hybrid AI-OR Optimization Engine&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=20;" parent="1" vertex="1">
           <mxGeometry x="470" y="70" width="360" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="phase1" value="&lt;b&gt;HeteroGraph Builder&lt;/b&gt;&lt;br&gt;&lt;span&gt;Builds PyG HeteroData&lt;br&gt;3 Nodes: Task (39-dim), Res (6), Shift (5)&lt;br&gt;3 Edges: precedes, uses, Constrained By&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c9daf8;strokeColor=#3b78d8;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
+        <mxCell id="phase1" value="&lt;b&gt;HeteroGraph Builder&lt;/b&gt;&lt;br&gt;&lt;span&gt;Builds PyG HeteroData&lt;br&gt;3 Nodes: Task (41-dim), Res (6), Shift (5)&lt;br&gt;3 Edges: precedes, uses, Constrained By&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c9daf8;strokeColor=#3b78d8;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Times New Roman;fontSize=18;" parent="1" vertex="1">
           <mxGeometry x="350" y="140" width="600" height="90" as="geometry" />
         </mxCell>
         <mxCell id="arr_data_p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;fontSize=18;fontFamily=Times New Roman;" parent="1" source="data_csv" target="phase1" edge="1">

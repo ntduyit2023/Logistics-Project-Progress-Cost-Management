@@ -6,18 +6,17 @@
 \begin{frame}{21. Đánh giá Mô hình AI: Tiến trình cải thiện R²}
     \begin{columns}
         \column{0.5\textwidth}
-        \textbf{Hạn chế ban đầu:}
+        \textbf{Phân tích Hiệu suất Dự báo (R²):}
         \begin{itemize}
-            \item \textbf{Khối lượng dữ liệu:} Tập huấn luyện giới hạn ở 5 dự án.
-            \item \textbf{Baseline (Inductive):} Mean R² = -0.11 (Hiện tượng quá khớp do sai biệt cấu trúc đồ thị).
+            \item \textbf{Thách thức dữ liệu:} Với giới hạn tập dữ liệu huấn luyện nhỏ (5 dự án), mô hình khó đạt được khả năng tổng quát hóa hoàn hảo.
+            \item \textbf{Hiệu suất đạt được:} Pre-training kết hợp tối ưu tham số (Optuna) giúp mô hình đạt Mean R² = 0.38.
         \end{itemize}
         \vspace{0.2cm}
-        \textbf{Đề xuất cải tiến phương pháp huấn luyện:}
-        \begin{enumerate}
-            \item \textbf{Học chuyển nạp (Transductive Learning):} Cung cấp 20\% Context $\rightarrow$ Mean R² = 0.24.
-            \item \textbf{Pre-training + HPO (Optuna):} $\rightarrow$ Mean R² = 0.38.
-        \end{enumerate}
-        \textit{(Bảo toàn kiến trúc HGT, cải tiến cơ chế biểu diễn dữ liệu và tinh chỉnh tham số)}
+        \textbf{Vai trò của Mô hình trong Hệ thống:}
+        \begin{itemize}
+            \item Không nhằm thay thế các thuật toán giải tích truyền thống.
+            \item Đóng vai trò cung cấp \textbf{Hệ số nhiễu (Noise factors)} và phân phối xác suất cho mô phỏng Monte Carlo, chuyển bài toán từ học máy thuần túy sang \textbf{tối ưu hóa ngẫu nhiên (stochastic optimization)}.
+        \end{itemize}
         
         \column{0.5\textwidth}
         \centering

@@ -4,7 +4,7 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="box_input" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;b style=&quot;&quot;&gt;HeteroData Input&lt;/b&gt;&lt;br&gt;&lt;/font&gt;&lt;div style=&quot;text-align: left; padding-left: 15px;&quot;&gt;&lt;br&gt;\(\bullet\) &lt;b&gt;Task Nodes&lt;/b&gt; (39-dim)&lt;br&gt;\(\bullet\) &lt;b&gt;Resource Nodes&lt;/b&gt; (6-dim)&lt;br&gt;\(\bullet\) &lt;b&gt;Shift Nodes&lt;/b&gt; (5-dim)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=18;" parent="1" vertex="1">
+        <mxCell id="box_input" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;b style=&quot;&quot;&gt;HeteroData Input&lt;/b&gt;&lt;br&gt;&lt;/font&gt;&lt;div style=&quot;text-align: left; padding-left: 15px;&quot;&gt;&lt;br&gt;\(\bullet\) &lt;b&gt;Task Nodes&lt;/b&gt; (41-dim)&lt;br&gt;\(\bullet\) &lt;b&gt;Resource Nodes&lt;/b&gt; (6-dim)&lt;br&gt;\(\bullet\) &lt;b&gt;Shift Nodes&lt;/b&gt; (5-dim)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=18;" parent="1" vertex="1">
           <mxGeometry x="100" y="120" width="220" height="150" as="geometry" />
         </mxCell>
         <mxCell id="arr_input_proj" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;endArrow=classic;fontSize=18;fontFamily=Times New Roman;" parent="1" source="box_input" edge="1">

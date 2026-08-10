@@ -3,13 +3,13 @@
 % -------------------------------------------------------------
 \section{AI Pipeline}
 
-\begin{frame}{16. Tổng quan Pipeline 5 Bước (End-to-End)}
+\begin{frame}{16. Kiến trúc Tổng thể (Proposed Architecture)}
     \begin{enumerate}
-        \item \textbf{HeteroGraph Builder:} Trích xuất JSON/CSV thành \texttt{HeteroData} (Task 41-dim, Resource 6-dim, Shift 5-dim).
-        \item \textbf{HGT Pretrainer:} Self-Supervised Phase 0 (Masked Autoencoder).
-        \item \textbf{HGT Inference:} Dự báo Scale factor \& Trễ hạn, kết xuất Cosine Attention.
-        \item \textbf{Monte Carlo CPM:} Lấy mẫu Beta-PERT đa vòng $\rightarrow$ Tính \% Criticality Index.
-        \item \textbf{CP-SAT Pareto Solver:} Lập lịch tối ưu Đa mục tiêu dựa trên dẫn đường của AI (AI-Guided).
+        \item \textbf{Biểu diễn Dữ liệu (Data Representation):} Chuyển đổi dữ liệu mạng lưới dự án thành cấu trúc Đồ thị Dị thể (Heterogeneous Graph).
+        \item \textbf{Học Đặc trưng (Feature Learning):} Ứng dụng mạng nơ-ron đồ thị (HGT) để ngoại suy các tham số nhiễu (noise parameters) bao gồm độ trễ kỳ vọng và phương sai.
+        \item \textbf{Mô phỏng Ngẫu nhiên (Stochastic Simulation):} Sử dụng phương pháp Monte Carlo tích hợp phân phối Beta-PERT nhằm định lượng Xác suất Tới hạn (Criticality Index - $CI$).
+        \item \textbf{Xây dựng Không gian Trạng thái (State Space Formulation):} Khởi tạo các kịch bản thực thi (Execution Modes) dựa trên phân tích tương quan (Attention Scores) và $CI$.
+        \item \textbf{Tối ưu hóa Ràng buộc (Constraint Optimization):} Giải bài toán quy hoạch thỏa mãn ràng buộc (CP-SAT) nhằm xác định tập hợp nghiệm đánh đổi (Trade-off Solutions).
     \end{enumerate}
 \end{frame}
 
@@ -18,30 +18,35 @@
     \includegraphics[width=\textwidth, height=0.85\textheight, keepaspectratio]{fig2_hgt_architecture.drawio.png}
 \end{frame}
 
-\begin{frame}{17. B2: HGT Pretraining (Masked Autoencoder)}
+\begin{frame}{17. Huấn luyện Tiền kỳ (Pre-training Strategy)}
     \begin{itemize}
-        \item Mask 25\% Task node features.
-        \item Đầu ra: \texttt{reconstructed\_x}.
-        \item Tối ưu \textbf{Smooth L1 Loss}.
+        \item \textbf{Cơ chế Khôi phục (Masked Autoencoder):} Che khuất ngẫu nhiên (Masking) $25\%$ đặc trưng của các nút công việc (Task Nodes) nhằm kích thích mô hình tự học biểu diễn.
+        \item \textbf{Mục tiêu Tối ưu:} Cực tiểu hóa hàm suy hao \textbf{Smooth L1 Loss} đối với vector đặc trưng được tái tạo (\texttt{reconstructed\_x}).
+        \item \textbf{Mục đích:} Nâng cao khả năng khái quát hóa (generalization) trước khi tinh chỉnh (fine-tuning) trên tập dữ liệu nhỏ.
     \end{itemize}
     \centering
     \vspace{0.2cm}
     \includegraphics[width=0.9\textwidth, height=0.65\textheight, keepaspectratio]{fig7_pretraining_flow.drawio.png}
 \end{frame}
 
-\begin{frame}{17b. B3: Inference \& Cosine Attention}
+\begin{frame}{17b. Kiến trúc Transfer Learning (Pre-training \& Fine-tuning)}
+    \centering
+    \includegraphics[width=\textwidth, height=0.85\textheight, keepaspectratio]{fig8_pretrain_finetune.drawio.png}
+\end{frame}
+
+\begin{frame}{18. Suy luận và Khai phá Tương quan (Inference \& Attention)}
     \begin{columns}
         \column{0.5\textwidth}
-        \textbf{Inference (Dự báo):}
+        \textbf{Cấu trúc Suy luận (Inference Module):}
         \begin{itemize}
-            \item \texttt{duration\_factor}: Softplus + 0.5
-            \item \texttt{expected\_delay}: ReLU
-            \item \texttt{uncertainty\_sigma}: Softplus + 0.01
+            \item \texttt{duration\_factor}: Hàm kích hoạt Softplus kết hợp dịch chuyển $0.5$ nhằm đảm bảo tính dương nghiêm ngặt.
+            \item \texttt{expected\_delay}: Hàm kích hoạt ReLU loại trừ nhiễu âm.
+            \item \texttt{uncertainty\_sigma}: Ước lượng phương sai thông qua hàm Softplus $+ 0.01$.
         \end{itemize}
         
         \column{0.5\textwidth}
-        \textbf{Cosine Attention (Task - Resource):}
-        Cơ chế Attention hỗ trợ mô hình nhận diện mức độ phụ thuộc giữa công việc và tài nguyên.
+        \textbf{Cơ chế Tập trung Tương tự Cosine (Cosine Attention):}
+        Định lượng mức độ phụ thuộc và nút thắt cổ chai (bottleneck) giữa tập Công việc ($T$) và Tài nguyên ($R$).
         \begin{equation}
             \text{sim}(t, r) = \frac{\mathbf{h}_t \cdot \mathbf{h}_r}{\|\mathbf{h}_t\| \|\mathbf{h}_r\|}
         \end{equation}
@@ -51,9 +56,9 @@
     \includegraphics[width=0.8\textwidth, height=0.45\textheight, keepaspectratio]{fig4_hgtconv_attention.drawio.png}
 \end{frame}
 
-\begin{frame}{18. B4: Mô phỏng Monte Carlo CPM}
-    \textbf{Tích hợp AI dự báo vào Beta-PERT:}
-    Hệ thống làm nhiễu $N$ vòng lặp (Iterations) bằng các tham số:
+\begin{frame}{18. B4: Mô phỏng Ngẫu nhiên (Stochastic CPM)}
+    \textbf{Tích hợp tham số nhiễu ngoại suy vào phân phối Beta-PERT:}
+    Tiến trình lấy mẫu ngẫu nhiên (Sampling Process) cho từng công việc qua $N$ vòng lặp:
     \begin{align}
         m &= \text{duration} \times \text{duration\_factor} + \text{expected\_delay} \\
         a &= \max(0.5, \; m \times (1 - 2\sigma)) \\
@@ -61,20 +66,20 @@
     \end{align}
     
     \vspace{0.2cm}
-    \textbf{Tổng hợp chỉ số Thống kê Cốt lõi:}
+    \textbf{Tổng hợp Phân phối Thống kê Cốt lõi:}
     \begin{itemize}
-        \item $P_{50}, P_{80}, P_{95}$: Các mốc thời gian hoàn thành theo độ tin cậy.
-        \item \textbf{Criticality Index ($CI_i$):} Tỷ lệ xác suất công việc $i$ trở thành nút thắt.
+        \item $P_{50}, P_{80}, P_{95}$: Các mốc thời gian hoàn thành dựa trên độ tin cậy.
+        \item \textbf{Criticality Index ($CI_i$):} Tỷ lệ xác suất nút $i$ nằm trên đường găng (Critical Path).
     \end{itemize}
-    \textit{Ứng dụng:} Tham số CI\% và Delay đóng vai trò định hướng để thu hẹp không gian tìm kiếm (Search Space) trong quá trình tối ưu.
+    \textit{Vai trò:} Tham số $CI$ đóng vai trò heuristic định hướng nhằm thu hẹp không gian tìm kiếm (Search Space) trong bước tối ưu tiếp theo.
 \end{frame}
 
-\begin{frame}{19. B5: CP-SAT AI-Guided Pareto Solver}
-    \textbf{Chiến lược "AI-Guided Critical Path Crashing":}
-    Chỉ áp dụng Crashing cho các công việc có $CI > \text{threshold}$ để tránh lãng phí chi phí.
+\begin{frame}{19. B5: Tối ưu hóa Lịch trình (CP-SAT Optimizer)}
+    \textbf{Chiến lược Rút ngắn Tiến độ Dẫn hướng (Heuristic-Guided Crashing):}
+    Cơ chế này giới hạn không gian tìm kiếm thông qua việc chỉ áp dụng các phương án nén thời gian (Crashing) lên các nút mạng có $CI$ vượt ngưỡng (threshold), qua đó tối ưu hóa chi phí biên (marginal cost).
     
     \vspace{0.2cm}
-    \textbf{4 Mode Thực thi (Alternative Execution Modes):}
+    \textbf{Định hình Không gian Giải pháp (Alternative Execution Modes):}
     \begin{table}
         \centering
         \footnotesize
@@ -91,19 +96,18 @@
     \end{table}
 \end{frame}
 
-\begin{frame}{20. B5: Hệ phương trình CP-SAT Constraints (5-Tier)}
+\begin{frame}{20. B5: Cấu trúc Mô hình Quy hoạch (Constraint Formulation)}
     \begin{columns}
         \column{0.5\textwidth}
-        \textbf{Ràng buộc OR-Tools CP-SAT:}
+        \textbf{Ràng buộc Lập trình (CP-SAT Constraints):}
         \begin{enumerate}
-            \item \textbf{Precedence:} \texttt{AddEndBeforeStart} tuân thủ Logic Mạng.
-            \item \textbf{Resource:} \texttt{AddCumulative} giới hạn tổng sức chứa đồng thời.
-            \item \textbf{Deadline:} Tổng thời gian $\leq$ Target Deadline (nếu có).
-            \item \textbf{Penalty/Bonus:} Hàm trừng phạt tài chính.
-            \item \textbf{Multi-Objective:} Quét lưới (Grid Sweep) trọng số sinh các phương án Pareto.
+            \item \textbf{Precedence:} \texttt{AddEndBeforeStart} đảm bảo tính toàn vẹn của quan hệ tiền nhiệm.
+            \item \textbf{Resource:} \texttt{AddCumulative} kiểm soát giới hạn tài nguyên khả dụng.
+            \item \textbf{Deadline:} Tích hợp hàm phạt (Penalty) vi phạm tiến độ mục tiêu.
+            \item \textbf{Multi-Scenario:} Ứng dụng quét lưới (Grid Sweep) tham số chi phí nhằm sinh tập hợp các nghiệm không bị thống trị (Non-dominated Solutions).
         \end{enumerate}
         \vspace{0.1cm}
-        \textit{(Sử dụng bộ giải Google OR-Tools \cite{ortools} và \cite{ga2023})}
+        \textit{(Áp dụng bộ giải Google OR-Tools \cite{ortools} và phương pháp \cite{ga2023})}
         \column{0.5\textwidth}
         \centering
         \includegraphics[width=0.9\linewidth]{fig6_cpsat_pareto.drawio.png}
