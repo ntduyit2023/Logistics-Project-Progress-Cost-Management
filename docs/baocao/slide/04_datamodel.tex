@@ -3,7 +3,12 @@
 % -------------------------------------------------------------
 \section{Mô hình Dữ liệu}
 
-\begin{frame}{12. Entity: TASK (Công việc) -- Node 39-dim}
+\begin{frame}{12. Cấu trúc Đồ thị Dị thể (HeteroGraph Structure)}
+    \centering
+    \includegraphics[width=\textwidth, height=0.85\textheight, keepaspectratio]{fig3_heterograph_structure.drawio.png}
+\end{frame}
+
+\begin{frame}{12b. Entity: TASK (Công việc) -- Node 39-dim}
     \textbf{Task là Node trung tâm trong HeteroGraph \cite{hu2020hgt}:} Mã hóa thông qua vector 39 chiều.
     \vspace{0.2cm}
     \begin{itemize}
@@ -20,9 +25,6 @@
     \end{itemize}
     \vspace{0.2cm}
     \textit{Lưu ý:} Tổng 38 chi phí được lưu tại \texttt{total\_cost} qua Cột tự động \texttt{GENERATED ALWAYS}.
-    \centering
-    \vspace{0.1cm}
-    \includegraphics[width=0.45\linewidth]{fig3_heterograph_structure.drawio.png}
 \end{frame}
 
 \begin{frame}{13. Entity: RESOURCE (Tài nguyên) -- Node 6-dim}
@@ -66,7 +68,7 @@
     \begin{itemize}
         \item \textbf{Cạnh Phụ thuộc (Task $\rightarrow$ precedes $\rightarrow$ Task):}
         \begin{itemize}
-            \item Thể hiện PDM logic: \texttt{dependency\_type} (FS, SS, FF, SF).
+            \item Thể hiện PDM logic: \texttt{dependency\_type} (FS, SS, FF).
             \item \texttt{lag\_hours}: Độ trễ hoặc Overlap.
             \item Module Frontend có DFS Cycle Detection để bảo vệ Đồ thị dạng DAG.
         \end{itemize}

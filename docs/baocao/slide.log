@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.1)  9 AUG 2026 19:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.1)  9 AUG 2026 20:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1578,25 +1578,16 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [13
 
  <./img/fig9a.png> <./img/fig9b.png>]) (slide/04_datamodel.tex
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 26--26
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 9--9
  [][][][]  
  []
 
-
-LaTeX Warning: Citation `hu2020hgt' on page 14 undefined on input line 26.
-
-LaTeX Font Info:    Font shape `T5/lmss/m/it' in size <10> not available
-(Font)              Font shape `T5/lmss/m/sl' tried instead on input line 26.
-<img/fig3_heterograph_structure.drawio.png, id=204, 1126.2075pt x 845.1575pt>
+<img/fig3_heterograph_structure.drawio.png, id=202, 1126.2075pt x 845.1575pt>
 File: img/fig3_heterograph_structure.drawio.png Graphic file (type png)
 <use img/fig3_heterograph_structure.drawio.png>
 Package pdftex.def Info: img/fig3_heterograph_structure.drawio.png  used on inp
-ut line 26.
-(pdftex.def)             Requested size: 195.00592pt x 146.33145pt.
-
-Overfull \vbox (76.48804pt too high) detected at line 26
- []
-
+ut line 9.
+(pdftex.def)             Requested size: 275.69127pt x 206.8913pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1605,10 +1596,15 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [14
 
  <./img/fig3_heterograph_structure.drawio.png>]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 48--48
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 28--28
  [][][][]  
  []
 
+
+LaTeX Warning: Citation `hu2020hgt' on page 15 undefined on input line 28.
+
+LaTeX Font Info:    Font shape `T5/lmss/m/it' in size <10> not available
+(Font)              Font shape `T5/lmss/m/sl' tried instead on input line 28.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1617,7 +1613,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [15
 
 ]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 61--61
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 50--50
  [][][][]  
  []
 
@@ -1629,20 +1625,10 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [16
 
 ]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 81--81
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 63--63
  [][][][]  
  []
 
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 81.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 81.
-LaTeX Font Info:    Font shape `T5/lmss/b/n' in size <10> not available
-(Font)              Font shape `T5/lmss/bx/n' tried instead on input line 81.
-LaTeX Font Info:    Font shape `T5/lmss/b/n' in size <7> not available
-(Font)              Font shape `T5/lmss/bx/n' tried instead on input line 81.
-LaTeX Font Info:    Font shape `T5/lmss/m/it' in size <7> not available
-(Font)              Font shape `T5/lmss/m/sl' tried instead on input line 81.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1650,21 +1636,21 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [17
 
-]) (slide/05_aipipeline.tex
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 17--17
+]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 83--83
  [][][][]  
  []
 
-<img/fig2_hgt_architecture.drawio.png, id=247, 1100.11pt x 1146.2825pt>
-File: img/fig2_hgt_architecture.drawio.png Graphic file (type png)
-<use img/fig2_hgt_architecture.drawio.png>
-Package pdftex.def Info: img/fig2_hgt_architecture.drawio.png  used on input li
-ne 17.
-(pdftex.def)             Requested size: 260.01231pt x 270.91562pt.
-
-Overfull \vbox (160.69966pt too high) detected at line 17
- []
-
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 83.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 83.
+LaTeX Font Info:    Font shape `T5/lmss/b/n' in size <10> not available
+(Font)              Font shape `T5/lmss/bx/n' tried instead on input line 83.
+LaTeX Font Info:    Font shape `T5/lmss/b/n' in size <7> not available
+(Font)              Font shape `T5/lmss/bx/n' tried instead on input line 83.
+LaTeX Font Info:    Font shape `T5/lmss/m/it' in size <7> not available
+(Font)              Font shape `T5/lmss/m/sl' tried instead on input line 83.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1672,25 +1658,9 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [18
 
- <./img/fig2_hgt_architecture.drawio.png>]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 49--49
+]) (slide/05_aipipeline.tex
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 14--14
  [][][][]  
- []
-
-<img/fig7_pretraining_flow.drawio.png, id=256, 1227.58624pt x 816.04875pt>
-File: img/fig7_pretraining_flow.drawio.png Graphic file (type png)
-<use img/fig7_pretraining_flow.drawio.png>
-Package pdftex.def Info: img/fig7_pretraining_flow.drawio.png  used on input li
-ne 49.
-(pdftex.def)             Requested size: 184.17484pt x 122.42693pt.
-<img/fig4_hgtconv_attention.drawio.png, id=257, 1543.7675pt x 1065.9825pt>
-File: img/fig4_hgtconv_attention.drawio.png Graphic file (type png)
-<use img/fig4_hgtconv_attention.drawio.png>
-Package pdftex.def Info: img/fig4_hgtconv_attention.drawio.png  used on input l
-ine 49.
-(pdftex.def)             Requested size: 173.34044pt x 119.682pt.
-
-Overfull \vbox (46.64006pt too high) detected at line 49
  []
 
 
@@ -1700,12 +1670,17 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [19
 
- <./img/fig7_pretraining_flow.drawio.png> <./img/fig4_hgtconv_attention.drawio.
-png>]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 67--67
+]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 19--19
  [][][][]  
  []
 
+<img/fig2_hgt_architecture.drawio.png, id=262, 1100.11pt x 1146.2825pt>
+File: img/fig2_hgt_architecture.drawio.png Graphic file (type png)
+<use img/fig2_hgt_architecture.drawio.png>
+Package pdftex.def Info: img/fig2_hgt_architecture.drawio.png  used on input li
+ne 19.
+(pdftex.def)             Requested size: 198.5652pt x 206.89914pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1713,11 +1688,17 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [20
 
-]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 89--89
+ <./img/fig2_hgt_architecture.drawio.png>]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 30--30
  [][][][]  
  []
 
+<img/fig7_pretraining_flow.drawio.png, id=271, 1227.58624pt x 816.04875pt>
+File: img/fig7_pretraining_flow.drawio.png Graphic file (type png)
+<use img/fig7_pretraining_flow.drawio.png>
+Package pdftex.def Info: img/fig7_pretraining_flow.drawio.png  used on input li
+ne 30.
+(pdftex.def)             Requested size: 238.00159pt x 158.21365pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1725,17 +1706,17 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [21
 
-]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 108--108
+ <./img/fig7_pretraining_flow.drawio.png>]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 52--52
  [][][][]  
  []
 
-<img/fig6_cpsat_pareto.drawio.png, id=286, 1106.1325pt x 1056.94875pt>
-File: img/fig6_cpsat_pareto.drawio.png Graphic file (type png)
-<use img/fig6_cpsat_pareto.drawio.png>
-Package pdftex.def Info: img/fig6_cpsat_pareto.drawio.png  used on input line 1
-08.
-(pdftex.def)             Requested size: 195.00592pt x 186.32353pt.
+<img/fig4_hgtconv_attention.drawio.png, id=280, 1543.7675pt x 1065.9825pt>
+File: img/fig4_hgtconv_attention.drawio.png Graphic file (type png)
+<use img/fig4_hgtconv_attention.drawio.png>
+Package pdftex.def Info: img/fig4_hgtconv_attention.drawio.png  used on input l
+ine 52.
+(pdftex.def)             Requested size: 158.62585pt x 109.53229pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1743,8 +1724,8 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [22
 
- <./img/fig6_cpsat_pareto.drawio.png>]) (slide/06_casestudy_benchmark.tex
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 19--19
+ <./img/fig4_hgtconv_attention.drawio.png>]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 70--70
  [][][][]  
  []
 
@@ -1756,7 +1737,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [23
 
 ]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 57--57
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 92--92
  [][][][]  
  []
 
@@ -1768,19 +1749,16 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [24
 
 ]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 77--77
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 111--111
  [][][][]  
  []
 
-<img/pareto_frontier.png, id=311, 798.5835pt x 498.30165pt>
-File: img/pareto_frontier.png Graphic file (type png)
-<use img/pareto_frontier.png>
-Package pdftex.def Info: img/pareto_frontier.png  used on input line 77.
-(pdftex.def)             Requested size: 195.00592pt x 121.67818pt.
-
-Overfull \vbox (8.31056pt too high) detected at line 77
- []
-
+<img/fig6_cpsat_pareto.drawio.png, id=307, 1106.1325pt x 1056.94875pt>
+File: img/fig6_cpsat_pareto.drawio.png Graphic file (type png)
+<use img/fig6_cpsat_pareto.drawio.png>
+Package pdftex.def Info: img/fig6_cpsat_pareto.drawio.png  used on input line 1
+11.
+(pdftex.def)             Requested size: 195.00592pt x 186.32353pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1788,8 +1766,8 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [25
 
- <./img/pareto_frontier.png>]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 105--105
+ <./img/fig6_cpsat_pareto.drawio.png>]) (slide/06_casestudy_benchmark.tex
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 19--19
  [][][][]  
  []
 
@@ -1800,8 +1778,8 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [26
 
-]) (slide/07_conclusion.tex
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 19--19
+]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 56--56
  [][][][]  
  []
 
@@ -1813,6 +1791,51 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [27
 
 ]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 76--76
+ [][][][]  
+ []
+
+<img/pareto_frontier.png, id=333, 798.5835pt x 498.30165pt>
+File: img/pareto_frontier.png Graphic file (type png)
+<use img/pareto_frontier.png>
+Package pdftex.def Info: img/pareto_frontier.png  used on input line 76.
+(pdftex.def)             Requested size: 195.00592pt x 121.67818pt.
+
+Overfull \vbox (8.31056pt too high) detected at line 76
+ []
+
+
+Overfull \hbox (29.71477pt too wide) has occurred while \output is active
+ [][][][]  
+ []
+
+[28
+
+ <./img/pareto_frontier.png>]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 104--104
+ [][][][]  
+ []
+
+
+Overfull \hbox (29.71477pt too wide) has occurred while \output is active
+ [][][][]  
+ []
+
+[29
+
+]) (slide/07_conclusion.tex
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 19--19
+ [][][][]  
+ []
+
+
+Overfull \hbox (29.71477pt too wide) has occurred while \output is active
+ [][][][]  
+ []
+
+[30
+
+]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 30--30
  [][][][]  
  []
@@ -1822,7 +1845,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[28
+[31
 
 ]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 54--54
@@ -1834,7 +1857,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[29
+[32
 
 ]) (slide/08_references.tex
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 8--8
@@ -1846,7 +1869,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[30
+[33
 
  <D:/Develop/MiKTeX/tex/latex/beamer/beamericonarticle.pdf>])
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 65--65
@@ -1860,7 +1883,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[31
+[34
 
 ]
 \tf@nav=\write6
@@ -1885,10 +1908,10 @@ Package rerunfilecheck Info: File `slide.out' has not changed.
 (rerunfilecheck)             Checksum: D9657850549587CF52B430F9B9E379BA;1232.
  ) 
 Here is how much of TeX's memory you used:
- 25863 strings out of 467509
- 484258 string characters out of 5421821
- 871918 words of memory out of 5000000
- 54446 multiletter control sequences out of 15000+600000
+ 25876 strings out of 467509
+ 484428 string characters out of 5421821
+ 870955 words of memory out of 5000000
+ 54452 multiletter control sequences out of 15000+600000
  794879 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,15n,123p,382b,839s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1906,9 +1929,9 @@ op/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><D:/Develop/MiKTeX/fonts/type1/public
 /lm/lmsy9.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><D:/Develop/M
 iKTeX/fonts/type1/public/lm/lmtt10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm
 /lmtt9.pfb><D:/Develop/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on slide.pdf (31 pages, 1816011 bytes).
+Output written on slide.pdf (34 pages, 1819498 bytes).
 PDF statistics:
- 486 PDF objects out of 1000 (max. 8388607)
- 74 named destinations out of 1000 (max. 500000)
+ 509 PDF objects out of 1000 (max. 8388607)
+ 81 named destinations out of 1000 (max. 500000)
  288 words of extra memory for PDF output out of 10000 (max. 10000000)
 

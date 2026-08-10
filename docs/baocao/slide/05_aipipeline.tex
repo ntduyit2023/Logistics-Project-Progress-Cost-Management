@@ -11,25 +11,27 @@
         \item \textbf{Monte Carlo CPM:} Lấy mẫu Beta-PERT đa vòng $\rightarrow$ Tính \% Criticality Index.
         \item \textbf{CP-SAT Pareto Solver:} Lập lịch tối ưu Đa mục tiêu dựa trên dẫn đường của AI (AI-Guided).
     \end{enumerate}
-    \centering
-    \vspace{0.1cm}
-    \includegraphics[width=0.6\linewidth]{fig2_hgt_architecture.drawio.png}
 \end{frame}
 
-\begin{frame}{17. B2: HGT Pretraining \& B3: Inference}
+\begin{frame}{16b. Kiến trúc chi tiết HGT}
+    \centering
+    \includegraphics[width=\textwidth, height=0.85\textheight, keepaspectratio]{fig2_hgt_architecture.drawio.png}
+\end{frame}
+
+\begin{frame}{17. B2: HGT Pretraining (Masked Autoencoder)}
+    \begin{itemize}
+        \item Mask 25\% Task node features.
+        \item Đầu ra: \texttt{reconstructed\_x}.
+        \item Tối ưu \textbf{Smooth L1 Loss}.
+    \end{itemize}
+    \centering
+    \vspace{0.2cm}
+    \includegraphics[width=0.9\textwidth, height=0.65\textheight, keepaspectratio]{fig7_pretraining_flow.drawio.png}
+\end{frame}
+
+\begin{frame}{17b. B3: Inference \& Cosine Attention}
     \begin{columns}
         \column{0.5\textwidth}
-        \textbf{Masked Autoencoder (Phase 0):}
-        \begin{itemize}
-            \item Mask 25\% Task node features.
-            \item Đầu ra: \texttt{reconstructed\_x}.
-            \item Tối ưu \textbf{Smooth L1 Loss}.
-        \end{itemize}
-        \centering
-        \vspace{0.1cm}
-        \includegraphics[width=0.85\linewidth]{fig7_pretraining_flow.drawio.png}
-        
-        \vspace{0.2cm}
         \textbf{Inference (Dự báo):}
         \begin{itemize}
             \item \texttt{duration\_factor}: Softplus + 0.5
@@ -43,9 +45,10 @@
         \begin{equation}
             \text{sim}(t, r) = \frac{\mathbf{h}_t \cdot \mathbf{h}_r}{\|\mathbf{h}_t\| \|\mathbf{h}_r\|}
         \end{equation}
-        \centering
-        \includegraphics[width=0.8\linewidth]{fig4_hgtconv_attention.drawio.png}
     \end{columns}
+    \centering
+    \vspace{0.3cm}
+    \includegraphics[width=0.8\textwidth, height=0.45\textheight, keepaspectratio]{fig4_hgtconv_attention.drawio.png}
 \end{frame}
 
 \begin{frame}{18. B4: Mô phỏng Monte Carlo CPM}

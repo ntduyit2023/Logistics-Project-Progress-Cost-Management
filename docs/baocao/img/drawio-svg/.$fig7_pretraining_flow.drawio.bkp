@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.1.1 Chrome/132.0.6834.210 Electron/34.3.3 Safari/537.36" version="26.1.1">
   <diagram name="Page-1" id="0">
-    <mxGraphModel dx="1668" dy="965" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1400" math="1" shadow="0">
+    <mxGraphModel dx="1493" dy="863" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1400" math="1" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -50,7 +50,7 @@
         <mxCell id="arr_opt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;endArrow=classic;fontSize=21;fontFamily=Times New Roman;" parent="1" source="loss_box" target="opt_box" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="metrics_box" value="&lt;b&gt;Validation Metrics&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;b&gt;MAE&lt;/b&gt; (Mean Absolute Error)&lt;br&gt;&lt;b&gt;RMSE&lt;/b&gt; (Root Mean Squared Error)&lt;br&gt;&lt;b&gt;Overfit Ratio&lt;/b&gt; (Val/Train Loss)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=3;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=21;" parent="1" vertex="1">
+        <mxCell id="metrics_box" value="&lt;b&gt;Validation Metrics&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;b&gt;MAE&lt;/b&gt; (Mean Absolute Error)&lt;br&gt;&lt;b&gt;RMSE&lt;/b&gt; (Root Mean Squared Error)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=3;align=center;verticalAlign=top;fontFamily=Times New Roman;spacingTop=10;fontSize=21;" parent="1" vertex="1">
           <mxGeometry x="270" y="680" width="600" height="160" as="geometry" />
         </mxCell>
         <mxCell id="arr_metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=3;endArrow=classic;fontSize=21;fontFamily=Times New Roman;" parent="1" source="loss_box" target="metrics_box" edge="1">

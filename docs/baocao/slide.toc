@@ -3,7 +3,7 @@
 \beamer@sectionintoc {2}{Cơ sở Lý thuyết}{5}{0}{2}
 \beamer@sectionintoc {3}{Kiến trúc \& Cấu trúc Hệ thống}{10}{0}{3}
 \beamer@sectionintoc {4}{Mô hình Dữ liệu}{14}{0}{4}
-\beamer@sectionintoc {5}{AI Pipeline}{18}{0}{5}
-\beamer@sectionintoc {6}{Thực nghiệm \& Benchmark}{23}{0}{6}
-\beamer@sectionintoc {7}{Kết luận \& Hướng phát triển}{27}{0}{7}
-\beamer@sectionintoc {8}{Tài liệu tham khảo}{30}{0}{8}
+\beamer@sectionintoc {5}{AI Pipeline}{19}{0}{5}
+\beamer@sectionintoc {6}{Thực nghiệm \& Benchmark}{26}{0}{6}
+\beamer@sectionintoc {7}{Kết luận \& Hướng phát triển}{30}{0}{7}
+\beamer@sectionintoc {8}{Tài liệu tham khảo}{33}{0}{8}
