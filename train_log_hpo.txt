@@ -1,0 +1,45 @@
+================================================================================
+STARTING HPO: Pre-trained HGT + Transductive Shift (15 Trials)
+================================================================================
+[I 2026-08-10 14:21:39,130] A new study created in memory with name: HGT_Transductive_Logistics
+[Trial 0] Mean R2: 0.3440 | Params: {'lr': 0.001175197116929421, 'noise_std': 0.03788922817558223, 'edge_drop_rate': 0.021033695970717525, 'mixup_alpha': 0.22430821023733716, 'weight_decay': 1.7974571347423336e-05}
+[I 2026-08-10 14:22:14,280] Trial 0 finished with value: 0.34395862817764283 and parameters: {'lr': 0.001175197116929421, 'noise_std': 0.03788922817558223, 'edge_drop_rate': 0.021033695970717525, 'mixup_alpha': 0.22430821023733716, 'weight_decay': 1.7974571347423336e-05}. Best is trial 0 with value: 0.34395862817764283.
+[Trial 1] Mean R2: 0.3678 | Params: {'lr': 0.0010257595312460313, 'noise_std': 0.012322515613793723, 'edge_drop_rate': 0.2364502983642207, 'mixup_alpha': 0.07504466781417035, 'weight_decay': 0.0007649084802474625}
+[I 2026-08-10 14:22:50,192] Trial 1 finished with value: 0.36781964302062986 and parameters: {'lr': 0.0010257595312460313, 'noise_std': 0.012322515613793723, 'edge_drop_rate': 0.2364502983642207, 'mixup_alpha': 0.07504466781417035, 'weight_decay': 0.0007649084802474625}. Best is trial 1 with value: 0.36781964302062986.
+[Trial 2] Mean R2: 0.3227 | Params: {'lr': 0.00027406280816459194, 'noise_std': 0.03779093473064043, 'edge_drop_rate': 0.20555527444606325, 'mixup_alpha': 0.26126998064394424, 'weight_decay': 5.1808545248544044e-05}
+[I 2026-08-10 14:23:38,841] Trial 2 finished with value: 0.3227153182029724 and parameters: {'lr': 0.00027406280816459194, 'noise_std': 0.03779093473064043, 'edge_drop_rate': 0.20555527444606325, 'mixup_alpha': 0.26126998064394424, 'weight_decay': 5.1808545248544044e-05}. Best is trial 1 with value: 0.36781964302062986.
+[Trial 3] Mean R2: 0.2505 | Params: {'lr': 0.00012407350560939999, 'noise_std': 0.034162307191171144, 'edge_drop_rate': 0.1878783395648854, 'mixup_alpha': 0.17048516614280285, 'weight_decay': 5.198267829794947e-05}
+[I 2026-08-10 14:24:42,176] Trial 3 finished with value: 0.2505057334899902 and parameters: {'lr': 0.00012407350560939999, 'noise_std': 0.034162307191171144, 'edge_drop_rate': 0.1878783395648854, 'mixup_alpha': 0.17048516614280285, 'weight_decay': 5.198267829794947e-05}. Best is trial 1 with value: 0.36781964302062986.
+[Trial 4] Mean R2: 0.2177 | Params: {'lr': 0.00010432445949742607, 'noise_std': 0.005131757816586114, 'edge_drop_rate': 0.28815894571326395, 'mixup_alpha': 0.2500473949514292, 'weight_decay': 0.0004311122515519159}
+[I 2026-08-10 14:26:38,611] Trial 4 finished with value: 0.21773334741592407 and parameters: {'lr': 0.00010432445949742607, 'noise_std': 0.005131757816586114, 'edge_drop_rate': 0.28815894571326395, 'mixup_alpha': 0.2500473949514292, 'weight_decay': 0.0004311122515519159}. Best is trial 1 with value: 0.36781964302062986.
+[Trial 5] Mean R2: 0.2369 | Params: {'lr': 0.0001098995442950783, 'noise_std': 0.008120378898300301, 'edge_drop_rate': 0.26818832932599534, 'mixup_alpha': 0.2849940658405494, 'weight_decay': 0.00010297765635649449}
+[I 2026-08-10 14:28:16,193] Trial 5 finished with value: 0.23686473369598388 and parameters: {'lr': 0.0001098995442950783, 'noise_std': 0.008120378898300301, 'edge_drop_rate': 0.26818832932599534, 'mixup_alpha': 0.2849940658405494, 'weight_decay': 0.00010297765635649449}. Best is trial 1 with value: 0.36781964302062986.
+[Trial 6] Mean R2: 0.3752 | Params: {'lr': 0.0013961009906436868, 'noise_std': 0.03513348369278242, 'edge_drop_rate': 0.2672643239508941, 'mixup_alpha': 0.0041709036068026785, 'weight_decay': 0.0005707853044415162}
+[I 2026-08-10 14:29:20,553] Trial 6 finished with value: 0.37520127296447753 and parameters: {'lr': 0.0013961009906436868, 'noise_std': 0.03513348369278242, 'edge_drop_rate': 0.2672643239508941, 'mixup_alpha': 0.0041709036068026785, 'weight_decay': 0.0005707853044415162}. Best is trial 6 with value: 0.37520127296447753.
+[Trial 7] Mean R2: 0.2450 | Params: {'lr': 0.004891184223075929, 'noise_std': 0.0274491406196476, 'edge_drop_rate': 0.1486651565009648, 'mixup_alpha': 0.13496398165426424, 'weight_decay': 1.0968465813803636e-05}
+[I 2026-08-10 14:30:32,633] Trial 7 finished with value: 0.24503015279769896 and parameters: {'lr': 0.004891184223075929, 'noise_std': 0.0274491406196476, 'edge_drop_rate': 0.1486651565009648, 'mixup_alpha': 0.13496398165426424, 'weight_decay': 1.0968465813803636e-05}. Best is trial 6 with value: 0.37520127296447753.
+[Trial 8] Mean R2: 0.3239 | Params: {'lr': 0.00042897166022422923, 'noise_std': 0.03087271029733156, 'edge_drop_rate': 0.07943798187533116, 'mixup_alpha': 0.1765404655579658, 'weight_decay': 2.6320680076465675e-05}
+[I 2026-08-10 14:32:27,492] Trial 8 finished with value: 0.3239406943321228 and parameters: {'lr': 0.00042897166022422923, 'noise_std': 0.03087271029733156, 'edge_drop_rate': 0.07943798187533116, 'mixup_alpha': 0.1765404655579658, 'weight_decay': 2.6320680076465675e-05}. Best is trial 6 with value: 0.37520127296447753.
+[Trial 9] Mean R2: 0.2483 | Params: {'lr': 0.0001248282256643946, 'noise_std': 0.03569010820038122, 'edge_drop_rate': 0.0679092514818681, 'mixup_alpha': 0.25467987526974134, 'weight_decay': 0.00014034352210821587}
+[I 2026-08-10 14:33:40,606] Trial 9 finished with value: 0.2482768177986145 and parameters: {'lr': 0.0001248282256643946, 'noise_std': 0.03569010820038122, 'edge_drop_rate': 0.0679092514818681, 'mixup_alpha': 0.25467987526974134, 'weight_decay': 0.00014034352210821587}. Best is trial 6 with value: 0.37520127296447753.
+[Trial 10] Mean R2: 0.3602 | Params: {'lr': 0.0026178094663180645, 'noise_std': 0.0485422342029211, 'edge_drop_rate': 0.13574594164450854, 'mixup_alpha': 0.39148908618220674, 'weight_decay': 0.00025467915154921535}
+[I 2026-08-10 14:35:25,320] Trial 10 finished with value: 0.36017422676086425 and parameters: {'lr': 0.0026178094663180645, 'noise_std': 0.0485422342029211, 'edge_drop_rate': 0.13574594164450854, 'mixup_alpha': 0.39148908618220674, 'weight_decay': 0.00025467915154921535}. Best is trial 6 with value: 0.37520127296447753.
+[Trial 11] Mean R2: 0.3771 | Params: {'lr': 0.0011667462875928148, 'noise_std': 0.015373679050871294, 'edge_drop_rate': 0.2359054739343015, 'mixup_alpha': 0.0015152236632154023, 'weight_decay': 0.0009747518531602505}
+[I 2026-08-10 14:36:37,095] Trial 11 finished with value: 0.3770673155784607 and parameters: {'lr': 0.0011667462875928148, 'noise_std': 0.015373679050871294, 'edge_drop_rate': 0.2359054739343015, 'mixup_alpha': 0.0015152236632154023, 'weight_decay': 0.0009747518531602505}. Best is trial 11 with value: 0.3770673155784607.
+[Trial 12] Mean R2: 0.3795 | Params: {'lr': 0.0016049979513527296, 'noise_std': 0.01797850337561014, 'edge_drop_rate': 0.25171080895416703, 'mixup_alpha': 0.02910066570243139, 'weight_decay': 0.0008796749445618837}
+[I 2026-08-10 14:38:13,801] Trial 12 finished with value: 0.37948509454727175 and parameters: {'lr': 0.0016049979513527296, 'noise_std': 0.01797850337561014, 'edge_drop_rate': 0.25171080895416703, 'mixup_alpha': 0.02910066570243139, 'weight_decay': 0.0008796749445618837}. Best is trial 12 with value: 0.37948509454727175.
+[Trial 13] Mean R2: 0.3801 | Params: {'lr': 0.002338603874157305, 'noise_std': 0.01748366199838632, 'edge_drop_rate': 0.2115321138769019, 'mixup_alpha': 0.004589294370814853, 'weight_decay': 0.000983234648382129}
+[I 2026-08-10 14:39:41,220] Trial 13 finished with value: 0.38006391525268557 and parameters: {'lr': 0.002338603874157305, 'noise_std': 0.01748366199838632, 'edge_drop_rate': 0.2115321138769019, 'mixup_alpha': 0.004589294370814853, 'weight_decay': 0.000983234648382129}. Best is trial 13 with value: 0.38006391525268557.
+[Trial 14] Mean R2: 0.3621 | Params: {'lr': 0.002559982174814518, 'noise_std': 0.018877802673612498, 'edge_drop_rate': 0.1879829356253322, 'mixup_alpha': 0.07446681018168075, 'weight_decay': 0.0002916509550761473}
+[I 2026-08-10 14:40:57,287] Trial 14 finished with value: 0.36213275194168093 and parameters: {'lr': 0.002559982174814518, 'noise_std': 0.018877802673612498, 'edge_drop_rate': 0.1879829356253322, 'mixup_alpha': 0.07446681018168075, 'weight_decay': 0.0002916509550761473}. Best is trial 13 with value: 0.38006391525268557.
+================================================================================
+HPO COMPLETE.
+Best Trial:
+  Value (Mean R2): 0.38006391525268557
+  Params: 
+    lr: 0.002338603874157305
+    noise_std: 0.01748366199838632
+    edge_drop_rate: 0.2115321138769019
+    mixup_alpha: 0.004589294370814853
+    weight_decay: 0.000983234648382129
+================================================================================

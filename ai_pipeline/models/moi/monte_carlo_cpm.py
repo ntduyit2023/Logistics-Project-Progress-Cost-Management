@@ -153,7 +153,18 @@ class MonteCarloCPMEngine:
                     for p in preds:
                         edge_data = self.graph.get_edge_data(p, t_id) or {}
                         lag = float(edge_data.get('lag_hours', 0.0))
-                        max_pred = max(max_pred, ef[p] + lag)
+                        dep_type = str(edge_data.get('dependency_type', 'FS')).upper()
+                        
+                        if dep_type == 'SS':
+                            v_es = es[p] + lag
+                        elif dep_type == 'FF':
+                            v_es = ef[p] + lag - sampled_durations[t_id]
+                        elif dep_type == 'SF':
+                            v_es = es[p] + lag - sampled_durations[t_id]
+                        else:
+                            v_es = ef[p] + lag
+                            
+                        max_pred = max(max_pred, v_es)
                     es[t_id] = max_pred
                 ef[t_id] = es[t_id] + sampled_durations[t_id]
                 
@@ -171,7 +182,18 @@ class MonteCarloCPMEngine:
                     for s in succs:
                         edge_data = self.graph.get_edge_data(t_id, s) or {}
                         lag = float(edge_data.get('lag_hours', 0.0))
-                        min_succ = min(min_succ, ls[s] - lag)
+                        dep_type = str(edge_data.get('dependency_type', 'FS')).upper()
+                        
+                        if dep_type == 'SS':
+                            u_lf = ls[s] - lag + sampled_durations[t_id]
+                        elif dep_type == 'FF':
+                            u_lf = lf[s] - lag
+                        elif dep_type == 'SF':
+                            u_lf = lf[s] - lag + sampled_durations[t_id]
+                        else:
+                            u_lf = ls[s] - lag
+                            
+                        min_succ = min(min_succ, u_lf)
                     lf[t_id] = min_succ
                 ls[t_id] = lf[t_id] - sampled_durations[t_id]
                 

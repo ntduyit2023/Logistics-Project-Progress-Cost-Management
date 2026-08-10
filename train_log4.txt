@@ -1,0 +1,91 @@
+================================================================================
+[Finetuner] K-FOLD CV (k=5) + AUGMENTATION + MIXUP + COSINE LR + META-LEARNER
+Tong so du an: 5
+================================================================================
+Da nap 5 do thi. Tong so tasks: 622
+[INFO] Target Normalization: Mean=1.1489, Std=0.0740
+
+============================================================
+  [Fold 1/5] Bat dau huan luyen...
+============================================================
+    Train: 449 tasks | Val: 114 tasks
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.2610 (R2: -0.8924) | Val Loss: 1.0399 (R2: -0.5473)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.8067 (R2: -0.1499) | Val Loss: 1.0082 (R2: -0.4450)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.5214 (R2: 0.0917) | Val Loss: 0.6229 (R2: -0.0388)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.3683 (R2: 0.3358) | Val Loss: 0.5655 (R2: -0.0334)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.2661 (R2: 0.5075) | Val Loss: 0.3510 (R2: 0.2887)
+    Epoch 100 | LR: 0.00750 | Train Loss: 0.3214 (R2: 0.4506) | Val Loss: 0.3638 (R2: 0.3553)
+    [Early Stop] Fold 1 dung tai Epoch 111. Best Val Loss: 0.3057
+  [Fold 1] Hoan thanh. Best Val Loss: 0.3057
+
+============================================================
+  [Fold 2/5] Bat dau huan luyen...
+============================================================
+    Train: 450 tasks | Val: 113 tasks
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.7005 (R2: -0.8410) | Val Loss: 0.8138 (R2: -0.4593)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.8337 (R2: -0.2043) | Val Loss: 0.8059 (R2: -0.4545)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.5905 (R2: 0.0051) | Val Loss: 0.6138 (R2: -0.1483)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.3281 (R2: 0.4475) | Val Loss: 0.4063 (R2: 0.1616)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.2100 (R2: 0.5035) | Val Loss: 0.3556 (R2: 0.2808)
+    Epoch 100 | LR: 0.00750 | Train Loss: 0.1960 (R2: 0.6460) | Val Loss: 0.2940 (R2: 0.3875)
+    Epoch 120 | LR: 0.00655 | Train Loss: 0.1722 (R2: 0.6493) | Val Loss: 0.2998 (R2: 0.3726)
+    [Early Stop] Fold 2 dung tai Epoch 125. Best Val Loss: 0.2730
+  [Fold 2] Hoan thanh. Best Val Loss: 0.2730
+
+============================================================
+  [Fold 3/5] Bat dau huan luyen...
+============================================================
+    Train: 450 tasks | Val: 113 tasks
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.5168 (R2: -0.3698) | Val Loss: 1.2220 (R2: -0.3590)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.8250 (R2: -0.2096) | Val Loss: 1.1199 (R2: -0.3313)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.3607 (R2: 0.2806) | Val Loss: 0.5900 (R2: 0.1270)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.2617 (R2: 0.4538) | Val Loss: 0.5122 (R2: 0.2935)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.1994 (R2: 0.5281) | Val Loss: 0.4411 (R2: 0.3587)
+    Epoch 100 | LR: 0.00750 | Train Loss: 0.3563 (R2: 0.2360) | Val Loss: 0.5108 (R2: 0.3057)
+    Epoch 120 | LR: 0.00655 | Train Loss: 0.1988 (R2: 0.6167) | Val Loss: 0.3692 (R2: 0.4555)
+    Epoch 140 | LR: 0.00553 | Train Loss: 0.2275 (R2: 0.5139) | Val Loss: 0.3336 (R2: 0.5247)
+    Epoch 160 | LR: 0.00448 | Train Loss: 0.1470 (R2: 0.6979) | Val Loss: 0.2854 (R2: 0.5758)
+    Epoch 180 | LR: 0.00346 | Train Loss: 0.1395 (R2: 0.7042) | Val Loss: 0.2957 (R2: 0.5692)
+    Epoch 200 | LR: 0.00251 | Train Loss: 0.1266 (R2: 0.7371) | Val Loss: 0.2870 (R2: 0.5830)
+    Epoch 220 | LR: 0.00166 | Train Loss: 0.1131 (R2: 0.7576) | Val Loss: 0.3194 (R2: 0.5402)
+    [Early Stop] Fold 3 dung tai Epoch 220. Best Val Loss: 0.2606
+  [Fold 3] Hoan thanh. Best Val Loss: 0.2606
+
+============================================================
+  [Fold 4/5] Bat dau huan luyen...
+============================================================
+    Train: 450 tasks | Val: 113 tasks
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.7278 (R2: -0.7132) | Val Loss: 0.9961 (R2: -1.2488)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.8419 (R2: -0.2340) | Val Loss: 0.6590 (R2: -0.2796)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.5898 (R2: 0.0235) | Val Loss: 0.5915 (R2: -0.5286)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.2957 (R2: 0.4026) | Val Loss: 0.3281 (R2: 0.2083)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.3602 (R2: 0.3921) | Val Loss: 0.3162 (R2: 0.2392)
+    Epoch 100 | LR: 0.00750 | Train Loss: 0.3105 (R2: 0.5127) | Val Loss: 0.2984 (R2: 0.2841)
+    Epoch 120 | LR: 0.00655 | Train Loss: 0.2734 (R2: 0.5986) | Val Loss: 0.2637 (R2: 0.3565)
+    Epoch 140 | LR: 0.00553 | Train Loss: 0.1901 (R2: 0.6862) | Val Loss: 0.2367 (R2: 0.3883)
+    Epoch 160 | LR: 0.00448 | Train Loss: 0.1539 (R2: 0.7222) | Val Loss: 0.2454 (R2: 0.3496)
+    Epoch 180 | LR: 0.00346 | Train Loss: 0.1330 (R2: 0.7635) | Val Loss: 0.2572 (R2: 0.3246)
+    [Early Stop] Fold 4 dung tai Epoch 186. Best Val Loss: 0.2280
+  [Fold 4] Hoan thanh. Best Val Loss: 0.2280
+
+============================================================
+  [Fold 5/5] Bat dau huan luyen...
+============================================================
+    Train: 453 tasks | Val: 110 tasks
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.4356 (R2: -0.2742) | Val Loss: 2.2170 (R2: -2.5750)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.7766 (R2: -0.2581) | Val Loss: 0.9573 (R2: -0.4104)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.4521 (R2: 0.1683) | Val Loss: 0.8514 (R2: -0.3511)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.2993 (R2: 0.5000) | Val Loss: 0.4119 (R2: 0.2172)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.2513 (R2: 0.5528) | Val Loss: 0.3828 (R2: 0.2479)
+    [Early Stop] Fold 5 dung tai Epoch 95. Best Val Loss: 0.3239
+  [Fold 5] Hoan thanh. Best Val Loss: 0.3239
+
+[Meta-Learner] Ridge trained on 563 OOF samples. OOF R2: 0.7453
+  Coef: 0.9412 | Intercept: 0.0000
+
+================================================================================
+--- Danh gia Ensemble (5 models) tren Test Set ---
+[Ensemble Base]  Test MSE: 0.2394 | Test R2: -1.2120 | Test NLL: 0.8331
+[Ensemble+Ridge] Test R2: -0.9592
+[INFO] Da luu model chinh (Fold 1) tai: E:\University\Year 3 - 3\DA3\ai_pipeline\models\moi\checkpoints\hgt_finetuned_weights.pt
+================================================================================

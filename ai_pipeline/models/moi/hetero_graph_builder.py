@@ -80,6 +80,27 @@ class HeteroGraphBuilder:
             
         data['task'].x = self.normalizer.encode_task_df(tasks_df)
 
+        # --- NẠP DỮ LIỆU NHÃN - GROUND TRUTH (Nếu có file labels.csv) ---
+        import os
+        labels_path = os.path.join(self.project_dir, 'labels.csv')
+        if os.path.exists(labels_path):
+            labels_df = pd.read_csv(labels_path)
+            y_features = []
+            for idx, row in tasks_df.iterrows():
+                t_id = str(row['task_id'])
+                label_row = labels_df[labels_df['task_id'] == t_id]
+                if not label_row.empty:
+                    dfac = float(label_row.iloc[0]['duration_factor'])
+                    # Phải Log-scale delay & sigma để tương thích với decode_predictions (np.expm1)
+                    raw_delay = float(label_row.iloc[0]['expected_delay'])
+                    raw_sigma = float(label_row.iloc[0]['uncertainty_sigma'])
+                    delay = float(np.log1p(raw_delay))
+                    sigma = float(np.log1p(raw_sigma))
+                else:
+                    dfac, delay, sigma = 1.0, 0.0, 0.1
+                y_features.append([dfac, delay, sigma])
+            data['task'].y = torch.tensor(y_features, dtype=torch.float32)
+
         # --- NÚT 2: RESOURCE NODES (6 Features) ---
         res_features = []
         for idx, row in res_df.iterrows():

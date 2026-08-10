@@ -1,0 +1,36 @@
+================================================================================
+[Finetuner] BAT DAU FINE-TUNING HGT (NODE-LEVEL SPLIT: 70-15-15)
+Tong so du an: 5
+================================================================================
+Da nap 5 do thi. Tong so tasks: 622
+[WARNING] Khong tim thay trong so Pretrained tai E:\University\Year 3 - 3\DA3\ai_pipeline\models\moi\checkpoints\hgt_best_weights.pt. Huan luyen tu dau!
+[INFO] Target Normalization: Mean=1.1527, Std=0.0739
+Epoch 001/200 | Train Loss: 2.1804 (R2: -1.7509) | Val Loss: 1.7588 (R2: -2.9268)
+Epoch 010/200 | Train Loss: 1.2703 (R2: -0.8249) | Val Loss: 1.7058 (R2: -2.8381)
+Epoch 020/200 | Train Loss: 1.2689 (R2: -0.8243) | Val Loss: 1.6986 (R2: -2.8377)
+Epoch 030/200 | Train Loss: 1.2726 (R2: -0.8239) | Val Loss: 1.7066 (R2: -2.8372)
+Epoch 040/200 | Train Loss: 1.2539 (R2: -0.8241) | Val Loss: 1.6863 (R2: -2.8377)
+Epoch 050/200 | Train Loss: 1.2614 (R2: -0.8237) | Val Loss: 1.6961 (R2: -2.8372)
+Epoch 060/200 | Train Loss: 1.2413 (R2: -0.8235) | Val Loss: 1.6699 (R2: -2.8395)
+Epoch 070/200 | Train Loss: 1.2375 (R2: -0.8242) | Val Loss: 1.6809 (R2: -2.8370)
+Epoch 080/200 | Train Loss: 1.2172 (R2: -0.8244) | Val Loss: 1.6435 (R2: -2.8376)
+Epoch 090/200 | Train Loss: 1.2100 (R2: -0.8242) | Val Loss: 1.6307 (R2: -2.8378)
+Epoch 100/200 | Train Loss: 1.2075 (R2: -0.8236) | Val Loss: 1.6351 (R2: -2.8374)
+Epoch 110/200 | Train Loss: 1.2189 (R2: -0.8244) | Val Loss: 1.6382 (R2: -2.8375)
+Epoch 120/200 | Train Loss: 1.2049 (R2: -0.8237) | Val Loss: 1.6382 (R2: -2.8378)
+Epoch 130/200 | Train Loss: 1.1908 (R2: -0.8240) | Val Loss: 1.6392 (R2: -2.8381)
+Epoch 140/200 | Train Loss: 1.1823 (R2: -0.8243) | Val Loss: 1.6192 (R2: -2.8372)
+Epoch 150/200 | Train Loss: 1.2592 (R2: -0.8239) | Val Loss: 1.6912 (R2: -2.8367)
+Epoch 160/200 | Train Loss: 1.1985 (R2: -0.8242) | Val Loss: 1.6271 (R2: -2.8383)
+Epoch 170/200 | Train Loss: 1.1905 (R2: -0.8238) | Val Loss: 1.6295 (R2: -2.8369)
+Epoch 180/200 | Train Loss: 1.2054 (R2: -0.8236) | Val Loss: 1.6280 (R2: -2.8370)
+Epoch 190/200 | Train Loss: 1.2039 (R2: -0.8251) | Val Loss: 1.6256 (R2: -2.8389)
+Epoch 200/200 | Train Loss: 1.1946 (R2: -0.8241) | Val Loss: 1.6313 (R2: -2.8370)
+================================================================================
+[Thanh cong] Da luu trong so Fine-Tuning tot nhat tai: E:\University\Year 3 - 3\DA3\ai_pipeline\models\moi\checkpoints\hgt_finetuned_weights.pt
+
+--- Danh gia tren Test Set ---
+E:\University\Year 3 - 3\DA3\ai_pipeline\models\moi\scripts\train_finetuner.py:207: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(finetuned_path))
+Test MSE: 1.3160 | Test R2: -3.0993 | Test NLL: 0.2098
+================================================================================

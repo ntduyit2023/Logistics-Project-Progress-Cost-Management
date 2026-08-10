@@ -1,0 +1,59 @@
+================================================================================
+[START] KET HOP DA LOAI HINH (MULTI-DOMAIN) PRETRAINING (SEED=42) TREN 5 DU AN:
+   * C2011-07
+   * C2012-04
+   * C2012-08
+   * C2018-09
+   * C2019-16
+================================================================================
+
+[BUILD] Dang dung do thi HeteroData (Z-Score Normalization) cho du an C2011-07...
+   -> Nodes: Task=49 | Resource=5 | Shift=12 | Edges=644
+
+[BUILD] Dang dung do thi HeteroData (Z-Score Normalization) cho du an C2012-04...
+   -> Nodes: Task=67 | Resource=16 | Shift=12 | Edges=888
+
+[BUILD] Dang dung do thi HeteroData (Z-Score Normalization) cho du an C2012-08...
+   -> Nodes: Task=437 | Resource=27 | Shift=12 | Edges=5917
+
+[BUILD] Dang dung do thi HeteroData (Z-Score Normalization) cho du an C2018-09...
+   -> Nodes: Task=37 | Resource=5 | Shift=12 | Edges=492
+
+[BUILD] Dang dung do thi HeteroData (Z-Score Normalization) cho du an C2019-16...
+   -> Nodes: Task=32 | Resource=1 | Shift=12 | Edges=427
+
+[TRAIN] Kich hoat Masked Autoencoder Pretrainer (300 Epochs Max, Early Stop Patience=40)...
+================================================================================
+[Pretrainer] SMOOTH L1 RECONSTRUCTION PRETRAINING: C2011-07, C2012-04, C2012-08, C2018-09, C2019-16
+   * Max Epochs: 300 | Patience: 40 | Mask Rate: 25%
+================================================================================
+   * Epoch 001/300 | Train Loss: 0.464282 | Val Loss: 0.247076 | Val MAE: 0.5609 | Val R2: -0.6609 | Ratio: 0.53 (Saved Best Weights)
+   * Epoch 002/300 | Train Loss: 0.200681 | Val Loss: 0.130361 | Val MAE: 0.4094 | Val R2: -0.2700 | Ratio: 0.65 (Saved Best Weights)
+   * Epoch 003/300 | Train Loss: 0.198141 | Val Loss: 0.109277 | Val MAE: 0.3618 | Val R2: -0.3939 | Ratio: 0.55 (Saved Best Weights)
+   * Epoch 005/300 | Train Loss: 0.167209 | Val Loss: 0.072463 | Val MAE: 0.2905 | Val R2: -0.3203 | Ratio: 0.43 (Saved Best Weights)
+   * Epoch 006/300 | Train Loss: 0.126985 | Val Loss: 0.063225 | Val MAE: 0.3146 | Val R2: -0.2437 | Ratio: 0.50 (Saved Best Weights)
+   * Epoch 010/300 | Train Loss: 0.198408 | Val Loss: 0.105894 | Val MAE: 0.3614 | Val R2: -0.0881 | Ratio: 0.53
+   * Epoch 020/300 | Train Loss: 0.145217 | Val Loss: 0.068487 | Val MAE: 0.2827 | Val R2: -0.0537 | Ratio: 0.47
+   * Epoch 029/300 | Train Loss: 0.273206 | Val Loss: 0.043666 | Val MAE: 0.2343 | Val R2: -0.0807 | Ratio: 0.16 (Saved Best Weights)
+   * Epoch 030/300 | Train Loss: 0.183302 | Val Loss: 0.074481 | Val MAE: 0.3372 | Val R2: -0.0276 | Ratio: 0.41
+   * Epoch 040/300 | Train Loss: 0.239801 | Val Loss: 0.737576 | Val MAE: 0.4808 | Val R2: -0.0496 | Ratio: 3.08 [CANH BAO OVERFIT!]
+   * Epoch 050/300 | Train Loss: 0.218371 | Val Loss: 0.069365 | Val MAE: 0.2813 | Val R2: -0.0368 | Ratio: 0.32
+   * Epoch 060/300 | Train Loss: 0.082236 | Val Loss: 0.074073 | Val MAE: 0.2434 | Val R2: -0.0511 | Ratio: 0.90
+
+[EARLY STOPPING] Model dat nguong toi uu o Epoch 29 (Val Loss khong giam sau 40 epochs consecutive).
+
+================================================================================
+[PRETRAINER EVALUATION REPORT] SUMMARY METRICS:
+   - Optimal Epoch: 29
+   - Train Loss (Smooth L1): 0.273206
+   - Val Loss (Out-of-Sample): 0.043666
+   - Val MAE (Mean Absolute Error): 0.2343
+   - Val RMSE (Root Mean Squared Error): 0.3884
+   - Val R2 Score: -0.0807
+   - Overfitting Ratio (Val/Train): 0.16 (Ideal <= 1.2)
+================================================================================
+
+================================================================================
+[SUCCESS] DA DAT DUOC BO THAM SO TOI UU NHAT HOAN HAO CHO CAC DANG DU AN!
+Checkpoint location: E:\University\Year 3 - 3\DA3\checkpoints\hgt_best_weights.pt
+================================================================================

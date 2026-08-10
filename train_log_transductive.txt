@@ -1,0 +1,74 @@
+================================================================================
+[HGT] LEAVE-ONE-PROJECT-OUT CV (LOOCV)
+Tong so du an: 5
+================================================================================
+Da nap 5 do thi. Tong so tasks: 622
+
+============================================================
+  [Fold 1/5] Val Project: C2011-07
+============================================================
+    Train: 582 tasks | Val: 40 tasks
+    Target Normalization (Train): Mean=1.1516, Std=0.0760
+    Epoch 001 | LR: 0.01000 | Train Loss: 2.0067 (R2: -0.0827) | Val Loss: 0.3256 (R2: -0.0696)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.8109 (R2: 0.0089) | Val Loss: 0.3095 (R2: -0.0186)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.2534 (R2: 0.6723) | Val Loss: 0.3433 (R2: -0.1304)
+    [Early Stop] Fold 1 dung tai Epoch 54. Best Val R2: 0.0030
+  [Fold 1] Hoan thanh. Best Val R2: 0.0030
+
+============================================================
+  [Fold 2/5] Val Project: C2012-04
+============================================================
+    Train: 568 tasks | Val: 54 tasks
+    Target Normalization (Train): Mean=1.1531, Std=0.0754
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.2659 (R2: -0.6597) | Val Loss: 0.6051 (R2: -0.0312)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.5917 (R2: 0.1643) | Val Loss: 0.4561 (R2: 0.2132)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.3657 (R2: 0.5353) | Val Loss: 0.6957 (R2: -0.2078)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.2642 (R2: 0.7133) | Val Loss: 0.4756 (R2: 0.1794)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.2242 (R2: 0.7576) | Val Loss: 0.4022 (R2: 0.3229)
+    Epoch 100 | LR: 0.00750 | Train Loss: 0.2222 (R2: 0.7029) | Val Loss: 0.8041 (R2: -0.3998)
+    [Early Stop] Fold 2 dung tai Epoch 102. Best Val R2: 0.4502
+  [Fold 2] Hoan thanh. Best Val R2: 0.4502
+
+============================================================
+  [Fold 3/5] Val Project: C2012-08
+============================================================
+    Train: 272 tasks | Val: 350 tasks
+    Target Normalization (Train): Mean=1.1454, Std=0.0691
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.3153 (R2: -0.3720) | Val Loss: 1.2907 (R2: 0.0024)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.9184 (R2: 0.0117) | Val Loss: 1.2459 (R2: 0.0252)
+    Epoch 040 | LR: 0.00957 | Train Loss: 0.4902 (R2: 0.4349) | Val Loss: 0.3200 (R2: 0.7560)
+    Epoch 060 | LR: 0.00905 | Train Loss: 0.2958 (R2: 0.6412) | Val Loss: 0.3006 (R2: 0.7711)
+    Epoch 080 | LR: 0.00835 | Train Loss: 0.3845 (R2: 0.6024) | Val Loss: 0.3439 (R2: 0.7378)
+    [Early Stop] Fold 3 dung tai Epoch 87. Best Val R2: 0.7827
+  [Fold 3] Hoan thanh. Best Val R2: 0.7827
+
+============================================================
+  [Fold 4/5] Val Project: C2018-09
+============================================================
+    Train: 592 tasks | Val: 30 tasks
+    Target Normalization (Train): Mean=1.1495, Std=0.0736
+    Epoch 001 | LR: 0.01000 | Train Loss: 2.3579 (R2: -0.1784) | Val Loss: 1.5929 (R2: -0.3016)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.9376 (R2: -0.0060) | Val Loss: 1.3245 (R2: -0.0865)
+    [Early Stop] Fold 4 dung tai Epoch 34. Best Val R2: -0.0143
+  [Fold 4] Hoan thanh. Best Val R2: -0.0143
+
+============================================================
+  [Fold 5/5] Val Project: C2019-16
+============================================================
+    Train: 596 tasks | Val: 26 tasks
+    Target Normalization (Train): Mean=1.1530, Std=0.0744
+    Epoch 001 | LR: 0.01000 | Train Loss: 1.3707 (R2: -0.1887) | Val Loss: 0.4989 (R2: -0.0119)
+    Epoch 020 | LR: 0.00989 | Train Loss: 0.9061 (R2: -0.0380) | Val Loss: 0.7179 (R2: -0.4659)
+    [Early Stop] Fold 5 dung tai Epoch 31. Best Val R2: -0.0119
+  [Fold 5] Hoan thanh. Best Val R2: -0.0119
+
+================================================================================
+--- TONG KET 5-FOLD LEAVE-ONE-PROJECT-OUT CV (HGT) ---
+Mean Test R2:  0.2419 ± 0.3234
+Mean Test MSE: 0.0028 ± 0.0020
+  Project 1 R2: 0.0030
+  Project 2 R2: 0.4502
+  Project 3 R2: 0.7827
+  Project 4 R2: -0.0143
+  Project 5 R2: -0.0119
+================================================================================

@@ -116,11 +116,27 @@ class BaseProjectNormalizer:
                         except (ValueError, TypeError):
                             pass
                 feat.append(np.log1p(max(0.0, val) / self.s_domain))
+                
+            # --- 3. Feature Engineering: Tỷ lệ chi phí (2 features) ---
+            try:
+                total_cost = max(1.0, float(row.get('total_cost', 1.0)))
+                labor = float(row.get('internal_labor_cost', row.get('labor', 0.0)))
+                material = float(row.get('material_cost', row.get('material', 0.0)))
+                equipment = float(row.get('equipment_fuel_cost', row.get('equipment', 0.0)))
+                
+                labor_ratio = labor / total_cost
+                mat_eq_ratio = (material + equipment) / total_cost
+                
+                feat.append(labor_ratio)
+                feat.append(mat_eq_ratio)
+            except (ValueError, TypeError):
+                feat.append(0.0)
+                feat.append(0.0)
 
             features_list.append(feat)
             
         if not features_list:
-            return torch.zeros((0, 39), dtype=torch.float32)
+            return torch.zeros((0, 41), dtype=torch.float32)
             
         tensor_x = torch.tensor(features_list, dtype=torch.float32)
         
@@ -161,7 +177,7 @@ class BaseProjectNormalizer:
 
     def decode_reconstructed_features(self, norm_tensor: torch.Tensor) -> np.ndarray:
         """
-        Giải mã Tensor tái tạo [N, 39] từ Phase 0 Pretrainer trở lại giá trị quy mô thực tế.
+        Giải mã Tensor tái tạo [N, 41] từ Phase 0 Pretrainer trở lại giá trị quy mô thực tế.
         """
         arr = norm_tensor.detach().cpu().numpy()
         raw = np.zeros_like(arr)
@@ -170,8 +186,12 @@ class BaseProjectNormalizer:
         raw[:, 0] = np.expm1(arr[:, 0])
         
         # Indices 1-38: Standard 38 Cost features
-        if arr.shape[1] > 1:
-            raw[:, 1:] = np.expm1(arr[:, 1:]) * self.s_domain
+        if arr.shape[1] >= 39:
+            raw[:, 1:39] = np.expm1(arr[:, 1:39]) * self.s_domain
+            
+        # Indices 39-40: Ratios (no decode needed for viewing, just raw percentage)
+        if arr.shape[1] == 41:
+            raw[:, 39:41] = arr[:, 39:41]
             
         return raw
 
