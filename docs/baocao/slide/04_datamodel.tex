@@ -73,12 +73,17 @@
             \item \texttt{lag\_hours}: Độ trễ hoặc Overlap.
             \item Module Frontend có DFS Cycle Detection để bảo vệ Đồ thị dạng DAG.
         \end{itemize}
-        \vspace{0.2cm}
+        \vspace{0.1cm}
         \item \textbf{Cạnh Phân bổ (Task $\rightarrow$ uses $\rightarrow$ Resource):}
         \begin{itemize}
-            \item Thể hiện mức tiêu thụ tài nguyên của công việc: \texttt{request\_quantity}.
-            \item Định nghĩa phương trình Cumulative Constraint trong CP-SAT:
+            \item Thể hiện mức tiêu thụ tài nguyên: \texttt{request\_quantity}.
+            \item Định nghĩa Cumulative Constraint trong CP-SAT:
             $$\sum_{i \in Active(t)} D_{ir} \leq \text{max\_availability}_r \quad \forall t \in [0, C_{\max}]$$
+        \end{itemize}
+        \vspace{0.1cm}
+        \item \textbf{Cạnh Ràng buộc Lịch (Task $\rightarrow$ constrained\_by $\rightarrow$ Shift):}
+        \begin{itemize}
+            \item Liên kết công việc với ca kíp (Agenda). Đảm bảo thời lượng thi công (Working Hours) được ánh xạ chính xác sang ngày thực tế (Calendar Date).
         \end{itemize}
     \end{itemize}
 \end{frame}

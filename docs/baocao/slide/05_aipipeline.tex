@@ -5,7 +5,7 @@
 
 \begin{frame}{16. Kiến trúc Tổng thể (Proposed Architecture)}
     \begin{enumerate}
-        \item \textbf{Biểu diễn Dữ liệu (Data Representation):} Chuyển đổi dữ liệu mạng lưới dự án thành cấu trúc Đồ thị Dị thể (Heterogeneous Graph).
+        \item \textbf{Biểu diễn Dữ liệu (Data Representation):} Chuyển đổi cấu trúc dự án thành Đồ thị Dị thể (Heterogeneous Graph) liên kết 3 tập đỉnh thực thể: Task (Công việc), Resource (Tài nguyên) và Shift (Ca/Lịch làm việc).
         \item \textbf{Học Đặc trưng (Feature Learning):} Ứng dụng mạng nơ-ron đồ thị (HGT) để ngoại suy các tham số nhiễu (noise parameters) bao gồm độ trễ kỳ vọng và phương sai.
         \item \textbf{Mô phỏng Ngẫu nhiên (Stochastic Simulation):} Sử dụng phương pháp Monte Carlo tích hợp phân phối Beta-PERT nhằm định lượng Xác suất Tới hạn (Criticality Index - $CI$).
         \item \textbf{Xây dựng Không gian Trạng thái (State Space Formulation):} Khởi tạo các kịch bản thực thi (Execution Modes) dựa trên phân tích tương quan (Attention Scores) và $CI$.
@@ -25,13 +25,13 @@
         \item \textbf{Mục đích:} Nâng cao khả năng khái quát hóa (generalization) trước khi tinh chỉnh (fine-tuning) trên tập dữ liệu nhỏ.
     \end{itemize}
     \centering
-    \vspace{0.2cm}
-    \includegraphics[width=0.9\textwidth, height=0.65\textheight, keepaspectratio]{fig7_pretraining_flow.drawio.png}
+    \vspace{0.1cm}
+    \includegraphics[width=0.9\textwidth, height=0.4\textheight, keepaspectratio]{fig7_pretraining_flow.drawio.png}
 \end{frame}
 
 \begin{frame}{17b. Kiến trúc Transfer Learning (Pre-training \& Fine-tuning)}
     \centering
-    \includegraphics[width=\textwidth, height=0.85\textheight, keepaspectratio]{fig8_pretrain_finetune.drawio.png}
+    \includegraphics[width=\textwidth, height=0.75\textheight, keepaspectratio]{fig8_pretrain_finetune.drawio.png}
 \end{frame}
 
 \begin{frame}{18. Suy luận và Khai phá Tương quan (Inference \& Attention)}
@@ -46,14 +46,16 @@
         
         \column{0.5\textwidth}
         \textbf{Cơ chế Tập trung Tương tự Cosine (Cosine Attention):}
-        Định lượng mức độ phụ thuộc và nút thắt cổ chai (bottleneck) giữa tập Công việc ($T$) và Tài nguyên ($R$).
+        Định lượng mức độ phụ thuộc đa thực thể (bottleneck) giữa tập Công việc ($T$), Tài nguyên ($R$) và Ca kíp ($S$).
         \begin{equation}
-            \text{sim}(t, r) = \frac{\mathbf{h}_t \cdot \mathbf{h}_r}{\|\mathbf{h}_t\| \|\mathbf{h}_r\|}
+            \text{sim}(t, \{r, s\}) = \frac{\mathbf{h}_t \cdot \mathbf{h}_{\{r, s\}}}{\|\mathbf{h}_t\| \|\mathbf{h}_{\{r, s\}}\|}
         \end{equation}
     \end{columns}
+\end{frame}
+
+\begin{frame}{18b. Cơ chế Truyền thông điệp \& Tập trung (Message Passing \& Attention)}
     \centering
-    \vspace{0.3cm}
-    \includegraphics[width=0.8\textwidth, height=0.45\textheight, keepaspectratio]{fig4_hgtconv_attention.drawio.png}
+    \includegraphics[width=\textwidth, height=0.75\textheight, keepaspectratio]{fig4_hgtconv_attention.drawio.png}
 \end{frame}
 
 \begin{frame}{18. B4: Mô phỏng Ngẫu nhiên (Stochastic CPM)}
@@ -97,19 +99,18 @@
 \end{frame}
 
 \begin{frame}{20. B5: Cấu trúc Mô hình Quy hoạch (Constraint Formulation)}
-    \begin{columns}
-        \column{0.5\textwidth}
-        \textbf{Mô hình Toán học (CP-SAT):}
-        \begin{enumerate}
-            \item \textbf{Decision Variables:} Biến `start` (Miền liên tục) và `Optional Interval` (Biến Boolean 0/1) phục vụ lựa chọn Mode thi công.
-            \item \textbf{Precedence \& Cumulative:} Áp dụng Lan truyền ràng buộc (Domain Propagation) tuân thủ logic mạng lưới và năng lực tài nguyên.
-            \item \textbf{Search Mechanism:} Tích hợp Rẽ nhánh (Branching) và Học lỗi (Clause Learning/Backtracking) nhằm tối ưu không gian tìm kiếm.
-            \item \textbf{Grid Sweep Pareto:} Trượt hàm mục tiêu $Z = \alpha \cdot T + \beta \cdot C + \gamma \cdot R$ để ngoại suy phổ phương án tối ưu.
-        \end{enumerate}
-        \vspace{0.1cm}
-        \textit{(Áp dụng bộ giải Google OR-Tools \cite{ortools} và phương pháp \cite{ga2023})}
-        \column{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{fig6_cpsat_pareto.drawio.png}
-    \end{columns}
+    \textbf{Mô hình Toán học (CP-SAT):}
+    \begin{enumerate}
+        \item \textbf{Decision Variables:} Biến `start` (Miền liên tục) và `Optional Interval` (Biến Boolean 0/1) phục vụ lựa chọn Mode thi công.
+        \item \textbf{Precedence \& Cumulative:} Áp dụng Lan truyền ràng buộc (Domain Propagation) tuân thủ logic mạng lưới và năng lực tài nguyên.
+        \item \textbf{Search Mechanism:} Tích hợp Rẽ nhánh (Branching) và Học lỗi (Clause Learning/Backtracking) nhằm tối ưu không gian tìm kiếm.
+        \item \textbf{Grid Sweep Pareto:} Trượt hàm mục tiêu $Z = \alpha \cdot T + \beta \cdot C + \gamma \cdot R$ để ngoại suy phổ phương án tối ưu.
+    \end{enumerate}
+    \vspace{0.5cm}
+    \textit{(Áp dụng bộ giải Google OR-Tools \cite{ortools} và phương pháp \cite{ga2023})}
+\end{frame}
+
+\begin{frame}{20b. Sơ đồ Luồng xử lý CP-SAT Pareto}
+    \centering
+    \includegraphics[width=\textwidth, height=0.75\textheight, keepaspectratio]{fig6_cpsat_pareto.drawio.png}
 \end{frame}
