@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.1)  10 AUG 2026 19:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.7.1)  11 AUG 2026 12:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1711,20 +1711,16 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [21
 
  <./img/fig7_pretraining_flow.drawio.png>]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 52--52
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 35--35
  [][][][]  
  []
 
-<img/fig4_hgtconv_attention.drawio.png, id=280, 1543.7675pt x 1065.9825pt>
-File: img/fig4_hgtconv_attention.drawio.png Graphic file (type png)
-<use img/fig4_hgtconv_attention.drawio.png>
-Package pdftex.def Info: img/fig4_hgtconv_attention.drawio.png  used on input l
-ine 52.
-(pdftex.def)             Requested size: 158.62585pt x 109.53229pt.
-
-Overfull \vbox (22.51978pt too high) detected at line 52
- []
-
+<img/fig8_pretrain_finetune.drawio.png, id=280, 1226.5825pt x 684.5575pt>
+File: img/fig8_pretrain_finetune.drawio.png Graphic file (type png)
+<use img/fig8_pretrain_finetune.drawio.png>
+Package pdftex.def Info: img/fig8_pretrain_finetune.drawio.png  used on input l
+ine 35.
+(pdftex.def)             Requested size: 370.71014pt x 206.89388pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
@@ -1732,9 +1728,19 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [22
 
- <./img/fig4_hgtconv_attention.drawio.png>]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 70--70
+ <./img/fig8_pretrain_finetune.drawio.png>]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 57--57
  [][][][]  
+ []
+
+<img/fig4_hgtconv_attention.drawio.png, id=289, 1543.7675pt x 1065.9825pt>
+File: img/fig4_hgtconv_attention.drawio.png Graphic file (type png)
+<use img/fig4_hgtconv_attention.drawio.png>
+Package pdftex.def Info: img/fig4_hgtconv_attention.drawio.png  used on input l
+ine 57.
+(pdftex.def)             Requested size: 158.62585pt x 109.53229pt.
+
+Overfull \vbox (22.51978pt too high) detected at line 57
  []
 
 
@@ -1744,8 +1750,8 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 
 [23
 
-]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 92--92
+ <./img/fig4_hgtconv_attention.drawio.png>]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 75--75
  [][][][]  
  []
 
@@ -1757,22 +1763,38 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
 [24
 
 ]
-Overfull \hbox (29.71477pt too wide) in paragraph at lines 110--110
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 97--97
  [][][][]  
  []
 
-<img/fig6_cpsat_pareto.drawio.png, id=307, 1106.1325pt x 1056.94875pt>
-File: img/fig6_cpsat_pareto.drawio.png Graphic file (type png)
-<use img/fig6_cpsat_pareto.drawio.png>
-Package pdftex.def Info: img/fig6_cpsat_pareto.drawio.png  used on input line 1
-10.
-(pdftex.def)             Requested size: 195.00592pt x 186.32353pt.
 
 Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
 [25
+
+]
+Overfull \hbox (29.71477pt too wide) in paragraph at lines 115--115
+ [][][][]  
+ []
+
+<img/fig6_cpsat_pareto.drawio.png, id=316, 1106.1325pt x 1056.94875pt>
+File: img/fig6_cpsat_pareto.drawio.png Graphic file (type png)
+<use img/fig6_cpsat_pareto.drawio.png>
+Package pdftex.def Info: img/fig6_cpsat_pareto.drawio.png  used on input line 1
+15.
+(pdftex.def)             Requested size: 195.00592pt x 186.32353pt.
+
+Overfull \vbox (47.82687pt too high) detected at line 115
+ []
+
+
+Overfull \hbox (29.71477pt too wide) has occurred while \output is active
+ [][][][]  
+ []
+
+[26
 
  <./img/fig6_cpsat_pareto.drawio.png>]) (slide/06_casestudy_benchmark.tex
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 25--25
@@ -1784,7 +1806,7 @@ LaTeX Font Info:    Trying to load font information for TS1+lmss on input line
 (D:\Develop\MiKTeX\tex/latex/lm\ts1lmss.fd
 File: ts1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-<img/sosanh.jpg, id=319, 887.315pt x 485.815pt>
+<img/sosanh.jpg, id=327, 887.315pt x 485.815pt>
 File: img/sosanh.jpg Graphic file (type jpg)
 <use img/sosanh.jpg>
 Package pdftex.def Info: img/sosanh.jpg  used on input line 25.
@@ -1798,14 +1820,14 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[26
+[27
 
 {D:/Develop/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc} <./img/sosanh.jpg>]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 40--40
  [][][][]  
  []
 
-<img/epoch.jpg, id=330, 987.69pt x 2493.315pt>
+<img/epoch.jpg, id=338, 987.69pt x 2493.315pt>
 File: img/epoch.jpg Graphic file (type jpg)
 <use img/epoch.jpg>
 Package pdftex.def Info: img/epoch.jpg  used on input line 40.
@@ -1815,14 +1837,14 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[27
+[28
 
  <./img/epoch.jpg>]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 58--58
  [][][][]  
  []
 
-<img/ket_qua_r2.jpg, id=338, 987.69pt x 485.815pt>
+<img/ket_qua_r2.jpg, id=346, 987.69pt x 485.815pt>
 File: img/ket_qua_r2.jpg Graphic file (type jpg)
 <use img/ket_qua_r2.jpg>
 Package pdftex.def Info: img/ket_qua_r2.jpg  used on input line 58.
@@ -1832,7 +1854,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[28
+[29
 
  <./img/ket_qua_r2.jpg>]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 107--107
@@ -1844,14 +1866,14 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[29
+[30
 
 ]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 128--128
  [][][][]  
  []
 
-<img/pareto_frontier.png, id=353, 798.5835pt x 498.30165pt>
+<img/pareto_frontier.png, id=361, 798.5835pt x 498.30165pt>
 File: img/pareto_frontier.png Graphic file (type png)
 <use img/pareto_frontier.png>
 Package pdftex.def Info: img/pareto_frontier.png  used on input line 128.
@@ -1861,7 +1883,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[30
+[31
 
  <./img/pareto_frontier.png>]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 160--160
@@ -1873,7 +1895,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[31
+[32
 
 ]) (slide/07_conclusion.tex
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 19--19
@@ -1885,7 +1907,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[32
+[33
 
 ]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 39--39
@@ -1897,7 +1919,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[33
+[34
 
 ]
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 59--59
@@ -1909,7 +1931,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[34
+[35
 
 ]) (slide/08_references.tex
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 8--8
@@ -1921,7 +1943,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[35
+[36
 
  <D:/Develop/MiKTeX/tex/latex/beamer/beamericonarticle.pdf>])
 Overfull \hbox (29.71477pt too wide) in paragraph at lines 65--65
@@ -1935,7 +1957,7 @@ Overfull \hbox (29.71477pt too wide) has occurred while \output is active
  [][][][]  
  []
 
-[36
+[37
 
 ]
 \tf@nav=\write6
@@ -1960,30 +1982,30 @@ Package rerunfilecheck Info: File `slide.out' has not changed.
 (rerunfilecheck)             Checksum: D9657850549587CF52B430F9B9E379BA;1232.
  ) 
 Here is how much of TeX's memory you used:
- 25941 strings out of 467509
- 485617 string characters out of 5421821
+ 25954 strings out of 467509
+ 486039 string characters out of 5421821
  870918 words of memory out of 5000000
- 54507 multiletter control sequences out of 15000+600000
+ 54518 multiletter control sequences out of 15000+600000
  796005 words of font info for 113 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,15n,123p,382b,839s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <D:/Develop/MiKTeX/fonts/type1/public/lm/lmex10.pfb><D:/Develop/MiKTeX/fonts/
 type1/public/lm/lmmi10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><
-D:/Develop/MiKTeX/fonts/type1/public/lm/lmmi9.pfb><D:/Develop/MiKTeX/fonts/type
-1/public/lm/lmss10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmss12.pfb><D:/
-Develop/MiKTeX/fonts/type1/public/lm/lmss8.pfb><D:/Develop/MiKTeX/fonts/type1/p
-ublic/lm/lmss9.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><D:/De
-velop/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><D:/Develop/MiKTeX/fonts/type1/p
-ublic/lm/lmsso12.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmsso8.pfb><D:/De
-velop/MiKTeX/fonts/type1/public/lm/lmsso9.pfb><D:/Develop/MiKTeX/fonts/type1/pu
-blic/lm/lmsy10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmsy7.pfb><D:/Devel
-op/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><D:/Develop/MiKTeX/fonts/type1/public
-/lm/lmsy9.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><D:/Develop/M
-iKTeX/fonts/type1/public/lm/lmtt10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm
-/lmtt9.pfb><D:/Develop/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on slide.pdf (36 pages, 2279453 bytes).
+D:/Develop/MiKTeX/fonts/type1/public/lm/lmss10.pfb><D:/Develop/MiKTeX/fonts/typ
+e1/public/lm/lmss12.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmss8.pfb><D:/
+Develop/MiKTeX/fonts/type1/public/lm/lmss9.pfb><D:/Develop/MiKTeX/fonts/type1/p
+ublic/lm/lmssbx10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmsso10.pfb><D:/
+Develop/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><D:/Develop/MiKTeX/fonts/type1
+/public/lm/lmsso8.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmsso9.pfb><D:/D
+evelop/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><D:/Develop/MiKTeX/fonts/type1/p
+ublic/lm/lmsy7.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><D:/Devel
+op/MiKTeX/fonts/type1/public/lm/lmsy9.pfb><D:/Develop/MiKTeX/fonts/type1/public
+/lm/lmtk10.pfb><D:/Develop/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><D:/Develop/
+MiKTeX/fonts/type1/public/lm/lmtt9.pfb><D:/Develop/MiKTeX/fonts/type1/public/am
+sfonts/symbols/msbm10.pfb>
+Output written on slide.pdf (37 pages, 2357700 bytes).
 PDF statistics:
- 535 PDF objects out of 1000 (max. 8388607)
- 84 named destinations out of 1000 (max. 500000)
- 303 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 543 PDF objects out of 1000 (max. 8388607)
+ 86 named destinations out of 1000 (max. 500000)
+ 308 words of extra memory for PDF output out of 10000 (max. 10000000)
 

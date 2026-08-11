@@ -69,9 +69,9 @@
     \textbf{Tổng hợp Phân phối Thống kê Cốt lõi:}
     \begin{itemize}
         \item $P_{50}, P_{80}, P_{95}$: Các mốc thời gian hoàn thành dựa trên độ tin cậy.
-        \item \textbf{Criticality Index ($CI_i$):} Tỷ lệ xác suất nút $i$ nằm trên đường găng (Critical Path).
+        \item \textbf{Criticality Index ($CI_i$):} Xác suất nút $i$ định vị trên đường găng (Khác biệt so với cơ chế Đường găng tĩnh của các phần mềm truyền thống).
     \end{itemize}
-    \textit{Vai trò:} Tham số $CI$ đóng vai trò heuristic định hướng nhằm thu hẹp không gian tìm kiếm (Search Space) trong bước tối ưu tiếp theo.
+    \textit{Vai trò:} Tích số $CI \times \text{Duration}$ tạo thành \textbf{Total Risk}, đóng vai trò heuristic định hướng, hỗ trợ bộ giải CP-SAT tập trung ngân sách tối ưu vào đúng các nút thắt cổ chai (bottlenecks).
 \end{frame}
 
 \begin{frame}{19. B5: Tối ưu hóa Lịch trình (CP-SAT Optimizer)}
@@ -88,9 +88,9 @@
             \textbf{Mode} & \textbf{Chiến lược} & \textbf{Thời gian} & \textbf{Chi phí} \\
             \midrule
             \textbf{0. Normal} & Giữ nguyên thiết kế ban đầu. & 100\% & 100\% \\
-            \textbf{1. Overtime} & Khai thác ngoài giờ (CI > 0). & $\sim$66\% & +50\% (Hệ số 1.5x) \\
-            \textbf{2. AddRes} & Bổ sung tài nguyên (Dựa trên Attention). & $\sim$70\% & +30\% \\
-            \textbf{3. Hybrid} & Phối hợp tối đa hóa nguồn lực (CI $> 90\%$). & $\sim$50\% & +80\% \\
+            \textbf{1. Overtime} & Khai thác ngoài giờ (CI > 0). & $\sim$66\% & Động (Theo Từ điển Tài nguyên) \\
+            \textbf{2. AddRes} & Bổ sung tài nguyên ngoài. & $\sim$70\% & + Chi phí cấu thành thuê ngoài \\
+            \textbf{3. Hybrid} & Phối hợp tối đa hóa nguồn lực. & $\sim$50\% & + Chi phí cận biên cao nhất \\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -99,12 +99,12 @@
 \begin{frame}{20. B5: Cấu trúc Mô hình Quy hoạch (Constraint Formulation)}
     \begin{columns}
         \column{0.5\textwidth}
-        \textbf{Ràng buộc Lập trình (CP-SAT Constraints):}
+        \textbf{Mô hình Toán học (CP-SAT):}
         \begin{enumerate}
-            \item \textbf{Precedence:} \texttt{AddEndBeforeStart} đảm bảo tính toàn vẹn của quan hệ tiền nhiệm.
-            \item \textbf{Resource:} \texttt{AddCumulative} kiểm soát giới hạn tài nguyên khả dụng.
-            \item \textbf{Deadline:} Tích hợp hàm phạt (Penalty) vi phạm tiến độ mục tiêu.
-            \item \textbf{Multi-Scenario:} Ứng dụng quét lưới (Grid Sweep) tham số chi phí nhằm sinh tập hợp các nghiệm không bị thống trị (Non-dominated Solutions).
+            \item \textbf{Decision Variables:} Biến `start` (Miền liên tục) và `Optional Interval` (Biến Boolean 0/1) phục vụ lựa chọn Mode thi công.
+            \item \textbf{Precedence \& Cumulative:} Áp dụng Lan truyền ràng buộc (Domain Propagation) tuân thủ logic mạng lưới và năng lực tài nguyên.
+            \item \textbf{Search Mechanism:} Tích hợp Rẽ nhánh (Branching) và Học lỗi (Clause Learning/Backtracking) nhằm tối ưu không gian tìm kiếm.
+            \item \textbf{Grid Sweep Pareto:} Trượt hàm mục tiêu $Z = \alpha \cdot T + \beta \cdot C + \gamma \cdot R$ để ngoại suy phổ phương án tối ưu.
         \end{enumerate}
         \vspace{0.1cm}
         \textit{(Áp dụng bộ giải Google OR-Tools \cite{ortools} và phương pháp \cite{ga2023})}
