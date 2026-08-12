@@ -92,8 +92,9 @@ Báo cáo Đồ án: Hệ thống Quản trị Dự án Logistics (GLPO)
     │   ├── 4.1.1 Đóng góp về mặt lý luận khoa học (Graph AI + Hybrid Optimization)
     │   └── 4.1.2 Đóng góp về mặt thực tiễn kỹ thuật (Microservices, Recursive CTE)
     └── 4.2 Đề xuất hướng phát triển
-        ├── 4.2.1 Tích hợp dữ liệu chuỗi cung ứng thời gian thực (IoT, RFID tracking)
-        └── 4.2.2 Tối ưu hóa Đa mục tiêu nâng cao bằng Học tăng cường sâu (Deep Reinforcement Learning - DRL)
+        ├── 4.2.1 Cải tiến Bộ Tối ưu hóa: Khắc phục điểm mù cục bộ bằng Thuật toán Di truyền Thích nghi (Adaptive GA)
+        ├── 4.2.2 Nâng cấp Kiến trúc Học máy Đồ thị: Áp dụng cơ chế Chú ý Nâng cao (Advanced Attention Mechanisms) như Graphormer
+        └── 4.2.3 Mở rộng Dữ liệu Huấn luyện (Data Scaling): Thu thập thêm các bộ dữ liệu dự án thực tế để tăng cường tính tổng quát (Generalization) của mô hình AI
 ```
 
 ## Ghi chú Triển khai (Implementation Notes)
