@@ -2,6 +2,13 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Kết quả đánh giá sai số dự báo tham số trên mô hình GNN}}{9}{table.caption.17}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces So sánh không gian tìm kiếm và thời gian giải (Dataset: DSLIB j120)}}{9}{table.caption.18}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Cấu hình phần cứng và thông số môi trường thử nghiệm}}{9}{table.caption.17}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị và tài nguyên của Case Study MFET 3008/5040}}{10}{table.caption.18}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces So sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{11}{table.caption.20}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Dung lượng bộ nhớ tiêu thụ của hệ thống theo quy mô đồ thị dự án}}{12}{table.caption.22}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Kết quả bài toán Crashing tiến độ và phân bổ chi phí gia tăng trên MFET 3008}}{12}{table.caption.23}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Chỉ số phân bổ tài nguyên nhân lực ($R_3$) trước và sau khi chạy Tối ưu hóa Resource Leveling}}{13}{table.caption.25}%
+\contentsline {table}{\numberline {3.7}{\ignorespaces So sánh hiệu năng và tốc độ hội tụ của các thuật toán tối ưu hóa}}{14}{table.caption.27}%
+\contentsline {table}{\numberline {3.8}{\ignorespaces Đánh giá sai số dự báo thời gian thực hiện công việc trên các kiến trúc AI}}{16}{table.caption.29}%
+\contentsline {table}{\numberline {3.9}{\ignorespaces Khả năng định vị nút Đường găng thông qua Trọng số Attention của HGT}}{17}{table.caption.32}%
 \addvspace {10\p@ }

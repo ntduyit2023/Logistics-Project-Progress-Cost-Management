@@ -2,4 +2,14 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Giao diện trực quan mạng lưới tiến trình công việc dự án MFET 3008 (Render tự động từ thư viện React-Flow với thuật toán phân cấp Dagre).}}{10}{figure.caption.19}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Biểu đồ cột so sánh thời gian thực thi truy vấn giữa ORM tiêu chuẩn và Recursive CTE theo quy mô đồ thị.}}{11}{figure.caption.21}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Biểu đồ sử dụng tài nguyên nhân lực Dev Computing theo thời gian TRƯỚC khi thực hiện tối ưu hóa (Lịch thi công khởi tạo sớm 66 ngày).}}{13}{figure.caption.24}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Biểu đồ phân bổ tài nguyên nhân lực Dev Computing SAU khi chạy thuật toán Tối ưu hóa Resource Leveling (Lịch 96 ngày khả thi).}}{14}{figure.caption.26}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Đồ thị đường thể hiện sự hội tụ của hàm mục tiêu theo thế hệ tiến hóa giữa GA tiêu chuẩn và Bộ Tối ưu hóa Lai.}}{15}{figure.caption.28}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Đường cong ROC-AUC và Ma trận nhầm lẫn (Confusion Matrix) của mô hình phân loại rủi ro dự án.}}{16}{figure.caption.30}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Biểu đồ Scatter Plot đối chiếu sai số hồi quy giữa thời gian hoàn thành dự báo (Predicted Days) và thực tế (Actual Days).}}{16}{figure.caption.31}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Bản đồ nhiệt trọng số Chú ý (Attention Heatmap) định vị các nút công việc có ảnh hưởng lớn nhất trên Đường găng.}}{17}{figure.caption.33}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Ảnh chụp màn hình giao diện thực tế hệ thống GLPO: Bảng điều khiển EVM Dashboard và Biểu đồ Gantt Tương tác trên kịch bản MFET 3008.}}{19}{figure.caption.34}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Sơ đồ Concept đề xuất kiến trúc Cơ chế Chú ý Nâng cao (Graphormer Advanced Attention) thay thế cho kiến trúc HGT cơ bản.}}{22}{figure.caption.35}%

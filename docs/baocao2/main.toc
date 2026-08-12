@@ -9,26 +9,21 @@
 \contentsline {chapter}{DANH MỤC HÌNH VẼ}{xiii}{section*.12}%
 \contentsline {chapter}{DANH MỤC BẢNG BIỂU}{xiv}{section*.14}%
 \contentsline {chapter}{LỜI MỞ ĐẦU}{xv}{chapter*.16}%
-\contentsline {section}{\numberline {1.}Lý do chọn đề tài}{xv}{section.0.1}%
-\contentsline {section}{\numberline {2.}Mục tiêu nghiên cứu}{xv}{section.0.2}%
-\contentsline {section}{\numberline {3.}Đối tượng và phạm vi nghiên cứu}{xvi}{section.0.3}%
-\contentsline {section}{\numberline {4.}Phương pháp nghiên cứu}{xvi}{section.0.4}%
-\contentsline {section}{\numberline {5.}Cấu trúc của đồ án}{xvii}{section.0.5}%
 \contentsline {chapter}{\numberline {1}TỔNG QUAN LÝ THUYẾT VÀ CƠ SỞ NGHIÊN CỨU}{1}{chapter.1}%
 \contentsline {section}{\numberline {1.}Tổng quan về Quản lý Dự án Logistics}{1}{section.1.1}%
 \contentsline {subsection}{\numberline {1.1.}Đặc thù của Dự án Logistics và Chuỗi cung ứng}{1}{subsection.1.1.1}%
 \contentsline {subsection}{\numberline {1.2.}Lý thuyết Sơ đồ mạng và Mạng công việc AON}{1}{subsection.1.1.2}%
 \contentsline {section}{\numberline {2.}Cơ sở Lý thuyết Kỹ thuật và Bài toán Tối ưu}{2}{section.1.2}%
 \contentsline {subsection}{\numberline {2.1.}Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP)}{2}{subsection.1.2.1}%
-\contentsline {subsection}{\numberline {2.2.}Bài toán Rút ngắn tiến độ và Tối ưu chi phí (Crashing)}{2}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {2.2.}Bài toán Rút ngắn tiến độ và Tối ưu chi phí (Crashing)}{3}{subsection.1.2.2}%
 \contentsline {subsection}{\numberline {2.3.}Quản lý Giá trị Đạt được (Earned Value Management - EVM)}{3}{subsection.1.2.3}%
 \contentsline {subsection}{\numberline {2.4.}Kiến trúc Mô hình Trí tuệ Nhân tạo Đề xuất}{3}{subsection.1.2.4}%
-\contentsline {subsubsection}{\numberline {2.4.1.}Mạng nơ-ron Đồ thị Dị thể (Heterogeneous Graph Transformer - HGT)}{3}{subsubsection.1.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.1.}Mạng nơ-ron Đồ thị Dị thể (Heterogeneous Graph Transformer - HGT)}{4}{subsubsection.1.2.4.1}%
 \contentsline {subsubsection}{\numberline {2.4.2.}Học tự giám sát bằng Masked Autoencoder (MAE)}{4}{subsubsection.1.2.4.2}%
 \contentsline {subsubsection}{\numberline {2.4.3.}Không gian Siêu tham số (Hyperparameters)}{4}{subsubsection.1.2.4.3}%
 \contentsline {subsection}{\numberline {2.5.}Phương pháp Chuẩn hóa Dữ liệu (Data Normalization)}{4}{subsection.1.2.5}%
 \contentsline {subsection}{\numberline {2.6.}Chỉ số Đánh giá Hiệu suất (Evaluation Metrics)}{4}{subsection.1.2.6}%
-\contentsline {section}{\numberline {3.}Tổng quan Tài liệu và Khoảng trống Nghiên cứu}{4}{section.1.3}%
+\contentsline {section}{\numberline {3.}Tổng quan Tài liệu và Khoảng trống Nghiên cứu}{5}{section.1.3}%
 \contentsline {subsection}{\numberline {3.1.}Nghiên cứu Trong nước}{5}{subsection.1.3.1}%
 \contentsline {subsection}{\numberline {3.2.}Nghiên cứu Ngoài nước}{5}{subsection.1.3.2}%
 \contentsline {subsection}{\numberline {3.3.}Khoảng trống nghiên cứu (Research Gap)}{5}{subsection.1.3.3}%
@@ -41,15 +36,29 @@
 \contentsline {section}{\numberline {6.}Giai đoạn 3: Mô phỏng Ngẫu nhiên (Stochastic CPM)}{8}{section.2.6}%
 \contentsline {section}{\numberline {7.}Giai đoạn 4: Tối ưu hóa Lịch trình (CP-SAT Pareto)}{8}{section.2.7}%
 \contentsline {section}{\numberline {8.}Triển khai ứng dụng (Deployment)}{8}{section.2.8}%
-\contentsline {chapter}{\numberline {3}KẾT QUẢ VÀ THẢO LUẬN}{9}{chapter.3}%
-\contentsline {section}{\numberline {1.}Đánh giá hiệu năng của mô hình biểu diễn (HGT \& SSL)}{9}{section.3.1}%
-\contentsline {section}{\numberline {2.}Phân tích kết quả Tối ưu hóa Đa mục tiêu (Pareto Front)}{9}{section.3.2}%
-\contentsline {section}{\numberline {3.}Ứng dụng web Quản lý Tiến độ}{10}{section.3.3}%
-\contentsline {section}{\numberline {4.}Thảo luận và Đánh giá tính ứng dụng thực tiễn}{10}{section.3.4}%
-\contentsline {subsection}{\numberline {4.1.}Ưu điểm của giải pháp đề xuất}{10}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {4.2.}Hạn chế của nghiên cứu}{10}{subsection.3.4.2}%
-\contentsline {chapter}{\numberline {4}KẾT LUẬN VÀ ĐỀ XUẤT}{11}{chapter.4}%
-\contentsline {section}{\numberline {1.}Kết luận chung}{11}{section.4.1}%
-\contentsline {section}{\numberline {2.}Hạn chế của nghiên cứu}{11}{section.4.2}%
-\contentsline {section}{\numberline {3.}Kiến nghị và Hướng phát triển}{12}{section.4.3}%
-\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{13}{section*.19}%
+\contentsline {chapter}{\numberline {3}KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN}{9}{chapter.3}%
+\contentsline {section}{\numberline {1.}Môi trường thực nghiệm và dữ liệu test}{9}{section.3.1}%
+\contentsline {subsection}{\numberline {1.1.}Cấu hình phần cứng và môi trường Docker}{9}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Tổng quan Case Study MFET 3008/5040}{9}{subsection.3.1.2}%
+\contentsline {section}{\numberline {2.}Đánh giá hiệu năng hệ thống đồ thị}{10}{section.3.2}%
+\contentsline {subsection}{\numberline {2.1.}Thời gian thực thi truy vấn: So sánh Recursive CTE và ORM tiêu chuẩn}{11}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Mức tiêu thụ bộ nhớ khi mở rộng đồ thị quy mô lớn}{12}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.}Đánh giá kết quả tối ưu hóa}{12}{section.3.3}%
+\contentsline {subsection}{\numberline {3.1.}Kết quả Crashing tiến độ: Mối quan hệ giữa Makespan và Chi phí gia tăng}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.2.}Tối ưu hóa tài nguyên: Giảm phương sai biểu đồ phân bổ nhân lực}{13}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.}Phân tích độ hội tụ của Thuật toán Di truyền và Kỹ thuật Lai}{14}{subsection.3.3.3}%
+\contentsline {section}{\numberline {4.}Đánh giá mô hình Trí tuệ nhân tạo}{15}{section.3.4}%
+\contentsline {subsection}{\numberline {4.1.}Độ chính xác dự báo thời gian thực hiện công việc (MAE, RMSE, MAPE)}{15}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {4.2.}Khả năng giải thích của mô hình: Trọng số Attention trên các nút đường găng}{17}{subsection.3.4.2}%
+\contentsline {section}{\numberline {5.}Bàn luận}{18}{section.3.5}%
+\contentsline {subsection}{\numberline {5.1.}Tính hiệu quả của việc phân ly 38 loại chi phí (G1--G7) trong thực tiễn Logistics}{18}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {5.2.}Hạn chế của hệ thống: Bài toán bẫy tối ưu cục bộ của Thuật toán Di truyền}{19}{subsection.3.5.2}%
+\contentsline {chapter}{\numberline {4}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{20}{chapter.4}%
+\contentsline {section}{\numberline {1.}Kết luận chung về đề tài}{20}{section.4.1}%
+\contentsline {subsection}{\numberline {1.1.}Đóng góp về mặt lý luận khoa học}{20}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Đóng góp về mặt thực tiễn kỹ thuật}{20}{subsection.4.1.2}%
+\contentsline {section}{\numberline {2.}Đề xuất hướng phát triển}{21}{section.4.2}%
+\contentsline {subsection}{\numberline {2.1.}Cải tiến Bộ Tối ưu hóa: Khắc phục điểm mù cục bộ bằng Thuật toán Di truyền Thích nghi (Adaptive GA)}{21}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Nâng cấp Kiến trúc Học máy Đồ thị: Áp dụng cơ chế Chú ý Nâng cao như Graphormer}{21}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {2.3.}Mở rộng Dữ liệu Huấn luyện: Thu thập dữ liệu thực tế tăng tính Tổng quát}{22}{subsection.4.2.3}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{23}{section*.36}%

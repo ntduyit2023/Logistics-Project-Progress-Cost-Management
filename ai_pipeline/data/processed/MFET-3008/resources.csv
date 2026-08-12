@@ -1,0 +1,9 @@
+ID,resource_name,resource_type,unit_cost,capacity
+R1,Design (Computing),Human,200.0,1.0
+R2,Design (Mechanical),Human,200.0,1.0
+R3,Development (Computing),Human,150.0,2.0
+R4,Development (Mechanical),Human,150.0,1.0
+R5,Assembly (Computing),Human,100.0,1.0
+R6,Assembly (Mechanical),Human,100.0,1.0
+R7,Purchase,Human,80.0,1.0
+R8,Documentation,Human,80.0,2.0

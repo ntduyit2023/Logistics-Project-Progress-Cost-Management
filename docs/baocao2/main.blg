@@ -41,37 +41,37 @@ Warning--I didn't find a database entry for "le2024environmental"
 Warning--I didn't find a database entry for "pedregosa2011sklearn"
 You've used 11 entries,
             1876 wiz_defined-function locations,
-            567 strings with 5385 characters,
-and the built_in function-call counts, 3190 in all, are:
-= -- 333
-> -- 100
+            566 strings with 5490 characters,
+and the built_in function-call counts, 3368 in all, are:
+= -- 343
+> -- 119
 < -- 0
-+ -- 38
-- -- 27
-* -- 212
-:= -- 429
++ -- 44
+- -- 33
+* -- 228
+:= -- 452
 add.period$ -- 14
 call.type$ -- 11
 change.case$ -- 10
 chr.to.int$ -- 0
 cite$ -- 11
-duplicate$ -- 164
-empty$ -- 312
-format.name$ -- 27
-if$ -- 790
+duplicate$ -- 171
+empty$ -- 325
+format.name$ -- 33
+if$ -- 830
 int.to.chr$ -- 0
 int.to.str$ -- 11
 missing$ -- 13
 newline$ -- 39
 num.names$ -- 11
-pop$ -- 41
+pop$ -- 46
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 119
+skip$ -- 127
 stack$ -- 0
-substring$ -- 248
-swap$ -- 72
+substring$ -- 264
+swap$ -- 76
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
@@ -79,5 +79,5 @@ type$ -- 0
 warning$ -- 0
 while$ -- 32
 width$ -- 13
-write$ -- 112
+write$ -- 111
 (There were 6 warnings)

@@ -12,27 +12,28 @@ Dự án Logistics bao trùm một hệ sinh thái các hoạt động quy mô l
 Do đó, Viện Quản lý Dự án Hoa Kỳ (PMI) \cite{pmbok2017} luôn nhấn mạnh sự đánh đổi khốc liệt giữa 3 yếu tố cốt lõi, hay còn gọi là "Tam giác sắt" (Iron Triangle): \textbf{Thời gian (Time)}, \textbf{Chi phí (Cost)} và \textbf{Phạm vi/Chất lượng (Scope/Quality)}. Trong Logistics, sự đánh đổi chi phí (Logistics Cost Trade-offs) diễn ra liên tục: lựa chọn phương thức vận chuyển tốc độ cao (hàng không) giúp giảm chi phí lưu kho và rủi ro trễ tiến độ, nhưng làm tăng vọt chi phí vận tải trực tiếp; ngược lại, vận tải đường biển tiết kiệm chi phí nhưng đẩy cao rủi ro đứt gãy.
 
 \subsection{Lý thuyết Sơ đồ mạng và Mạng công việc AON}
-Để mô hình hóa một cách trực quan và toán học hóa dự án, các nhà quản lý Logistics sử dụng Lý thuyết Sơ đồ mạng (Network Diagramming). Phổ biến nhất là \textbf{Mạng công việc AON (Activity-on-Node)}, trong đó mỗi nút (node) đại diện cho một công việc (Task), và các cung định hướng (edges) biểu diễn luồng công việc. 
+Để mô hình hóa một cách trực quan và toán học hóa tiến trình thực hiện dự án, các nhà quản lý Logistics ứng dụng Lý thuyết Sơ đồ mạng (Network Diagramming). Phổ biến và hiệu quả nhất là mô hình \textbf{Mạng công việc AON (Activity-on-Node)}, trong đó mỗi nút (Node $v_i \in V$) đại diện cho một công việc cụ thể, và các cung định hướng (Edge $e_{ij} \in E$) biểu diễn quan hệ phụ thuộc tiến trình giữa công việc tiền nhiệm $v_i$ và công việc kế nhiệm $v_j$. 
 
-Bên trong mỗi nút AON chứa các thông số thời gian sống còn của dự án, được tính toán thông qua thuật toán Truyền xuôi (Forward Pass) và Truyền ngược (Backward Pass):
+Trong nghiên cứu này, kịch bản thực nghiệm Case Study quốc tế chuẩn \textbf{MFET 3008 / MFET 5040} (\textit{Parcel Transport, Storage and Database System}) được biểu diễn hoàn toàn dưới dạng một đồ thị định hướng không chu trình AON (AON DAG) bao gồm $21$ nút công việc cốt lõi ($V = \{A, B, C, \dots, U\}$) mô phỏng toàn bộ tiến trình từ thiết kế kiến trúc, phát triển phần mềm, chế tạo phần cứng, tích hợp giao diện đến kiểm thử bàn giao hệ thống.
+
+Bên trong mỗi nút công việc AON chứa 6 tham số thời gian cốt lõi, được tính toán tự động thông qua hai lượt thuật toán Truyền xuôi (Forward Pass) và Truyền ngược (Backward Pass):
 \begin{itemize}
-    \item \textbf{ES (Early Start) \& EF (Early Finish):} Thời điểm sớm nhất có thể bắt đầu và hoàn thành công việc. ($EF = ES + \text{Duration}$).
-    \item \textbf{LS (Late Start) \& LF (Late Finish):} Thời điểm muộn nhất phải bắt đầu và hoàn thành công việc để không làm trễ toàn bộ dự án. ($LF = LS + \text{Duration}$).
-    \item \textbf{Slack (Thời gian dự trữ):} Khoảng thời gian trì hoãn tối đa cho phép của công việc mà không ảnh hưởng tới tiến độ chung. ($Slack = LS - ES$).
+    \item \textbf{ES (Early Start) \& EF (Early Finish):} Thời điểm sớm nhất có thể bắt đầu và hoàn thành công việc. Đối với công việc $i$ có thời gian thực hiện $d_i$: $EF_i = ES_i + d_i$.
+    \item \textbf{LS (Late Start) \& LF (Late Finish):} Thời điểm muộn nhất bắt buộc phải bắt đầu và hoàn thành công việc để không làm kéo dài tổng tiến độ hoàn thành của dự án: $LS_i = LF_i - d_i$.
+    \item \textbf{Slack / Total Float (Thời gian dự trữ toàn phần):} Khoảng thời gian trì hoãn tối đa cho phép của công việc $i$ mà không ảnh hưởng tới ngày hoàn thành chung của toàn bộ dự án: $Slack_i = LS_i - ES_i = LF_i - EF_i$.
 \end{itemize}
 
-Dựa trên cấu trúc AON, hai khái niệm cốt lõi nhất được định hình là \textbf{Đường găng (Critical Path)} và \textbf{Mối quan hệ phụ thuộc (Type Dependence)}:
+Dựa trên cấu trúc Mạng công việc AON, hai khái niệm kỹ thuật cốt lõi được định hình:
 
-\textbf{Đường găng (Critical Path) và Lý thuyết Điểm nghẽn (TOC):} 
-Theo Lý thuyết Điểm nghẽn (Theory of Constraints - TOC) của Eliyahu M. Goldratt, mọi hệ thống luôn có ít nhất một "nút thắt" giới hạn năng suất toàn cục. Trong quản lý dự án, Đường găng chính là điểm nghẽn về mặt thời gian. Nó là chuỗi các công việc nối tiếp nhau có tổng thời gian dài nhất. Các công việc trên Đường găng có thời gian dự trữ bằng không ($Slack = 0$). Việc tối ưu hóa (ví dụ: đẩy nhanh tiến độ) ở các công việc không nằm trên Đường găng là sự lãng phí vô ích vì nó không giúp dự án hoàn thành sớm hơn.
+\textbf{1. Đường găng (Critical Path) và Lý thuyết Điểm nghẽn (TOC):} 
+Theo Lý thuyết Điểm nghẽn (Theory of Constraints - TOC), mọi hệ thống luôn bị giới hạn năng suất bởi một chuỗi điểm nghẽn cốt lõi. Trong quản lý dự án, Đường găng chính là điểm nghẽn về mặt thời gian hoàn thành. Đường găng được xác định là đường đi liên tục từ nút khởi tạo ($A$) đến nút kết thúc ($U$) có tổng thời gian thực hiện lớn nhất. Tất cả các công việc nằm trên Đường găng đều có thời gian dự trữ bằng không ($Slack_i = 0$). Trong Case Study MFET 3008/5040, thuật toán CPM xác định Đường găng cơ sở là chuỗi tiến trình $A \rightarrow C \rightarrow G \rightarrow I \rightarrow J \rightarrow N \rightarrow R \rightarrow T \rightarrow U$ với tổng thời gian hoàn thành $T_0 = 4 + 7 + 10 + 16 + 12 + 7 + 5 + 3 + 2 = \mathbf{66\text{ ngày làm việc}}$. Bất kỳ sự chậm trễ nào dù chỉ 1 ngày tại các nút găng này đều lập tức kéo dài tiến độ hoàn thành chung của toàn bộ dự án.
 
-\textbf{Mối quan hệ phụ thuộc (Type Dependence):} 
-Các công việc logistics bị ràng buộc bởi các logic thi công tiêu chuẩn, chia thành 4 loại liên kết chính \cite{pmbok2017}:
+\textbf{2. Các mối quan hệ phụ thuộc PDM (Precedence Diagramming Method):} 
+Các công việc trong dự án logistics bị ràng buộc nghiêm ngặt bởi các logic thi công tiêu chuẩn, biểu diễn bằng $26$ cạnh phụ thuộc định hướng \cite{pmbok2017}:
 \begin{enumerate}
-    \item \textit{Finish-to-Start (FS):} Công việc B chỉ bắt đầu khi A hoàn thành (VD: Dỡ hàng xong mới được bốc hàng lên xe khác).
-    \item \textit{Start-to-Start (SS):} Bắt đầu song song cùng A, thường có độ trễ Lag (VD: Dỡ hàng và kiểm đếm nhập kho WMS).
-    \item \textit{Finish-to-Finish (FF):} B kết thúc cùng A (VD: Thanh toán cước vận tải chỉ hoàn tất khi quá trình bàn giao hàng xong).
-    \item \textit{Start-to-Finish (SF):} B chỉ kết thúc khi A bắt đầu (VD: Bàn giao ca trực bảo vệ kho bãi).
+    \item \textit{Finish-to-Start (FS):} Công việc $j$ chỉ được phép bắt đầu khi công việc $i$ đã hoàn thành hoàn toàn ($ES_j \geq EF_i$). Ví dụ trong MFET 3008: Task B (Lập đặc tả phần cứng) và Task C (Lập đặc tả phần mềm) chỉ bắt đầu khi Task A (Đưa ra quyết định kiến trúc) hoàn tất.
+    \item \textit{Ràng buộc hội tụ đa tiền nhiệm (Multi-predecessor Convergence):} Công việc $j$ đòi hỏi tất cả các công việc tiền nhiệm phải hoàn thành ($ES_j = \max_{i \in \mathcal{P}_j} EF_i$). Ví dụ: Task H (Bản vẽ chi tiết phần cứng) đòi hỏi cả Task E (Thiết kế phần cứng) và Task F (Thiết kế phần mềm) đồng thời kết thúc; Task R (Tích hợp HW/SW) đòi hỏi cả Task N (Lắp đặt mẫu thử) và Task Q (Lắp ráp phần cứng) hoàn tất.
+    \item \textit{Start-to-Start (SS) \& Finish-to-Finish (FF) có độ trễ Lag:} Cho phép triển khai song song giữa các công đoạn thi công phần cứng và phần mềm kết hợp với khoảng thời gian chờ cố định $\text{Lag}_{ij}$.
 \end{enumerate}
 
 \section{Cơ sở Lý thuyết Kỹ thuật và Bài toán Tối ưu}

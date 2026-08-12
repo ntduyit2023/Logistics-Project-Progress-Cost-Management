@@ -38,10 +38,6 @@ T.~Chai and R.~R. Draxler, ``Root mean square error ({RMSE}) or mean absolute
   error ({MAE})? - arguments against avoiding {RMSE} in the literature,'' {\em
   Geoscientific Model Development}, vol.~7, no.~3, pp.~1247--1250, 2014.
 
-\bibitem{nagelkerke1991r2}
-N.~J. Nagelkerke, ``A note on a general definition of the coefficient of
-  determination,'' {\em Biometrika}, vol.~78, no.~3, pp.~691--692, 1991.
-
 \bibitem{tran2021}
 V.~H. Tran and D.~T. Nguyen, ``Application of meta-heuristic algorithms for
   resource-constrained project scheduling in vietnam logistics,'' {\em Journal
@@ -49,5 +45,11 @@ V.~H. Tran and D.~T. Nguyen, ``Application of meta-heuristic algorithms for
 
 \bibitem{ortools2019}
 L.~Perron and V.~Furnon, ``{OR-Tools}.'' Google, 2019.
+
+\bibitem{ying2021graphormer}
+C.~Ying, T.~He, D.~Chen, T.~Zheng, G.~Lu, R.~Zheng, and T.~Liu, ``Do
+  transformers really perform bad for graph representation?,'' in {\em Advances
+  in Neural Information Processing Systems (NeurIPS)}, vol.~34,
+  pp.~28877--28888, 2021.
 
 \end{thebibliography}
