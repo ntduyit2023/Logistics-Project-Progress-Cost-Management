@@ -1,0 +1,29 @@
+\chapter{KẾT LUẬN VÀ ĐỀ XUẤT}
+
+\section{Kết luận chung}
+Đồ án đã nghiên cứu, thiết kế và phát triển thành công hệ thống \textbf{"AI Pipeline for Project Schedule and Cost Management"}, giải quyết trọn vẹn bài toán Lập lịch dự án hạn chế tài nguyên (RCPSP) trong bối cảnh Đa mục tiêu (Thời gian - Chi phí) và rủi ro bất định. 
+
+Hệ thống đã đạt được 4 thành tựu kỹ thuật cốt lõi:
+\begin{enumerate}
+    \item \textbf{Chuẩn hóa dữ liệu Đồ thị dị thể:} Trích xuất và chuyển đổi thành công bộ dữ liệu tiêu chuẩn DSLIB/PSPLIB thành cấu trúc Đồ thị dị thể (Task, Resource, Shift). Cách biểu diễn này mô tả chính xác sự phức tạp về mặt topo của một dự án thi công thực tế so với các ma trận quan hệ hai chiều đơn giản.
+    \item \textbf{Tiên phong ứng dụng Học tự giám sát (SSL):} Xây dựng thành công cơ chế Masked Autoencoder trên mô hình Heterogeneous Graph Transformer (HGT). Giải pháp này giúp vượt qua rào cản lớn nhất của AI trong quản lý dự án là sự thiếu hụt dữ liệu gán nhãn, cho phép máy học tự nhận thức các quy luật rủi ro ẩn.
+    \item \textbf{Lượng hóa Rủi ro (Stochastic CPM):} Kết hợp sáng tạo giữa suy luận AI (tham số Beta-PERT) và phương pháp mô phỏng Monte Carlo. Hệ thống đã thay thế cách tính toán tất định (Deterministic) tuyến tính bằng mô hình xác suất, định lượng chính xác Chỉ số Tới hạn (Criticality Index - CI) của từng hạng mục.
+    \item \textbf{Tối ưu hóa Lập lịch Đa mục tiêu:} Việc mồi các tham số CI từ AI vào bộ giải Constraint Programming (CP-SAT) của Google OR-Tools đã tạo ra cơ chế AI-Guided Optimization. Giải pháp này giúp cắt giảm không gian tìm kiếm, tăng tốc độ giải lên gấp hàng chục lần và xuất ra được Đường cong Cạnh tranh Pareto trực quan cho các nhà Quản lý dự án.
+\end{enumerate}
+
+\section{Hạn chế của nghiên cứu}
+Dù đạt được những kết quả khả quan, đồ án vẫn còn một số điểm giới hạn về mặt kỹ thuật cần nhìn nhận thẳng thắn:
+\begin{itemize}
+    \item \textbf{Giới hạn Thời gian Bộ giải (Time-out):} Với các dự án có quy mô siêu lớn ($> 500$ hạng mục) và cấu trúc cực kỳ dày đặc, bộ giải CP-SAT vẫn gặp khó khăn trong việc tìm nghiệm tối ưu tuyệt đối (Global Optimum) trong thời gian ngắn. Một số điểm trên đường cong Pareto hiện tại có thể chỉ là nghiệm cục bộ (Local Optimum) nếu áp dụng hard-limit 5 giây cho Web Backend.
+    \item \textbf{Thiếu vắng dữ liệu Ngoại sinh (Exogenous Data):} Mô hình HGT hiện tại chỉ đánh giá rủi ro dựa trên cấu trúc Topology nội tại (Precedence, Resource). Trong thực tế, các yếu tố ngoại cảnh như thời tiết xấu, biến động giá vật liệu hay chậm trễ chuỗi cung ứng đóng vai trò cực kỳ quan trọng nhưng chưa được hệ thống mô hình hóa.
+    \item \textbf{Chế độ thi công (Execution Modes) tĩnh:} Hệ thống hiện định nghĩa cố định 4 chế độ thi công (Normal, OT, Add Res, Outsource). Thực tế công trường đòi hỏi sự linh hoạt cao hơn (ví dụ: chia nhỏ ca, làm việc luân phiên 3 ca).
+\end{itemize}
+
+\section{Kiến nghị và Hướng phát triển}
+Từ những hạn chế trên, các hướng phát triển trong tương lai được đề xuất bao gồm:
+
+\textbf{1. Tích hợp Dữ liệu Ngoại sinh (Weather \& Supply Chain):} Bổ sung thêm các Nút Môi trường (Environment Nodes) và Nút Tài chính (Finance Nodes) vào Đồ thị dị thể. Mô hình HGT sẽ được nâng cấp thành Spatio-Temporal HGT để hấp thụ dữ liệu chuỗi thời gian về dự báo thời tiết (mưa, bão) và biến động giá cả vật tư, từ đó điều chỉnh phân phối Beta-PERT chính xác theo từng giai đoạn thi công.
+
+\textbf{2. Ứng dụng Học Tăng cường (Reinforcement Learning - RL):} Thay thế hoặc kết hợp bộ giải CP-SAT bằng các tác tử Reinforcement Learning (như PPO hoặc SAC). RL có khả năng học các chiến lược Heuristic riêng biệt để lập lịch cực nhanh (dưới 0,1 giây), đặc biệt hữu ích trong kịch bản cần Lập lịch lại thời gian thực (Real-time Rescheduling) khi có sự cố xảy ra trên công trường.
+
+\textbf{3. Mở rộng Hệ sinh thái Phần mềm:} Triển khai ứng dụng Web thành một nền tảng SaaS (Software as a Service) hoàn chỉnh. Tích hợp API trực tiếp với các phần mềm quản lý phổ biến hiện nay như Microsoft Project, Primavera P6 hoặc Jira để đồng bộ dữ liệu hai chiều, giúp người dùng dễ dàng ứng dụng AI mà không làm gián đoạn quy trình làm việc quen thuộc.

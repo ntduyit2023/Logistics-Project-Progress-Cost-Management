@@ -1,0 +1,83 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: trang_bia.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: bia_phu.aux
+Reallocating 'name_of_file' (item size: 1) to 18 items.
+A level-1 auxiliary file: nhan_xet_gvhd.aux
+Reallocating 'name_of_file' (item size: 1) to 18 items.
+A level-1 auxiliary file: nhan_xet_gvpb.aux
+Reallocating 'name_of_file' (item size: 1) to 17 items.
+A level-1 auxiliary file: loi_cam_doan.aux
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: loi_cam_on.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: tom_tat.aux
+Reallocating 'name_of_file' (item size: 1) to 13 items.
+A level-1 auxiliary file: abstract.aux
+Reallocating 'name_of_file' (item size: 1) to 21 items.
+A level-1 auxiliary file: tu_ngu_thuat_ngu.aux
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: loi_mo_dau.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: chuong1.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: chuong2.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: chuong3.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: chuong4.aux
+Reallocating 'name_of_file' (item size: 1) to 7 items.
+The style file: ieeetr.bst
+Reallocating 'name_of_file' (item size: 1) to 8 items.
+Database file #1: tailieu.bib
+Warning--I didn't find a database entry for "bui2025urbanization"
+Warning--I didn't find a database entry for "dam2024pm25"
+Warning--I didn't find a database entry for "ho2025assessment"
+Warning--I didn't find a database entry for "rti2024pollution"
+Warning--I didn't find a database entry for "le2024environmental"
+Warning--I didn't find a database entry for "pedregosa2011sklearn"
+You've used 11 entries,
+            1876 wiz_defined-function locations,
+            567 strings with 5385 characters,
+and the built_in function-call counts, 3190 in all, are:
+= -- 333
+> -- 100
+< -- 0
++ -- 38
+- -- 27
+* -- 212
+:= -- 429
+add.period$ -- 14
+call.type$ -- 11
+change.case$ -- 10
+chr.to.int$ -- 0
+cite$ -- 11
+duplicate$ -- 164
+empty$ -- 312
+format.name$ -- 27
+if$ -- 790
+int.to.chr$ -- 0
+int.to.str$ -- 11
+missing$ -- 13
+newline$ -- 39
+num.names$ -- 11
+pop$ -- 41
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 119
+stack$ -- 0
+substring$ -- 248
+swap$ -- 72
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 32
+width$ -- 13
+write$ -- 112
+(There were 6 warnings)

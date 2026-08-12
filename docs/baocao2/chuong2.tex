@@ -1,0 +1,74 @@
+% LƯU Ý: File này yêu cầu \usepackage{float} trong preamble của file main
+\chapter{PHƯƠNG TIỆN NGHIÊN CỨU - PHƯƠNG PHÁP NGHIÊN CỨU}
+Chương này trình bày chi tiết phương pháp luận và các công cụ thực thi của hệ thống Quản lý Tiến độ \& Chi phí Dự án. Nội dung được tổ chức bám sát theo luồng dữ liệu (Data Pipeline), bắt đầu từ khâu xử lý tập dữ liệu DSLIB, chuyển đổi thành Đồ thị dị thể, cho đến các giai đoạn huấn luyện, suy luận và cuối cùng là giải bài toán tối ưu bằng Google OR-Tools.
+
+\section{Sơ đồ tổng quan giải pháp}
+Hệ thống "AI Pipeline for Project Management" được thiết kế thành một quy trình xuyên suốt gồm 4 khối chức năng chính:
+
+\textbf{1. Giai đoạn Tiền xử lý \& Biểu diễn dữ liệu:} Tiếp nhận dữ liệu thô từ DSLIB, trích xuất cấu trúc phụ thuộc (Precedence) và nhu cầu tài nguyên (Resource Demands), sau đó ánh xạ vào cấu trúc Đồ thị dị thể (Heterogeneous Graph).
+
+\textbf{2. Giai đoạn Tự học biểu diễn (Pre-training SSL):} Huấn luyện mô hình Heterogeneous Graph Transformer (HGT) \cite{hu2020hgt} thông qua cơ chế Masked Autoencoder \cite{he2022mae} để mô hình tự nhận thức các quy luật vận hành của dự án mà không cần dữ liệu có nhãn.
+
+\textbf{3. Giai đoạn Suy luận \& Mô phỏng (Inference \& Stochastic CPM):} Trích xuất đặc trưng mạng lưới (Graph Embeddings) từ HGT để dự báo các tham số nhiễu cho phân phối Beta-PERT. Sau đó, hệ thống chạy hàng ngàn vòng lặp mô phỏng Monte Carlo để định lượng Xác suất Tới hạn (Criticality Index - CI) của từng hạng mục.
+
+\textbf{4. Giai đoạn Tối ưu hóa (CP-SAT Pareto):} Cung cấp các trọng số CI và Score vào bộ giải Tối ưu hóa Ràng buộc (Constraint Programming) \cite{ortools2019} để lập lịch đa mục tiêu (Thời gian vs Chi phí), xuất ra đường cong Pareto phục vụ ra quyết định.
+
+\section{Phương tiện nghiên cứu}
+Để hiện thực hóa kiến trúc trên, nghiên cứu sử dụng một hệ sinh thái các công nghệ mạnh mẽ và hiện đại:
+
+\textbf{Về mặt Trí tuệ nhân tạo (AI):} Hệ thống sử dụng \textbf{Python} làm ngôn ngữ phát triển cốt lõi, kết hợp với thư viện \textbf{PyTorch} và \textbf{PyTorch Geometric (PyG)} để xây dựng và huấn luyện mô hình Mạng nơ-ron đồ thị (GNN) trên phần cứng tăng tốc GPU. Các cơ chế xử lý ma trận và toán học được tối ưu hóa qua \texttt{numpy} và \texttt{scikit-learn} \cite{pedregosa2011sklearn}.
+
+\textbf{Về mặt Tối ưu hóa (Optimization):} Bộ giải \textbf{CP-SAT} thuộc nền tảng mã nguồn mở \textbf{Google OR-Tools} \cite{ortools2019} được lựa chọn để giải quyết bài toán RCPSP. Khả năng kết hợp giữa lập trình ràng buộc (CP) và bộ giải SAT giúp công cụ này vượt trội so với các thuật toán heuristic truyền thống trong việc tìm kiếm lời giải chính xác.
+
+\textbf{Về mặt Triển khai (Deployment):} Giao diện người dùng được xây dựng bằng \textbf{React.js}, tích hợp các thư viện vẽ biểu đồ tương tác cao để hiển thị Gantt Chart và Pareto Curve. Phía backend được phát triển bằng \textbf{FastAPI} để cung cấp các luồng API tốc độ cao, kết nối mượt mà với lõi AI và cơ sở dữ liệu PostgreSQL.
+
+\section{Tập dữ liệu nghiên cứu (DSLIB)}
+Dữ liệu là nền tảng sống còn của mọi hệ thống AI. Trong đồ án này, tập dữ liệu \textbf{DSLIB} được sử dụng làm nguồn huấn luyện và kiểm thử chính.
+
+DSLIB được xây dựng trên nền tảng các bài toán chuẩn mực của \textbf{PSPLIB} (Project Scheduling Problem Library) \cite{kolisch1997psplib}. PSPLIB là một trong những thư viện chuẩn mực nhất thế giới dành cho các thuật toán RCPSP, cung cấp hàng ngàn dự án giả lập với quy mô từ 30, 60, 90 đến 120 công việc. Mỗi dự án trong DSLIB/PSPLIB được định nghĩa chặt chẽ với:
+\begin{itemize}
+    \item Ma trận phụ thuộc (Precedence Matrix) quy định logic thi công.
+    \item Nhu cầu tài nguyên tái tạo (Renewable Resources) của từng công việc.
+    \item Hạn mức tài nguyên tối đa (Resource Availabilities) của toàn dự án.
+\end{itemize}
+
+Thông qua việc parse (phân tích cú pháp) các tệp DSLIB, hệ thống tự động sinh ra tập dữ liệu đồ thị, khởi tạo ba tập đỉnh cơ sở: $V_{\text{Task}}$, $V_{\text{Resource}}$ và $V_{\text{Shift}}$. Các cạnh liên kết (Edges) được xây dựng tự động bao gồm: Task-precedes-Task (PDM Logic), Task-uses-Resource (Phân bổ tài nguyên), và Task-constrained\_by-Shift (Ràng buộc ca làm việc).
+
+\section{Giai đoạn 1: Huấn luyện Tiền kỳ (Pre-training SSL)}
+Do đặc thù thiếu vắng nhãn dữ liệu đánh giá độ rủi ro trong quản lý dự án, phương pháp Học tự giám sát (Self-Supervised Learning) với kiến trúc Masked Autoencoder (MAE) được triển khai \cite{he2022mae}.
+
+Thuật toán thực hiện ngẫu nhiên che khuất 25\% số lượng nút Công việc (Task Nodes) bằng cách chuyển vector đặc trưng $\mathbf{x}_i \rightarrow \mathbf{0}$. Các nút Tài nguyên (Resource) và Ca kíp (Shift) được giữ nguyên. Mô hình HGT đóng vai trò là một Autoencoder, tiến hành thu thập thông điệp (Message Passing) qua cơ chế Heterogeneous Attention \cite{hu2020hgt} để ngoại suy lại các giá trị bị che khuất. 
+
+Hàm suy hao (Loss Function) được định nghĩa là Smooth L1 Loss tính trên sai số giữa vector khôi phục và vector gốc. Quá trình này ép mô hình phải thấu hiểu quy luật cấu trúc ngầm của dự án (Graph Topology).
+
+\section{Giai đoạn 2: Suy luận và Khai phá (Inference \& Attention)}
+Sau khi kết thúc quá trình Pre-training, mô hình được đóng băng trọng số (Freeze) các lớp Encoder. Ở lớp đầu ra, các hàm kích hoạt (Activation Functions) chuyên biệt được áp dụng để chuyển đổi Embedding thành tham số xác suất:
+\begin{itemize}
+    \item \texttt{expected\_delay}: Dự báo độ trễ trung bình, sử dụng hàm ReLU để loại trừ các giá trị âm vô lý.
+    \item \texttt{uncertainty\_sigma}: Dự báo phương sai, sử dụng hàm Softplus để đảm bảo tính dương nghiêm ngặt, phản ánh mức độ dao động thời gian.
+\end{itemize}
+Đồng thời, cơ chế Cosine Attention trích xuất ra một ma trận Attention Scores. Ma trận này định lượng trực tiếp mức độ phụ thuộc và điểm thắt cổ chai giữa từng nhóm Công việc và Tài nguyên.
+
+\section{Giai đoạn 3: Mô phỏng Ngẫu nhiên (Stochastic CPM)}
+Các tham số thu thập được từ HGT sẽ được bơm trực tiếp vào phân phối Beta-PERT. Giá trị Thời gian thi công $T$ của mỗi công việc không còn là một số nguyên tĩnh mà là một biến ngẫu nhiên tuân theo: $T \sim \text{PERT}(a, m, b)$, trong đó các cực trị $a$ và $b$ được tinh chỉnh bằng \texttt{expected\_delay} và \texttt{uncertainty\_sigma}.
+
+Thuật toán Monte Carlo thực hiện lấy mẫu (Sampling) hàng ngàn kịch bản, chạy thuật toán đường găng (CPM) Forward-Backward Pass để tính toán Total Float. Cuối cùng, hệ thống tổng hợp ra Chỉ số Tới hạn (Criticality Index - CI). $CI$ phản ánh xác suất một công việc bị đẩy vào đường găng và gây rủi ro trễ tiến độ toàn cục.
+
+\section{Giai đoạn 4: Tối ưu hóa Lịch trình (CP-SAT Pareto)}
+Các giá trị CI thu được từ Monte Carlo đóng vai trò là trọng số ưu tiên. Mô hình Tối ưu hóa đa mục tiêu được định dạng trên OR-Tools CP-SAT \cite{ortools2019} với 4 chế độ thi công (4-Mode Scheduling):
+\begin{enumerate}
+    \item \textbf{Normal:} Không làm thêm, chi phí cơ bản.
+    \item \textbf{Overtime (OT):} Tăng ca, giảm thời gian nhưng tăng chi phí nhân công.
+    \item \textbf{Add Resource:} Thuê thêm máy, cực nhanh nhưng chi phí rất đắt.
+    \item \textbf{Outsource:} Khoán ngoài, rủi ro cao, chi phí thay đổi.
+\end{enumerate}
+
+Chỉ những công việc có $CI$ lớn (nút cổ chai) mới được AI cho phép mở khóa các chế độ 2, 3, 4. Các công việc ít quan trọng bị giới hạn ở chế độ 1 để tiết kiệm chi phí. Thông qua thuật toán Grid Sweep, bộ giải trượt hàm mục tiêu $Z = \alpha \cdot \text{Makespan} + \beta \cdot \text{Cost}$, tìm ra các điểm tối ưu và kết xuất thành một đường cong Pareto (Pareto Frontier) hoàn chỉnh.
+
+\section{Triển khai ứng dụng (Deployment)}
+Kiến trúc phần mềm chia làm hai phân hệ độc lập (Microservices):
+\begin{itemize}
+    \item \textbf{Backend (FastAPI):} Chịu trách nhiệm nhận file DSLIB, kích hoạt quy trình AI Pipeline, xử lý các phép toán Tensor nặng trên GPU, và giao tiếp với cơ sở dữ liệu.
+    \item \textbf{Frontend (React):} Hiển thị kết quả tối ưu trực quan. Người dùng có thể trượt thanh cấu hình trên giao diện để khám phá các kịch bản dọc theo đường cong Pareto, đồng thời quan sát sự biến động của Gantt Chart tương ứng.
+\end{itemize}
+Kiến trúc này đảm bảo tính tương tác thời gian thực cao, mang lại giá trị ứng dụng mạnh mẽ cho các nhà quản lý dự án trong thực tế.

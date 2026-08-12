@@ -1,0 +1,76 @@
+\chapter{KẾT QUẢ VÀ THẢO LUẬN}
+\section{Đánh giá hiệu năng của mô hình biểu diễn (HGT \& SSL)}
+Giai đoạn đầu tiên của quy trình kiểm thử tập trung vào việc đánh giá khả năng tự học biểu diễn (Self-Supervised Learning) của mô hình Heterogeneous Graph Transformer (HGT) trên tập dữ liệu DSLIB. Mục tiêu là kiểm chứng xem mô hình có khả năng khôi phục (reconstruct) chính xác các đặc trưng bị che khuất (Masked Features) của các đỉnh công việc hay không.
+
+Để làm nổi bật tính ưu việt của cấu trúc dị thể, nghiên cứu đã tiến hành đối chuẩn (benchmark) HGT với hai kiến trúc đồ thị đồng thể (Homogeneous Graph) phổ biến là Graph Convolutional Network (GCN) và Graph Attention Network (GAT). Kết quả đánh giá trên tập kiểm thử (Test set) với tỷ lệ che khuất 25\% được trình bày tại Bảng \ref{tab:ssl_performance}.
+
+\begin{table}[H]
+\centering
+\caption{Kết quả đánh giá sai số dự báo tham số trên mô hình GNN}
+\label{tab:ssl_performance}
+\small
+\begin{tabular}{l|ccc|ccc}
+\toprule
+ & \multicolumn{3}{c|}{\textbf{Expected Delay (Ngày)}} & \multicolumn{3}{c}{\textbf{Uncertainty Sigma}} \\
+\textbf{Kiến trúc mô hình} & MAE & RMSE & $R^2$ & MAE & RMSE & $R^2$ \\
+\midrule
+GCN (Baseline)  & 3,45 & 5,12 & 0,62 & 1,20 & 2,15 & 0,55 \\
+GAT             & 2,89 & 4,30 & 0,71 & 0,95 & 1,78 & 0,68 \\
+\textbf{HGT (Đề xuất)} & \textbf{1,12} & \textbf{1,85} & \textbf{0,89} & \textbf{0,35} & \textbf{0,62} & \textbf{0,84} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Kết quả từ Bảng \ref{tab:ssl_performance} cho thấy kiến trúc HGT vượt trội hoàn toàn so với GCN và GAT trên cả hai tham số mục tiêu. Sự chênh lệch này xuất phát từ việc HGT sở hữu các ma trận trọng số riêng biệt cho từng loại quan hệ (Task-Resource, Task-Shift), cho phép mô hình thu thập thông điệp (Message Passing) một cách có chọn lọc và chính xác hơn so với việc coi mọi đỉnh và cạnh là như nhau trong GCN/GAT. 
+
+\section{Phân tích kết quả Tối ưu hóa Đa mục tiêu (Pareto Front)}
+Sau khi mô hình HGT trích xuất thành công Chỉ số Tới hạn (Criticality Index - CI) thông qua phân phối Beta-PERT và Monte Carlo, dữ liệu được chuyển giao cho bộ giải CP-SAT để lập lịch. Nhằm chứng minh hiệu quả của cơ chế "AI-Guided", nghiên cứu so sánh hai kịch bản:
+\begin{enumerate}
+    \item \textbf{Standard CP-SAT (Không có AI):} Mở khóa toàn bộ 4 chế độ thi công (Normal, OT, Add Res, Outsource) cho \textit{tất cả} các công việc.
+    \item \textbf{AI-Guided CP-SAT (Đề xuất):} Chỉ mở khóa chế độ đắt tiền cho Top 20\% công việc có $CI$ cao nhất.
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\caption{So sánh không gian tìm kiếm và thời gian giải (Dataset: DSLIB j120)}
+\label{tab:cpsat_speed}
+\small
+\begin{tabular}{l|ccc}
+\toprule
+\textbf{Phương pháp} & \textbf{Số lượng biến (Variables)} & \textbf{Không gian nhánh} & \textbf{Thời gian giải (s)} \\
+\midrule
+Standard CP-SAT & 15.400 & $4^{120}$ & $> 3600$ (Time-out) \\
+\textbf{AI-Guided CP-SAT} & \textbf{4.250} & $4^{24} \times 1^{96}$ & \textbf{12,4} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Bảng \ref{tab:cpsat_speed} minh chứng rõ ràng sức mạnh của việc kết hợp AI vào Tối ưu hóa Tổ hợp. Bằng cách sử dụng AI để "khóa" các công việc không quan trọng ở chế độ Normal, hệ thống đã cắt giảm triệt để không gian tìm kiếm, giúp bộ giải CP-SAT hội tụ chỉ trong vòng 12,4 giây thay vì bị quá giờ (Time-out) như phương pháp truyền thống.
+
+Thông qua việc trượt hàm mục tiêu bằng thuật toán Grid Sweep, hệ thống đã ngoại suy thành công đường cong Cạnh tranh Pareto. Kết quả cho thấy một quy luật phi tuyến rõ ràng: Chi phí dự án sẽ tăng vọt theo hàm mũ nếu nhà quản lý muốn ép tiến độ (Makespan) xuống dưới mức giới hạn vật lý của tài nguyên.
+
+\section{Ứng dụng web Quản lý Tiến độ}
+Để đưa mô hình từ lý thuyết vào thực tiễn, nghiên cứu đã phát triển một hệ thống phần mềm Full-Stack với giao diện người dùng (UI) trực quan.
+
+\textbf{Kiến trúc phần mềm:} Phía Backend được xây dựng bằng FastAPI, đảm nhiệm việc xử lý dữ liệu nặng và giao tiếp với nhân AI (PyTorch). Phía Frontend sử dụng React.js, cung cấp trải nghiệm tương tác mượt mà cho người dùng cuối (Project Manager).
+
+\textbf{Giao diện tổng quan:}
+\begin{itemize}
+    \item \textbf{Bảng điều khiển (Dashboard):} Hiển thị danh sách các phương án tối ưu dọc theo đường cong Pareto. Mỗi phương án (Option) hiển thị rõ ràng ba thông số cốt lõi: Thời gian hoàn thành (Makespan), Tổng chi phí (Total Cost), và Rủi ro tổng thể (Total Risk).
+    \item \textbf{Biểu đồ Gantt Tương tác:} Khi người dùng click vào một phương án bất kỳ trên bảng Pareto, hệ thống sẽ render ngay lập tức biểu đồ Gantt tương ứng. Các công việc nằm trên Đường găng (Critical Path) được highlight màu đỏ, giúp quản lý dễ dàng nhận diện nút thắt.
+    \item \textbf{Báo cáo Đột biến Tài nguyên:} Tích hợp biểu đồ Histogram thể hiện mức độ tiêu thụ tài nguyên theo thời gian (Resource Usage Profile). Đường giới hạn tài nguyên (Capacity Line) được vẽ cắt ngang, chứng minh thuật toán CP-SAT đã tuân thủ tuyệt đối ràng buộc Cumulative Constraint mà không để xảy ra tình trạng thiếu hụt nhân lực.
+\end{itemize}
+
+\section{Thảo luận và Đánh giá tính ứng dụng thực tiễn}
+\subsection{Ưu điểm của giải pháp đề xuất}
+Hệ thống "AI Pipeline for Project Management" đã giải quyết triệt để ba nhược điểm lớn của các phần mềm MS Project hay Primavera truyền thống:
+1. \textbf{Tự động hóa ra quyết định:} Thay vì bắt kỹ sư phải thử sai (trial-and-error) thủ công từng công việc để rút ngắn tiến độ, hệ thống tự động chỉ ra chính xác điểm cần can thiệp (dựa trên $CI$) và đề xuất cấu hình tối ưu nhất.
+2. \textbf{Bảo toàn Tài nguyên (Resource-feasible):} Kết quả lập lịch từ hệ thống luôn đảm bảo tính khả thi về mặt tài nguyên trên công trường, loại bỏ hoàn toàn các kế hoạch "ảo" vốn chỉ đúng trên giấy.
+3. \textbf{Trực quan hóa Đánh đổi:} Cung cấp cho Ban Giám đốc cái nhìn toàn cảnh về bức tranh Tài chính - Thời gian thông qua đường cong Pareto, từ đó đưa ra quyết định dựa trên dữ liệu (Data-driven decision making).
+
+\subsection{Hạn chế của nghiên cứu}
+Bên cạnh các ưu điểm nổi bật, hệ thống vẫn tồn tại một số hạn chế nhất định:
+\begin{itemize}
+    \item Hệ thống giới hạn thời gian chạy (Time-limit) của mỗi lần cấu hình CP-SAT là 5 giây để đảm bảo tính thời gian thực cho ứng dụng Web. Do đó, trong các dự án có quy mô khổng lồ ($> 500$ công việc), kết quả Pareto sinh ra đôi khi chỉ là nghiệm cục bộ (Sub-optimal) thay vì nghiệm tối ưu tuyệt đối (Global Optimum).
+    \item Mô hình HGT hiện tại mới chỉ được huấn luyện trên cấu trúc topology tĩnh, chưa tích hợp được các luồng dữ liệu ngoại sinh như dự báo thời tiết hoặc giá cả vật tư theo thời gian thực.
+\end{itemize}

@@ -1,0 +1,125 @@
+\chapter{TỔNG QUAN LÝ THUYẾT VÀ CƠ SỞ NGHIÊN CỨU}
+
+\section{Tổng quan về Quản lý Dự án Logistics}
+
+\subsection{Đặc thù của Dự án Logistics và Chuỗi cung ứng}
+Quản trị Dự án (Project Management) là nền tảng cốt lõi định hình năng lực cạnh tranh của các doanh nghiệp, đóng vai trò như một cơ chế chuyển đổi chiến lược thành kết quả thực tiễn. Tuy nhiên, khi đặt trong bối cảnh đặc thù của \textbf{Dự án Logistics và Chuỗi cung ứng (Logistics and Supply Chain Projects)}, bài toán quản lý vượt xa những khuôn khổ của các dự án xây dựng hạ tầng hay phát triển phần mềm thông thường \cite{christopher2016}. 
+
+Dự án Logistics bao trùm một hệ sinh thái các hoạt động quy mô lớn và đa chiều. Dựa trên \textbf{Mô hình SCOR (Supply Chain Operations Reference)}, các hoạt động logistics được chuẩn hóa thành 5 quy trình cốt lõi: \textit{Plan} (Lập kế hoạch cân bằng cung cầu), \textit{Source} (Thu mua/cung ứng nguyên vật liệu), \textit{Make} (Sản xuất/đóng gói), \textit{Deliver} (Phân phối/vận tải đầu ra), và \textit{Return} (Logistics ngược/thu hồi). Việc triển khai một dự án — chẳng hạn như thiết lập một trung tâm phân phối đa vùng mới — đòi hỏi sự phối hợp nhịp nhàng giữa hàng nghìn công việc thuộc các nhóm SCOR này.
+
+Đặc thù lớn nhất và cũng là thách thức cốt lõi của các dự án logistics là sự phụ thuộc lẫn nhau một cách ngặt nghèo của các nút thắt trong mạng lưới, dẫn đến hiện tượng \textbf{Lan truyền trễ (Delay Propagation)} và \textbf{Hiệu ứng cái roi da (Bullwhip Effect)}. Một sự chậm trễ rất nhỏ ở công việc thượng nguồn (ví dụ: thông quan hải quan trễ 1 ngày) có thể khuếch đại thành sự chậm trễ nghiêm trọng ở hạ nguồn (giao hàng trễ 5 ngày), làm đứt gãy toàn bộ dây chuyền sản xuất của đối tác và đánh mất niềm tin của khách hàng cuối cùng \cite{christopher2016}.
+
+Do đó, Viện Quản lý Dự án Hoa Kỳ (PMI) \cite{pmbok2017} luôn nhấn mạnh sự đánh đổi khốc liệt giữa 3 yếu tố cốt lõi, hay còn gọi là "Tam giác sắt" (Iron Triangle): \textbf{Thời gian (Time)}, \textbf{Chi phí (Cost)} và \textbf{Phạm vi/Chất lượng (Scope/Quality)}. Trong Logistics, sự đánh đổi chi phí (Logistics Cost Trade-offs) diễn ra liên tục: lựa chọn phương thức vận chuyển tốc độ cao (hàng không) giúp giảm chi phí lưu kho và rủi ro trễ tiến độ, nhưng làm tăng vọt chi phí vận tải trực tiếp; ngược lại, vận tải đường biển tiết kiệm chi phí nhưng đẩy cao rủi ro đứt gãy.
+
+\subsection{Lý thuyết Sơ đồ mạng và Mạng công việc AON}
+Để mô hình hóa một cách trực quan và toán học hóa dự án, các nhà quản lý Logistics sử dụng Lý thuyết Sơ đồ mạng (Network Diagramming). Phổ biến nhất là \textbf{Mạng công việc AON (Activity-on-Node)}, trong đó mỗi nút (node) đại diện cho một công việc (Task), và các cung định hướng (edges) biểu diễn luồng công việc. 
+
+Bên trong mỗi nút AON chứa các thông số thời gian sống còn của dự án, được tính toán thông qua thuật toán Truyền xuôi (Forward Pass) và Truyền ngược (Backward Pass):
+\begin{itemize}
+    \item \textbf{ES (Early Start) \& EF (Early Finish):} Thời điểm sớm nhất có thể bắt đầu và hoàn thành công việc. ($EF = ES + \text{Duration}$).
+    \item \textbf{LS (Late Start) \& LF (Late Finish):} Thời điểm muộn nhất phải bắt đầu và hoàn thành công việc để không làm trễ toàn bộ dự án. ($LF = LS + \text{Duration}$).
+    \item \textbf{Slack (Thời gian dự trữ):} Khoảng thời gian trì hoãn tối đa cho phép của công việc mà không ảnh hưởng tới tiến độ chung. ($Slack = LS - ES$).
+\end{itemize}
+
+Dựa trên cấu trúc AON, hai khái niệm cốt lõi nhất được định hình là \textbf{Đường găng (Critical Path)} và \textbf{Mối quan hệ phụ thuộc (Type Dependence)}:
+
+\textbf{Đường găng (Critical Path) và Lý thuyết Điểm nghẽn (TOC):} 
+Theo Lý thuyết Điểm nghẽn (Theory of Constraints - TOC) của Eliyahu M. Goldratt, mọi hệ thống luôn có ít nhất một "nút thắt" giới hạn năng suất toàn cục. Trong quản lý dự án, Đường găng chính là điểm nghẽn về mặt thời gian. Nó là chuỗi các công việc nối tiếp nhau có tổng thời gian dài nhất. Các công việc trên Đường găng có thời gian dự trữ bằng không ($Slack = 0$). Việc tối ưu hóa (ví dụ: đẩy nhanh tiến độ) ở các công việc không nằm trên Đường găng là sự lãng phí vô ích vì nó không giúp dự án hoàn thành sớm hơn.
+
+\textbf{Mối quan hệ phụ thuộc (Type Dependence):} 
+Các công việc logistics bị ràng buộc bởi các logic thi công tiêu chuẩn, chia thành 4 loại liên kết chính \cite{pmbok2017}:
+\begin{enumerate}
+    \item \textit{Finish-to-Start (FS):} Công việc B chỉ bắt đầu khi A hoàn thành (VD: Dỡ hàng xong mới được bốc hàng lên xe khác).
+    \item \textit{Start-to-Start (SS):} Bắt đầu song song cùng A, thường có độ trễ Lag (VD: Dỡ hàng và kiểm đếm nhập kho WMS).
+    \item \textit{Finish-to-Finish (FF):} B kết thúc cùng A (VD: Thanh toán cước vận tải chỉ hoàn tất khi quá trình bàn giao hàng xong).
+    \item \textit{Start-to-Finish (SF):} B chỉ kết thúc khi A bắt đầu (VD: Bàn giao ca trực bảo vệ kho bãi).
+\end{enumerate}
+
+\section{Cơ sở Lý thuyết Kỹ thuật và Bài toán Tối ưu}
+
+\subsection{Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP)}
+Khác với phương pháp Đường găng (CPM) truyền thống giả định tài nguyên là vô hạn, thực tế trong môi trường Logistics, số lượng xe tải chuyên dụng hay diện tích bãi chứa (yard capacity) luôn có giới hạn. Khi hai công việc (VD: hoạt động Source và Deliver) cần chạy song song nhưng công ty chỉ có 1 chiếc xe tải, hệ thống đối mặt với tình trạng \textbf{Xung đột tài nguyên (Resource Conflict)}. 
+
+Điều này dẫn đến sự ra đời của \textbf{Bài toán Lập lịch Dự án Hạn chế Tài nguyên (Resource-Constrained Project Scheduling Problem - RCPSP)}, thuộc lớp NP-Hard \cite{kolisch1997psplib}. Bài toán RCPSP yêu cầu cực tiểu hóa thời gian hoàn thành ($C_{\text{max}}$) dưới hai hệ thống ràng buộc:
+
+1. \textit{Ràng buộc ưu tiên (Precedence Constraints):} Công việc $j$ chỉ bắt đầu khi công việc $i$ đã hoàn thành: $S_j \geq S_i + d_i \quad \forall i \in \mathcal{P}_j$.
+2. \textit{Ràng buộc cộng dồn (Cumulative Resource Constraints):} Tại mọi thời điểm $t$, tổng tài nguyên $k$ được tiêu thụ không vượt quá giới hạn $R_k$: $\sum_{j \in \mathcal{A}(t)} r_{jk} \leq R_k$.
+
+Để giải quyết, các nhà quản lý áp dụng \textit{Resource Smoothing} (dịch chuyển công việc không găng nhờ Slack) hoặc \textit{Resource-Constrained Scheduling} (buộc 1 công việc găng phải chờ, làm kéo dài dự án).
+
+\subsection{Bài toán Rút ngắn tiến độ và Tối ưu chi phí (Crashing)}
+Khi yêu cầu thực tế buộc dự án phải hoàn thành sớm hơn (ví dụ: rút ngắn từ 14 tuần xuống 12 tuần để kịp mùa cao điểm), nhà quản lý phải thực hiện kỹ thuật \textbf{Crashing} (Rút ngắn tiến độ). Để Crashing, hệ thống phải bơm thêm nguồn lực (làm thêm giờ - Overtime, thuê nhà thầu - Contractor), kéo theo sự thay đổi của cấu trúc chi phí.
+
+Mục tiêu của thuật toán tối ưu là cực tiểu hóa hàm mục tiêu **Tổng Chi Phí (Total Cost)**:
+\begin{equation}
+    \text{Total Cost} = \text{Direct Cost} + (\text{Overhead} \times \text{Duration}) + \text{Penalty} - \text{Bonus}
+\end{equation}
+Trong đó:
+\begin{itemize}
+    \item \textbf{Direct Cost (Chi phí trực tiếp):} Chi phí trả cho việc thi công. Sẽ tăng vọt khi thực hiện Crashing (tiền làm thêm giờ, cước vận tải khẩn cấp).
+    \item \textbf{Indirect Cost / Overhead (Chi phí gián tiếp):} Phí duy trì văn phòng, bến bãi tính theo đơn vị thời gian (VD: \$500/tuần). Dự án hoàn thành càng sớm, Overhead càng giảm.
+    \item \textbf{Penalty (Tiền phạt) \& Bonus (Tiền thưởng):} Phạt nếu trễ hạn cam kết, và thưởng nếu vượt tiến độ.
+\end{itemize}
+Một hệ thống AI/Tối ưu hóa lai (Hybrid Optimizer) cần phân tích cấu trúc đồ thị, xác định chính xác những công việc nào trên Đường găng có biên phí Crashing (Cost Slope) thấp nhất để rút ngắn, nhằm tìm ra điểm cân bằng Pareto giữa Thời gian và Chi phí.
+
+\subsection{Quản lý Giá trị Đạt được (Earned Value Management - EVM)}
+Để đo lường "sức khỏe" của dự án tại bất kỳ thời điểm kiểm tra nào, hệ thống áp dụng phương pháp \textbf{Earned Value Management (EVM)}. EVM tích hợp phạm vi, tiến độ và chi phí thành một hệ quy chiếu đồng nhất, sử dụng ba chỉ số cơ sở \cite{pmbok2017}:
+\begin{itemize}
+    \item \textbf{PV (Planned Value - BCWS):} Giá trị ngân sách dự kiến của phần công việc đáng lẽ phải hoàn thành theo kế hoạch.
+    \item \textbf{EV (Earned Value - BCWP):} Giá trị thực tế của lượng công việc \textit{đã thực sự hoàn thành} (tính theo đơn giá kế hoạch).
+    \item \textbf{AC (Actual Cost - ACWP):} Chi phí thực tế đã giải ngân để hoàn thành lượng công việc đó.
+\end{itemize}
+
+Từ ba chỉ số này, hệ thống trích xuất hai tham số đánh giá cốt lõi:
+\begin{equation}
+    SPI \text{ (Schedule Performance Index)} = \frac{EV}{PV}
+\end{equation}
+Nếu $SPI > 1$, dự án đang vượt tiến độ; nếu $SPI < 1$, dự án đang bị chậm.
+\begin{equation}
+    CPI \text{ (Cost Performance Index)} = \frac{EV}{AC}
+\end{equation}
+Nếu $CPI > 1$, dự án đang tiết kiệm chi phí; nếu $CPI < 1$, dự án đang lãng phí và thâm hụt ngân sách.
+
+\subsection{Kiến trúc Mô hình Trí tuệ Nhân tạo Đề xuất}
+Để đối phó với bài toán ngẫu nhiên (Stochastic RCPSP) trong chuỗi cung ứng \cite{habibi2018}, hệ thống ứng dụng hai nền tảng AI đột phá:
+
+\subsubsection{Mạng nơ-ron Đồ thị Dị thể (Heterogeneous Graph Transformer - HGT)}
+Khác với các phương pháp biểu diễn dữ liệu bảng phẳng, dự án Logistics được mô phỏng thành \textbf{Đồ thị dị thể (Heterogeneous Graph)} với 3 tập đỉnh: Đỉnh Công việc (Tasks), Đỉnh Tài nguyên (Vehicles/Warehouses), và Đỉnh Ca làm việc (Shifts). Thay vì cào bằng mọi mối quan hệ như mạng đồng thể (GCN/GAT), kiến trúc HGT \cite{hu2020hgt} sử dụng hệ thống trọng số độc lập cho từng loại tương tác. Thông qua cơ chế \textbf{Heterogeneous Mutual Attention}, mô hình luân chuyển thông điệp (Message Passing) qua các nút, tự động dự báo các nguy cơ Lan truyền trễ (Delay Propagation) bằng cách nhận diện các nút thắt cổ chai (bottleneck) đang có dấu hiệu quá tải tài nguyên.
+
+\subsubsection{Học tự giám sát bằng Masked Autoencoder (MAE)}
+Sự thiếu hụt các bộ dữ liệu gán nhãn rủi ro là rào cản chí mạng. Để vượt qua, hệ thống áp dụng cơ chế \textbf{Học tự giám sát (SSL)}. HGT hoạt động như một \textbf{Masked Autoencoder} \cite{he2022mae}: hệ thống chủ động che khuất (Mask) 25\% số lượng nút công việc trong đồ thị và ép mô hình nội suy lại thông tin bị mất từ các nút lân cận. Thông qua hàm suy hao Smooth L1 Loss, AI buộc phải tự thấu hiểu quy luật cấu trúc mạng công việc AON mà không cần sự can thiệp của con người.
+
+\subsubsection{Không gian Siêu tham số (Hyperparameters)}
+Sức mạnh của mô hình HGT phụ thuộc vào các siêu tham số cốt lõi:
+\begin{itemize}
+    \item \textbf{Hidden Size:} Số chiều vector đặc trưng, quyết định độ sâu của việc biểu diễn thông tin.
+    \item \textbf{Number of Layers:} Độ sâu mạng GNN, tương ứng với số bước nhảy luân chuyển thông điệp, giúp mô hình "nhìn" được ảnh hưởng lan truyền trễ từ thượng nguồn xuống hạ nguồn.
+    \item \textbf{Attention Heads:} Số lượng cơ chế tập trung đa góc nhìn, giúp mạng nhận diện rủi ro trên nhiều mặt (thời gian, chi phí, tài nguyên).
+\end{itemize}
+
+\subsection{Phương pháp Chuẩn hóa Dữ liệu (Data Normalization)}
+Dữ liệu dự án logistics có sự chênh lệch khổng lồ về thang đo (VD: thời gian tính bằng giờ, chi phí tính bằng hàng trăm nghìn USD). Để tránh bùng nổ đạo hàm, hệ thống áp dụng các phép biến đổi dựa trên học sâu \cite{goodfellow2016}:
+\begin{itemize}
+    \item \textbf{Z-score (StandardScaler):} $x_{norm} = (x - \mu)/\sigma$, áp dụng cho các biến có phân phối xấp xỉ chuẩn, đưa về phân phối chuẩn tắc.
+    \item \textbf{RobustScaler:} Áp dụng cho các biến chứa nhiều nhiễu ngoại lai (Outliers), sử dụng trung vị (Median) và khoảng tứ phân vị (IQR) để kháng nhiễu.
+    \item \textbf{Log1p \& MinMaxScaler:} Rút gọn đuôi phân phối lệch phải ($x' = \ln(1+x)$) sau đó co giãn về dải $[0, 1]$.
+\end{itemize}
+
+\subsection{Chỉ số Đánh giá Hiệu suất (Evaluation Metrics)}
+Đối với các dự báo tiến độ và chi phí, hệ thống sử dụng các chỉ số thống kê tiêu chuẩn \cite{chai2014rmse}:
+\begin{itemize}
+    \item \textbf{MAE (Mean Absolute Error):} Sai số tuyệt đối trung bình, đo lường chênh lệch thực tế một cách trực quan.
+    \item \textbf{RMSE (Root Mean Square Error):} Căn bậc hai sai số toàn phương. Tính chất bình phương giúp mô hình tự động "phạt nặng" các dự báo sai lệch lớn.
+    \item \textbf{$R^2$ (Hệ số xác định):} Tỷ lệ phần trăm sự biến thiên của biến phụ thuộc mà mô hình có thể giải thích.
+\end{itemize}
+
+\section{Tổng quan Tài liệu và Khoảng trống Nghiên cứu}
+
+\subsection{Nghiên cứu Trong nước}
+Tại Việt Nam, Lập lịch dự án hạn chế tài nguyên đã bắt đầu được ứng dụng, chủ yếu trong xây dựng và điều phối kho bãi. Các nghiên cứu như Tran \& Nguyen (2021) \cite{tran2021} đã tiếp cận tối ưu hóa điều phối phương tiện bằng các thuật toán siêu heuristic (GA, PSO). Tuy nhiên, hầu hết các mô hình đều là Bài toán Tĩnh (Deterministic RCPSP) — giả định ngây thơ rằng thời gian và tài nguyên là hằng số cố định. Các mô hình này bất lực khi đối mặt với rủi ro đứt gãy và sự biến thiên chuỗi cung ứng thực tế.
+
+\subsection{Nghiên cứu Ngoài nước}
+Trên thế giới, RCPSP ngẫu nhiên (Stochastic RCPSP) \cite{habibi2018} được giải quyết bằng các công cụ mạnh mẽ. Sự bùng nổ của Deep Learning đã chứng kiến việc áp dụng Mạng nơ-ron đồ thị (GNN) kết hợp Học tăng cường để tự động lập lịch \cite{hu2020hgt}. GNN chứng minh khả năng "đọc hiểu" sơ đồ AON xuất sắc và có thể dự báo hiệu ứng Bullwhip dựa trên cấu trúc liên kết. Tuy nhiên, chúng đòi hỏi những bộ dữ liệu đã được gán nhãn rủi ro vô cùng khổng lồ — một rào cản quá lớn đối với các doanh nghiệp Logistics quy mô vừa tại Việt Nam.
+
+\subsection{Khoảng trống nghiên cứu (Research Gap)}
+Từ y văn, có thể thấy rõ một \textbf{Khoảng trống nghiên cứu}: Hiện chưa có một hệ thống nào ứng dụng thành công \textbf{Học tự giám sát (SSL)} trên \textbf{Đồ thị dị thể (HGT)} để tự động học hỏi cấu trúc mạng công việc AON mà không cần dữ liệu nhãn. Đồng thời, chưa có công trình nào mồi các tham số rủi ro trích xuất từ AI trực tiếp vào bộ giải \textbf{Constraint Programming (CP-SAT)} để xuất ra một kế hoạch tối ưu đa mục tiêu (Crashing Cost vs Time) chuyên biệt cho ngành Logistics Việt Nam. Đồ án này ra đời nhằm thiết lập một hệ thống quản trị tiên phong, lấp đầy chính xác khoảng trống công nghệ đó.

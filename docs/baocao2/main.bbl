@@ -1,0 +1,53 @@
+\begin{thebibliography}{10}
+
+\bibitem{christopher2016}
+M.~Christopher, {\em Logistics \& Supply Chain Management}.
+\newblock London, UK: Pearson UK, 5th~ed., 2016.
+
+\bibitem{pmbok2017}
+{Project Management Institute}, {\em A Guide to the Project Management Body of
+  Knowledge (PMBOK Guide)}.
+\newblock Newtown Square, PA: Project Management Institute, 6th~ed., 2017.
+
+\bibitem{kolisch1997psplib}
+R.~Kolisch and A.~Sprecher, ``{PSPLIB} - a project scheduling problem library:
+  {OR} software - {ORSEP} operations research software exchange program,'' {\em
+  European Journal of Operational Research}, vol.~96, no.~1, pp.~205--216,
+  1997.
+
+\bibitem{habibi2018}
+F.~Habibi, F.~Barzinpour, and S.~Sadjadi, ``Resource-constrained project
+  scheduling problem: review of past and recent developments,'' {\em Journal of
+  Project Management}, vol.~3, no.~2, pp.~55--88, 2018.
+
+\bibitem{hu2020hgt}
+Z.~Hu, Y.~Dong, K.~Wang, and Y.~Sun, ``Heterogeneous graph transformer,'' in
+  {\em Proceedings of The Web Conference 2020}, pp.~2704--2710, 2020.
+
+\bibitem{he2022mae}
+K.~He, X.~Chen, S.~Xie, Y.~Li, P.~Dollár, and R.~Girshick, ``Masked
+  autoencoders are scalable vision learners,'' in {\em Proceedings of the
+  IEEE/CVF Conference on CVPR}, pp.~16000--16009, 2022.
+
+\bibitem{goodfellow2016}
+I.~Goodfellow, Y.~Bengio, and A.~Courville, {\em Deep Learning}.
+\newblock Cambridge, MA: MIT Press, 2016.
+
+\bibitem{chai2014rmse}
+T.~Chai and R.~R. Draxler, ``Root mean square error ({RMSE}) or mean absolute
+  error ({MAE})? - arguments against avoiding {RMSE} in the literature,'' {\em
+  Geoscientific Model Development}, vol.~7, no.~3, pp.~1247--1250, 2014.
+
+\bibitem{nagelkerke1991r2}
+N.~J. Nagelkerke, ``A note on a general definition of the coefficient of
+  determination,'' {\em Biometrika}, vol.~78, no.~3, pp.~691--692, 1991.
+
+\bibitem{tran2021}
+V.~H. Tran and D.~T. Nguyen, ``Application of meta-heuristic algorithms for
+  resource-constrained project scheduling in vietnam logistics,'' {\em Journal
+  of Science and Technology}, vol.~59, no.~4, pp.~112--125, 2021.
+
+\bibitem{ortools2019}
+L.~Perron and V.~Furnon, ``{OR-Tools}.'' Google, 2019.
+
+\end{thebibliography}
