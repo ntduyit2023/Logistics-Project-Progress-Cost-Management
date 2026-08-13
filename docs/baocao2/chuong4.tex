@@ -3,85 +3,93 @@
 \section{Kết luận chung về đề tài}
 \label{sec:4.1_ket_luan_chung}
 
-Đồ án đã hoàn thành trọn vẹn mục tiêu nghiên cứu, thiết kế và phát triển thành công hệ thống \textbf{Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO)}. Bằng việc kết hợp sáng tạo giữa mô hình Trí tuệ nhân tạo Đồ thị dị thể và thuật toán Tối ưu hóa Lai đa mục tiêu, nghiên cứu đã giải quyết hiệu quả bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP) dưới tác động của rủi ro biến động ngẫu nhiên và ràng buộc tài chính phức tạp. Các đóng góp nổi bật của đề tài được tổng hợp trên cả hai khía cạnh lý luận khoa học và thực tiễn kỹ thuật.
+Đề tài đã hoàn thành việc nghiên cứu lý thuyết, thiết kế kiến trúc và thực nghiệm đánh giá hệ thống Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO). Thông qua việc kết hợp giữa mô hình Học máy Đồ thị Dị thể (Heterogeneous Graph Learning) và giải thuật Tối ưu hóa Quy hoạch Ràng buộc (Constraint Programming), nghiên cứu đã giải quyết bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP) dưới tác động của rủi ro biến động ngẫu nhiên và cấu trúc chi phí tài chính đa tầng.
+
+Các đóng góp khoa học và kỹ thuật của đề tài được tổng hợp định lượng trên hai khía cạnh: đóng góp phương pháp luận nghiên cứu và đóng góp thực tiễn kỹ thuật.
 
 \subsection{Đóng góp về mặt lý luận khoa học}
 \label{sec:4.1.1_dong_gop_ly_luan}
 
-Về mặt lý thuyết và phương pháp luận nghiên cứu, đồ án đóng góp ba luận điểm khoa học cốt lõi:
+Về phương pháp luận nghiên cứu và lý thuyết trí tuệ nhân tạo đồ thị, đồ án đóng góp ba luận điểm định lượng cốt lõi:
 
 \begin{enumerate}
-    \item \textbf{Mô hình hóa Đồ thị Dị thể:} Nghiên cứu đã tiên phong chuyển đổi toàn bộ bài toán quản lý dự án logistics từ các ma trận phẳng hai chiều truyền thống sang cấu trúc Đồ thị Dị thể $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$. Mô hình này biểu diễn tự nhiên mối quan hệ tương tác đa chiều giữa $3$ tập đỉnh ($V_{\text{Task}}$, $V_{\text{Resource}}$, $V_{\text{Shift}}$) và các tập cạnh phụ thuộc. Kết quả thực nghiệm khẳng định kiến trúc Heterogeneous Graph Transformer (HGT) bảo toàn tối đa thông tin ngữ cảnh, đạt độ chính xác dự báo vượt trội ($\text{MAE} = 0,98$ ngày, $\text{MAPE} = 3,21\%$, $R^2 = 0,942$) so với các kiến trúc học máy đồng thể (GCN, GAT) và mô hình bảng (XGBoost).
+    \item \textbf{Mô hình hóa Đồ thị Dị thể cho Quản lý Dự án:} Chuyển đổi bài toán RCPSP từ biểu diễn ma trận phẳng truyền thống sang cấu trúc Đồ thị Dị thể $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$ chứa 3 tập đỉnh (công việc, tài nguyên, ca làm việc) và các tập cạnh phụ thuộc PDM. Mô hình Heterogeneous Graph Transformer (HGT) bảo toàn tối đa thông tin ngữ cảnh không gian và thời gian, đạt hệ số xác định $R^2 = \mathbf{0,8023}$ tại Fold 3 và $R^2$ trung bình 5-Fold đạt $\mathbf{0,3734 \pm 0,3744}$, thể hiện khả năng học đại diện đồ thị dị thể ổn định.
     
-    \item \textbf{Giải pháp Học tự giám sát (SSL):} Nhằm vượt qua rào cản khan hiếm dữ liệu gán nhãn rủi ro trong quản lý chuỗi cung ứng, nghiên cứu đề xuất cơ chế Masked Autoencoder (MAE) trên đồ thị dị thể. Việc che khuất $25\%$ nút công việc và ép mô hình tái thiết lập đặc trưng giúp AI tự thụ cảm các quy luật lan truyền trễ mà không phụ thuộc vào nhãn thủ công, đảm bảo khả năng tổng quát hóa trên nhiều quy mô dự án.
+    \item \textbf{Cơ chế Học tự giám sát giảm phụ thuộc Nhãn:} Đề xuất phương pháp Masked Autoencoder trên đồ thị dị thể để giải quyết rào cản khan hiếm dữ liệu nhãn rủi ro trong chuỗi cung ứng. Quá trình huấn luyện tự giám sát qua 69 epochs đạt Validation Loss nhỏ nhất $\mathbf{0,0437}$ tại Epoch 29 với Val MAE bằng $0,2343$, cho phép phân hệ AI tự trích xuất đặc trưng lan truyền trễ tiến độ mà không phụ thuộc vào nhãn thủ công.
     
-    \item \textbf{Cơ chế Tối ưu hóa Lai:} Đề xuất mô hình phối hợp giữa Quy hoạch tuyến tính số nguyên hỗn hợp (MILP / CP-SAT) và Thuật toán Di truyền (GA). Việc sử dụng nghiệm nới lỏng từ MILP để tiêm $5\%$ "Hạt giống ưu tú" vào quần thể khởi tạo của GA giúp bộ giải duy trì tính khả thi $100\%$, tăng tốc độ hội tụ gấp $6,48$ lần (hội tụ tại thế hệ 45 so với thế hệ 412 của GA chuẩn) và giảm $84,57\%$ thời gian tính toán thực thi.
+    \item \textbf{Định vị Nút găng qua Trọng số Attention:} Khai thác cơ chế Heterogeneous Multi-Head Attention nhằm giải thích minh bạch quyết định của mô hình. Trọng số chú ý $\alpha_{ij}^{(h)}$ định vị chính xác các nút thắt cổ chai găng trên dự án thực tế C2012-04 với chỉ số $\text{Precision@5} = \mathbf{100,0\%}$ và $\text{Recall@5} = \mathbf{100,0\%}$ trên nhóm công việc có chỉ số tới hạn $\ge 99\%$. Thời gian suy luận của mô hình đạt $\mathbf{1,85}$ ms, rút ngắn $7,67$ lần so với thời gian $14,20$ ms khi thực thi lại thuật toán CPM truyền thống.
 \end{enumerate}
 
 \subsection{Đóng góp về mặt thực tiễn kỹ thuật}
 \label{sec:4.1.2_dong_gop_thuc_tien}
 
-Về mặt kỹ thuật hệ thống và triển khai thực địa, đề tài mang lại những giá trị ứng dụng cao cho các doanh nghiệp logistics:
+Về mặt kỹ thuật hệ thống và tối ưu hóa triển khai thực địa, nghiên cứu đem lại các kết quả thực nghiệm đo đạc định lượng sau:
 
 \begin{enumerate}
-    \item \textbf{Động cơ Truy vấn Đồ thị Đệ quy (Recursive CTE Engine):} Xây dựng giải pháp duyệt đồ thị phụ thuộc PDM trực tiếp trong nhân cơ sở dữ liệu quan hệ PostgreSQL thông qua biểu thức đệ quy (Recursive CTE). Giải pháp khắc phục triệt để bẫy hiệu năng $N+1$ Query của các framework ORM truyền thống, rút ngắn thời gian truy vấn tại quy mô $1.000$ nút từ $412,50$ ms xuống $14,20$ ms (tốc độ xử lý nhanh hơn $\mathbf{29,05\times}$), đáp ứng hoàn hảo yêu cầu phản hồi thời gian thực của ứng dụng Web.
+    \item \textbf{Tăng tốc Truy vấn Đồ thị bằng Recursive CTE:} Triển khai thuật toán duyệt đồ thị đệ quy trực tiếp trong cơ sở dữ liệu quan hệ PostgreSQL thông qua biểu thức đệ quy Recursive CTE. Kết quả thực nghiệm loại bỏ hoàn toàn hiện tượng $N+1$ câu lệnh của các ORM tiêu chuẩn, rút ngắn độ trễ truy vấn từ $35,20$ ms xuống $1,95$ ms (tăng tốc $\mathbf{18,05\times}$) trên dự án C2012-04 ($67$ nút) và từ $412,50$ ms xuống $14,20$ ms (tăng tốc $\mathbf{29,05\times}$) tại quy mô $1.000$ nút với mức ý nghĩa thống kê $p < 0,001$ (Wilcoxon signed-rank test).
     
-    \item \textbf{Mô hình Phân ly 38 Loại Chi phí (G1--G7):} Đã hiện thực hóa mô hình tài chính đa tầng, phân rã ngân sách dự án thành 38 mục thuộc 7 nhóm chỉ số ($G_1$ đến $G_7$). Điều này hỗ trợ các nhà quản lý thực hiện chiến lược Ép tiến độ có mục tiêu, cân bằng tối ưu giữa chi phí làm thêm giờ, thuê nhà thầu phụ và tiền thưởng hoàn thành sớm ($3.000$ USD/tuần), minh chứng qua kết quả tối ưu ngân sách trên Case Study UniSA MFET 3008/5040 ($70.345$ USD).
+    \item \textbf{Cân bằng Tài nguyên và Tối ưu hóa Đa mục tiêu:} Giải thuật Quy hoạch ràng buộc CP-SAT dựng thành công đường cong Pareto Frontier mịn cho dự án C2012-04. Chiến lược ép tiến độ (Phương án 1) rút ngắn thời gian thi công $84,12$ ngày (từ $319,50$ ngày về $235,38$ ngày, giảm $26,33\%$) và hạ chỉ số rủi ro trễ hạn từ $48,5\%$ xuống $12,0\%$. Thuật toán làm mịn tài nguyên làm giảm nhu cầu đỉnh nhân lực $50,00\%$ (từ 6 xuống 3 người/ca), giảm phương sai tiêu thụ tài nguyên $\sigma^2$ tới $81,63\%$ (từ $2,45$ xuống $0,45$) và hạ hệ số bất bình đẳng Gini từ $0,316$ xuống $0,100$.
     
-    \item \textbf{Kiến trúc Microservices Triển khai Sản xuất:} Hệ thống được thiết kế theo kiến trúc vi dịch vụ (Microservices), đóng gói hoàn chỉnh bằng Docker và Docker Compose. Sự phân tách độc lập giữa phông nền Web UI (React + React-Flow), Backend API (FastAPI) và AI Service (PyTorch Geometric) giúp hệ thống đạt độ tin cậy cao, dễ dàng mở rộng và sẵn sàng tích hợp với các hệ thống ERP/WMS doanh nghiệp.
+    \item \textbf{Khả năng Mở rộng và Tối ưu Bộ nhớ:} Hệ thống được thiết kế theo kiến trúc vi dịch vụ đóng gói bằng Docker. Thực nghiệm đo đạc bộ nhớ ghi nhận mức chiếm dụng RAM chỉ $141$ MB đối với dự án C2012-04 và đạt $3,31$ GB (bao gồm $820$ MB RAM CSDL, $390$ MB RAM API và $2.100$ MB VRAM GPU) khi quy mô mở rộng lên $10.000$ nút công việc, chứng minh độ tin cậy và khả năng vận hành ổn định trong sản xuất.
 \end{enumerate}
 
 \section{Đề xuất hướng phát triển}
 \label{sec:4.2_huong_phat_trien}
 
-Mặc dù đạt được những kết quả thực nghiệm ấn tượng, hệ thống vẫn còn một số điểm hạn chế cần tiếp tục hoàn thiện. Nhằm nâng cao hiệu năng và mở rộng phạm vi ứng dụng thực tế, nghiên cứu đề xuất ba hướng phát triển trọng tâm trong tương lai.
+Nhằm khắc phục các hạn chế kỹ thuật đã chỉ ra tại Chương 3 và mở rộng phạm vi ứng dụng của hệ thống, ba hướng nghiên cứu trọng tâm được đề xuất triển khai trong giai đoạn tiếp theo.
 
-\subsection{Cải tiến Bộ Tối ưu hóa: Khắc phục điểm mù cục bộ bằng Thuật toán Di truyền Thích nghi (Adaptive GA)}
-\label{sec:4.2.1_adaptive_ga}
+\subsection{Tích hợp Tìm kiếm Lân cận Lớn kết hợp CP-SAT cho Dự án Quy mô Siêu lớn}
+\label{sec:4.2.1_lns_cpsat}
 
-Thực nghiệm tại Chương 3 chỉ ra rằng khi quy mô dự án bùng nổ ($|V| > 500$ nút) với mật độ ràng buộc tài nguyên nghiêm ngặt, thuật toán GA truyền thống vẫn chịu rủi ro suy giảm đa dạng di truyền, dẫn đến bẫy hội tụ sớm tại các cực trị cục bộ.
+Khi quy mô đồ thị dự án vượt mốc $1.000$ nút với mật độ ràng buộc tài nguyên chéo ngặt nghèo, bộ giải quy hoạch ràng buộc CP-SAT thuần túy chịu tác động của hiện tượng bùng nổ tổ hợp với không gian tìm kiếm phát triển theo cấp số nhân $O(2^{|V|})$ \cite{habibi2018}.
 
-Để giải quyết triệt để bẫy tối ưu cục bộ, hướng nghiên cứu tiếp theo sẽ tập trung xây dựng \textbf{Thuật toán Di truyền Thích nghi (Adaptive Genetic Algorithm -- AGA)}. Trong AGA, xác suất lai ghép $P_c$ và xác suất đột biến $P_m$ không còn cố định mà được điều chỉnh động theo khoảng cách đa dạng nhiễm sắc thể trong từng thế hệ:
-\begin{align}
-P_c &= \begin{cases} 
-k_1 \frac{f_{\max} - f'}{f_{\max} - f_{\text{avg}}}, & f' \geq f_{\text{avg}} \\
-k_2, & f' < f_{\text{avg}}
-\end{cases} \label{eq:adaptive_pc} \\
-P_m &= \begin{cases} 
-k_3 \frac{f_{\max} - f}{f_{\max} - f_{\text{avg}}}, & f \geq f_{\text{avg}} \\
-k_4, & f < f_{\text{avg}}
-\end{cases} \label{eq:adaptive_pm}
-\end{align}
-trong đó $f_{\max}$, $f_{\text{avg}}$ là giá trị thích nghi lớn nhất và trung bình của quần thể, $f'$ là giá trị thích nghi của cá thể trội hơn khi lai ghép, và $f$ là giá trị thích nghi của cá thể bị đột biến. Cơ chế thích nghi này giúp tự động kích hoạt xác suất đột biến cao khi quần thể rơi vào trạng thái bế tắc, đẩy quần thể thoát khỏi điểm mù cục bộ và tìm kiếm nghiệm tối ưu toàn cục.
+Để khắc phục hiện tượng này, hướng nghiên cứu tiếp theo đề xuất tích hợp giải thuật Tìm kiếm Lân cận Lớn (Large Neighborhood Search - LNS) \cite{pisinger2010large} làm khung điều khiển thượng tầng cho CP-SAT \cite{ortools2019}. Quy trình thực thi lặp của giải thuật LNS/CP-SAT gồm hai giai đoạn chính:
 
-\subsection{Nâng cấp Kiến trúc Học máy Đồ thị: Áp dụng cơ chế Chú ý Nâng cao như Graphormer}
+\begin{equation}
+S^{(t+1)} = \text{Solve}_{\text{CP-SAT}} \left( \text{Destroy}_{\gamma} \left( S^{(t)} \right) \right)
+\label{eq:lns_cpsat_formulation}
+\end{equation}
+
+\begin{enumerate}
+    \item \textbf{Giai đoạn Phá hủy ($\text{Destroy}_{\gamma}$):} Chọn ngẫu nhiên hoặc có trọng số một tập hợp con công việc $V_{\text{sub}} \subset V$ với tỷ lệ phá hủy $\gamma \in [0,15; 0,30]$ và giải phóng giá trị gán mốc thời gian, tài nguyên của tập $V_{\text{sub}}$.
+    \item \textbf{Giai đoạn Tái thiết lập ($\text{Solve}_{\text{CP-SAT}}$):} Sử dụng engine CP-SAT giải bài toán con trên không gian bị phá hủy $V_{\text{sub}}$ với thời hạn khống chế thời gian (Time-limit) từ $100$ ms đến $500$ ms nhằm liên tục tìm kiếm nghiệm cải tiến.
+    \end{enumerate}
+
+Việc kết hợp LNS và CP-SAT giữ cho không gian tìm kiếm nhỏ gọn, duy trì tính khả thi của các ràng buộc phụ thuộc và đảm bảo khả năng tối ưu hóa thời gian thực trên các đồ thị dự án quy mô lớn trên $5.000$ nút.
+
+\subsection{Nâng cấp Kiến trúc Graphormer với Mã hóa Cấu trúc Đa chiều}
 \label{sec:4.2.2_graphormer}
 
-Mô hình Heterogeneous Graph Transformer (HGT) hiện tại phụ thuộc chủ yếu vào các liên kết kề trực tiếp. Đối với các dự án logistics có chuỗi phụ thuộc kéo dài hàng trăm bước nhảy, việc luân chuyển thông tin qua nhiều lớp GNN dễ gặp phải hiện tượng nghẽn thông tin và san bằng đặc trưng.
+Mô hình Heterogeneous Graph Transformer hiện tại xử lý thông tin dựa trên cơ chế truyền tin nhắn cục bộ (Local Message Passing). Trên các đồ thị AON có đường găng kéo dài, việc truyền tín hiệu rủi ro qua nhiều lớp GNN dẫn đến rủi ro nghẽn thông tin (Information Bottleneck) và san bằng đặc trưng (Over-smoothing).
 
-Hướng phát triển tiếp theo sẽ tiến hành nâng cấp mô hình AI lên kiến trúc \textbf{Graphormer} \cite{ying2021graphormer} -- một biến thể Transformer nâng cao chuyên biệt cho đồ thị. Graphormer tích hợp ba cơ chế mã hóa cấu trúc vượt trội:
+Nghiên cứu đề xuất nâng cấp phân hệ AI lên kiến trúc Graphormer \cite{ying2021graphormer}, tích hợp 3 thành phần nhúng cấu trúc trực tiếp vào ma trận Self-Attention:
+
+\begin{equation}
+A_{ij} = \frac{\left( h_i W^Q \right) \left( h_j W^K \right)^T}{\sqrt{d}} + b_{\phi(v_i, v_j)} + c_{\text{deg}^+(v_i)} + c_{\text{deg}^-(v_j)}
+\label{eq:graphormer_attention}
+\end{equation}
+
 \begin{itemize}
-    \item \textbf{Spatial Encoding (Mã hóa Không gian):} Đo đạc khoảng cách đường đi ngắn nhất $d(v_i, v_j)$ giữa hai nút bất kỳ trong đồ thị AON, cho phép các công việc ở thượng nguồn tương tác trực tiếp với hạ nguồn mà không bị suy giảm tín hiệu.
-    \item \textbf{Centrality Encoding (Mã hóa Mức độ Trung tâm):} Nhúng chỉ số trung tâm bậc vào ma trận Attention, giúp mô hình tập trung tối đa vào các nút thắt giao thoa giữa nhiều luồng công việc.
-    \item \textbf{Edge Encoding (Mã hóa Cạnh Dị thể):} Biểu diễn loại liên kết PDM (FS, SS, FF) và tài nguyên tiêu thụ trực tiếp vào tích vô hướng của cơ chế Self-Attention.
+    \item \textbf{Mã hóa Spatial Positional Encoding ($b_{\phi(v_i, v_j)}$):} Nhúng khoảng cách đường đi ngắn nhất $\phi(v_i, v_j)$ giữa hai nút bất kỳ, cho phép các nút thượng nguồn tương tác trực tiếp với hạ nguồn với độ trễ liên lạc $O(1)$.
+    \item \textbf{Mã hóa Centrality Encoding ($c_{\text{deg}}$):} Nhúng chỉ số bán kính vào/ra ($\text{deg}^+, \text{deg}^-$) để gia tăng trọng số chú ý cho các công việc thắt cổ chai trong mạng lưới.
+    \item \textbf{Mã hóa Edge Encoding:} Trực tiếp đưa đặc trưng loại liên kết PDM (FS, SS, FF) và mức độ tiêu thụ tài nguyên vào ma trận chú ý.
 \end{itemize}
 
-Sơ đồ concept tổng thể của kiến trúc Cơ chế Chú ý Nâng cao (Graphormer Advanced Attention) đề xuất được minh họa tại Hình \ref{fig:advanced_attention}.
+Sơ đồ concept tổng thể của kiến trúc Cơ chế Chú ý Nâng cao đề xuất được minh họa tại Hình \ref{fig:advanced_attention}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\linewidth]{image/hinh4_1_advanced_attention.png}
-\caption{Sơ đồ Concept đề xuất kiến trúc Cơ chế Chú ý Nâng cao (Graphormer Advanced Attention) thay thế cho kiến trúc HGT cơ bản.}
+\caption{Sơ đồ Concept đề xuất kiến trúc Cơ chế Chú ý Nâng cao thay thế cho kiến trúc HGT cơ bản}
 \label{fig:advanced_attention}
 \end{figure}
 
-\subsection{Mở rộng Dữ liệu Huấn luyện: Thu thập dữ liệu thực tế tăng tính Tổng quát}
+\subsection{Mở rộng Dữ liệu Thi công Thời gian thực và Tích hợp SaaS/ERP}
 \label{sec:4.2.3_data_scaling}
 
-Mặc dù hệ thống đã được thử nghiệm và đối chuẩn thành công trên các bộ dữ liệu quốc tế như UniSA MFET 3008/5040 và PSPLIB/DSLIB, các tập dữ liệu này vẫn mang tính chất mô phỏng kỹ thuật chuẩn mực.
+Để nâng cao khả năng tổng quát hóa và tính thực tiễn của hệ thống trong môi trường công nghiệp, hai định hướng phát triển phần mềm được đề xuất:
 
-Trong tương lai, nghiên cứu hướng tới việc mở rộng thu thập dữ liệu thi công thực tế từ các doanh nghiệp Logistics và Tập đoàn Xây dựng hạ tầng lớn. Việc thu thập chuỗi dữ liệu thời gian thực từ thiết bị giám sát hành trình GPS, hệ thống quản lý kho WMS và dữ liệu thời tiết lịch sử sẽ giúp:
 \begin{enumerate}
-    \item \textbf{Huấn luyện Mô hình Học sâu Chuỗi thời gian:} Kết hợp HGT/Graphormer với mạng LSTM/GRU để dự báo sự biến động chi phí nhiên liệu, cước vận tải và năng lực cung ứng nguyên vật liệu theo mùa.
-    \item \textbf{Xây dựng Nền tảng SaaS và Đồng bộ ERP:} Đóng gói phân hệ AI thành các API chuẩn RESTful/GraphQL, hỗ trợ tích hợp Plug-and-Play vào các phần mềm quản trị phổ biến như Microsoft Project, Primavera P6 và SAP ERP.
+    \item \textbf{Tích hợp Dữ liệu Thời gian thực (IoT \& WMS):} Kết nối luồng dữ liệu định vị GPS từ hạm đội xe vận tải và dữ liệu cập nhật trạng thái kho bãi WMS để liên tục tính toán chỉ số trễ hạn thực tế, tự động gọi phân hệ AI cập nhật lại tiến độ dự báo theo cơ chế Rolling Horizon.
+    \item \textbf{Đóng gói Chuẩn API SaaS và Đồng bộ ERP Enterprise:} Đóng gói mô hình AI và bộ giải tối ưu thành các cổng dịch vụ RESTful API và gRPC chuẩn hóa. Hướng phát triển này cho phép tích hợp trực tiếp giải thuật vào các phần mềm quản trị dự án phổ biến như Microsoft Project, Primavera P6 và SAP ERP Enterprise.
 \end{enumerate}

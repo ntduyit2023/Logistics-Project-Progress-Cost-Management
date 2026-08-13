@@ -37,28 +37,28 @@
 \contentsline {section}{\numberline {7.}Giai đoạn 4: Tối ưu hóa Lịch trình (CP-SAT Pareto)}{8}{section.2.7}%
 \contentsline {section}{\numberline {8.}Triển khai ứng dụng (Deployment)}{8}{section.2.8}%
 \contentsline {chapter}{\numberline {3}KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN}{9}{chapter.3}%
-\contentsline {section}{\numberline {1.}Môi trường thực nghiệm và dữ liệu test}{9}{section.3.1}%
-\contentsline {subsection}{\numberline {1.1.}Cấu hình phần cứng và môi trường Docker}{9}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {1.2.}Tổng quan Case Study MFET 3008/5040}{9}{subsection.3.1.2}%
-\contentsline {section}{\numberline {2.}Đánh giá hiệu năng hệ thống đồ thị}{10}{section.3.2}%
+\contentsline {section}{\numberline {1.}Môi trường Thực nghiệm và Dữ liệu Kiểm thử}{9}{section.3.1}%
+\contentsline {subsection}{\numberline {1.1.}Cấu hình phần cứng và Môi trường Máy chủ}{9}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Tổng quan về Dự án C2012-04}{9}{subsection.3.1.2}%
+\contentsline {section}{\numberline {2.}Đánh giá Hiệu năng Hệ thống Đồ thị}{11}{section.3.2}%
 \contentsline {subsection}{\numberline {2.1.}Thời gian thực thi truy vấn: So sánh Recursive CTE và ORM tiêu chuẩn}{11}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {2.2.}Mức tiêu thụ bộ nhớ khi mở rộng đồ thị quy mô lớn}{12}{subsection.3.2.2}%
-\contentsline {section}{\numberline {3.}Đánh giá kết quả tối ưu hóa}{12}{section.3.3}%
-\contentsline {subsection}{\numberline {3.1.}Kết quả Crashing tiến độ: Mối quan hệ giữa Makespan và Chi phí gia tăng}{12}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.2.}Tối ưu hóa tài nguyên: Giảm phương sai biểu đồ phân bổ nhân lực}{13}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.}Phân tích độ hội tụ của Thuật toán Di truyền và Kỹ thuật Lai}{14}{subsection.3.3.3}%
-\contentsline {section}{\numberline {4.}Đánh giá mô hình Trí tuệ nhân tạo}{15}{section.3.4}%
-\contentsline {subsection}{\numberline {4.1.}Độ chính xác dự báo thời gian thực hiện công việc (MAE, RMSE, MAPE)}{15}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {4.2.}Khả năng giải thích của mô hình: Trọng số Attention trên các nút đường găng}{17}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {2.2.}Mức tiêu thụ Bộ nhớ khi mở rộng đồ thị quy mô lớn}{12}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.}Đánh giá Kết quả Tối ưu hóa}{12}{section.3.3}%
+\contentsline {subsection}{\numberline {3.1.}Kết quả Ép tiến độ: Mức độ giảm thời gian và Chi phí gia tăng}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.2.}Tối ưu hóa Tài nguyên: Giảm phương sai biểu đồ phân bổ nhân lực}{13}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.}Biểu đồ đánh đổi Pareto của CP-SAT và không gian tìm kiếm}{14}{subsection.3.3.3}%
+\contentsline {section}{\numberline {4.}Đánh giá Mô hình Trí tuệ Nhân tạo}{15}{section.3.4}%
+\contentsline {subsection}{\numberline {4.1.}Độ chính xác dự báo thời gian: MAE, RMSE, MAPE}{15}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {4.2.}Mức độ giải thích: Trọng số Attention trên các nút Đường găng}{17}{subsection.3.4.2}%
 \contentsline {section}{\numberline {5.}Bàn luận}{18}{section.3.5}%
-\contentsline {subsection}{\numberline {5.1.}Tính hiệu quả của việc phân ly 38 loại chi phí (G1--G7) trong thực tiễn Logistics}{18}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {5.2.}Hạn chế của hệ thống: Bài toán bẫy tối ưu cục bộ của Thuật toán Di truyền}{19}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {5.1.}Tính hiệu quả của việc phân ly 38 loại chi phí vào thực tiễn Logistics}{18}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {5.2.}Hạn chế của hệ thống: Hiện tượng bùng nổ tổ hợp của CP-SAT với dự án siêu lớn}{19}{subsection.3.5.2}%
 \contentsline {chapter}{\numberline {4}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{20}{chapter.4}%
 \contentsline {section}{\numberline {1.}Kết luận chung về đề tài}{20}{section.4.1}%
 \contentsline {subsection}{\numberline {1.1.}Đóng góp về mặt lý luận khoa học}{20}{subsection.4.1.1}%
 \contentsline {subsection}{\numberline {1.2.}Đóng góp về mặt thực tiễn kỹ thuật}{20}{subsection.4.1.2}%
 \contentsline {section}{\numberline {2.}Đề xuất hướng phát triển}{21}{section.4.2}%
-\contentsline {subsection}{\numberline {2.1.}Cải tiến Bộ Tối ưu hóa: Khắc phục điểm mù cục bộ bằng Thuật toán Di truyền Thích nghi (Adaptive GA)}{21}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {2.2.}Nâng cấp Kiến trúc Học máy Đồ thị: Áp dụng cơ chế Chú ý Nâng cao như Graphormer}{21}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {2.3.}Mở rộng Dữ liệu Huấn luyện: Thu thập dữ liệu thực tế tăng tính Tổng quát}{22}{subsection.4.2.3}%
+\contentsline {subsection}{\numberline {2.1.}Tích hợp Tìm kiếm Lân cận Lớn kết hợp CP-SAT cho Dự án Quy mô Siêu lớn}{21}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Nâng cấp Kiến trúc Graphormer với Mã hóa Cấu trúc Đa chiều}{21}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {2.3.}Mở rộng Dữ liệu Thi công Thời gian thực và Tích hợp SaaS/ERP}{22}{subsection.4.2.3}%
 \contentsline {chapter}{TÀI LIỆU THAM KHẢO}{23}{section*.36}%

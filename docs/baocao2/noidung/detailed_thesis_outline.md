@@ -72,7 +72,7 @@ Báo cáo Đồ án: Hệ thống Quản trị Dự án Logistics (GLPO)
 ├── CHƯƠNG 3: KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN
 │   ├── 3.1 Môi trường Thực nghiệm và Dữ liệu Test
 │   │   ├── 3.1.1 Cấu hình phần cứng (CPU/RAM) và Môi trường Docker (Dev Profile)
-│   │   └── 3.1.2 Tổng quan  C2012-04 
+│   │   └── 3.1.2 Tổng quan C2012-04 
 │   ├── 3.2 Đánh giá Hiệu năng Hệ thống Đồ thị (System Performance)
 │   │   ├── 3.2.1 Thời gian thực thi truy vấn (Query Latency): So sánh Recursive CTE vs ORM tiêu chuẩn
 │   │   └── 3.2.2 Mức tiêu thụ Bộ nhớ (Memory Footprint) khi scale lên đồ thị 1000+ nodes

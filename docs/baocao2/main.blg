@@ -34,45 +34,45 @@ The style file: ieeetr.bst
 Reallocating 'name_of_file' (item size: 1) to 8 items.
 Database file #1: tailieu.bib
 Warning--I didn't find a database entry for "pedregosa2011sklearn"
-You've used 11 entries,
+You've used 13 entries,
             1876 wiz_defined-function locations,
-            561 strings with 5409 characters,
-and the built_in function-call counts, 3368 in all, are:
-= -- 343
-> -- 119
+            575 strings with 5643 characters,
+and the built_in function-call counts, 4004 in all, are:
+= -- 416
+> -- 131
 < -- 0
-+ -- 44
-- -- 33
-* -- 228
-:= -- 452
-add.period$ -- 14
-call.type$ -- 11
-change.case$ -- 10
++ -- 49
+- -- 36
+* -- 268
+:= -- 533
+add.period$ -- 16
+call.type$ -- 13
+change.case$ -- 12
 chr.to.int$ -- 0
-cite$ -- 11
-duplicate$ -- 171
-empty$ -- 325
-format.name$ -- 33
-if$ -- 830
+cite$ -- 13
+duplicate$ -- 205
+empty$ -- 385
+format.name$ -- 36
+if$ -- 990
 int.to.chr$ -- 0
-int.to.str$ -- 11
-missing$ -- 13
-newline$ -- 39
-num.names$ -- 11
-pop$ -- 46
+int.to.str$ -- 13
+missing$ -- 15
+newline$ -- 45
+num.names$ -- 13
+pop$ -- 50
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 127
+skip$ -- 156
 stack$ -- 0
-substring$ -- 264
-swap$ -- 76
+substring$ -- 328
+swap$ -- 94
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 32
-width$ -- 13
-write$ -- 111
+while$ -- 40
+width$ -- 15
+write$ -- 131
 (There was 1 warning)

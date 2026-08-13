@@ -3,61 +3,66 @@
 
 \section*{1. Lý do chọn đề tài}
 
-Trong bối cảnh toàn cầu hóa và sự bùng nổ của ngành thương mại điện tử, ngành Logistics và Quản trị Chuỗi cung ứng (\textit{Supply Chain Management}) đã trở thành hạ tầng xương sống quyết định năng lực cạnh tranh của nền kinh tế quốc gia. Việc triển khai các dự án logistics quy mô lớn --- chẳng hạn như xây dựng trung tâm phân phối đa vùng, hiện đại hóa hệ thống kho bãi tự động hay phát triển hệ thống phần mềm quản lý vận tải --- đòi hỏi sự phối hợp nhịp nhàng giữa hàng trăm công việc phụ thuộc phức tạp và hàng loạt các loại tài nguyên hạn chế \cite{christopher2016}.
+Trong bối cảnh phát triển mạnh mẽ của thương mại toàn cầu và chuỗi cung ứng hiện đại, ngành Logistics đóng vai trò hạ tầng kỹ thuật cốt lõi quyết định năng lực vận hành của nền kinh tế \cite{christopher2016}. Các dự án logistics quy mô lớn --- như triển khai trung tâm phân phối đa vùng, hiện đại hóa kho vận thông minh WMS và tối ưu hóa tuyến đường vận tải --- thường có đặc thụ bao gồm hàng trăm công việc liên kết phụ thuộc phức tạp và chịu sự chi phối ngặt nghèo của các giới hạn tài nguyên chuyên môn \cite{pmbok2017}.
 
-Tuy nhiên, việc quản trị tiến độ và chi phí trong các dự án logistics thực tế đang đối mặt với những thách thức ngặt nghèo:
+Tuy nhiên, quy trình quản trị tiến độ và chi phí trong các dự án logistics hiện nay đang đối mặt với 3 thách thức kỹ thuật cốt lõi:
+
 \begin{enumerate}
-    \item \textbf{Cấu trúc phụ thuộc mạng lưới đa chiều và hiệu ứng Lan truyền trễ (Delay Propagation):} Sự chậm trễ của một công việc ở thượng nguồn (ví dụ: thông quan hải quan hoặc kiểm thử phần mềm) có thể nhanh chóng khuếch đại thành sự đứt gãy tiến độ toàn bộ hạ nguồn, làm bùng nổ chi phí lưu kho và phạt vi phạm hợp đồng \cite{pmbok2017}.
-    \item \textbf{Bài toán Lập lịch Ràng buộc Tài nguyên (RCPSP) và Đánh đổi Thời gian -- Chi phí (Time-Cost Trade-off):} Trong thực tế, tài nguyên nhân lực chuyên môn và thiết bị luôn bị giới hạn ngặt nghèo. Khi xảy ra xung đột tài nguyên, các nhà quản lý buộc phải thực hiện điều phối tài nguyên (\textit{Resource Leveling}) hoặc rút ngắn tiến độ (\textit{Crashing}) bằng cách làm thêm giờ hoặc thuê nhà thầu phụ, làm thay đổi phức tạp cấu trúc chi phí dự án \cite{kolisch1997psplib}.
-    \item \textbf{Hạn chế của các phần mềm quản lý truyền thống:} Các giải pháp thương mại hiện nay chủ yếu dựa trên mô hình bảng phẳng hoặc các thuật toán tất định CPM truyền thống, gặp bẫy hiệu năng $N+1$ khi truy vấn mạng lưới đồ thị quy mô lớn, đồng thời thiếu khả năng học tập tự động các rủi ro bất định từ dữ liệu lịch sử.
+    \item \textbf{Cấu trúc phụ thuộc mạng lưới phi tuyến và sự lan truyền rủi ro:} Các bài toán quản lý dự án truyền thống thường tiếp cận theo dạng dữ liệu bảng phẳng hai chiều. Cách tiếp cận này bỏ qua bản chất phụ thuộc đồ thị định hướng không chu trình (AON DAG) và quan hệ phụ thuộc tiến trình (PDM), dẫn đến việc không dự báo được rủi ro lan truyền trễ tiến độ từ thượng nguồn xuống hạ nguồn.
+    \item \textbf{Bài toán Lập lịch Ràng buộc Tài nguyên và Cấu trúc Chi phí Đa tầng:} Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP) là bài toán thuộc lớp NP-hard \cite{kolisch1997psplib}. Khi xảy ra xung đột nhân lực và thiết bị, việc điều chỉnh tiến độ hoặc ép tiến độ thi công làm phát sinh sự đánh đổi phức tạp giữa thời gian hoàn thành, chi phí làm thêm giờ, chi phí nhà thầu phụ và rủi ro trễ hạn.
+    \item \textbf{Bẫy hiệu năng phần mềm và tính đóng của mô hình tất định:} Các phần mềm thương mại hiện nay phụ thuộc vào thuật toán CPM tất định và mô hình ORM tiêu chuẩn. Điều này gây ra bẫy hiệu năng $N+1$ khi truy vấn cấu trúc đồ thị quy mô lớn trong CSDL, đồng thời thiếu khả năng tự động học tập quy luật bất định từ dữ liệu thi công lịch sử.
 \end{enumerate}
 
-Sự xuất hiện của công nghệ \textbf{Trí tuệ Nhân tạo Đồ thị (Graph AI)} --- đặc biệt là kiến trúc \textbf{Heterogeneous Graph Transformer (HGT)} \cite{hu2020hgt} kết hợp \textbf{Học tự giám sát (Self-Supervised Learning -- SSL)} \cite{he2022mae} --- mở ra cơ hội đột phá giúp mô hình hóa tự nhiên cấu trúc đa chiều của dự án logistics. Đồng thời, việc kết hợp Graph AI với các bộ tối ưu hóa số nguyên (Constraint Programming / MILP) và thuật toán tiến hóa (Genetic Algorithms) tạo tiền đề xây dựng một giải pháp quản trị thông minh, đáp ứng thời gian thực. Vì những lý do cấp thiết đó, đồ án lựa chọn nghiên cứu đề tài: \textbf{"Hệ thống Quản trị Tiến độ và Chi phí Dự án Logistics dựa trên AI Đồ thị Dị thể và Tối ưu hóa Lai đa mục tiêu (GLPO)"}.
+Sự bùng nổ của mạng nơ-ron học sâu đồ thị dị thể (Heterogeneous Graph Neural Networks), đặc biệt là kiến trúc Heterogeneous Graph Transformer (HGT) \cite{hu2020hgt} tích hợp cơ chế Học tự giám sát Masked Autoencoder \cite{he2022mae}, mở ra phương pháp luận mới giúp biểu diễn tự nhiên mối tương tác đa chiều giữa công việc, tài nguyên và ca làm việc. Đồng thời, việc kết hợp Graph AI với bộ giải quy hoạch ràng buộc CP-SAT \cite{ortools2019} tạo tiền đề phát triển động cơ tối ưu hóa lai đa mục tiêu đáp ứng thời gian thực.
+
+Vì những lý do cấp thiết về cả mặt khoa học lẫn thực tiễn công nghiệp, đồ án lựa chọn thực hiện đề tài: \textbf{"Hệ thống Quản trị Tiến độ và Chi phí Dự án Logistics dựa trên AI Đồ thị Dị thể và Tối ưu hóa Lai đa mục tiêu (GLPO)"}.
 
 \section*{2. Mục tiêu nghiên cứu}
 
-Đồ án đặt ra mục tiêu tổng quát là nghiên cứu, thiết kế và phát triển thành công hệ thống \textbf{GLPO (Logistics Project Progress and Cost Management System)} nhằm tự động hóa quy trình quản lý tiến độ, dự báo rủi ro lan truyền trễ và tối ưu hóa cân bằng đa mục tiêu (Thời gian -- Chi phí -- Tài nguyên) cho các dự án logistics. Để đạt được mục tiêu tổng quát, 5 mục tiêu cụ thể được triển khai:
+Mục tiêu tổng quát của đồ án là nghiên cứu phương pháp luận, thiết kế kiến trúc và phát triển hoàn chỉnh hệ thống phần mềm GLPO nhằm tự động hóa quá trình lập lịch, dự báo rủi ro lan truyền trễ và tối ưu hóa đa mục tiêu Thời gian -- Chi phí -- Tài nguyên cho các dự án logistics.
+
+Để đạt được mục tiêu tổng quát, đồ án triển khai 5 mục tiêu kỹ thuật cụ thể:
 
 \begin{enumerate}
-    \item \textbf{Xây dựng Động cơ Truy vấn Đồ thị Đệ quy (Recursive CTE Engine):} Thiết kế cấu trúc lưu trữ và giải pháp duyệt sơ đồ mạng PDM trực tiếp trong cơ sở dữ liệu PostgreSQL, triệt tiêu bẫy hiệu năng $N+1$ Query và đảm bảo tốc độ phản hồi thời gian thực ($< 100$ ms).
-    \item \textbf{Phát triển Phân hệ Trí tuệ Nhân tạo Đồ thị (Heterogeneous Graph AI):} Biểu diễn dự án dưới dạng Đồ thị Dị thể ($V_{\text{Task}}$, $V_{\text{Resource}}$, $V_{\text{Shift}}$), huấn luyện mô hình HGT tích hợp cơ chế SSL Masked Autoencoder (MAE) để dự báo độ trễ công việc và trích xuất Trọng số Chú ý (Attention Weights) giải thích các nút găng rủi ro.
-    \item \textbf{Xây dựng Bộ Tối ưu hóa Lai Đa mục tiêu (Hybrid MILP-GA Engine):} Phối hợp giữa giải thuật Quy hoạch tuyến tính số nguyên hỗn hợp (MILP / CP-SAT) và Thuật toán Di truyền (GA) với cơ chế "Tiêm hạt giống ưu tú" (\textit{Elite Seeding}), giải quyết trọn vẹn bài toán RCPSP và Crashing tiến độ.
-    \item \textbf{Hiện thực hóa Mô hình Tài chính Phân ly 38 loại Chi phí (G1--G7):} Xây dựng bộ công cụ phân tích cấu trúc ngân sách đa tầng, hỗ trợ quản lý chỉ số EVM ($PV, EV, AC, CPI, SPI$) và thực hiện chiến lược Crashing có mục tiêu.
-    \item \textbf{Đóng gói và Triển khai Đóng chuẩn (Benchmark Implementation):} Triển khai toàn bộ hệ thống theo kiến trúc vi dịch vụ Microservices (React, FastAPI, PyTorch Geometric, Docker), tiến hành kiểm thử và đối chuẩn toàn diện trên bộ dữ liệu chuẩn quốc tế \textbf{UniSA MFET 3008 / MFET 5040}.
+    \item \textbf{Tối ưu hóa Động cơ Truy vấn Đồ thị trong CSDL:} Thiết kế thuật toán duyệt sơ đồ mạng PDM đệ quy trực tiếp trong nhân CSDL PostgreSQL thông qua biểu thức Recursive CTE, triệt tiêu bẫy hiệu năng $N+1$ và đạt độ trễ truy vấn dưới $20$ ms.
+    \item \textbf{Phát triển Phân hệ AI Đồ thị Dị thể với Cơ chế Học tự giám sát:} Biểu diễn dự án dưới dạng Đồ thị Dị thể $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$, huấn luyện mô hình HGT kết hợp cơ chế Masked Autoencoder để dự báo thời gian thi công thực tế và trích xuất Trọng số Attention nhằm giải thích minh bạch các nút thắt cổ chai găng.
+    \item \textbf{Xây dựng Bộ Tối ưu hóa Lai Đa mục tiêu:} Ứng dụng engine quy hoạch ràng buộc Google OR-Tools CP-SAT kết hợp thuật toán làm mịn tài nguyên để giải bài toán RCPSP, dựng đường cong Pareto Frontier đánh đổi giữa thời gian thi công, tổng chi phí và rủi ro trễ hạn.
+    \item \textbf{Hiện thực hóa Mô hình Tài chính Phân ly 38 loại Chi phí:} Xây dựng công cụ phân rã ngân sách thành 38 hạng mục thuộc 7 nhóm chỉ số tài chính $G_1$ đến $G_7$, kết hợp phương pháp Quản lý Giá trị Thu được (EVM) để hỗ trợ chiến lược ép tiến độ thi công.
+    \item \textbf{Đóng gói và Triển khai Hệ thống theo Kiến trúc Vi dịch vụ:} Đóng gói hoàn chỉnh phông nền Web UI (React-Flow), Backend API (FastAPI) và Phân hệ AI (PyTorch Geometric) bằng Docker Compose, tiến hành kiểm thử và đo đạc định lượng trên dự án thực tế C2012-04.
 \end{enumerate}
 
 \section*{3. Đối tượng và phạm vi nghiên cứu}
 
-\textbf{Đối tượng nghiên cứu} của đồ án bao gồm:
+\textbf{Đối tượng nghiên cứu:}
 \begin{itemize}
-    \item Cấu trúc mạng lưới công việc AON DAG, quan hệ phụ thuộc tiến trình PDM (FS, SS, FF) và các chỉ số thời gian CPM ($ES, EF, LS, LF, Slack$).
-    \item Định ngạch tiêu thụ tài nguyên nhân lực chuyên môn hạn chế ($R_1 \rightarrow R_8$) và phương thái tiêu thụ tài nguyên theo thời gian.
-    \item Mô hình toán học của bài toán lập lịch ràng buộc tài nguyên (RCPSP), bài toán rút ngắn tiến độ (Crashing) và cơ cấu 38 loại chi phí logistics thuộc 7 nhóm chỉ số ($G_1 \rightarrow G_7$).
-    \item Kiến trúc mạng nơ-ron đồ thị dị thể HGT, cơ chế học tự giám sát SSL MAE và bộ giải tối ưu lai MILP-GA.
+    \item Cấu trúc mạng lưới công việc AON DAG, các loại quan hệ phụ thuộc tiến trình PDM và thuật toán tính toán mốc thời gian CPM.
+    \item Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP), bài toán làm mịn biểu đồ nhân lực và bài toán ép tiến độ (Crashing Trade-off).
+    \item Mô hình tài chính đa tầng phân rã 38 loại chi phí logistics thuộc 7 nhóm chỉ số $G_1$ đến $G_7$ và chỉ tiêu kỹ thuật EVM.
+    \item Kiến trúc mạng nơ-ron đồ thị dị thể HGT, cơ chế học tự giám sát Masked Autoencoder và bộ giải quy hoạch ràng buộc CP-SAT.
 \end{itemize}
 
-\textbf{Phạm vi dữ liệu và đối chuẩn:} Nghiên cứu tập trung đánh giá định lượng trên bộ dữ liệu Case Study chuẩn quốc tế \textbf{MFET 3008 / MFET 5040} (\textit{Parcel Transport, Storage and Database System -- University of South Australia}) bao gồm $21$ nút công việc cốt lõi, $26$ đường liên kết phụ thuộc, $8$ chuyên môn nhân sự hạn chế và ngân sách chi phí trực tiếp cơ sở $49.510$ USD.
+\textbf{Phạm vi dữ liệu thực nghiệm:} Nghiên cứu tiến hành đánh giá thực nghiệm định lượng trên tập dữ liệu dự án thực tế \textbf{C2012-04} bao gồm $67$ công việc cốt lõi, $119$ cạnh phụ thuộc PDM và $5$ loại tài nguyên chuyên môn hạn chế.
 
-\textbf{Phạm vi triển khai kỹ thuật:} Đồ án xây dựng ứng dụng web hoàn chỉnh theo kiến trúc Microservices đóng gói Container bằng Docker Compose, không bao gồm việc tích hợp trực tiếp vào phần mềm phần cứng IoT của xe tải trên thực địa.
+\textbf{Phạm vi ứng dụng kỹ thuật:} Hệ thống phần mềm Web hoàn chỉnh được đóng gói dưới dạng vi dịch vụ containerizado vận hành trên Docker Desktop.
 
 \section*{4. Phương pháp nghiên cứu}
 
-Đồ án ứng dụng kết hợp phương pháp nghiên cứu lý thuyết, mô hình hóa toán học và thực nghiệm kỹ thuật:
+Đồ án áp dụng kết hợp ba nhóm phương pháp nghiên cứu chuẩn mực:
+
 \begin{enumerate}
-    \item \textbf{Phương pháp Mô hình hóa Toán học và Tối ưu hóa:} Sử dụng Lý thuyết Sơ đồ mạng AON để xây dựng đồ thị DAG, thiết lập mô hình bài toán quy hoạch toán học cho RCPSP và Crashing. Áp dụng kỹ thuật nới lỏng MILP kết hợp với thuật toán tiến hóa di truyền GA để tìm tập nghiệm Pareto.
-    \item \textbf{Phương pháp Học sâu Đồ thị (Graph Deep Learning):} Xây dựng mạng HGT trên thư viện PyTorch Geometric, áp dụng kỹ thuật tự giám sát Masked Autoencoder (MAE) với hàm suy hao Smooth L1 Loss để học đại diện đồ thị mà không cần nhãn thủ công.
-    \item \textbf{Phương pháp Kỹ thuật Phần mềm (Software Engineering):} Áp dụng quy tắc thiết kế vi dịch vụ (Microservices), xây dựng RESTful API với FastAPI, tối ưu hóa truy vấn CSDL với PostgreSQL Recursive CTE và thiết kế giao diện tương tác với React-Flow.
-    \item \textbf{Phương pháp Đánh giá Thực nghiệm (Empirical Benchmark):} Thực hiện đo đạc độ trễ truy vấn (\textit{Query Latency}), dung lượng bộ nhớ tiêu thụ (\textit{RAM/VRAM Footprint}), tốc độ hội tụ di truyền, sai số hồi quy AI (MAE, RMSE, MAPE, $R^2$) và kiểm định giả thuyết thống kê (\textit{Wilcoxon test}).
+    \item \textbf{Phương pháp Mô hình hóa Toán học và Tối ưu hóa Tổ hợp:} Biểu diễn mạng lưới công việc bằng Lý thuyết Đồ thị DAG. Thiết lập mô hình quy hoạch toán học cho bài toán RCPSP và bài toán ép tiến độ. Khai thác thuật toán sinh mệnh đề lười của bộ giải CP-SAT để tìm tập nghiệm Pareto toàn cục.
+    \item \textbf{Phương pháp Học máy Đồ thị (Graph Machine Learning):} Xây dựng kiến trúc Heterogeneous Graph Transformer trên thư viện PyTorch Geometric. Áp dụng kỹ thuật Masked Autoencoder để học đại diện đồ thị không giám sát và trích xuất bản đồ nhiệt Attention Heatmap định vị nút găng.
+    \item \textbf{Phương pháp Thực nghiệm Kỹ thuật Phần mềm:} Áp dụng kiến trúc Vi dịch vụ (Microservices), xây dựng RESTful API bằng FastAPI, tối ưu nhân CSDL với PostgreSQL Recursive CTE, thiết kế giao diện React-Flow và đo đạc hiệu năng với kiểm định giả thuyết thống kê Wilcoxon.
 \end{enumerate}
 
 \section*{5. Cấu trúc của đồ án}
 
-Nội dung chính của đồ án được tổ chức thành 4 chương logic:
+Đồ án được bố cục logic thành 4 chương chính:
 
-\textbf{Chương 1: Tổng quan lý thuyết và Cơ sở nghiên cứu} --- Trình bày đặc thù dự án logistics (mô hình SCOR, hiệu ứng Bullwhip), lý thuyết sơ đồ mạng AON, CPM, bài toán RCPSP, bài toán Crashing, phương pháp EVM, cơ sở lý thuyết về Mạng nơ-ron Đồ thị Dị thể (HGT) và Học tự giám sát (SSL MAE).
+\textbf{Chương 1: Tổng quan lý thuyết và Cơ sở nghiên cứu} --- Trình bày đặc thù quản lý dự án logistics, lý thuyết sơ đồ mạng AON/CPM, bài toán RCPSP, mô hình tài chính EVM, cơ sở lý thuyết về Mạng nơ-ron Đồ thị Dị thể HGT và Học tự giám sát.
 
-\textbf{Chương 2: Kiến trúc Hệ thống và Phương pháp luận đề xuất} --- Mô tả chi tiết kiến trúc tổng thể Microservices, lược đồ CSDL PostgreSQL, thuật toán truy vấn Recursive CTE, đường ống tiền xử lý ETL Tensor, thuật toán Tối ưu hóa Lai MILP-GA, pipeline huấn luyện AI HGT-SSL và hạ tầng đóng gói Docker.
+\textbf{Chương 2: Kiến trúc Hệ thống và Phương pháp luận đề xuất} --- Trình bày thiết kế kiến trúc vi dịch vụ, lược đồ CSDL PostgreSQL, thuật toán truy vấn Recursive CTE, đường ống học máy PyTorch Geometric HGT, bộ giải CP-SAT và hạ tầng Docker.
 
-\textbf{Chương 3: Kết quả Thực nghiệm và Thảo luận} --- Trình bày toàn bộ số liệu đối chuẩn thực nghiệm định lượng trên Case Study UniSA MFET 3008/5040, bao gồm hiệu năng truy vấn CTE, mức tiêu thụ bộ nhớ RAM/VRAM, hiệu quả làm mịn tài nguyên (\textit{Resource Leveling}), kết quả Crashing tiến độ, độ chính xác mô hình AI (MAE, RMSE, MAPE, $R^2$), khả năng giải thích bằng Attention Heatmap và bàn luận chuyên sâu.
+\textbf{Chương 3: Kết quả Thực nghiệm và Thảo luận} --- Phân tích toàn bộ dữ liệu thực nghiệm định lượng trên dự án C2012-04 bao gồm độ trễ truy vấn CTE, bộ nhớ RAM/VRAM tiêu thụ, kết quả làm mịn tài nguyên, đường cong Pareto CP-SAT, độ chính xác mô hình AI ($R^2$, MAE, RMSE) và khả năng giải thích bằng Attention Heatmap.
 
-\textbf{Chương 4: Kết luận và Hướng phát triển} --- Tổng kết các đóng góp khoa học và thực tiễn của đề tài, phân tích hạn chế nội tại và đề xuất 3 hướng phát triển trọng tâm (Thuật toán Di truyền Thích nghi AGA, kiến trúc Graphormer Advanced Attention và mở rộng chuỗi dữ liệu thời gian thực SaaS/ERP).
+\textbf{Chương 4: Kết luận và Hướng phát triển} --- Tổng kết các đóng góp định lượng về mặt lý luận và thực tiễn kỹ thuật của đề tài, phân tích hạn chế nội tại và đề xuất 3 hướng nghiên cứu nâng cấp bao gồm LNS/CP-SAT, kiến trúc Graphormer và mở rộng dữ liệu thời gian thực.
