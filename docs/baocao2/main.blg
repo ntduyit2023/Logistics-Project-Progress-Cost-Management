@@ -33,15 +33,10 @@ Reallocating 'name_of_file' (item size: 1) to 7 items.
 The style file: ieeetr.bst
 Reallocating 'name_of_file' (item size: 1) to 8 items.
 Database file #1: tailieu.bib
-Warning--I didn't find a database entry for "bui2025urbanization"
-Warning--I didn't find a database entry for "dam2024pm25"
-Warning--I didn't find a database entry for "ho2025assessment"
-Warning--I didn't find a database entry for "rti2024pollution"
-Warning--I didn't find a database entry for "le2024environmental"
 Warning--I didn't find a database entry for "pedregosa2011sklearn"
 You've used 11 entries,
             1876 wiz_defined-function locations,
-            566 strings with 5490 characters,
+            561 strings with 5409 characters,
 and the built_in function-call counts, 3368 in all, are:
 = -- 343
 > -- 119
@@ -80,4 +75,4 @@ warning$ -- 0
 while$ -- 32
 width$ -- 13
 write$ -- 111
-(There were 6 warnings)
+(There was 1 warning)

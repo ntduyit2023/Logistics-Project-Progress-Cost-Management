@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+import json
 import numpy as np
 import torch
 import torch.nn as nn
@@ -97,6 +98,22 @@ def build_model(moi_dir, checkpoint_dir):
         num_heads=4,
         num_layers=2
     )
+    
+    # Load pretrained weights if available
+    pretrain_path = os.path.join(moi_dir, "..", "..", "..", "checkpoints", "hgt_best_weights.pt")
+    if not os.path.exists(pretrain_path):
+        pretrain_path = os.path.join(moi_dir, checkpoint_dir, "hgt_best_weights.pt")
+        
+    if os.path.exists(pretrain_path):
+        try:
+            state_dict = torch.load(pretrain_path, map_location='cpu', weights_only=True)
+            model.load_state_dict(state_dict, strict=False)
+            print(f"    [INFO] Đã tải trọng số Pretrained từ: {pretrain_path}")
+        except Exception as e:
+            print(f"    [WARN] Không thể tải trọng số Pretrained: {e}")
+    else:
+        print(f"    [WARN] Không tìm thấy pretrained weights tại {pretrain_path}. Bắt đầu train từ đầu (From Scratch).")
+        
     return model
 
 
@@ -149,6 +166,7 @@ def train_finetuner(
     fold_mse_scores = []
 
     for fold in range(k_folds):
+        fold_history = []
         print(f"\n{'='*60}")
         print(f"  [Fold {fold+1}/{k_folds}] Val Project: {os.path.basename(project_dirs[fold])}")
         print(f"{'='*60}")
@@ -298,8 +316,19 @@ def train_finetuner(
             avg_val_r2 = calculate_r2(true_val_cat, pred_val_cat).item() if len(true_val_cat) > 0 else 0.0
             avg_val_mse = F.mse_loss(pred_val_cat, true_val_cat).item()
 
+            curr_lr = scheduler.get_last_lr()[0] if scheduler else lr
+            
+            fold_history.append({
+                'epoch': epoch,
+                'train_loss': avg_loss,
+                'train_r2': avg_r2,
+                'val_loss': avg_val_loss,
+                'val_r2': avg_val_r2,
+                'val_mse': avg_val_mse,
+                'lr': curr_lr
+            })
+
             if epoch % 20 == 0 or epoch == 1:
-                curr_lr = scheduler.get_last_lr()[0] if scheduler else lr
                 print(f"    Epoch {epoch:03d} | LR: {curr_lr:.5f} | "
                       f"Train Loss: {avg_loss:.4f} (R2: {avg_r2:.4f}) | "
                       f"Val Loss: {avg_val_loss:.4f} (R2: {avg_val_r2:.4f})")
@@ -318,6 +347,15 @@ def train_finetuner(
 
         fold_r2_scores.append(best_val_r2)
         fold_mse_scores.append(best_val_mse)
+        
+        history_path = os.path.join(moi_dir, checkpoint_dir, f"finetune_history_fold_{fold+1}.json")
+        try:
+            with open(history_path, 'w', encoding='utf-8') as f:
+                json.dump(fold_history, f, indent=4)
+            print(f"  [Fold {fold+1}] Lịch sử lưu tại: {history_path}")
+        except Exception as e:
+            print(f"  [Fold {fold+1}] Lỗi lưu JSON: {e}")
+            
         print(f"  [Fold {fold+1}] Hoan thanh. Best Val R2: {best_val_r2:.4f}")
 
     print("\n================================================================================")

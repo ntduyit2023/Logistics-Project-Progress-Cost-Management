@@ -15,11 +15,6 @@ R.~Kolisch and A.~Sprecher, ``{PSPLIB} - a project scheduling problem library:
   European Journal of Operational Research}, vol.~96, no.~1, pp.~205--216,
   1997.
 
-\bibitem{habibi2018}
-F.~Habibi, F.~Barzinpour, and S.~Sadjadi, ``Resource-constrained project
-  scheduling problem: review of past and recent developments,'' {\em Journal of
-  Project Management}, vol.~3, no.~2, pp.~55--88, 2018.
-
 \bibitem{hu2020hgt}
 Z.~Hu, Y.~Dong, K.~Wang, and Y.~Sun, ``Heterogeneous graph transformer,'' in
   {\em Proceedings of The Web Conference 2020}, pp.~2704--2710, 2020.
@@ -28,6 +23,11 @@ Z.~Hu, Y.~Dong, K.~Wang, and Y.~Sun, ``Heterogeneous graph transformer,'' in
 K.~He, X.~Chen, S.~Xie, Y.~Li, P.~Dollár, and R.~Girshick, ``Masked
   autoencoders are scalable vision learners,'' in {\em Proceedings of the
   IEEE/CVF Conference on CVPR}, pp.~16000--16009, 2022.
+
+\bibitem{habibi2018}
+F.~Habibi, F.~Barzinpour, and S.~Sadjadi, ``Resource-constrained project
+  scheduling problem: review of past and recent developments,'' {\em Journal of
+  Project Management}, vol.~3, no.~2, pp.~55--88, 2018.
 
 \bibitem{goodfellow2016}
 I.~Goodfellow, Y.~Bengio, and A.~Courville, {\em Deep Learning}.

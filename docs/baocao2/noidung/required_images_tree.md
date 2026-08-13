@@ -22,8 +22,8 @@ Danh mục Biểu đồ & Hình ảnh Báo cáo Đồ án GLPO
 │   ├── Hình 2.3: Lược đồ Cơ sở Dữ liệu Thực thể Liên kết (ERD) trên hệ quản trị PostgreSQL.
 │   ├── Hình 2.4: Lưu đồ khối (Flowchart) mô tả thuật toán Recursive CTE quét qua mạng lưới DAG.
 │   ├── Hình 2.5: Phân tích trực quan luồng Tiền xử lý Dữ liệu (ETL Pipeline) từ file DSLIB thành Tensor.
-│   ├── Hình 2.6: Sơ đồ cấu trúc thuật toán Tối ưu hóa Lai (Hybrid MILP & GA Architecture).
-│   ├── Hình 2.7: Minh họa mảng mã hóa Nhiễm sắc thể (Chromosome Encoding) của Thuật toán Di truyền.
+│   ├── Hình 2.6: Sơ đồ cấu trúc thuật toán Tối ưu hóa Ràng buộc CP-SAT (Constraint Programming).
+│   ├── Hình 2.7: Lưu đồ tích hợp kết quả HGT và mô phỏng Monte Carlo vào mô hình CP-SAT.
 │   ├── Hình 2.8: Pipeline Huấn luyện AI: Tự giám sát (MAE) kết hợp Tinh chỉnh có giám sát (Fine-tuning).
 │   └── Hình 2.9: Sơ đồ hạ tầng Triển khai (Deployment Topology) với Docker và Docker Compose.
 │
@@ -32,8 +32,8 @@ Danh mục Biểu đồ & Hình ảnh Báo cáo Đồ án GLPO
 │   ├── Hình 3.2: Biểu đồ cột (Bar Chart) so sánh Query Latency của CTE so với truy vấn đệ quy thông thường.
 │   ├── Hình 3.3: Biểu đồ sử dụng tài nguyên (Resource Histogram) TRƯỚC khi tối ưu hóa.
 │   ├── Hình 3.4: Biểu đồ phân bổ nguồn lực (Resource Leveling Chart) SAU khi chạy tối ưu hóa.
-│   ├── Hình 3.5: Đồ thị đường (Line Chart) biểu diễn sự hội tụ của hàm Fitness (Thuật toán GA).
-│   ├── Hình 3.6: Đường cong ROC-AUC và Ma trận nhầm lẫn (Confusion Matrix) của mô hình phân loại rủi ro.
+│   ├── Hình 3.5: Biểu đồ đường cong Pareto (Pareto Frontier) so sánh sự đánh đổi giữa Makespan và Cost.
+│   ├── Hình 3.6: Biểu đồ Learning Curve (Sự hội tụ của Loss và R2 Score) của mô hình AI HGT.
 │   ├── Hình 3.7: Biểu đồ Scatter Plot đối chiếu sai số Hồi quy (Predicted Days vs Actual Days).
 │   ├── Hình 3.8: Bản đồ Nhiệt trọng số Chú ý (Attention Heatmap) giải thích mức độ ảnh hưởng của Node.
 │   └── Hình 3.9: Ảnh chụp (Screenshot) giao diện EVM Dashboard và Gantt Chart hoạt động thực tế.

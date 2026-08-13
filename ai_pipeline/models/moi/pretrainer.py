@@ -9,6 +9,7 @@ Chức năng:
 """
 
 import os
+import json
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -96,6 +97,7 @@ class HGTPretrainer:
         best_val_loss = float('inf')
         best_metrics = {}
         no_improve_count = 0
+        history_log = []
 
         for epoch in range(1, max_epochs + 1):
             self.model.train()
@@ -171,6 +173,16 @@ class HGTPretrainer:
             overfit_ratio = val_loss_val / max(1e-6, train_loss_val)
 
             # Đánh giá Early Stopping theo Val Loss
+            history_log.append({
+                'epoch': epoch,
+                'train_loss': train_loss_val,
+                'val_loss': val_loss_val,
+                'val_mae': val_mae,
+                'val_rmse': val_rmse,
+                'val_r2': val_r2,
+                'overfit_ratio': overfit_ratio
+            })
+
             if val_loss_val < best_val_loss - 1e-4:
                 best_val_loss = val_loss_val
                 best_metrics = {
@@ -211,6 +223,14 @@ class HGTPretrainer:
         print(f"   - Val R2 Score: {best_metrics.get('val_r2', 0.0):.4f}")
         print(f"   - Overfitting Ratio (Val/Train): {best_metrics.get('overfit_ratio', 1.0):.2f} (Ideal <= 1.2)")
         print("================================================================================")
+
+        history_path = os.path.join(self.checkpoint_dir, "pretrain_history.json")
+        try:
+            with open(history_path, 'w', encoding='utf-8') as f:
+                json.dump(history_log, f, indent=4)
+            print(f"[Pretrainer] Đã xuất lịch sử huấn luyện (JSON) tại: {history_path}")
+        except Exception as e:
+            print(f"[Pretrainer] Lỗi khi lưu file JSON: {e}")
 
         self.model.eval()
         return best_metrics

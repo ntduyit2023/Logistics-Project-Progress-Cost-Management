@@ -72,27 +72,27 @@ Báo cáo Đồ án: Hệ thống Quản trị Dự án Logistics (GLPO)
 ├── CHƯƠNG 3: KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN
 │   ├── 3.1 Môi trường Thực nghiệm và Dữ liệu Test
 │   │   ├── 3.1.1 Cấu hình phần cứng (CPU/RAM) và Môi trường Docker (Dev Profile)
-│   │   └── 3.1.2 Tổng quan Case Study MFET 3008/5040 (21 Đỉnh, 8 Ràng buộc tài nguyên)
+│   │   └── 3.1.2 Tổng quan  C2012-04 
 │   ├── 3.2 Đánh giá Hiệu năng Hệ thống Đồ thị (System Performance)
 │   │   ├── 3.2.1 Thời gian thực thi truy vấn (Query Latency): So sánh Recursive CTE vs ORM tiêu chuẩn
 │   │   └── 3.2.2 Mức tiêu thụ Bộ nhớ (Memory Footprint) khi scale lên đồ thị 1000+ nodes
 │   ├── 3.3 Đánh giá Kết quả Tối ưu hóa (Optimization Evaluation)
 │   │   ├── 3.3.1 Kết quả Crashing: Mức độ giảm thời gian (Makespan) và Chi phí gia tăng (Marginal Cost)
 │   │   ├── 3.3.2 Tối ưu hóa Tài nguyên (Resource Leveling): Giảm phương sai biểu đồ phân bổ nhân lực
-│   │   └── 3.3.3 Đồ thị hội tụ (Convergence Plot) của GA và tốc độ hội tụ khi áp dụng Hybridization
+│   │   └── 3.3.3 Biểu đồ đánh đổi Pareto (Pareto Frontier) của CP-SAT và thời gian phân bổ không gian tìm kiếm
 │   ├── 3.4 Đánh giá Mô hình Trí tuệ Nhân tạo (AI Metrics)
 │   │   ├── 3.4.1 Độ chính xác dự báo thời gian: MAE, RMSE, MAPE
 │   │   └── 3.4.2 Mức độ giải thích (Explainability): Trọng số Attention trên các nút Đường găng
 │   └── 3.5 Bàn luận (Discussion)
 │       ├── 3.5.1 Tính hiệu quả của việc phân ly 38 loại chi phí (G1-G7) vào thực tiễn Logistics
-│       └── 3.5.2 Hạn chế của hệ thống: Bài toán "Lối thoát tối ưu cục bộ" (Local Optima Trap) của GA
+│       └── 3.5.2 Hạn chế của hệ thống: Hiện tượng bùng nổ tổ hợp (Combinatorial Explosion) của CP-SAT với dự án siêu lớn
 │
 └── CHƯƠNG 4: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
     ├── 4.1 Kết luận chung về đề tài
     │   ├── 4.1.1 Đóng góp về mặt lý luận khoa học (Graph AI + Hybrid Optimization)
     │   └── 4.1.2 Đóng góp về mặt thực tiễn kỹ thuật (Microservices, Recursive CTE)
     └── 4.2 Đề xuất hướng phát triển
-        ├── 4.2.1 Cải tiến Bộ Tối ưu hóa: Khắc phục điểm mù cục bộ bằng Thuật toán Di truyền Thích nghi (Adaptive GA)
+        ├── 4.2.1 Cải tiến Bộ Tối ưu hóa: Áp dụng Tìm kiếm Lân cận Lớn (Large Neighborhood Search - LNS) kết hợp CP-SAT cho dự án quy mô tỷ trọng cao
         ├── 4.2.2 Nâng cấp Kiến trúc Học máy Đồ thị: Áp dụng cơ chế Chú ý Nâng cao (Advanced Attention Mechanisms) như Graphormer
         └── 4.2.3 Mở rộng Dữ liệu Huấn luyện (Data Scaling): Thu thập thêm các bộ dữ liệu dự án thực tế để tăng cường tính tổng quát (Generalization) của mô hình AI
 ```
