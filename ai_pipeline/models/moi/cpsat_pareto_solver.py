@@ -129,8 +129,8 @@ class CPSATParetoSolver:
         ratios = np.linspace(0.0, 1.0, num=max(2, pareto_count))
         configs = []
         for idx, r in enumerate(ratios, start=1):
-            w_makespan = int(10 + (r ** 1.5) * 1000000)
-            w_cost = int(10 + ((1.0 - r) ** 1.5) * 10)
+            w_makespan = int(1 + (r ** 1.5) * 100000)
+            w_cost = int(1 + ((1.0 - r) ** 1.5) * 100)
             num_allowed = int(round(len(ranked_crit_tasks) * r))
             allowed_crash_set = set(ranked_crit_tasks[:num_allowed])
             name = f"Phương án [{idx}]"

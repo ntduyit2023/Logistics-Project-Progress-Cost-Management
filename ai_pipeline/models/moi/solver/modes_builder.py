@@ -96,6 +96,7 @@ def build_task_modes(
         base_labor = float(t.get('labor', cost_meta.get('base_labor', 0.0)) or 0.0)
         base_equipment = float(t.get('equipment') or 0.0)
         base_energy = float(t.get('energy', cost_meta.get('base_energy', 0.0)) or 0.0)
+        fixed_costs = max(0.0, base_cost - (base_labor + base_equipment + base_energy))
 
         # =========================================================================
         # BƯỚC 2: TẠO MODE 0 - TIÊU CHUẨN (NORMAL)
@@ -274,9 +275,9 @@ def build_task_modes(
                 energy_rate_h = base_energy / max(1.0, dur_0)
                 
                 new_base_labor = round(labor_rate_h * dur_2_actual, 2)
-                new_base_equip = round(equip_rate_h * dur_2_actual, 2)
-                new_base_energy = round(energy_rate_h * dur_2_actual, 2)
-                new_base_cost = round(new_base_labor + new_base_equip + new_base_energy, 2)
+                new_base_equip = base_equipment
+                new_base_energy = base_energy
+                new_base_cost = round(new_base_labor + new_base_equip + new_base_energy + fixed_costs, 2)
                 
                 cost_2 = round(new_base_cost + net_cost_increase, 2)
                 risk_2 = ci_score * 0.85
