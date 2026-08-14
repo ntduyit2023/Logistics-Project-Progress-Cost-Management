@@ -74,31 +74,80 @@ Báo cáo Đồ án: Hệ thống Quản trị Dự án Logistics (GLPO)
 │       └── 2.11.2 Luồng hoạt động và Cơ chế kết xuất Frontend Rendering
 │
 ├── CHƯƠNG 3: KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN
-│   ├── 3.1 Kết quả tổng hợp
-│   │   ├── 3.1.1 Thiết lập tập dữ liệu C2012-04 và các baseline
-│   │   └── 3.1.2 Kết quả tổng hợp thời gian, chi phí và rủi ro
-│   ├── 3.2 Phân tích hiệu suất theo tầm nhìn dự báo (Phân tích sai số dự báo thời lượng)
-│   │   ├── 3.2.1 Sai số tuyệt đối trung bình (MAE)
-│   │   ├── 3.2.2 Sai số toàn phương trung bình (RMSE)
-│   │   ├── 3.2.3 Hệ số xác định $R^2$
-│   │   └── 3.2.4 Sai số phần trăm tuyệt đối trung bình (MAPE)
-│   ├── 3.3 Đánh giá tính ổn định
-│   │   ├── 3.3.1 Phân bố RMSE qua các cấu hình 5-Fold Cross Validation
-│   │   ├── 3.3.2 Đánh giá năng lực tổng quát hóa zero-shot xuyên dự án
-│   │   └── 3.3.3 Lượng hóa độ bất định dự báo (Uncertainty Estimation)
-│   ├── 3.4 Ảnh hưởng của quy mô dự án (Quy mô đồ thị J30, J60, J120)
-│   ├── 3.5 Ảnh hưởng của chiến lược chia dữ liệu (LOPO CV vs Random Split)
-│   ├── 3.6 Tốc độ suy giảm hiệu suất (Thời gian hội tụ và độ trễ suy luận AI)
-│   ├── 3.7 Đánh giá phương pháp kết hợp mô hình (AI-Guided CP-SAT vs Baselines)
-│   ├── 3.8 Chi phí tính toán (Dung lượng bộ nhớ và độ trễ truy vấn Recursive CTE)
-│   ├── 3.9 Ứng dụng web quản trị tiến độ và chi phí dự án (GLPO Web UI)
-│   │   ├── 3.9.1 Kiến trúc ứng dụng vi dịch vụ container hóa
-│   │   ├── 3.9.2 Giao diện tổng quan danh sách và Gantt Chart
-│   │   └── 3.9.3 Giao diện phân tích tài chính S-Curve và Pareto
-│   └── 3.10 Thảo luận
-│       ├── 3.10.1 Đánh giá mức độ đạt mục tiêu
-│       ├── 3.10.2 Ưu điểm của giải pháp đề xuất
-│       └── 3.10.3 Hạn chế của nghiên cứu và hướng phát triển
+│   │
+│   ├── 3.1 Tổng quan Kết quả Thực nghiệm
+│   │   ├── 3.1.1 Môi trường thực nghiệm và Tập dữ liệu
+│   │   │   └── [Bảng] Thống kê 5 dự án trong DSLIB
+│   │   │           (C2019-16 | C2018-09 | C2011-07 | C2012-04 | C2012-08)
+│   │   │           Cột: Mã dự án, |V|, |E|, Ngân sách, Số tài nguyên
+│   │   └── 3.1.2 Bảng tổng hợp chỉ số hiệu năng toàn hệ thống
+│   │           └── [Bảng tóm tắt] Mỗi phân hệ → 1-2 chỉ số đại diện:
+│   │                   - Graph DB:  Latency CTE 1,95 ms vs ORM 35,20 ms
+│   │                   - AI HGT:    R² trung bình 0,3734 | Best R² 0,8023
+│   │                   - CP-SAT:    Makespan giảm 21,1% | Risk giảm 36,5%
+│   │
+│   ├── 3.2 Hiệu năng Phân hệ Lưu trữ Đồ thị (Graph DB)
+│   │   ├── 3.2.1 Độ trễ truy vấn: Recursive CTE vs ORM tiêu chuẩn
+│   │   │   ├── [Bảng] Thời gian (ms) theo |V| = 20 → 5.000
+│   │   │   └── [Hình] Biểu đồ cột so sánh hai phương pháp
+│   │   └── 3.2.2 Mức tiêu thụ Bộ nhớ khi mở rộng quy mô
+│   │           └── [Bảng] RAM CSDL + Backend API + VRAM theo |V|
+│   │
+│   ├── 3.3 Hiệu năng Phân hệ AI (HGT + Pre-training SSL)
+│   │   ├── 3.3.1 Chiến lược chia dữ liệu xuyên dự án (LOPO CV)
+│   │   │   ├── Giải thích tại sao k=5 (Leave-One-Project-Out,
+│   │   │   │   không phải k-fold ngẫu nhiên vì 5 dự án = 5 folds)
+│   │   │   └── [Bảng] LOPO CV vs Random Split
+│   │   │           Cột: Train R², Val R², Val MSE, Hiện tượng rò rỉ
+│   │   ├── 3.3.2 Quá trình huấn luyện và Hội tụ mô hình
+│   │   │   ├── [Hình] Đường cong Loss Pre-training (NLL Loss + MAE/RMSE)
+│   │   │   └── Phân tích: best epoch, Early Stopping patience=40
+│   │   ├── 3.3.3 Độ chính xác dự báo: MAE, RMSE, MAPE, R²
+│   │   │   ├── Công thức toán học 4 chỉ số
+│   │   │   ├── [Bảng] Kết quả từng Fold (Fold 1→5 + Trung bình ± σ)
+│   │   │   │           Cột: Fold, Số epochs, Best Val R², Min Val Loss, Val MSE
+│   │   │   ├── [Hình] Đường cong R² Score và Loss qua 5-Fold (epoch.jpg)
+│   │   │   └── [Hình] Scatter Plot dự báo vs thực tế (regression_scatter)
+│   │   ├── 3.3.4 Ảnh hưởng Quy mô đồ thị đến hiệu năng AI
+│   │   │   └── [Bảng] 5 dự án: |V|, |E|, Val Loss, Best R², Latency (ms)
+│   │   │           (C2019-16 → C2012-08, sắp xếp theo |V| tăng dần)
+│   │   └── 3.3.5 Định vị Nút thắt cổ chai (Bottleneck Attention)
+│   │           ├── Cơ chế: Cosine Similarity giữa V_Task và V_Resource
+│   │           └── [Hình] Bản đồ nhiệt (15 công việc găng × 8 tài nguyên)
+│   │
+│   ├── 3.4 Hiệu năng Phân hệ Tối ưu hóa (CP-SAT + Monte Carlo)
+│   │   ├── 3.4.1 Phân phối Rủi ro Tiến độ (Monte Carlo CPM)
+│   │   │   ├── Mô tả: Beta-PERT → 10.000 vòng lặp → CDF thực nghiệm
+│   │   │   └── [Hình] Đường cong CDF với mốc P50, P80, P95
+│   │   ├── 3.4.2 Kết quả Ép tiến độ (Crashing)
+│   │   │   ├── [Bảng] 3 phương án tối ưu đại diện
+│   │   │   │           Cột: Phương án, Makespan, Overtime (giờ/tasks),
+│   │   │   │                Tổng chi phí, Risk%, Chiến lược
+│   │   │   └── Biện luận đánh đổi Makespan - Chi phí
+│   │   ├── 3.4.3 Tối ưu hóa Phân bổ Tài nguyên (Resource Leveling)
+│   │   │   ├── Công thức hàm mục tiêu phương sai tài nguyên
+│   │   │   ├── [Bảng] Chỉ số trước/sau tối ưu
+│   │   │   │           (Peak, Min, Mean, Variance, Std Dev, Gini)
+│   │   │   ├── [Hình] Biểu đồ nhân lực TRƯỚC tối ưu
+│   │   │   └── [Hình] Biểu đồ nhân lực SAU tối ưu
+│   │   └── 3.4.4 Đường biên Pareto Frontier
+│   │           ├── [Bảng] Điểm Pareto P₁, P₂, P₃
+│   │           │           Cột: Điểm nghiệm, Makespan, Cost, Risk%, Overtime
+│   │           └── [Hình] Đường cong Pareto Frontier (Cost vs Makespan)
+│   │
+│   ├── 3.5 Đối chuẩn Toàn hệ thống (Benchmarking)
+│   │   ├── [Bảng] GLPO (Opt.1) vs CPM vs GA vs Pure CP-SAT
+│   │   │           Cột: Phương pháp, Makespan (h), Cost (USD),
+│   │   │                Risk%, Số tasks tăng ca, Thời gian giải (CPU)
+│   │   └── Biện luận 3 điểm:
+│   │       ├── (a) Ảnh hưởng của ràng buộc tài nguyên hữu hạn
+│   │       ├── (b) Cơ chế AI-Guided Optimization (Bottleneck → Crashing)
+│   │       └── (c) Bài toán đánh đổi Chi phí - Rủi ro (Cost-Risk Trade-off)
+│   │
+│   └── 3.6 Bàn luận và Hạn chế
+│       ├── 3.6.1 Tính hiệu quả của phân ly 38 loại chi phí trong Logistics
+│       ├── 3.6.2 Hạn chế: Bùng nổ tổ hợp CP-SAT khi |V| > 1.000
+│       └── 3.6.3 Hướng phát triển tiếp theo
 │
 └── CHƯƠNG 4: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
     ├── 4.1 Kết luận chung

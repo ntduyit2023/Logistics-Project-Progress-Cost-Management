@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.7.1)  14 AUG 2026 10:46
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.7.1)  14 AUG 2026 20:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1371,8 +1371,8 @@ Overfull \hbox (19.54721pt too wide) in paragraph at lines 831--840
  []
 
 [14]
-File: image/../image/fig4_hgtconv_attention.drawio.png Graphic file (type bmp)
-<image/../image/fig4_hgtconv_attention.drawio.png>
+File: image/../image/fig2_hgt_architecture.drawio.png Graphic file (type bmp)
+<image/../image/fig2_hgt_architecture.drawio.png>
  [15] [16] [17]) [18]
 \openout2 = `chuong2.aux'.
 
@@ -1424,106 +1424,72 @@ Chương 3.
 File: image/hinh3_1_reactflow_network.jpg Graphic file (type bmp)
 <image/hinh3_1_reactflow_network.jpg>
  [36]
-LaTeX Font Info:    Calculating math sizes for size <13> on input line 90.
+File: image/hinh3_2_query_latency.png Graphic file (type bmp)
+<image/hinh3_2_query_latency.png>
+ [37] [38] [39]
+File: image/hinh3_6_roc_confusion.png Graphic file (type bmp)
+<image/hinh3_6_roc_confusion.png>
+File: image/hinh3_7_regression_scatter.png Graphic file (type bmp)
+<image/hinh3_7_regression_scatter.png>
+ [40] [41]
+LaTeX Font Info:    Calculating math sizes for size <13> on input line 313.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <13> not available
-(Font)              size <12> substituted on input line 90.
+(Font)              size <12> substituted on input line 313.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <6.5> not available
-(Font)              size <6> substituted on input line 90.
+(Font)              size <6> substituted on input line 313.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 90.
+(Font)              size <12> substituted on input line 313.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 90.
+(Font)              size <6> substituted on input line 313.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <13> not available
-(Font)              size <12> substituted on input line 90.
+(Font)              size <12> substituted on input line 313.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <6.5> not available
-(Font)              size <6> substituted on input line 90.
+(Font)              size <6> substituted on input line 313.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 90.
+(hyperref)                removing `math shift' on input line 313.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `superscript' on input line 90.
+(hyperref)                removing `math shift' on input line 313.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 90.
-
-[37]
-File: image/hinh3_7_regression_scatter.png Graphic file (type bmp)
-<image/hinh3_7_regression_scatter.png>
-File: image/epoch.jpg Graphic file (type bmp)
-<image/epoch.jpg>
- [38]
-File: image/hinh3_8_attention_heatmap.png Graphic file (type bmp)
-<image/hinh3_8_attention_heatmap.png>
- [39]
-File: image/cdf_risk.png Graphic file (type bmp)
-<image/cdf_risk.png>
- [40] [41]
-File: image/pretrain_loss.png Graphic file (type bmp)
-<image/pretrain_loss.png>
- [42] [43]
-File: image/hinh3_3_resource_before.png Graphic file (type bmp)
-<image/hinh3_3_resource_before.png>
-File: image/hinh3_4_resource_after.png Graphic file (type bmp)
-<image/hinh3_4_resource_after.png>
- [44]
-File: image/pareto_frontier.png Graphic file (type bmp)
-<image/pareto_frontier.png>
- [45]
-File: image/hinh3_2_query_latency.png Graphic file (type bmp)
-<image/hinh3_2_query_latency.png>
- [46]
-File: image/hinh3_9a_dashboard.jpg Graphic file (type bmp)
-<image/hinh3_9a_dashboard.jpg>
-File: image/hinh3_9b_projects_list.jpg Graphic file (type bmp)
-<image/hinh3_9b_projects_list.jpg>
-File: image/hinh3_9c_gantt_overview.jpg Graphic file (type bmp)
-<image/hinh3_9c_gantt_overview.jpg>
-File: image/hinh3_9d_financial_scurve.jpg Graphic file (type bmp)
-<image/hinh3_9d_financial_scurve.jpg>
-File: image/hinh3_9e_ai_config.jpg Graphic file (type bmp)
-<image/hinh3_9e_ai_config.jpg>
-File: image/hinh3_9f_pareto_table.jpg Graphic file (type bmp)
-<image/hinh3_9f_pareto_table.jpg>
- [47] [48]) [49]
+) [42]
 \openout2 = `chuong4.aux'.
 
  (chuong4.tex
 Chương 4.
-[50
+[43
 
 
 
 
-] [51]
+] [44]
 File: image/hinh4_1_advanced_attention.png Graphic file (type bmp)
 <image/hinh4_1_advanced_attention.png>
-) [52] (main.bbl
+) [45] (main.bbl
 Underfull \hbox (badness 2671) in paragraph at lines 4--8
 []\TU/TimesNewRoman(0)/m/n/10 Project Management Institute, \TU/TimesNewRoman(0
 )/m/it/10 A Guide to the Project Management Body of Knowledge (PMBOK
  []
 
-[53
+[46
 
 
 
-]) [54] (main.aux (trang_bia.aux) (bia_phu.aux) (nhan_xet_gvhd.aux)
+]) [47] (main.aux (trang_bia.aux) (bia_phu.aux) (nhan_xet_gvhd.aux)
 (nhan_xet_gvpb.aux) (loi_cam_doan.aux) (loi_cam_on.aux) (tom_tat.aux)
 (abstract.aux) (tu_ngu_thuat_ngu.aux) (loi_mo_dau.aux) (chuong1.aux)
 (chuong2.aux) (chuong3.aux) (chuong4.aux))
@@ -1538,12 +1504,12 @@ LaTeX Font Warning: Size substitutions with differences
 
  ) 
 Here is how much of TeX's memory you used:
- 39601 strings out of 402628
- 936229 string characters out of 5444702
- 1595010 words of memory out of 5000000
- 67975 multiletter control sequences out of 15000+600000
- 636074 words of font info for 119 fonts, out of 8000000 for 9000
+ 39445 strings out of 402628
+ 931474 string characters out of 5444702
+ 1592012 words of memory out of 5000000
+ 67833 multiletter control sequences out of 15000+600000
+ 636058 words of font info for 117 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 102i,20n,107p,824b,2323s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,20n,107p,947b,2323s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (75 pages).
+Output written on main.pdf (68 pages).

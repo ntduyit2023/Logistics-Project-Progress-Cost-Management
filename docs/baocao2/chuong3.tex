@@ -1,538 +1,86 @@
 \chapter{KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN}
-
-Chương này trình bày toàn bộ kết quả thực nghiệm định lượng, phân tích hiệu năng và thảo luận chuyên sâu về hệ thống Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO). Các kết quả được thu thập trực tiếp từ dữ liệu nhật ký huấn luyện AI và kết quả tối ưu hóa đa mục tiêu mới nhất xoay quanh dự án đối chuẩn \textbf{C2012-04} trích xuất từ tập dữ liệu DSLIB.
-
-% ==========================================
-% 3.1. KẾT QUẢ THỰC NGHIỆM TỔNG HỢP
-% ==========================================
-\section{Kết quả thực nghiệm tổng hợp}
-\label{sec:3.1_ket_qua_thuc_nghiem_tong_hop}
-
-\subsection{Thiết lập tập dữ liệu C2012-04 và các baseline}
-\label{sec:3.1.1_thiet_lap_dataset_baseline}
-
-Để đánh giá hiệu quả của giải pháp đề xuất, nghiên cứu áp dụng kịch bản dự án đối chuẩn thực tế \textbf{C2012-04} trích xuất từ tập dữ liệu logistics. Dự án này đại diện cho kịch bản quản trị và điều phối chuỗi cung ứng logistics quy mô trung bình phức tạp với cấu trúc topo mạng lưới và định ngạch tài nguyên nghiêm ngặt:
-\begin{itemize}
-    \item \textbf{Cấu trúc công việc:} Gồm $67$ công việc lá độc lập được liên kết với nhau bằng $94$ ràng buộc thứ tự thi công định hướng PDM (Finish-to-Start, Start-to-Start, v.v.). Mật độ liên kết mạng lưới đạt 2,12 cạnh/nút.
-    \item \textbf{Định ngạch tài nguyên:} Sử dụng 5 nhóm tài nguyên hạn chế có tính chất tái tạo và tái sử dụng qua các ngày làm việc, bao gồm nhân sự kỹ thuật chuyên môn và thiết bị logistics chuyên dụng.
-    \item \textbf{Cấu trúc tài chính:} Tổng ngân sách cơ sở của dự án đạt \$9.980.668,83 USD, được phân bổ và theo dõi chi tiết qua 38 mục chi phí thuộc 7 nhóm chỉ số tài chính từ $G_1$ đến $G_7$.
-\end{itemize}
-
-Để đối chuẩn và kiểm chứng hiệu quả, giải pháp lai đề xuất (GNN-Guided CP-SAT) được so sánh trực tiếp với 3 phương pháp baseline chính:
-\begin{enumerate}
-    \item \textbf{Phương pháp CPM truyền thống (Critical Path Method):} Lập lịch tĩnh chỉ dựa trên thời lượng danh định trung bình của công việc, hoàn toàn bỏ qua các yếu tố rủi ro ngẫu nhiên và giới hạn tài nguyên.
-    \item \textbf{Thuật toán di truyền (Genetic Algorithm - GA):} Giải thuật meta-heuristic phổ biến trong tối ưu hóa lập lịch dự án RCPSP để tìm kiếm đường biên Pareto.
-    \item \textbf{Bộ giải CP-SAT thuần túy (Pure CP-SAT Solver):} Bộ giải lập trình ràng buộc CP-SAT của Google OR-Tools chạy trực tiếp trên toàn bộ không gian tìm kiếm mà không có sự dẫn đường hoặc thu hẹp miền giá trị từ các dự báo rủi ro của AI.
-\end{enumerate}
-
-Cấu trúc topo mạng công việc AON biểu diễn trên giao diện React Flow của ứng dụng Web thực tế được minh họa tại Hình \ref{fig:hinh3_1_reactflow}.
-
-\subsection{Kết quả tổng hợp thời gian, chi phí và rủi ro}
-\label{sec:3.1.2_ket_qua_tong_hop}
-
-Sau khi thu thập dữ liệu rủi ro dự báo từ phân hệ AI và đưa qua bộ giải tối ưu hóa đa mục tiêu CP-SAT, kết quả thực nghiệm tổng hợp của dự án case-study C2012-04 được tổng hợp tại Bảng \ref{tab:dataset_summary}.
-
-\begin{table}[H]
-\centering
-\caption{Thống kê đặc trưng cấu trúc đồ thị và kết quả tổng hợp của Dự án C2012-04}
-\label{tab:dataset_summary}
-\small
-\begin{tabular}{ll}
-\toprule
-\textbf{Đặc trưng thuộc tính} & \textbf{Giá trị thông số Thực nghiệm Dự án C2012-04} \\
-\midrule
-Mã định danh dự án & C2012-04 \\
-Tổng số lượng nút công việc lá & 67 nút ($Task_1$ đến $Task_{67}$) \\
-Số lượng cạnh liên kết topo PDM & 94 liên kết thứ tự thi công định hướng \\
-Thời gian hoàn thành trung bình (Monte Carlo) & 1.353,49 giờ, độ lệch chuẩn $\sigma = 162,55$ giờ \\
-Mốc rủi ro dự án & $P_{50} = 1.344,03$ giờ, $P_{80} = 1.497,06$ giờ, $P_{95} = 1.621,28$ giờ \\
-Khoảng thời gian Makespan tối ưu & 235,38 ngày đến 319,50 ngày \\
-Khoảng chi phí dự toán tối ưu & \$9.980.668,83 USD đến \$10.271.732,32 USD \\
-Số lượng công việc găng kích hoạt tăng ca & 19 công việc (tổng $348,0$ giờ làm thêm giờ) \\
-Phân ly chi phí chi tiết & 38 mục chi phí thuộc 7 nhóm tài chính $G_1$ đến $G_7$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{image/hinh3_1_reactflow_network.jpg}
-\caption{Giao diện trực quan mạng lưới đồ thị AON dự án C2012-04 trên ứng dụng web}
-\label{fig:hinh3_1_reactflow}
-\end{figure}
+\label{ch:chuong3_ket_qua}
 
 % ==========================================
-% 3.2. PHÂN TÍCH HIỆU SUẤT THEO TẦM NHÌN DỰ BÁO
+% 3.1. TỔNG QUAN KẾT QUẢ THỰC NGHIỆM
 % ==========================================
-\section{Phân tích hiệu suất theo tầm nhìn dự báo (Phân tích sai số dự báo thời lượng)}
-\label{sec:3.2_ai_accuracy}
+\section{Tổng quan Kết quả Thực nghiệm}
+\label{sec:3.1_tong_quan_ket_qua}
 
-Nhiệm vụ cốt lõi của phân hệ AI là dự báo thời gian thi công thực tế $\hat{y}_i$ của các công việc dưới tác động của các yếu tố rủi ro phi tuyến. Để đánh giá độ chính xác dự báo, các chỉ số đo lường sai số hồi quy MAE, RMSE, $R^2$ và MAPE được sử dụng làm thước đo tiêu chuẩn. Các chỉ số này được tính toán theo các công thức toán học chuẩn mực:
-\begin{align}
-\text{MAE} &= \frac{1}{N}\sum_{i=1}^{N} |y_i - \hat{y}_i| \label{eq:mae} \\
-\text{RMSE} &= \sqrt{\frac{1}{N}\sum_{i=1}^{N} (y_i - \hat{y}_i)^2} \label{eq:rmse} \\
-\text{MAPE} &= \frac{1}{N}\sum_{i=1}^{N} \left| \frac{y_i - \hat{y}_i}{y_i} \right| \times 100\% \label{eq:mape} \\
-R^2 &= 1 - \frac{\sum_{i=1}^{N} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{N} (y_i - \bar{y})^2} \label{eq:r2}
-\end{align}
+\subsection{Môi trường thực nghiệm và Tập dữ liệu}
+\label{sec:3.1.1_moi_truong_va_du_lieu}
 
-Trong đó, $y_i$ là thời gian thi công thực địa ghi nhận từ nhật ký lịch sử, $\hat{y}_i$ là giá trị dự báo bởi mô hình Heterogeneous Graph Transformer (HGT) kết hợp với học tự giám sát SSL MAE, và $\bar{y}$ là giá trị trung bình của nhãn thực tế.
-
-\subsection{Sai số tuyệt đối trung bình (MAE)}
-\label{sec:3.2.1_mae}
-
-Chỉ số MAE đo lường độ lệch tuyệt đối trung bình giữa giá trị dự báo và giá trị thực địa. Kết quả thực nghiệm trên toàn bộ tập dữ liệu kiểm thử ghi nhận chỉ số MAE trung bình đạt mức \textbf{0,1125} đối với hệ số thời lượng công việc (duration factor) và \textbf{1,92 giờ} đối với giá trị độ trễ kỳ vọng của công việc (expected delay). Sai số này cho thấy mô hình AI có độ lệch rất nhỏ so với thực tế, đảm bảo tính khả thi cao khi nạp tham số dự báo vào phân hệ mô phỏng.
-
-\subsection{Sai số toàn phương trung bình (RMSE)}
-\label{sec:3.2.2_rmse}
-
-Chỉ số RMSE đặc biệt nhạy cảm với các sai số lớn do thực hiện phép bình phương sai số trước khi lấy trung bình và khai căn. Thực nghiệm ghi nhận chỉ số RMSE trung bình của mô hình đạt \textbf{0,1584}. Việc duy trì mức RMSE thấp và tiệm cận sát chỉ số MAE chứng minh mô hình GNN hoạt động cực kỳ ổn định, không mắc phải các sai số dự báo cực đoan hay lệch hướng lớn trên các công việc găng của dự án.
-
-\subsection{Hệ số xác định $R^2$}
-\label{sec:3.2.3_r2}
-
-Hệ số xác định $R^2$ biểu diễn tỷ lệ phương sai của biến mục tiêu được giải thích bởi mô hình. Kết quả thực nghiệm ghi nhận chỉ số $R^2$ đạt trung bình \textbf{0,3734} trên toàn bộ các fold kiểm thử chéo và đạt giá trị tối ưu \textbf{0,8023} tại fold tốt nhất (Fold 3). Khả năng giải thích biến thiên đạt tới $80,23\%$ chứng minh mô hình HGT có năng lực nắm bắt rất tốt sự tương tác phi tuyến giữa cấu trúc topo mạng PDM và phân bổ tài nguyên.
-
-\subsection{Sai số phần trăm tuyệt đối trung bình (MAPE)}
-\label{sec:3.2.4_mape}
-
-Chỉ số MAPE đo lường sai số tương đối dưới dạng tỷ lệ phần trăm so với nhãn thực tế. Chỉ số MAPE trung bình của mô hình đạt mức \textbf{8,45\%}, nằm trong ngưỡng an toàn cho phép (<10\%) đối với các bài toán lập lịch dự án logistics phức tạp. Biểu đồ Scatter Plot đối chiếu tương quan giữa giá trị dự báo và thực tế được thể hiện tại Hình \ref{fig:hinh3_2_regression_scatter}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.75\linewidth]{image/hinh3_7_regression_scatter.png}
-\caption{Biểu đồ Scatter Plot đối chiếu thời gian thi công dự báo của mô hình AI vs thời gian thi công thực tế}
-\label{fig:hinh3_2_regression_scatter}
-\end{figure}
+\subsection{Bảng tổng hợp chỉ số hiệu năng toàn hệ thống}
+\label{sec:3.1.2_bang_tong_hop_chi_so}
 
 % ==========================================
-% 3.3. ĐÁNH GIÁ TÍNH ỔN ĐỊNH
+% 3.2. HIỆU NĂNG PHÂN HỆ LƯU TRỮ ĐỒ THỊ (GRAPH DB)
 % ==========================================
-\section{Đánh giá tính ổn định}
-\label{sec:3.3_stability_evaluation}
+\section{Hiệu năng Phân hệ Lưu trữ Đồ thị (Graph DB)}
+\label{sec:3.2_hieu_nang_graphdb}
 
-\subsection{Phân bố RMSE qua các cấu hình 5-Fold Cross Validation}
-\label{sec:3.3.1_cross_validation_distribution}
+\subsection{Độ trễ truy vấn: Recursive CTE vs ORM tiêu chuẩn}
+\label{sec:3.2.1_query_latency}
 
-Để đánh giá độ ổn định của mô hình AI trước các biến động topo đồ thị khác nhau, nghiên cứu thực hiện kiểm thử chéo LOPO CV trên 5 folds độc lập. Kết quả chi tiết của từng fold được thống kê tại Bảng \ref{tab:ai_metrics_comparison}.
-
-\begin{table}[H]
-\centering
-\caption{Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation}
-\label{tab:ai_metrics_comparison}
-\small
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Fold Kiểm thử} & \textbf{Số Epochs Huấn luyện} & \textbf{Best Validation $R^2$} & \textbf{Min Validation Loss} & \textbf{Validation MSE Cuối} \\
-\midrule
-Fold 1 & 47 epochs & 0,0106 (Epoch 16) & 0,3013 & 0,002952 \\
-Fold 2 & 94 epochs & 0,6287 (Epoch 64) & 0,2219 & 0,001701 \\
-\textbf{Fold 3 (Đỉnh cao)} & \textbf{211 epochs} & $\mathbf{0,8023\text{ (Epoch 181)}}$ & $\mathbf{0,2512}$ & $\mathbf{0,001292}$ \\
-Fold 4 & 64 epochs & 0,5792 (Epoch 34) & 0,5780 & 0,003468 \\
-Fold 5 & 67 epochs & -0,1537 (Epoch 37) & 0,6296 & 0,004645 \\
-\midrule
-\textbf{Trung bình 5-Fold} & -- & $\mathbf{0,3734 \pm 0,3744}$ & $\mathbf{0,3964 \pm 0,1720}$ & $\mathbf{0,002812}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{image/epoch.jpg}
-\caption{Đường cong học tập đánh giá quá trình hội tụ Loss và R² Score qua 5-Fold Cross Validation}
-\label{fig:hinh3_3_learning_curve}
-\end{figure}
-
-Sự biến động chỉ số $R^2$ giữa các folds (từ $-0,1537$ ở Fold 5 lên đến $0,8023$ ở Fold 3) phản ánh sự khác biệt sâu sắc về mặt topo giữa các đồ thị dự án khác nhau. Fold 3 đạt kết quả vượt trội do đồ thị kiểm thử có mật độ tương đương với tập huấn luyện, giúp cơ chế truyền tin của GNN hoạt động tối ưu. Đường cong học tập được minh họa tại Hình \ref{fig:hinh3_3_learning_curve}.
-
-\subsection{Đánh giá năng lực tổng quát hóa zero-shot xuyên dự án}
-\label{sec:3.3.2_zero_shot_generalization}
-
-Khả năng định vị nút Đường găng (Critical Path) thông qua cơ chế Multi-Head Attention của HGT được trình bày tại Bảng \ref{tab:attention_explainability}. Trọng số chú ý tập trung vào các nút có rủi ro cao được thể hiện qua bản đồ nhiệt ở Hình \ref{fig:hinh3_4_attention_heatmap}.
-
-\begin{table}[H]
-\centering
-\caption{Khả năng định vị nút Đường găng thông qua Trọng số Attention của HGT trên Dự án C2012-04}
-\label{tab:attention_explainability}
-\small
-\begin{tabular}{lccc}
-\toprule
-\textbf{Phương pháp Xác định Nút Găng} & \textbf{Precision@5 (\%)} & \textbf{Recall@5 (\%)} & \textbf{Thời gian xử lý (ms)} \\
-\midrule
-Thuật toán CPM truyền thống & $100,0\%$ & $100,0\%$ & 14,20 ms \\
-GAT Attention Weights (Đồ thị Đồng thể) & $40,0\%$ & $40,0\%$ & 4,50 ms \\
-\textbf{HGT Attention Weights (Đề xuất)} & $\mathbf{100,0\%}$ & $\mathbf{100,0\%}$ & $\mathbf{1,85\text{ ms}}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.82\linewidth]{image/hinh3_8_attention_heatmap.png}
-\caption{Bản đồ nhiệt trọng số Attention định vị các nút công việc tới hạn trên Dự án C2012-04}
-\label{fig:hinh3_4_attention_heatmap}
-\end{figure}
-
-Kết quả ghi nhận HGT đạt $\text{Precision@5} = 100\%$ và $\text{Recall@5} = 100\%$ tương đương giải thuật CPM truyền thống nhưng với tốc độ thực thi nhanh hơn $7,67$ lần ($1,85$ ms so với $14,20$ ms), chứng minh năng lực tổng quát hóa topo vượt trội.
-
-\subsection{Lượng hóa độ bất định dự báo (Uncertainty Estimation)}
-\label{sec:3.3.3_uncertainty_estimation}
-
-Nhờ huấn luyện bằng hàm mất mát Gaussian NLL Loss, mô hình GLPO xuất ra đồng thời giá trị phương sai bất định $\hat{\sigma}_i^2$. Thực nghiệm cho thấy các công việc có tính chất phức tạp, liên kết với nhiều nút tài nguyên hạn chế có xu hướng trả về phương sai $\hat{\sigma}_i^2$ cao hơn (dao động từ $0,65$ đến $0,95$). Giá trị $\hat{\sigma}_i^2$ này được nhúng trực tiếp làm tham số biến động cho phân phối Beta-PERT trong phân hệ mô phỏng Monte Carlo CPM, tạo cơ sở thực tế cho việc xác định mốc thời gian an toàn của dự án. Đồ thị phân phối tích lũy CDF rủi ro tiến độ thu được từ quá trình mô phỏng Monte Carlo CPM trên dự án C2012-04 được trực quan hóa tại Hình \ref{fig:hinh3_5_cdf_risk}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\linewidth]{image/cdf_risk.png}
-\caption{Đường cong phân phối xác suất tích lũy CDF thời lượng dự án từ mô phỏng Monte Carlo CPM}
-\label{fig:hinh3_5_cdf_risk}
-\end{figure}
+\subsection{Mức tiêu thụ Bộ nhớ khi mở rộng quy mô}
+\label{sec:3.2.2_memory_footprint}
 
 % ==========================================
-% 3.4. ẢNH HƯỞNG CỦA QUY MÔ DỰ ÁN
+% 3.3. HIỆU NĂNG PHÂN HỆ AI (HGT + PRE-TRAINING SSL)
 % ==========================================
-\section{Ảnh hưởng của quy mô dự án (Quy mô đồ thị J30, J60, J120)}
-\label{sec:3.4_project_scale_effects}
+\section{Hiệu năng Phân hệ AI (HGT + Pre-training SSL)}
+\label{sec:3.3_hieu_nang_ai}
 
-Quy mô của dự án (được đại diện bởi số lượng công việc $|V|$ và số lượng ràng buộc thứ tự $|E|$ trong đồ thị AON) có ảnh hưởng quyết định đến không gian tìm kiếm tối ưu và tốc độ xử lý của hệ thống. Nghiên cứu thực hiện thực nghiệm mở rộng trên các quy mô dự án tiêu chuẩn từ tập dữ liệu đối chuẩn PSPLIB, bao gồm J30 ($30$ công việc), J60 ($60$ công việc), J120 ($120$ công việc) và các đồ thị mở rộng nhân tạo lên đến $10.000$ công việc. Kết quả so sánh hiệu năng được tổng hợp tại Bảng \ref{tab:scale_impact}.
+\subsection{Chiến lược chia dữ liệu xuyên dự án (LOPO CV)}
+\label{sec:3.3.1_lopo_cv}
 
-\begin{table}[H]
-\centering
-\caption{Ảnh hưởng của quy mô đồ thị dự án đến sai số dự báo AI và thời gian tối ưu lập lịch}
-\label{tab:scale_impact}
-\small
-\begin{tabular}{lccccc}
-\toprule
-\textbf{Tập dữ liệu} & \textbf{Số công việc ($|V|$)} & \textbf{Số ràng buộc ($|E|$)} & \textbf{MAE dự báo} & \textbf{Hệ số $R^2$} & \textbf{Thời gian CP-SAT (s)} \\
-\midrule
-J30 & 30 & 42 & 0,1085 & 0,3924 & $0,45 \pm 0,08$ s \\
-\textbf{C2012-04} & \textbf{67} & \textbf{94} & \textbf{0,1125} & \textbf{0,3734} & $\mathbf{1,85 \pm 0,25\text{ s}}$ \\
-J60 & 60 & 88 & 0,1142 & 0,3685 & $3,12 \pm 0,48$ s \\
-J120 & 120 & 176 & 0,1195 & 0,3512 & $14,80 \pm 2,15$ s \\
-J1000 & 1.000 & 1.691 & 0,1210 & 0,3420 & $245,50 \pm 35,60$ s \\
-J5000 & 5.000 & 8.621 & 0,1285 & 0,3312 & > 3.600 s (Timeout) \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Quá trình huấn luyện và Hội tụ mô hình}
+\label{sec:3.3.2_training_convergence}
 
-Kết quả từ Bảng \ref{tab:scale_impact} chỉ ra hai xu hướng quan trọng:
-\begin{itemize}
-    \item \textbf{Độ ổn định của mô hình AI:} Chỉ số sai số MAE và hệ số $R^2$ duy trì biên độ dao động rất nhỏ khi quy mô đồ thị tăng từ 30 nút lên 5.000 nút (MAE tăng nhẹ từ $0,1085$ lên $0,1285$; $R^2$ giảm từ $0,3924$ xuống $0,3312$). Điều này chứng minh cơ chế truyền thông điệp (Message Passing) của HGT kết hợp với học biểu diễn tự giám sát (SSL MAE) có năng lực tổng quát hóa topo rất tốt, không bị suy giảm đột ngột hiệu năng khi đối mặt với các đồ thị quy mô lớn.
-    \item \textbf{Sự bùng nổ không gian tìm kiếm CP-SAT:} Trái ngược với mô hình AI, thời gian giải bài toán lập lịch ràng buộc đa mục tiêu của bộ giải CP-SAT tăng theo cấp số nhân. Với quy mô dưới 120 công việc (J120), bộ giải CP-SAT tìm được nghiệm Pareto tối ưu toàn cục chỉ trong vòng dưới 15 giây. Tuy nhiên, khi quy mô tăng lên 1.000 công việc, không gian tìm kiếm bùng nổ khiến thời gian tìm nghiệm tăng vọt lên 245,5 giây, và hoàn toàn quá tải (>3.600 giây) ở quy mô 5.000 công việc. 
-\end{itemize}
+\subsection{Độ chính xác dự báo: MAE, RMSE, MAPE, $R^2$}
+\label{sec:3.3.3_accuracy_metrics}
+
+\subsection{Ảnh hưởng Quy mô đồ thị đến hiệu năng AI}
+\label{sec:3.3.4_graph_size_impact}
+
+\subsection{Định vị Nút thắt cổ chai (Bottleneck Attention)}
+\label{sec:3.3.5_bottleneck_attention}
 
 % ==========================================
-% 3.5. ẢNH HƯỞNG CỦA CHIẾN LƯỢC CHIA DỮ LIỆU
+% 3.4. HIỆU NĂNG PHÂN HỆ TỐI ƯU HÓA (CP-SAT + MONTE CARLO)
 % ==========================================
-\section{Ảnh hưởng của chiến lược chia dữ liệu (LOPO CV vs Random Split)}
-\label{sec:3.5_data_split_effects}
+\section{Hiệu năng Phân hệ Tối ưu hóa (CP-SAT + Monte Carlo)}
+\label{sec:3.4_hieu_nang_toi_uu_hoa}
 
-Để làm rõ tầm quan trọng của chiến lược chia tập dữ liệu được đề xuất, nghiên cứu tiến hành thực nghiệm đối chứng hiệu năng giữa chiến lược chia ngẫu nhiên mức công việc (Random Task-level Split) và chiến lược kiểm thử chéo loại bỏ một dự án (Leave-One-Project-Out CV - LOPO CV). Kết quả đối chuẩn chi tiết được tổng hợp tại Bảng \ref{tab:split_strategy_comparison}.
+\subsection{Phân phối Rủi ro Tiến độ (Monte Carlo CPM)}
+\label{sec:3.4.1_monte_carlo}
 
-\begin{table}[H]
-\centering
-\caption{Đối chuẩn hiệu năng của mô hình GNN dưới hai chiến lược phân chia dữ liệu}
-\label{tab:split_strategy_comparison}
-\small
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Chiến lược Chia Dữ liệu} & \textbf{Train $R^2$} & \textbf{Val $R^2$ (Xuyên dự án)} & \textbf{Validation MSE} & \textbf{Hiện tượng rò rỉ} \\
-\midrule
-Random Task-level Split & 0,9850 & -0,6850 & 0,00045 & Rò rỉ thông điệp mạng GNN \\
-\textbf{LOPO CV (Đề xuất)} & \textbf{0,4850} & \textbf{0,3734} & \textbf{0,00281} & Không xảy ra rò rỉ dữ liệu \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Kết quả Ép tiến độ (Crashing)}
+\label{sec:3.4.2_crashing}
 
-Thống kê thực nghiệm cho thấy:
-\begin{itemize}
-    \item \textbf{Với Random Task-level Split:} Mô hình HGT đạt chỉ số $R^2 \approx 0,9850$ trên tập huấn luyện và $R^2 \approx 0,9425$ trên tập kiểm thử nội bộ đồ thị. Tuy nhiên, kết quả này xảy ra do hiện tượng rò rỉ thông điệp (Message Passing Leakage). Trong quá trình huấn luyện, các nút kiểm thử kế cận nút huấn luyện đã truyền đặc trưng của mình qua các cạnh kề, khiến mô hình học thuộc lòng cấu trúc topo đồ thị. Khi đem sang kiểm thử trên một đồ thị dự án hoàn toàn mới, $R^2$ lập tức suy giảm mạnh về mức âm (<-0,50), phản ánh mô hình hoàn toàn mất khả năng tổng quát hóa.
-    \item \textbf{Với LOPO CV (Đề xuất):} Loại bỏ hoàn toàn sự rò rỉ dữ liệu bằng cách cô lập vật lý đồ thị kiểm thử. Chỉ số $R^2$ trung bình đạt \textbf{0,3734}, phản ánh năng lực dự báo zero-shot thực địa khách quan của mô hình trước khi đưa vào vận hành thực tế.
-\end{itemize}
+\subsection{Tối ưu hóa Phân bổ Tài nguyên (Resource Leveling)}
+\label{sec:3.4.3_resource_leveling}
+
+\subsection{Đường biên Pareto Frontier}
+\label{sec:3.4.4_pareto_frontier}
 
 % ==========================================
-% 3.6. TỐC ĐỘ SUY GIẢM HIỆU SUẤT
+% 3.5. ĐỐI CHUẨN TOÀN HỆ THỐNG (BENCHMARKING)
 % ==========================================
-\section{Tốc độ suy giảm hiệu suất (Thời gian hội tụ và độ trễ suy luận AI)}
-\label{sec:3.6_performance_drop}
-
-Độ trễ và tốc độ hội tụ của hệ thống quyết định khả năng tích hợp vào các luồng API thời gian thực. Mô hình tiền kỳ tự giám sát (HGT MAE) hội tụ rất nhanh nhờ sử dụng hàm mất mát Masked Attribute Reconstruction Loss (NLL Loss) phối hợp với cơ chế Early Stopping với `patience = 40` qua 69 epochs. Kết quả ghi nhận Train Loss thấp nhất đạt mức \textbf{0,0822} tại Epoch 60, và Validation Loss đạt tối ưu \textbf{0,0437} tại Epoch 29. Đặc biệt, sai số tuyệt đối trung bình Val MAE đạt mức tối thiểu \textbf{0,2194} và Val RMSE đạt \textbf{0,3460} ở Epoch 35. Biểu đồ hội tụ tổn thất và sai số MAE/RMSE trong giai đoạn tiền huấn luyện được trình bày tại Hình \ref{fig:hinh3_5_pretrain}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{image/pretrain_loss.png}
-\caption{Quá trình hội tụ NLL Loss và các chỉ số sai số MAE, RMSE trong giai đoạn Pre-training}
-\label{fig:hinh3_5_pretrain}
-\end{figure}
-
-Khi chuyển sang giai đoạn tinh chỉnh đa nhiệm có giám sát, hệ thống ghi nhận thời gian suy luận (Inference Latency) của GNN cực kỳ nhanh, chỉ tốn trung bình \textbf{1,85 ms} cho đồ thị 67 nút và dưới \textbf{25 ms} cho đồ thị 1.000 nút. Điều này khẳng định hiệu suất hệ thống không bị suy giảm theo thời gian và hoàn toàn đáp ứng yêu cầu phản hồi lập tức trên môi trường Web.
+\section{Đối chuẩn Toàn hệ thống (Benchmarking)}
+\label{sec:3.5_benchmarking}
 
 % ==========================================
-% 3.7. ĐÁNH GIÁ PHƯƠNG PHÁP KẾT HỢP MÔ HÌNH
+% 3.6. BÀN LUẬN VÀ HẠN CHẾ
 % ==========================================
-\section{Đánh giá phương pháp kết hợp mô hình (AI-Guided CP-SAT vs Baselines)}
-\label{sec:3.7_model_combination}
+\section{Bàn luận và Hạn chế}
+\label{sec:3.6_ban_luan}
 
-Phân hệ tối ưu hóa đa mục tiêu CP-SAT được tích hợp dữ liệu rủi ro từ mô phỏng Monte Carlo dẫn đường bởi AI. Thử nghiệm tiến hành đánh đổi giữa Makespan (Thời gian hoàn thành) và Total Cost (Chi phí thực hiện).
+\subsection{Tính hiệu quả của phân ly 38 loại chi phí trong Logistics}
+\label{sec:3.6.1_chi_phi_logistics}
 
-\subsection{Kết quả Ép tiến độ: Mức độ giảm thời gian và Chi phí gia tăng}
-\label{sec:3.7.1_crashing_results}
+\subsection{Hạn chế: Bùng nổ tổ hợp CP-SAT khi $|V| > 1.000$}
+\label{sec:3.6.2_han_che_cpsat}
 
-Khi thực hiện ép tiến độ mạnh (crashing) kết hợp chế độ làm thêm giờ và bổ sung nguồn lực, thời gian thi công dự án được rút ngắn đáng kể. Chi tiết kết quả thực nghiệm bài toán ép tiến độ được trình bày tại Bảng \ref{tab:crashing_tradeoff}.
-
-\begin{table}[H]
-\centering
-\caption{Kết quả thực nghiệm bài toán ép tiến độ dự án C2012-04}
-\label{tab:crashing_tradeoff}
-\small
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{cccccc}
-\toprule
-\textbf{Phương án Tối ưu} & \textbf{Thời gian Thi công ($T$)} & \textbf{Số giờ làm thêm} & \textbf{Tổng Chi phí ($C$)} & \textbf{Rủi ro Trễ ($Risk\%$)} & \textbf{Chi tiết Chiến lược Ép tiến độ} \\
-\midrule
-Phương án 1 (Nhanh nhất) & 235,38 ngày (1.883h) & 348,0 giờ (19 công việc) & $\$10.271.732,32$ & $\mathbf{12,0\%}$ & Làm thêm 4h/ngày + Thêm 2-4 nhân lực \\
-Phương án 2 (Cân bằng) & 283,25 ngày (2.266h) & 26,0 giờ (7 công việc) & $\$10.005.958,49$ & $32,8\%$ & Ép tiến độ vừa phải các nút găng chính \\
-Phương án 3 (Ép nhẹ) & 296,50 ngày (2.372h) & 0,0 giờ (0 công việc) & $\$9.984.762,66$ & $38,5\%$ & Tối ưu hóa phân bổ thời gian dự trữ \\
-Phương án 4 (Thường) & 308,38 ngày (2.467h) & 0,0 giờ (0 công việc) & $\$9.981.141,83$ & $43,7\%$ & Nhân lực nội bộ định ngạch chuẩn \\
-Phương án 7 (Kéo dài Tối đa) & 319,50 ngày (2.556h) & 0,0 giờ (0 công việc) & $\$9.982.164,66$ & $48,5\%$ & Giới hạn tài nguyên, kéo dài tiến độ \\
-\bottomrule
-\end{tabular}%
-}
-\end{table}
-
-\subsection{Tối ưu hóa Tài nguyên (San phẳng tài nguyên)}
-\label{sec:3.7.2_resource_leveling}
-
-Hàm mục tiêu tối ưu hóa tài nguyên hướng tới việc giảm thiểu phương sai tiêu thụ tài nguyên theo thời gian. Sự thay đổi chỉ số trước và sau tối ưu hóa được thống kê tại Bảng \ref{tab:resource_leveling}. Biểu đồ phân bổ tài nguyên trước và sau khi làm mịn được minh họa tại Hình \ref{fig:hinh3_5_resource_before} and Hình \ref{fig:hinh3_6_resource_after}.
-
-\begin{table}[H]
-\centering
-\caption{Chỉ số phân bổ tài nguyên nhân lực trước và sau Tối ưu hóa trên Dự án C2012-04}
-\label{tab:resource_leveling}
-\small
-\begin{tabular}{lccc}
-\toprule
-\textbf{Chỉ số Đánh giá Tài nguyên} & \textbf{Trước Tối ưu} & \textbf{Sau Tối ưu} & \textbf{Mức độ Cải thiện} \\
-\midrule
-Nhu cầu đỉnh cao nhất & 6 nhân sự / ca & $\mathbf{3\text{ nhân sự / ca}}$ & Giảm $50,00\%$ \\
-Nhu cầu thấp nhất & 1 nhân sự / ca & $\mathbf{1\text{ nhân sự / ca}}$ & Không đổi \\
-Nhu cầu trung bình & 2,35 nhân sự / ca & $2,35\text{ nhân sự / ca}$ & Không đổi \\
-Phương sai tiêu thụ & 2,45 & $\mathbf{0,45}$ & \textbf{Giảm $81,63\%$} \\
-Độ lệch chuẩn & 1,57 & $\mathbf{0,67}$ & Giảm $57,32\%$ \\
-Hệ số bất bình đẳng Gini & 0,316 & $\mathbf{0,100}$ & Giảm $68,35\%$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\linewidth]{image/hinh3_3_resource_before.png}
-\caption{Biểu đồ phân bổ nhu cầu tài nguyên nhân lực TRƯỚC khi tối ưu hóa trên Dự án C2012-04}
-\label{fig:hinh3_5_resource_before}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\linewidth]{image/hinh3_4_resource_after.png}
-\caption{Biểu đồ phân bổ nhu cầu tài nguyên nhân lực SAU khi tối ưu hóa làm mịn tài nguyên trên Dự án C2012-04}
-\label{fig:hinh3_6_resource_after}
-\end{figure}
-
-\subsection{Biểu đồ đường biên Pareto Frontier}
-\label{sec:3.7.3_pareto_frontier}
-
-Bằng cơ chế grid sweep trượt trọng số hàm mục tiêu, bộ giải CP-SAT kết xuất tập nghiệm tối ưu Pareto đại diện tại Bảng \ref{tab:pareto_cpsat} và minh họa tại Hình \ref{fig:hinh3_7_pareto}.
-
-\begin{table}[H]
-\centering
-\caption{Các điểm nghiệm đại diện trên tập Pareto Frontier dự án C2012-04}
-\label{tab:pareto_cpsat}
-\small
-\resizebox{\linewidth}{!}{%
-\begin{tabular}{ccccc}
-\toprule
-\textbf{Điểm Nghiệm Pareto} & \textbf{Thời gian Thi công ($T$)} & \textbf{Tổng Chi phí ($C$)} & \textbf{Mức Rủi ro Trễ ($Risk\%$)} & \textbf{Số giờ làm thêm} \\
-\midrule
-$P_1$ (Phương án 1 - Nhanh nhất) & 235,38 ngày (1.883h) & $\mathbf{\$10.271.732,32}$ & $\mathbf{12,0\%}$ & 348,0 giờ \\
-$P_2$ (Phương án 2 - Cân bằng) & 283,25 ngày (2.266h) & $\$10.005.958,49$ & $32,8\%$ & 26,0 giờ \\
-$P_3$ (Phương án 3 - Ép nhẹ) & 296,50 ngày (2.372h) & $\$9.984.762,66$ & $38,5\%$ & 0,0 giờ \\
-$P_4$ (Phương án 4 - Thường) & 308,38 ngày (2.467h) & $\$9.981.141,83$ & $43,7\%$ & 0,0 giờ \\
-$P_5$ (Phương án 7 - Max) & $\mathbf{319,50\text{ ngày (2.556h)}}$ & $\$9.982.164,66$ & $\mathbf{48,5\%}$ & 0,0 giờ \\
-\bottomrule
-\end{tabular}%
-}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\linewidth]{image/pareto_frontier.png}
-\caption{Biểu đồ đường cong Pareto Frontier thể hiện sự đánh đổi giữa Thời gian, Chi phí và Rủi ro trễ hạn}
-\label{fig:hinh3_7_pareto}
-\end{figure}
-
-% ==========================================
-% 3.8. CHI PHÍ TÍNH TOÁN
-% ==========================================
-\section{Chi phí tính toán (Dung lượng bộ nhớ và độ trễ truy vấn Recursive CTE)}
-\label{sec:3.8_computational_cost}
-
-\subsection{Độ trễ truy vấn: So sánh Recursive CTE và ORM tiêu chuẩn}
-\label{sec:3.8.1_query_latency}
-
-Hệ thống đề xuất giải pháp lưu trữ và truy vấn đồ thị trực tiếp trong cơ sở dữ liệu quan hệ PostgreSQL thông qua biểu thức bảng chung đệ quy Recursive CTE. Kết quả đối chuẩn thời gian thực thi giữa ORM tiêu chuẩn và Recursive CTE được trình bày tại Bảng \ref{tab:query_latency_comparison} và thể hiện trực quan trên Hình \ref{fig:hinh3_8_query_latency}.
-
-\begin{table}[H]
-\centering
-\caption{So sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}
-\label{tab:query_latency_comparison}
-\small
-\begin{tabular}{ccccc}
-\toprule
-\textbf{Quy mô Đồ thị ($|V|$)} & \textbf{Số lượng Cạnh ($|E|$)} & \textbf{ORM Tiêu chuẩn (ms)} & \textbf{Recursive CTE (ms)} & \textbf{Hệ số tăng tốc} \\
-\midrule
-20 & 33 & $12,45 \pm 1,12$ & $\mathbf{1,18 \pm 0,09}$ & $10,55\times$ \\
-67 & 119 & $35,20 \pm 2,15$ & $\mathbf{1,95 \pm 0,11}$ & $\mathbf{18,05\times}$ \\
-100 & 148 & $48,60 \pm 3,45$ & $\mathbf{2,45 \pm 0,15}$ & $19,84\times$ \\
-500 & 872 & $185,30 \pm 12,80$ & $\mathbf{7,82 \pm 0,41}$ & $23,70\times$ \\
-1.000 & 1.691 & $412,50 \pm 25,60$ & $\mathbf{14,20 \pm 0,78}$ & $\mathbf{29,05\times}$ \\
-5.000 & 8.621 & $2.450,10 \pm 142,50$ & $\mathbf{68,45 \pm 3,12}$ & $35,79\times$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\linewidth]{image/hinh3_2_query_latency.png}
-\caption{Biểu đồ cột so sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}
-\label{fig:hinh3_8_query_latency}
-\end{figure}
-
-Giải pháp Recursive CTE thực hiện phép duyệt đồ thị trực tiếp trên nhân RAM của cơ sở dữ liệu giúp đạt tốc độ truy vấn vượt trội, tăng tốc tối đa lên tới \textbf{35,79 lần} tại quy mô đồ thị 5.000 nút.
-
-\subsection{Mức tiêu thụ bộ nhớ khi mở rộng đồ thị}
-\label{sec:3.8.2_memory_consumption}
-
-Kết quả đo đạc bộ nhớ tiêu thụ động khi mở rộng đồ thị phục vụ suy luận GNN được thể hiện trong Bảng \ref{tab:memory_footprint}.
-
-\begin{table}[H]
-\centering
-\caption{Dung lượng bộ nhớ tiêu thụ của hệ thống theo quy mô đồ thị dự án}
-\label{tab:memory_footprint}
-\small
-\begin{tabular}{ccccc}
-\toprule
-\textbf{Số lượng Nút ($|V|$)} & \textbf{RAM CSDL} & \textbf{RAM Backend API} & \textbf{VRAM PyTorch AI} & \textbf{Tổng RAM Tiêu thụ} \\
-\midrule
-67 & 32 MB & 14 MB & 95 MB & 141 MB \\
-100 & 42 MB & 18 MB & 120 MB & 180 MB \\
-500 & 85 MB & 35 MB & 240 MB & 360 MB \\
-1.000 & 160 MB & 68 MB & 410 MB & 638 MB \\
-5.000 & 450 MB & 210 MB & 1.150 MB & 1.810 MB \\
-10.000 & 820 MB & 390 MB & 2.100 MB & $\mathbf{3.310\text{ MB}}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Số liệu Bảng \ref{tab:memory_footprint} cho thấy mức tăng trưởng bộ nhớ tuân theo hàm tuyến tính $O(|V| + |E|)$ thay vì hàm bậc hai $O(|V|^2)$. Ngay cả khi quy mô đồ thị bùng nổ lên đến $10.000$ công việc, tổng bộ nhớ RAM tiêu thụ của toàn bộ hệ thống chỉ là $3,31$ GB, chứng minh khả năng vận hành ổn định.
-
-% ==========================================
-% 3.9. ỨNG DỤNG WEB QUẢN TRỊ TIẾN ĐỘ VÀ CHI PHÍ DỰ ÁN
-% ==========================================
-\section{Ứng dụng web quản trị tiến độ và chi phí dự án (GLPO Web UI)}
-\label{sec:3.9_web_application}
-
-\subsection{Kiến trúc vi dịch vụ container hóa}
-\label{sec:3.9.1_microservices_architecture}
-
-Hệ thống được đóng gói hoàn chỉnh bằng Docker Compose và vận hành thông qua giao diện Web React.js tương tác. Bộ giao diện dashboard, danh mục dự án, biểu đồ Gantt, đường cong tài chính lũy tích S-Curve và bảng Pareto được chụp thực tế tại Hình \ref{fig:hinh3_9_evm_dashboard}.
-
-\subsection{Giao diện tổng quan danh sách và Gantt Chart}
-\label{sec:3.9.2_gantt_chart_interface}
-
-Giao diện Web tương tác React Flow cho phép hiển thị các nút găng bị nhuộm đỏ động, giúp người quản lý trực quan hóa toàn bộ tiến trình dự án C2012-04.
-
-\subsection{Giao diện phân tích tài chính S-Curve và Pareto}
-\label{sec:3.9.3_scurve_pareto_interface}
-
-Bộ giao diện cho phép phân tích EVM (Earned Value Management) thông qua đường cong S tài chính lũy tích và bảng sweep Pareto.
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{0.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{image/hinh3_9a_dashboard.jpg}
-    \caption{Tổng quan Danh mục Dự án và So sánh Chi phí}
-    \label{fig:hinh3_9a_dashboard}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{image/hinh3_9b_projects_list.jpg}
-    \caption{Quản lý Danh sách Các Dự án Logistics}
-    \label{fig:hinh3_9b_projects_list}
-\end{subfigure}
-
-\vspace{0.3cm}
-
-\begin{subfigure}[b]{0.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{image/hinh3_9c_gantt_overview.jpg}
-    \caption{Tổng quan Dự án C2012-04 và Biểu đồ Gantt Phân bổ}
-    \label{fig:hinh3_9c_gantt}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{image/hinh3_9d_financial_scurve.jpg}
-    \caption{Đường cong S Tài chính và Phân tích Rủi ro Monte Carlo}
-    \label{fig:hinh3_9d_scurve}
-\end{subfigure}
-
-\vspace{0.3cm}
-
-\begin{subfigure}[b]{0.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{image/hinh3_9e_ai_config.jpg}
-    \caption{Cấu hình Ràng buộc và Thông số Đầu vào AI Pipeline}
-    \label{fig:hinh3_9e_ai_config}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.48\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{image/hinh3_9f_pareto_table.jpg}
-    \caption{Biểu đồ Đường cong Pareto Frontier và Bảng Phương án Tối ưu}
-    \label{fig:hinh3_9f_pareto_table}
-\end{subfigure}
-
-\caption{Bộ giao diện phần mềm trực quan Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO Web UI)}
-\label{fig:hinh3_9_evm_dashboard}
-\end{figure}
-
-% ==========================================
-% 3.10. THẢO LUẬN
-% ==========================================
-\section{Thảo luận}
-\label{sec:3.10_discussion}
-
-\subsection{Đánh giá mức độ đạt mục tiêu}
-\label{sec:3.10.1_goals_achievement}
-
-Hệ thống GLPO đề xuất đạt được đầy đủ các mục tiêu thiết kế ban đầu:
-\begin{itemize}
-    \item \textbf{Về mặt dự báo AI:} Mô hình HGT đạt hệ số xác định $R^2 = 0,8023$, có khả năng học topo đồ thị dị thể tiến độ để dự báo độ trễ và độ bất định của từng công việc.
-    \item \textbf{Về mặt tối ưu hóa:} Bộ giải CP-SAT san mịn tài nguyên vượt trội, làm giảm phương sai phân bổ nhân lực tới $81,63\%$ và hệ số bất bình đẳng Gini giảm $68,35\%$.
-\end{itemize}
-
-\subsection{Ưu điểm của giải pháp đề xuất}
-\label{sec:3.10.2_advantages}
-
-\begin{enumerate}
-    \item \textbf{Tránh rò rỉ dữ liệu:} Chiến lược kiểm thử chéo LOPO CV loại bỏ rò rỉ thông tin, mang lại tính khách quan thực nghiệm.
-    \item \textbf{Quy trình kết hợp AI + OR chặt chẽ:} Kết nối trực tiếp xác suất phân phối rủi ro dự báo từ AI vào tối ưu hóa CP-SAT.
-    \item \textbf{Khả năng giải thích cao:} Trọng số Attention định vị chính xác 100\% các công việc găng rủi ro.
-\end{enumerate}
-
-\subsection{Hạn chế của nghiên cứu và hướng phát triển}
-\label{sec:3.10.3_limitations}
-
-Mặc dù hệ thống vận hành rất tốt ở quy mô trung bình phức tạp như dự án C2012-04, thử nghiệm mở rộng chỉ ra hiện tượng bùng nổ tổ hợp (Combinatorial Explosion) của CP-SAT khi quy mô dự án vượt quá 1.000 công việc lá.
-
-Để khắc phục hạn chế này, hướng phát triển tương lai sẽ tập trung nghiên cứu giải pháp chia nhỏ đồ thị lớn hoặc ứng dụng giải thuật Tìm kiếm Lân cận Lớn (Large Neighborhood Search - LNS) phối hợp với CP-SAT để mở rộng phạm vi áp dụng cho các siêu dự án logistics thực tế.
+\subsection{Hướng phát triển tiếp theo}
+\label{sec:3.6.3_huong_phat_trien}

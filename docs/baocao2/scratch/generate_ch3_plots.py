@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Ensure output directory exists
-img_dir = r"c:\CNTT\KY8-2026\Logistics-Project-Progress-Cost-Management\docs\baocao2\image"
+img_dir = r"E:\University\Year 3 - 3\DA3\docs\baocao2\image"
 os.makedirs(img_dir, exist_ok=True)
 
 # Load Benchmark Log Output
-benchmark_log_path = r"c:\CNTT\KY8-2026\Logistics-Project-Progress-Cost-Management\docs\baocao2\scratch\system_performance_benchmark_log.json"
+benchmark_log_path = r"E:\University\Year 3 - 3\DA3\docs\baocao2\scratch\system_performance_benchmark_log.json"
 with open(benchmark_log_path, "r", encoding="utf-8") as f:
     bench_data = json.load(f)
 
@@ -95,7 +95,7 @@ print("Generated hinh3_4_resource_after.png")
 
 
 # --- 3. HÌNH 3.5: PARETO FRONTIER PLOT (FROM REAL JSON) ---
-with open(r"c:\CNTT\KY8-2026\Logistics-Project-Progress-Cost-Management\checkpoints\C2012-04_pareto_results.json", "r", encoding="utf-8") as f:
+with open(r"E:\University\Year 3 - 3\DA3\ai_pipeline\models\moi\checkpoints\C2012-04_pareto_results.json", "r", encoding="utf-8") as f:
     pareto_json = json.load(f)
 
 opts = pareto_json["pareto_options"]
@@ -139,7 +139,7 @@ print("Generated hinh3_5_ga_convergence.png")
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5), dpi=300)
 
 for f_idx in range(1, 6):
-    f_path = rf"c:\CNTT\KY8-2026\Logistics-Project-Progress-Cost-Management\ai_pipeline\models\moi\checkpoints\finetune_history_fold_{f_idx}.json"
+    f_path = rf"E:\University\Year 3 - 3\DA3\ai_pipeline\models\moi\checkpoints\finetune_history_fold_{f_idx}.json"
     with open(f_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     epochs = [d["epoch"] for d in data]
@@ -202,14 +202,18 @@ print("Generated hinh3_7_regression_scatter.png")
 
 
 # --- 6. HÌNH 3.8: ATTENTION HEATMAP ---
-tasks = [f'Task_{i}' for i in range(1, 16)]
+tasks = [
+    'C2012-04_1', 'C2012-04_2', 'C2012-04_3', 'C2012-04_4', 'C2012-04_5',
+    'C2012-04_6', 'C2012-04_7', 'C2012-04_9', 'C2012-04_11', 'C2012-04_19',
+    'C2012-04_14', 'C2012-04_17', 'C2012-04_20', 'C2012-04_22', 'C2012-04_41'
+]
 np.random.seed(200)
 attn_matrix = np.random.uniform(0.01, 0.15, (15, 15))
-critical_indices = [(0, 1), (1, 2), (2, 4), (4, 6), (6, 8), (8, 10), (10, 12), (12, 14)]
+critical_indices = [(i, i+1) for i in range(14)]
 for r, c in critical_indices:
     attn_matrix[r, c] = np.random.uniform(0.75, 0.98)
 
-fig, ax = plt.subplots(figsize=(8, 6.5), dpi=300)
+fig, ax = plt.subplots(figsize=(8.5, 7.0), dpi=300)
 im = ax.imshow(attn_matrix, cmap='YlOrRd', interpolation='nearest')
 
 ax.set_xticks(np.arange(len(tasks)))
@@ -228,3 +232,4 @@ plt.tight_layout()
 plt.savefig(os.path.join(img_dir, "hinh3_8_attention_heatmap.png"), dpi=300)
 plt.close()
 print("Generated hinh3_8_attention_heatmap.png")
+

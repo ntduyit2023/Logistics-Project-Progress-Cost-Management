@@ -12,14 +12,11 @@
 \contentsline {table}{\numberline {2.1}{\ignorespaces Cấu hình chi tiết hạ tầng phần cứng và phần mềm thực nghiệm}}{21}{table.caption.45}%
 \contentsline {table}{\numberline {2.2}{\ignorespaces Thông số cấu trúc đặc trưng của Dự án mẫu C2012-04}}{23}{table.caption.46}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị và kết quả tổng hợp của Dự án C2012-04}}{36}{table.caption.53}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation}}{39}{table.caption.56}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces Khả năng định vị nút Đường găng thông qua Trọng số Attention của HGT trên Dự án C2012-04}}{39}{table.caption.58}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces Ảnh hưởng của quy mô đồ thị dự án đến sai số dự báo AI và thời gian tối ưu lập lịch}}{41}{table.caption.61}%
-\contentsline {table}{\numberline {3.5}{\ignorespaces Đối chuẩn hiệu năng của mô hình GNN dưới hai chiến lược phân chia dữ liệu}}{42}{table.caption.62}%
-\contentsline {table}{\numberline {3.6}{\ignorespaces Kết quả thực nghiệm bài toán ép tiến độ dự án C2012-04}}{43}{table.caption.64}%
-\contentsline {table}{\numberline {3.7}{\ignorespaces Chỉ số phân bổ tài nguyên nhân lực trước và sau Tối ưu hóa trên Dự án C2012-04}}{44}{table.caption.65}%
-\contentsline {table}{\numberline {3.8}{\ignorespaces Các điểm nghiệm đại diện trên tập Pareto Frontier dự án C2012-04}}{45}{table.caption.68}%
-\contentsline {table}{\numberline {3.9}{\ignorespaces So sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{46}{table.caption.70}%
-\contentsline {table}{\numberline {3.10}{\ignorespaces Dung lượng bộ nhớ tiêu thụ của hệ thống theo quy mô đồ thị dự án}}{47}{table.caption.72}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Cấu hình phần cứng và môi trường phần mềm thực nghiệm}}{35}{table.caption.53}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị của 5 dự án trong tập dữ liệu DSLIB}}{35}{table.caption.54}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Bảng tổng hợp chỉ số hiệu năng đại diện của toàn hệ thống GLPO}}{36}{table.caption.56}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces So sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{37}{table.caption.57}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Dung lượng bộ nhớ tiêu thụ của hệ thống theo quy mô đồ thị dự án}}{38}{table.caption.59}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Đối chuẩn cơ chế đánh giá giữa Random Split và Leave-One-Project-Out (LOPO CV)}}{39}{table.caption.60}%
+\contentsline {table}{\numberline {3.7}{\ignorespaces Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation}}{40}{table.caption.61}%
 \addvspace {10\p@ }

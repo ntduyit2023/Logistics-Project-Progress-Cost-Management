@@ -46,6 +46,27 @@ from ai_pipeline.models.moi.monte_carlo_cpm import MonteCarloCPMEngine
 from ai_pipeline.models.moi.cpsat_pareto_solver import CPSATParetoSolver
 
 
+def get_lopo_normalization_params(project_id: str, project_root: str) -> Tuple[float, float]:
+    projects = ['C2011-07', 'C2012-04', 'C2012-08', 'C2018-09', 'C2019-16']
+    train_projects = [p for p in projects if p != project_id]
+    
+    dfacs = []
+    processed_dir = os.path.join(project_root, 'ai_pipeline', 'data', 'processed')
+    for p in train_projects:
+        labels_path = os.path.join(processed_dir, p, 'labels.csv')
+        if os.path.exists(labels_path):
+            try:
+                df = pd.read_csv(labels_path)
+                if 'duration_factor' in df.columns:
+                    dfacs.extend(df['duration_factor'].dropna().tolist())
+            except Exception:
+                pass
+    if not dfacs:
+        return 1.1272, 0.0768  # Fold 2 mean and std fallback values
+    import numpy as np
+    return float(np.mean(dfacs)), float(np.std(dfacs)) + 1e-6
+
+
 def run_new_pipeline(
     project_id: str = "C2011-07",
     mc_iterations: int = 10000,
@@ -162,12 +183,22 @@ def run_new_pipeline(
         preds = model(hetero_data.x_dict, hetero_data.edge_index_dict)
 
     decoded_preds = builder.normalizer.decode_predictions(preds)
+    target_mean, target_std = get_lopo_normalization_params(project_id, project_root)
+    print(f"   * [AI Normalization] LOPO CV normalization params for {project_id}: Mean={target_mean:.4f}, Std={target_std:.4f}")
 
     ai_task_preds = {}
     for t_id, idx in builder.task_id_map.items():
+        # Denormalize duration_factor (it was z-score normalized during supervised training)
+        norm_dfac = float(decoded_preds['duration_factor'][idx])
+        denorm_dfac = norm_dfac * target_std + target_mean
+        
+        # Remove artificial 24h cap on expected_delay, only enforce lower bound of 0.0
+        raw_delay = float(decoded_preds['expected_delay_hours'][idx])
+        denorm_delay = max(0.0, raw_delay)
+        
         ai_task_preds[t_id] = {
-            'duration_factor': float(decoded_preds['duration_factor'][idx]),
-            'expected_delay': min(24.0, float(decoded_preds['expected_delay_hours'][idx])),
+            'duration_factor': denorm_dfac,
+            'expected_delay': denorm_delay,
             'uncertainty_sigma': float(decoded_preds['uncertainty_sigma'][idx])
         }
     print(f"   * AI suy luan & gia ma (Decoder) thanh cong du bao cho {len(ai_task_preds)} task.")
