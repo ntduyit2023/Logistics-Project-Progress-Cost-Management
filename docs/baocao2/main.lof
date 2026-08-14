@@ -1,15 +1,33 @@
 \babel@toc {vietnamese}{}\relax 
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Sơ đồ mô phỏng Mô hình tham chiếu SCOR trong chuỗi cung ứng.}}{1}{figure.caption.23}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Minh họa Hiệu ứng Bullwhip (Sự khuếch đại dao động nhu cầu).}}{2}{figure.caption.24}%
+\contentsline {figure}{\numberline {1.3}{\ignorespaces Cấu trúc cơ bản của Sơ đồ mạng lưới AON.}}{3}{figure.caption.25}%
+\contentsline {figure}{\numberline {1.4}{\ignorespaces Lưu đồ trực quan phép tính CPM (Minh họa các thông số trên 1 nút đồ thị).}}{4}{figure.caption.26}%
+\contentsline {figure}{\numberline {1.5}{\ignorespaces Đồ thị thể hiện mối quan hệ nghịch biến giữa Thời gian và Chi phí.}}{6}{figure.caption.27}%
+\contentsline {figure}{\numberline {1.6}{\ignorespaces Biểu đồ mô tả Đường biên Pareto trong không gian Đa mục tiêu.}}{6}{figure.caption.28}%
+\contentsline {figure}{\numberline {1.7}{\ignorespaces Đồ thị minh họa các đường cơ sở của EVM (Sự phân kỳ của PV, EV, AC).}}{7}{figure.caption.29}%
+\contentsline {figure}{\numberline {1.8}{\ignorespaces Cấu trúc truyền tin trong Mạng nơ-ron đồ thị.}}{13}{figure.caption.40}%
+\contentsline {figure}{\numberline {1.9}{\ignorespaces Cơ chế tính toán Attention chi tiết trên các quan hệ dị thể trong lớp HGTConv.}}{15}{figure.caption.43}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Sơ đồ luồng xử lý và kiến trúc hệ thống GLPO (Graph-Based Logistics Project Optimizer).}}{19}{figure.caption.44}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Sơ đồ biểu diễn cấu trúc Đồ thị dị thể (Heterogeneous Graph Structure) của dự án C2012-04 với các nút Task, Resource, và Shift.}}{23}{figure.caption.47}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Sơ đồ quy trình tiền xử lý dữ liệu và làm sạch đồ thị (Graph Preprocessing Pipeline).}}{24}{figure.caption.48}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Chiến lược phân tách dữ liệu Leave-One-Project-Out Cross-Validation (LOPO CV) cho hệ thống GNN.}}{28}{figure.caption.49}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Sơ đồ quy trình huấn luyện tiền kỳ tự giám sát Masked Autoencoder trên đồ thị dị thể.}}{29}{figure.caption.50}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Kiến trúc mạng HGT Task Predictor tích hợp cơ chế Hybrid Readout Pooling và các đầu giải mã đa nhiệm.}}{30}{figure.caption.51}%
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Sơ đồ luồng dữ liệu (Data Flow) và tương tác kết xuất giữa Frontend React, Backend FastAPI, và PostgreSQL.}}{34}{figure.caption.52}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Giao diện trực quan mạng lưới đồ thị AON dự án trên ứng dụng web}}{10}{figure.caption.19}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Biểu đồ cột so sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{11}{figure.caption.21}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Biểu đồ phân bổ nhu cầu tài nguyên nhân lực TRƯỚC khi tối ưu hóa trên Dự án C2012-04}}{13}{figure.caption.25}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Biểu đồ phân bổ nhu cầu tài nguyên nhân lực SAU khi tối ưu hóa làm mịn tài nguyên trên Dự án C2012-04}}{14}{figure.caption.26}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Biểu đồ đường cong Pareto Frontier thể hiện sự đánh đổi giữa Thời gian, Chi phí và Rủi ro trễ hạn}}{15}{figure.caption.28}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Đường cong học tập đánh giá quá trình hội tụ Loss và R² Score qua 5-Fold Cross Validation}}{16}{figure.caption.30}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Biểu đồ Scatter Plot đối chiếu thời gian thi công dự báo của mô hình AI vs thời gian thi công thực tế}}{16}{figure.caption.31}%
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Bản đồ nhiệt trọng số Attention định vị các nút công việc tới hạn trên Dự án C2012-04}}{17}{figure.caption.33}%
-\contentsline {figure}{\numberline {3.9}{\ignorespaces Bộ giao diện phần mềm trực quan Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO Web UI)}}{18}{figure.caption.34}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Giao diện trực quan mạng lưới đồ thị AON dự án C2012-04 trên ứng dụng web}}{36}{figure.caption.54}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Biểu đồ Scatter Plot đối chiếu thời gian thi công dự báo của mô hình AI vs thời gian thi công thực tế}}{38}{figure.caption.55}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Đường cong học tập đánh giá quá trình hội tụ Loss và R² Score qua 5-Fold Cross Validation}}{39}{figure.caption.57}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Bản đồ nhiệt trọng số Attention định vị các nút công việc tới hạn trên Dự án C2012-04}}{40}{figure.caption.59}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Đường cong phân phối xác suất tích lũy CDF thời lượng dự án từ mô phỏng Monte Carlo CPM}}{41}{figure.caption.60}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Quá trình hội tụ NLL Loss và các chỉ số sai số MAE, RMSE trong giai đoạn Pre-training}}{43}{figure.caption.63}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Biểu đồ phân bổ nhu cầu tài nguyên nhân lực TRƯỚC khi tối ưu hóa trên Dự án C2012-04}}{44}{figure.caption.66}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Biểu đồ phân bổ nhu cầu tài nguyên nhân lực SAU khi tối ưu hóa làm mịn tài nguyên trên Dự án C2012-04}}{44}{figure.caption.67}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Biểu đồ đường cong Pareto Frontier thể hiện sự đánh đổi giữa Thời gian, Chi phí và Rủi ro trễ hạn}}{45}{figure.caption.69}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Biểu đồ cột so sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{46}{figure.caption.71}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Bộ giao diện phần mềm trực quan Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO Web UI)}}{48}{figure.caption.73}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Sơ đồ Concept đề xuất kiến trúc Cơ chế Chú ý Nâng cao thay thế cho kiến trúc HGT cơ bản}}{22}{figure.caption.35}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Sơ đồ Concept đề xuất kiến trúc Cơ chế Chú ý Nâng cao thay thế cho kiến trúc HGT cơ bản}}{52}{figure.caption.74}%

@@ -99,8 +99,11 @@ draw_box(ax, 14.4, 5.9, 3.2, 2.2, COLOR_OUTPUT, COLOR_OUTPUT_BORDER, "Dự báo 
 
 # Adjust margins and save
 plt.tight_layout()
-os.makedirs(r"c:\CNTT\KY8-2026\Logistics-Project-Progress-Cost-Management\docs\baocao2\image", exist_ok=True)
-out_path = r"c:\CNTT\KY8-2026\Logistics-Project-Progress-Cost-Management\docs\baocao2\image\hinh4_1_advanced_attention.png"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+image_dir = os.path.abspath(os.path.join(script_dir, "..", "image"))
+os.makedirs(image_dir, exist_ok=True)
+out_path = os.path.join(image_dir, "hinh4_1_advanced_attention.png")
 plt.savefig(out_path, bbox_inches='tight', dpi=300)
 plt.close()
 print(f"Successfully generated clean {out_path}")
+

@@ -5,60 +5,144 @@
 \contentsline {chapter}{LỜI CẢM ƠN}{iv}{chapter*.6}%
 \contentsline {chapter}{TÓM LƯỢC}{v}{chapter*.7}%
 \contentsline {chapter}{ABSTRACT}{vi}{chapter*.8}%
-\contentsline {chapter}{DANH MỤC CÁC TỪ VIẾT TẮT VÀ THUẬT NGỮ}{ix}{chapter*.11}%
-\contentsline {chapter}{DANH MỤC HÌNH VẼ}{xiii}{section*.12}%
-\contentsline {chapter}{DANH MỤC BẢNG BIỂU}{xiv}{section*.14}%
-\contentsline {chapter}{LỜI MỞ ĐẦU}{xv}{chapter*.16}%
-\contentsline {chapter}{\numberline {1}TỔNG QUAN LÝ THUYẾT VÀ CƠ SỞ NGHIÊN CỨU}{1}{chapter.1}%
-\contentsline {section}{\numberline {1.}Tổng quan về Quản lý Dự án Logistics}{1}{section.1.1}%
-\contentsline {subsection}{\numberline {1.1.}Đặc thù của Dự án Logistics và Chuỗi cung ứng}{1}{subsection.1.1.1}%
-\contentsline {subsection}{\numberline {1.2.}Lý thuyết Sơ đồ mạng và Mạng công việc AON}{1}{subsection.1.1.2}%
-\contentsline {section}{\numberline {2.}Cơ sở Lý thuyết Kỹ thuật và Bài toán Tối ưu}{2}{section.1.2}%
-\contentsline {subsection}{\numberline {2.1.}Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP)}{2}{subsection.1.2.1}%
-\contentsline {subsection}{\numberline {2.2.}Bài toán Rút ngắn tiến độ và Tối ưu chi phí (Crashing)}{3}{subsection.1.2.2}%
-\contentsline {subsection}{\numberline {2.3.}Quản lý Giá trị Đạt được (Earned Value Management - EVM)}{3}{subsection.1.2.3}%
-\contentsline {subsection}{\numberline {2.4.}Kiến trúc Mô hình Trí tuệ Nhân tạo Đề xuất}{3}{subsection.1.2.4}%
-\contentsline {subsubsection}{\numberline {2.4.1.}Mạng nơ-ron Đồ thị Dị thể (Heterogeneous Graph Transformer - HGT)}{4}{subsubsection.1.2.4.1}%
-\contentsline {subsubsection}{\numberline {2.4.2.}Học tự giám sát bằng Masked Autoencoder (MAE)}{4}{subsubsection.1.2.4.2}%
-\contentsline {subsubsection}{\numberline {2.4.3.}Không gian Siêu tham số (Hyperparameters)}{4}{subsubsection.1.2.4.3}%
-\contentsline {subsection}{\numberline {2.5.}Phương pháp Chuẩn hóa Dữ liệu (Data Normalization)}{4}{subsection.1.2.5}%
-\contentsline {subsection}{\numberline {2.6.}Chỉ số Đánh giá Hiệu suất (Evaluation Metrics)}{4}{subsection.1.2.6}%
-\contentsline {section}{\numberline {3.}Tổng quan Tài liệu và Khoảng trống Nghiên cứu}{5}{section.1.3}%
-\contentsline {subsection}{\numberline {3.1.}Nghiên cứu Trong nước}{5}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {3.2.}Nghiên cứu Ngoài nước}{5}{subsection.1.3.2}%
-\contentsline {subsection}{\numberline {3.3.}Khoảng trống nghiên cứu (Research Gap)}{5}{subsection.1.3.3}%
-\contentsline {chapter}{\numberline {2}PHƯƠNG TIỆN NGHIÊN CỨU - PHƯƠNG PHÁP NGHIÊN CỨU}{6}{chapter.2}%
-\contentsline {section}{\numberline {1.}Sơ đồ tổng quan giải pháp}{6}{section.2.1}%
-\contentsline {section}{\numberline {2.}Phương tiện nghiên cứu}{6}{section.2.2}%
-\contentsline {section}{\numberline {3.}Tập dữ liệu nghiên cứu (DSLIB)}{7}{section.2.3}%
-\contentsline {section}{\numberline {4.}Giai đoạn 1: Huấn luyện Tiền kỳ (Pre-training SSL)}{7}{section.2.4}%
-\contentsline {section}{\numberline {5.}Giai đoạn 2: Suy luận và Khai phá (Inference \& Attention)}{7}{section.2.5}%
-\contentsline {section}{\numberline {6.}Giai đoạn 3: Mô phỏng Ngẫu nhiên (Stochastic CPM)}{8}{section.2.6}%
-\contentsline {section}{\numberline {7.}Giai đoạn 4: Tối ưu hóa Lịch trình (CP-SAT Pareto)}{8}{section.2.7}%
-\contentsline {section}{\numberline {8.}Triển khai ứng dụng (Deployment)}{8}{section.2.8}%
-\contentsline {chapter}{\numberline {3}KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN}{9}{chapter.3}%
-\contentsline {section}{\numberline {1.}Môi trường Thực nghiệm và Dữ liệu Kiểm thử}{9}{section.3.1}%
-\contentsline {subsection}{\numberline {1.1.}Cấu hình phần cứng và Môi trường Máy chủ}{9}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {1.2.}Tổng quan về Dự án C2012-04}{9}{subsection.3.1.2}%
-\contentsline {section}{\numberline {2.}Đánh giá Hiệu năng Hệ thống Đồ thị}{11}{section.3.2}%
-\contentsline {subsection}{\numberline {2.1.}Thời gian thực thi truy vấn: So sánh Recursive CTE và ORM tiêu chuẩn}{11}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {2.2.}Mức tiêu thụ Bộ nhớ khi mở rộng đồ thị quy mô lớn}{12}{subsection.3.2.2}%
-\contentsline {section}{\numberline {3.}Đánh giá Kết quả Tối ưu hóa}{12}{section.3.3}%
-\contentsline {subsection}{\numberline {3.1.}Kết quả Ép tiến độ: Mức độ giảm thời gian và Chi phí gia tăng}{12}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.2.}Tối ưu hóa Tài nguyên: Giảm phương sai biểu đồ phân bổ nhân lực}{13}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.}Biểu đồ đánh đổi Pareto của CP-SAT và không gian tìm kiếm}{14}{subsection.3.3.3}%
-\contentsline {section}{\numberline {4.}Đánh giá Mô hình Trí tuệ Nhân tạo}{15}{section.3.4}%
-\contentsline {subsection}{\numberline {4.1.}Độ chính xác dự báo thời gian: MAE, RMSE, MAPE}{15}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {4.2.}Mức độ giải thích: Trọng số Attention trên các nút Đường găng}{17}{subsection.3.4.2}%
-\contentsline {section}{\numberline {5.}Bàn luận}{18}{section.3.5}%
-\contentsline {subsection}{\numberline {5.1.}Tính hiệu quả của việc phân ly 38 loại chi phí vào thực tiễn Logistics}{18}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {5.2.}Hạn chế của hệ thống: Hiện tượng bùng nổ tổ hợp của CP-SAT với dự án siêu lớn}{19}{subsection.3.5.2}%
-\contentsline {chapter}{\numberline {4}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{20}{chapter.4}%
-\contentsline {section}{\numberline {1.}Kết luận chung về đề tài}{20}{section.4.1}%
-\contentsline {subsection}{\numberline {1.1.}Đóng góp về mặt lý luận khoa học}{20}{subsection.4.1.1}%
-\contentsline {subsection}{\numberline {1.2.}Đóng góp về mặt thực tiễn kỹ thuật}{20}{subsection.4.1.2}%
-\contentsline {section}{\numberline {2.}Đề xuất hướng phát triển}{21}{section.4.2}%
-\contentsline {subsection}{\numberline {2.1.}Tích hợp Tìm kiếm Lân cận Lớn kết hợp CP-SAT cho Dự án Quy mô Siêu lớn}{21}{subsection.4.2.1}%
-\contentsline {subsection}{\numberline {2.2.}Nâng cấp Kiến trúc Graphormer với Mã hóa Cấu trúc Đa chiều}{21}{subsection.4.2.2}%
-\contentsline {subsection}{\numberline {2.3.}Mở rộng Dữ liệu Thi công Thời gian thực và Tích hợp SaaS/ERP}{22}{subsection.4.2.3}%
-\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{23}{section*.36}%
+\contentsline {chapter}{DANH MỤC CÁC TỪ VIẾT TẮT VÀ THUẬT NGỮ}{xi}{chapter*.11}%
+\contentsline {chapter}{DANH MỤC HÌNH VẼ}{xv}{section*.12}%
+\contentsline {chapter}{DANH MỤC BẢNG BIỂU}{xvi}{section*.14}%
+\contentsline {chapter}{LỜI MỞ ĐẦU}{xvii}{chapter*.16}%
+\contentsline {paragraph}{Đối tượng nghiên cứu:}{xviii}{paragraph*.17}%
+\contentsline {paragraph}{Phạm vi dữ liệu thực nghiệm:}{xviii}{paragraph*.18}%
+\contentsline {paragraph}{Phạm vi triển khai:}{xviii}{paragraph*.19}%
+\contentsline {paragraph}{Mô hình hóa toán học và tối ưu hóa tổ hợp:}{xviii}{paragraph*.20}%
+\contentsline {paragraph}{Học máy trên đồ thị (Graph Machine Learning):}{xviii}{paragraph*.21}%
+\contentsline {paragraph}{Thực nghiệm kỹ thuật phần mềm:}{xviii}{paragraph*.22}%
+\contentsline {chapter}{\numberline {1}Tổng quan Lý thuyết và Cơ sở Nghiên cứu}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.}Đặc thù Dự án Logistics và Chuỗi cung ứng}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.}Mô hình tham chiếu SCOR}{1}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Hiệu ứng Bullwhip: Nguyên nhân và tác động đến chi phí dự trữ}{2}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.3.}Các rủi ro đứt gãy tiến độ}{2}{subsection.1.1.3}%
+\contentsline {section}{\numberline {2.}Quản trị Dự án dựa trên Đồ thị}{2}{section.1.2}%
+\contentsline {subsection}{\numberline {2.1.}Sơ đồ mạng lưới hoạt động AON}{2}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Phân tích Hợp lệ: Sắp xếp Tô-pô và Phát hiện chu trình}{3}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {2.3.}Phương pháp Đường găng (CPM)}{3}{subsection.1.2.3}%
+\contentsline {section}{\numberline {3.}Tối ưu hóa Ràng buộc Tài nguyên và Ép tiến độ}{4}{section.1.3}%
+\contentsline {subsection}{\numberline {3.1.}Bài toán RCPSP}{4}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {3.2.}Tối ưu Ép tiến độ (Crashing) bằng Bộ giải Constraint Programming (CP-SAT)}{4}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {3.3.}Khái niệm Đường biên Pareto}{6}{subsection.1.3.3}%
+\contentsline {section}{\numberline {4.}Quản lý Giá trị Đạt được (EVM)}{7}{section.1.4}%
+\contentsline {subsection}{\numberline {4.1.}Các biến số cơ sở}{7}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {4.2.}Phân tích Phương sai và Chỉ số Hiệu suất}{7}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {4.3.}Dự báo tương lai}{7}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {4.4.}Mô hình 6 Nhóm Chi phí Đặc trưng (Group 1 - Group 6)}{8}{subsection.1.4.4}%
+\contentsline {subsection}{\numberline {4.5.}Cấu trúc Cơ sở Dữ liệu Đầu vào của Hệ thống}{8}{subsection.1.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1.}1. Bảng thuộc tính Công việc (Task Input Schema)}{9}{subsubsection.1.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2.}2. Bảng Ràng buộc Công nghệ (Constraint Logic Schema)}{10}{subsubsection.1.4.5.2}%
+\contentsline {subsubsection}{\numberline {4.5.3.}3. Bảng Thuộc tính Tài nguyên (Constraint Resource Schema)}{10}{subsubsection.1.4.5.3}%
+\contentsline {subsubsection}{\numberline {4.5.4.}4. Bảng Cấu hình Thời gian (Constraint Time Schema)}{10}{subsubsection.1.4.5.4}%
+\contentsline {subsubsection}{\numberline {4.5.5.}5. Bảng Phân bổ Tài nguyên (Resource Allocation Schema)}{11}{subsubsection.1.4.5.5}%
+\contentsline {subsubsection}{\numberline {4.5.6.}6. Bảng Yêu cầu Khách hàng (User Request Constraint Schema)}{11}{subsubsection.1.4.5.6}%
+\contentsline {subsection}{\numberline {4.6.}Mô hình Toán học Tính toán Chi phí theo Chế độ và Dự án (Dynamic Cost Engine)}{11}{subsection.1.4.6}%
+\contentsline {subsubsection}{\numberline {4.6.1.}1. Đơn giá chi phí theo giờ làm việc gốc}{11}{subsubsection.1.4.6.1}%
+\contentsline {subsubsection}{\numberline {4.6.2.}2. Công thức tính thời lượng và chi phí công việc theo các chế độ (Modes)}{12}{subsubsection.1.4.6.2}%
+\contentsline {paragraph}{Chế độ 0 (Tiêu chuẩn):}{12}{paragraph*.36}%
+\contentsline {paragraph}{Chế độ 1 (Tăng ca - Overtime):}{12}{paragraph*.37}%
+\contentsline {paragraph}{Chế độ 2 (Thêm tài nguyên - AddRes):}{12}{paragraph*.38}%
+\contentsline {paragraph}{Chế độ 3 (Lai - Hybrid):}{12}{paragraph*.39}%
+\contentsline {subsubsection}{\numberline {4.6.3.}3. Mô hình tính tổng chi phí Dự án}{13}{subsubsection.1.4.6.3}%
+\contentsline {section}{\numberline {5.}Trí tuệ Nhân tạo và Học máy trên Đồ thị}{13}{section.1.5}%
+\contentsline {subsection}{\numberline {5.1.}Mạng nơ-ron đồ thị (GNN): Cơ chế truyền tin}{13}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {5.2.}Mạng nơ-ron đồ thị dị thể (HGT)}{13}{subsection.1.5.2}%
+\contentsline {subsection}{\numberline {5.3.}Học biểu diễn Tự giám sát bằng Bộ mã hóa tự động ẩn (MAE)}{15}{subsection.1.5.3}%
+\contentsline {subsection}{\numberline {5.4.}Tinh chỉnh có giám sát (Fine-tuning) và Các mô hình Đối chuẩn (Baselines)}{16}{subsection.1.5.4}%
+\contentsline {section}{\numberline {6.}Cơ sở Toán học: Tiền xử lý Dữ liệu và Chỉ số Đánh giá}{16}{section.1.6}%
+\contentsline {subsection}{\numberline {6.1.}Các phương pháp Chuẩn hóa dữ liệu}{16}{subsection.1.6.1}%
+\contentsline {subsection}{\numberline {6.2.}Chỉ số đánh giá hiệu năng hồi quy của AI}{17}{subsection.1.6.2}%
+\contentsline {subsection}{\numberline {6.3.}Mô phỏng Monte Carlo CPM và Phân phối Beta-PERT}{17}{subsection.1.6.3}%
+\contentsline {section}{\numberline {7.}Tổng quan các công trình nghiên cứu và Khoảng trống}{18}{section.1.7}%
+\contentsline {subsection}{\numberline {7.1.}Các nghiên cứu trong nước về tối ưu tiến độ}{18}{subsection.1.7.1}%
+\contentsline {subsection}{\numberline {7.2.}Các nghiên cứu ngoài nước về ứng dụng Graph AI trong Logistics}{18}{subsection.1.7.2}%
+\contentsline {subsection}{\numberline {7.3.}Khoảng trống nghiên cứu}{18}{subsection.1.7.3}%
+\contentsline {chapter}{\numberline {2}PHƯƠNG TIỆN VÀ PHƯƠNG PHÁP NGHIÊN CỨU}{19}{chapter.2}%
+\contentsline {section}{\numberline {1.}Sơ đồ tổng quan giải pháp}{19}{section.2.1}%
+\contentsline {subsection}{\numberline {1.1.}Khối 1 -- Trích xuất và Tiền xử lý dữ liệu (ETL Pipeline)}{20}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Khối 2 -- Xây dựng Đồ thị Dị thể (Heterogeneous Graph Builder)}{20}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {1.3.}Khối 3 -- Dự báo AI dựa trên mạng HGT (AI Predictive Engine)}{20}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {1.4.}Khối 4 -- Mô phỏng Đường găng Ngẫu nhiên (Stochastic CPM)}{20}{subsection.2.1.4}%
+\contentsline {subsection}{\numberline {1.5.}Khối 5 -- Tối ưu hóa Lập lịch đa mục tiêu (CP-SAT Solver)}{20}{subsection.2.1.5}%
+\contentsline {section}{\numberline {2.}Phương tiện nghiên cứu}{21}{section.2.2}%
+\contentsline {subsection}{\numberline {2.1.}Ngôn ngữ lập trình và các thư viện hỗ trợ}{21}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Hạ tầng phần cứng và môi trường thực nghiệm}{21}{subsection.2.2.2}%
+\contentsline {section}{\numberline {3.}Thu thập dữ liệu}{21}{section.2.3}%
+\contentsline {subsection}{\numberline {3.1.}Dữ liệu tiến độ và chi phí cơ sở}{22}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {3.2.}Dữ liệu tài nguyên và ca kíp}{22}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {3.3.}Dữ liệu rủi ro và nhãn đánh giá}{22}{subsection.2.3.3}%
+\contentsline {section}{\numberline {4.}Tập dữ liệu nghiên cứu (DSLIB)}{22}{section.2.4}%
+\contentsline {subsection}{\numberline {4.1.}Nguồn gốc và quy mô tập dữ liệu}{22}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {4.2.}Cấu trúc tệp dữ liệu mẫu C2012-04}{23}{subsection.2.4.2}%
+\contentsline {section}{\numberline {5.}Tiền xử lý dữ liệu và Làm sạch đồ thị}{23}{section.2.5}%
+\contentsline {subsection}{\numberline {5.1.}Bước 1 -- Lọc hạng mục lá (Leaf Node Filtering)}{24}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {5.2.}Bước 2 -- Phát hiện chu trình (Cycle Detection DFS)}{24}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {5.3.}Bước 3 -- Xử lý công việc cô lập (Orphan Node Resolution)}{25}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {5.4.}Bước 4 -- Đồng bộ hóa giờ thi công (Timeline Alignment)}{25}{subsection.2.5.4}%
+\contentsline {section}{\numberline {6.}Kỹ nghệ đặc trưng}{25}{section.2.6}%
+\contentsline {subsection}{\numberline {6.1.}Trích xuất các tỷ lệ chi phí thành phần}{25}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {6.2.}Mã hóa lượng giác chu kỳ thời gian (Sin/Cos)}{26}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {6.3.}Tích hợp đặc trưng trễ (Lag) và thống kê trượt}{26}{subsection.2.6.3}%
+\contentsline {section}{\numberline {7.}Chuẩn hóa dữ liệu}{26}{section.2.7}%
+\contentsline {subsection}{\numberline {7.1.}Biến đổi Log-scale cho chi phí và nhãn}{26}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {7.2.}Chuẩn hóa Z-Score và kẹp giá trị}{26}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {7.3.}Cơ cấu Normalizer Registry thích ứng}{27}{subsection.2.7.3}%
+\contentsline {section}{\numberline {8.}Chia tập dữ liệu}{27}{section.2.8}%
+\contentsline {subsection}{\numberline {8.1.}Đặc trưng cấu trúc topo rời rạc và rò rỉ dữ liệu}{27}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {8.2.}Chiến lược Kiểm thử chéo Loại bỏ một Dự án (Leave-One-Project-Out CV)}{27}{subsection.2.8.2}%
+\contentsline {section}{\numberline {9.}Huấn luyện mô hình}{28}{section.2.9}%
+\contentsline {subsection}{\numberline {9.1.}Huấn luyện tiền kỳ tự giám sát (Pre-training SSL HGT MAE)}{29}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {9.2.}Huấn luyện tinh chỉnh đa nhiệm và Ước lượng Bất định (Supervised Fine-tuning)}{30}{subsection.2.9.2}%
+\contentsline {subsubsection}{\numberline {9.2.1.}Kỹ thuật Tăng cường dữ liệu Đồ thị (Graph Data Augmentation)}{30}{subsubsection.2.9.2.1}%
+\contentsline {subsubsection}{\numberline {9.2.2.}Trộn mẫu biểu diễn (Manifold Mixup)}{31}{subsubsection.2.9.2.2}%
+\contentsline {subsubsection}{\numberline {9.2.3.}Ước lượng Bất định bằng Gaussian NLL Loss}{31}{subsubsection.2.9.2.3}%
+\contentsline {section}{\numberline {10.}Đánh giá mô hình}{31}{section.2.10}%
+\contentsline {subsection}{\numberline {10.1.}Các chỉ số đánh giá độ chính xác dự báo rủi ro tiến độ}{32}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {10.2.}Các chỉ số đánh giá hiệu năng tối ưu hóa lập lịch}{32}{subsection.2.10.2}%
+\contentsline {section}{\numberline {11.}Triển khai ứng dụng (Deployment)}{33}{section.2.11}%
+\contentsline {subsection}{\numberline {11.1.}Kiến trúc hệ thống và Container hóa (Docker \& Docker Compose)}{33}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {11.2.}Luồng hoạt động và Cơ chế kết xuất Frontend Rendering}{34}{subsection.2.11.2}%
+\contentsline {chapter}{\numberline {3}KẾT QUẢ THỰC NGHIỆM VÀ THẢO LUẬN}{35}{chapter.3}%
+\contentsline {section}{\numberline {1.}Kết quả thực nghiệm tổng hợp}{35}{section.3.1}%
+\contentsline {subsection}{\numberline {1.1.}Thiết lập tập dữ liệu C2012-04 và các baseline}{35}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Kết quả tổng hợp thời gian, chi phí và rủi ro}{36}{subsection.3.1.2}%
+\contentsline {section}{\numberline {2.}Phân tích hiệu suất theo tầm nhìn dự báo (Phân tích sai số dự báo thời lượng)}{37}{section.3.2}%
+\contentsline {subsection}{\numberline {2.1.}Sai số tuyệt đối trung bình (MAE)}{37}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Sai số toàn phương trung bình (RMSE)}{37}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {2.3.}Hệ số xác định $R^2$}{37}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {2.4.}Sai số phần trăm tuyệt đối trung bình (MAPE)}{38}{subsection.3.2.4}%
+\contentsline {section}{\numberline {3.}Đánh giá tính ổn định}{39}{section.3.3}%
+\contentsline {subsection}{\numberline {3.1.}Phân bố RMSE qua các cấu hình 5-Fold Cross Validation}{39}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.2.}Đánh giá năng lực tổng quát hóa zero-shot xuyên dự án}{39}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.}Lượng hóa độ bất định dự báo (Uncertainty Estimation)}{40}{subsection.3.3.3}%
+\contentsline {section}{\numberline {4.}Ảnh hưởng của quy mô dự án (Quy mô đồ thị J30, J60, J120)}{41}{section.3.4}%
+\contentsline {section}{\numberline {5.}Ảnh hưởng của chiến lược chia dữ liệu (LOPO CV vs Random Split)}{42}{section.3.5}%
+\contentsline {section}{\numberline {6.}Tốc độ suy giảm hiệu suất (Thời gian hội tụ và độ trễ suy luận AI)}{43}{section.3.6}%
+\contentsline {section}{\numberline {7.}Đánh giá phương pháp kết hợp mô hình (AI-Guided CP-SAT vs Baselines)}{43}{section.3.7}%
+\contentsline {subsection}{\numberline {7.1.}Kết quả Ép tiến độ: Mức độ giảm thời gian và Chi phí gia tăng}{43}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {7.2.}Tối ưu hóa Tài nguyên (San phẳng tài nguyên)}{44}{subsection.3.7.2}%
+\contentsline {subsection}{\numberline {7.3.}Biểu đồ đường biên Pareto Frontier}{45}{subsection.3.7.3}%
+\contentsline {section}{\numberline {8.}Chi phí tính toán (Dung lượng bộ nhớ và độ trễ truy vấn Recursive CTE)}{45}{section.3.8}%
+\contentsline {subsection}{\numberline {8.1.}Độ trễ truy vấn: So sánh Recursive CTE và ORM tiêu chuẩn}{46}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {8.2.}Mức tiêu thụ bộ nhớ khi mở rộng đồ thị}{47}{subsection.3.8.2}%
+\contentsline {section}{\numberline {9.}Ứng dụng web quản trị tiến độ và chi phí dự án (GLPO Web UI)}{47}{section.3.9}%
+\contentsline {subsection}{\numberline {9.1.}Kiến trúc vi dịch vụ container hóa}{47}{subsection.3.9.1}%
+\contentsline {subsection}{\numberline {9.2.}Giao diện tổng quan danh sách và Gantt Chart}{47}{subsection.3.9.2}%
+\contentsline {subsection}{\numberline {9.3.}Giao diện phân tích tài chính S-Curve và Pareto}{48}{subsection.3.9.3}%
+\contentsline {section}{\numberline {10.}Thảo luận}{48}{section.3.10}%
+\contentsline {subsection}{\numberline {10.1.}Đánh giá mức độ đạt mục tiêu}{48}{subsection.3.10.1}%
+\contentsline {subsection}{\numberline {10.2.}Ưu điểm của giải pháp đề xuất}{49}{subsection.3.10.2}%
+\contentsline {subsection}{\numberline {10.3.}Hạn chế của nghiên cứu và hướng phát triển}{49}{subsection.3.10.3}%
+\contentsline {chapter}{\numberline {4}KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}{50}{chapter.4}%
+\contentsline {section}{\numberline {1.}Kết luận chung về đề tài}{50}{section.4.1}%
+\contentsline {subsection}{\numberline {1.1.}Đóng góp về mặt lý luận khoa học}{50}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {1.2.}Đóng góp về mặt thực tiễn kỹ thuật}{50}{subsection.4.1.2}%
+\contentsline {section}{\numberline {2.}Đề xuất hướng phát triển}{51}{section.4.2}%
+\contentsline {subsection}{\numberline {2.1.}Tích hợp Tìm kiếm Lân cận Lớn kết hợp CP-SAT cho Dự án Quy mô Siêu lớn}{51}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {2.2.}Nâng cấp Kiến trúc Graphormer với Mã hóa Cấu trúc Đa chiều}{51}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {2.3.}Mở rộng Dữ liệu Thi công Thời gian thực và Tích hợp SaaS/ERP}{52}{subsection.4.2.3}%
+\contentsline {chapter}{TÀI LIỆU THAM KHẢO}{53}{section*.75}%

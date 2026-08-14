@@ -10,7 +10,9 @@
 
 % --- CÁC GÓI HỖ TRỢ KHÁC (GIỮ NGUYÊN) ---
 \usepackage{tikz}          
-\usetikzlibrary{calc}      
+\usetikzlibrary{calc, positioning, arrows.meta, shapes.geometric, matrix}      
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{xcolor}        
 \usepackage{amsmath}       
 \usepackage{amssymb}
@@ -114,6 +116,7 @@
 \usepackage{subcaption}
 % --- 10. TẠO LIÊN KẾT (Sửa lỗi \phantomsection) ---
 \usepackage[unicode]{hyperref} 
+\usepackage{bookmark}
 \hypersetup{
     colorlinks=true,      % Cho phép đổi màu link thay vì đóng khung
     linkcolor=black,      % Màu link mục lục

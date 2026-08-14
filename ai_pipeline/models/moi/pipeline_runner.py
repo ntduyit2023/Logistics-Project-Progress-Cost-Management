@@ -108,19 +108,54 @@ def run_new_pipeline(
           f"tai nguyen: {hetero_data['resource'].x.size(0)} nut, "
           f"ca thi cong: {hetero_data['shift'].x.size(0)} nut")
 
-    # 2. Khởi tạo mô hình HGT & Pretrainer (Phase 0) với Hybrid Readout Pooling (Mean + Max)
+    # 2. Khởi tạo mô hình HGT & Tải trọng số Fine-tuned tương ứng cho từng Fold LOPO CV
     model = HGTTaskPredictor({
         'task': hetero_data['task'].x.size(1),
         'resource': hetero_data['resource'].x.size(1),
         'shift': hetero_data['shift'].x.size(1)
     }, hidden_dim=128)
     
-    ckpt_dir = os.path.join(project_root, "checkpoints")
-    if project_root == "/" or not os.access(project_root, os.W_OK):
-        ckpt_dir = os.path.join(os.getcwd(), "checkpoints")
+    # Định nghĩa ánh xạ mã dự án sang tệp trọng số Fold LOPO CV tương ứng
+    fold_mapping = {
+        "C2011-07": "hgt_fold1.pt",
+        "C2012-04": "hgt_fold2.pt",
+        "C2012-08": "hgt_fold3.pt",
+        "C2018-09": "hgt_fold4.pt",
+        "C2019-16": "hgt_fold5.pt"
+    }
     
-    pretrainer = HGTPretrainer(model, checkpoint_dir=ckpt_dir)
-    pretrainer.train_or_load(hetero_data, epochs=20)
+    loaded_fine_tuned = False
+    if project_id in fold_mapping:
+        filename = fold_mapping[project_id]
+        # Các đường dẫn tìm kiếm tiềm năng cho tệp checkpoints
+        search_paths = [
+            os.path.join(project_root, "ai_pipeline", "models", "moi", "checkpoints", filename),
+            os.path.join(project_root, "checkpoints", filename),
+            os.path.join(os.getcwd(), "checkpoints", filename),
+            os.path.join(script_dir, "checkpoints", filename)
+        ]
+        for p in search_paths:
+            if os.path.exists(p):
+                print(f"   * [AI Loader] Tim thay va dang nap trong so Fine-tuned cho {project_id}: {p}")
+                try:
+                    try:
+                        state_dict = torch.load(p, map_location='cpu', weights_only=True)
+                    except TypeError:
+                        state_dict = torch.load(p, map_location='cpu')
+                    model.load_state_dict(state_dict)
+                    model.eval()
+                    loaded_fine_tuned = True
+                    break
+                except Exception as e:
+                    print(f"   * [AI Loader] Loi khi tai file {p}: {e}")
+                    
+    if not loaded_fine_tuned:
+        print(f"   * [AI Loader] [WARN] Khong tim thay/khong the nap weight Fine-tuned cho {project_id}. Tu dong chay fallback Pretrain/Load...")
+        ckpt_dir = os.path.join(project_root, "checkpoints")
+        if project_root == "/" or not os.access(project_root, os.W_OK):
+            ckpt_dir = os.path.join(os.getcwd(), "checkpoints")
+        pretrainer = HGTPretrainer(model, checkpoint_dir=ckpt_dir)
+        pretrainer.train_or_load(hetero_data, epochs=20)
 
     # 3. Suy luận dự báo AI
     with torch.no_grad():

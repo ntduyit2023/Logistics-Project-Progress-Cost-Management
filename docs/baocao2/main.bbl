@@ -1,63 +1,134 @@
 \begin{thebibliography}{10}
 
-\bibitem{christopher2016}
-M.~Christopher, {\em Logistics \& Supply Chain Management}.
-\newblock London, UK: Pearson UK, 5th~ed., 2016.
-
 \bibitem{pmbok2017}
 {Project Management Institute}, {\em A Guide to the Project Management Body of
   Knowledge (PMBOK Guide)}.
 \newblock Newtown Square, PA: Project Management Institute, 6th~ed., 2017.
+\newblock \url{https://www.pmi.org/pmbok-guide-standards}.
 
 \bibitem{kolisch1997psplib}
 R.~Kolisch and A.~Sprecher, ``{PSPLIB} - a project scheduling problem library:
   {OR} software - {ORSEP} operations research software exchange program,'' {\em
   European Journal of Operational Research}, vol.~96, no.~1, pp.~205--216,
   1997.
+\newblock \url{https://doi.org/10.1016/S0377-2217(96)00170-1}.
+
+\bibitem{christopher2016}
+M.~Christopher, {\em Logistics \& Supply Chain Management}.
+\newblock London, UK: Pearson UK, 5th~ed., 2016.
+\newblock \url{https://www.pearson.com/en-gb.html}.
 
 \bibitem{hu2020hgt}
 Z.~Hu, Y.~Dong, K.~Wang, and Y.~Sun, ``Heterogeneous graph transformer,'' in
   {\em Proceedings of The Web Conference 2020}, pp.~2704--2710, 2020.
+\newblock \url{https://doi.org/10.1145/3366423.3380027}.
 
-\bibitem{he2022mae}
-K.~He, X.~Chen, S.~Xie, Y.~Li, P.~Dollár, and R.~Girshick, ``Masked
-  autoencoders are scalable vision learners,'' in {\em Proceedings of the
-  IEEE/CVF Conference on CVPR}, pp.~16000--16009, 2022.
+\bibitem{trietsch1993pert}
+D.~Trietsch and K.~R. Baker, ``{PERT} 21: Fitting {PERT}/cpm for use in the
+  21st century,'' {\em International Journal of Project Management}, vol.~11,
+  pp.~149--152, 1993.
+\newblock \url{https://doi.org/10.1016/0263-7863(93)90022-P}.
 
 \bibitem{habibi2018}
 F.~Habibi, F.~Barzinpour, and S.~Sadjadi, ``Resource-constrained project
   scheduling problem: review of past and recent developments,'' {\em Journal of
   Project Management}, vol.~3, no.~2, pp.~55--88, 2018.
+\newblock \url{https://doi.org/10.5267/j.jpm.2017.10.001}.
+
+\bibitem{ortools2019}
+L.~Perron and V.~Furnon, ``{OR-Tools}.''
+  \url{https://developers.google.com/optimization}, 2019.
+
+\bibitem{kipf_2017_gcn}
+T.~N. Kipf and M.~Welling, ``Semi-supervised classification with graph
+  convolutional networks,'' in {\em International Conference on Learning
+  Representations (ICLR)}, 2017.
+\newblock \url{https://arxiv.org/abs/1609.02907}.
+
+\bibitem{he2022mae}
+K.~He, X.~Chen, S.~Xie, Y.~Li, P.~Dollár, and R.~Girshick, ``Masked
+  autoencoders are scalable vision learners,'' in {\em Proceedings of the
+  IEEE/CVF Conference on CVPR}, pp.~16000--16009, 2022.
+\newblock \url{https://doi.org/10.1109/CVPR52688.2022.01553}.
+
+\bibitem{han2011data}
+J.~Han, M.~Kamber, and J.~Pei, {\em Data Mining: Concepts and Techniques}.
+\newblock Boston, MA: Morgan Kaufmann, 3rd~ed., 2011.
+\newblock \url{https://doi.org/10.1016/C2009-0-61861-6}.
+
+\bibitem{bishop2006pattern}
+C.~M. Bishop, {\em Pattern Recognition and Machine Learning}.
+\newblock New York, NY: Springer, 2006.
+\newblock \url{https://www.springer.com/gp/book/9780387310732}.
 
 \bibitem{goodfellow2016}
 I.~Goodfellow, Y.~Bengio, and A.~Courville, {\em Deep Learning}.
 \newblock Cambridge, MA: MIT Press, 2016.
+\newblock \url{https://www.deeplearningbook.org/}.
+
+\bibitem{pedregosa2011sklearn}
+F.~Pedregosa {\em et~al.}, ``Scikit-learn: Machine learning in python,'' {\em
+  Journal of Machine Learning Research}, vol.~12, pp.~2825--2830, 2011.
+\newblock \url{https://jmlr.org/papers/v12/pedregosa11a.html}.
 
 \bibitem{chai2014rmse}
 T.~Chai and R.~R. Draxler, ``Root mean square error ({RMSE}) or mean absolute
   error ({MAE})? - arguments against avoiding {RMSE} in the literature,'' {\em
   Geoscientific Model Development}, vol.~7, no.~3, pp.~1247--1250, 2014.
-
-\bibitem{tran2021}
-V.~H. Tran and D.~T. Nguyen, ``Application of meta-heuristic algorithms for
-  resource-constrained project scheduling in vietnam logistics,'' {\em Journal
-  of Science and Technology}, vol.~59, no.~4, pp.~112--125, 2021.
-
-\bibitem{ortools2019}
-L.~Perron and V.~Furnon, ``{OR-Tools}.'' Google, 2019.
+\newblock \url{https://doi.org/10.5194/gmd-7-1247-2014}.
 
 \bibitem{nagelkerke1991r2}
 N.~J. Nagelkerke, ``A note on a general definition of the coefficient of
   determination,'' {\em Biometrika}, vol.~78, no.~3, pp.~691--692, 1991.
+\newblock \url{https://doi.org/10.1093/biomet/78.3.691}.
+
+\bibitem{rubinstein2016simulation}
+R.~Y. Rubinstein and D.~P. Kroese, {\em Simulation and the Monte Carlo Method}.
+\newblock Hoboken, NJ: John Wiley \& Sons, 3rd~ed., 2016.
+\newblock \url{https://doi.org/10.1002/9781118632208}.
+
+\bibitem{vanhoucke2016integrated}
+M.~Vanhoucke, {\em Integrated Project Management and Control: First-Class
+  Project Management Methods}.
+\newblock Ghent, Belgium: Springer, 2016.
+\newblock \url{https://doi.org/10.1007/978-3-319-27151-4}.
+
+\bibitem{malcolm1959application}
+D.~G. Malcolm, J.~H. Roseboom, C.~E. Clark, and W.~Fazar, ``Application of a
+  technique for research and development program evaluation,'' {\em Operations
+  Research}, vol.~7, no.~5, pp.~646--669, 1959.
+\newblock \url{https://doi.org/10.1287/opre.7.5.646}.
+
+\bibitem{le_2020_cpm}
+H.~Q. Le {\em et~al.}, ``Applying genetic algorithm combined with critical path
+  method for resource leveling in infrastructure projects,'' {\em Vietnam
+  Journal of Construction}, 2020.
+\newblock \url{https://doi.org/10.31814/jvn.2020.12.02.04}.
+
+\bibitem{zhang_2022_supply_chain}
+Y.~Zhang {\em et~al.}, ``Predicting supply chain disruptions using
+  heterogeneous graph neural networks,'' {\em IEEE Transactions on Engineering
+  Management}, 2022.
+\newblock \url{https://doi.org/10.1109/TEM.2022.3168852}.
+
+\bibitem{google_ortools}
+{Google LLC}, ``Or-tools user manual.''
+  \url{https://developers.google.com/optimization}, 2019.
+
+\bibitem{gurobi}
+{Gurobi Optimization, LLC}, ``Gurobi optimizer reference manual.''
+  \url{https://www.gurobi.com}, 2023.
 
 \bibitem{pisinger2010large}
 D.~Pisinger and S.~Ropke, ``Large neighborhood search,'' {\em Handbook of
   Metaheuristics}, pp.~399--419, 2010.
+\newblock \url{https://doi.org/10.1007/978-1-4419-1375-3_13}.
 
 \bibitem{ying2021graphormer}
 C.~Ying, T.~He, D.~Chen, T.~Zheng, G.~Lu, R.~Zheng, and T.~Liu, ``Do
   transformers really perform bad for graph representation?,'' in {\em Advances
   in Neural Information Processing Systems (NeurIPS)}, vol.~34,
   pp.~28877--28888, 2021.
+\newblock \url{https://arxiv.org/abs/2106.07471}.
 
 \end{thebibliography}

@@ -33,46 +33,44 @@ Reallocating 'name_of_file' (item size: 1) to 7 items.
 The style file: ieeetr.bst
 Reallocating 'name_of_file' (item size: 1) to 8 items.
 Database file #1: tailieu.bib
-Warning--I didn't find a database entry for "pedregosa2011sklearn"
-You've used 13 entries,
+You've used 24 entries,
             1876 wiz_defined-function locations,
-            575 strings with 5643 characters,
-and the built_in function-call counts, 4004 in all, are:
-= -- 416
-> -- 131
+            649 strings with 8038 characters,
+and the built_in function-call counts, 6320 in all, are:
+= -- 676
+> -- 212
 < -- 0
-+ -- 49
-- -- 36
-* -- 268
-:= -- 533
-add.period$ -- 16
-call.type$ -- 13
-change.case$ -- 12
++ -- 81
+- -- 57
+* -- 387
+:= -- 874
+add.period$ -- 52
+call.type$ -- 24
+change.case$ -- 21
 chr.to.int$ -- 0
-cite$ -- 13
-duplicate$ -- 205
-empty$ -- 385
-format.name$ -- 36
-if$ -- 990
+cite$ -- 24
+duplicate$ -- 316
+empty$ -- 622
+format.name$ -- 57
+if$ -- 1571
 int.to.chr$ -- 0
-int.to.str$ -- 13
-missing$ -- 15
-newline$ -- 45
-num.names$ -- 13
-pop$ -- 50
+int.to.str$ -- 24
+missing$ -- 28
+newline$ -- 103
+num.names$ -- 24
+pop$ -- 83
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 156
+skip$ -- 208
 stack$ -- 0
-substring$ -- 328
-swap$ -- 94
+substring$ -- 400
+swap$ -- 121
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 40
-width$ -- 15
-write$ -- 131
-(There was 1 warning)
+while$ -- 57
+width$ -- 26
+write$ -- 271

@@ -1,14 +1,25 @@
 \babel@toc {vietnamese}{}\relax 
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {1.1}{\ignorespaces Đặc tả cấu trúc bảng thuộc tính Công việc (Task)}}{9}{table.caption.30}%
+\contentsline {table}{\numberline {1.2}{\ignorespaces Đặc tả cấu trúc bảng quan hệ ràng buộc tiến độ (Constraint Logic)}}{10}{table.caption.31}%
+\contentsline {table}{\numberline {1.3}{\ignorespaces Đặc tả cấu trúc bảng thuộc tính và năng lực tài nguyên (Constraint Resource)}}{10}{table.caption.32}%
+\contentsline {table}{\numberline {1.4}{\ignorespaces Đặc tả cấu trúc bảng cấu hình thời gian làm việc (Constraint Time)}}{10}{table.caption.33}%
+\contentsline {table}{\numberline {1.5}{\ignorespaces Đặc tả cấu trúc bảng phân bổ tài nguyên (Resource Allocation)}}{11}{table.caption.34}%
+\contentsline {table}{\numberline {1.6}{\ignorespaces Đặc tả cấu trúc bảng yêu cầu biên từ người dùng (User Request Constraint)}}{11}{table.caption.35}%
+\contentsline {table}{\numberline {1.7}{\ignorespaces Siêu tham số cấu trúc mạng nội tại của HGTTaskPredictor}}{14}{table.caption.41}%
+\contentsline {table}{\numberline {1.8}{\ignorespaces Siêu tham số huấn luyện và hàm mất mát của mô hình HGT}}{15}{table.caption.42}%
 \addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Cấu hình chi tiết hạ tầng phần cứng và phần mềm thực nghiệm}}{21}{table.caption.45}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Thông số cấu trúc đặc trưng của Dự án mẫu C2012-04}}{23}{table.caption.46}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Cấu hình phần cứng và thông số môi trường thử nghiệm}}{9}{table.caption.17}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị và tài nguyên của Dự án C2012-04}}{10}{table.caption.18}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces So sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{11}{table.caption.20}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces Dung lượng bộ nhớ tiêu thụ của hệ thống theo quy mô đồ thị dự án}}{12}{table.caption.22}%
-\contentsline {table}{\numberline {3.5}{\ignorespaces Kết quả thực nghiệm bài toán ép tiến độ dự án C2012-04}}{12}{table.caption.23}%
-\contentsline {table}{\numberline {3.6}{\ignorespaces Chỉ số phân bổ tài nguyên nhân lực trước và sau Tối ưu hóa trên Dự án C2012-04}}{13}{table.caption.24}%
-\contentsline {table}{\numberline {3.7}{\ignorespaces Các điểm nghiệm đại diện trên tập Pareto Frontier dự án C2012-04}}{14}{table.caption.27}%
-\contentsline {table}{\numberline {3.8}{\ignorespaces Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation}}{16}{table.caption.29}%
-\contentsline {table}{\numberline {3.9}{\ignorespaces Khả năng định vị nút Đường găng thông qua Trọng số Attention của HGT trên Dự án C2012-04}}{17}{table.caption.32}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị và kết quả tổng hợp của Dự án C2012-04}}{36}{table.caption.53}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation}}{39}{table.caption.56}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Khả năng định vị nút Đường găng thông qua Trọng số Attention của HGT trên Dự án C2012-04}}{39}{table.caption.58}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Ảnh hưởng của quy mô đồ thị dự án đến sai số dự báo AI và thời gian tối ưu lập lịch}}{41}{table.caption.61}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Đối chuẩn hiệu năng của mô hình GNN dưới hai chiến lược phân chia dữ liệu}}{42}{table.caption.62}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Kết quả thực nghiệm bài toán ép tiến độ dự án C2012-04}}{43}{table.caption.64}%
+\contentsline {table}{\numberline {3.7}{\ignorespaces Chỉ số phân bổ tài nguyên nhân lực trước và sau Tối ưu hóa trên Dự án C2012-04}}{44}{table.caption.65}%
+\contentsline {table}{\numberline {3.8}{\ignorespaces Các điểm nghiệm đại diện trên tập Pareto Frontier dự án C2012-04}}{45}{table.caption.68}%
+\contentsline {table}{\numberline {3.9}{\ignorespaces So sánh thời gian thực thi truy vấn đồ thị giữa ORM tiêu chuẩn và Recursive CTE}}{46}{table.caption.70}%
+\contentsline {table}{\numberline {3.10}{\ignorespaces Dung lượng bộ nhớ tiêu thụ của hệ thống theo quy mô đồ thị dự án}}{47}{table.caption.72}%
 \addvspace {10\p@ }

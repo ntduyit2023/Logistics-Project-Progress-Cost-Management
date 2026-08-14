@@ -3,66 +3,65 @@
 
 \section*{1. Lý do chọn đề tài}
 
-Trong bối cảnh phát triển mạnh mẽ của thương mại toàn cầu và chuỗi cung ứng hiện đại, ngành Logistics đóng vai trò hạ tầng kỹ thuật cốt lõi quyết định năng lực vận hành của nền kinh tế \cite{christopher2016}. Các dự án logistics quy mô lớn --- như triển khai trung tâm phân phối đa vùng, hiện đại hóa kho vận thông minh WMS và tối ưu hóa tuyến đường vận tải --- thường có đặc thụ bao gồm hàng trăm công việc liên kết phụ thuộc phức tạp và chịu sự chi phối ngặt nghèo của các giới hạn tài nguyên chuyên môn \cite{pmbok2017}.
+Các dự án logistics quy mô lớn --- bao gồm triển khai trung tâm phân phối đa điểm, cải tạo hệ thống kho vận và tối ưu hóa tuyến vận tải --- thường có cấu trúc mạng lưới công việc phức tạp với hàng trăm tác vụ phụ thuộc nhau theo quan hệ Hoàn thành--Bắt đầu (Finish-to-Start) kèm độ trễ ràng buộc (lag) \cite{pmbok2017}. Bài toán lập lịch cho các dự án dạng này, khi tồn tại giới hạn tài nguyên nhân lực và thiết bị, được phân loại là bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP) thuộc lớp NP-hard \cite{kolisch1997psplib}.
 
-Tuy nhiên, quy trình quản trị tiến độ và chi phí trong các dự án logistics hiện nay đang đối mặt với 3 thách thức kỹ thuật cốt lõi:
+Thực tiễn quản lý dự án logistics hiện nay đối mặt với ba vấn đề kỹ thuật cụ thể:
 
 \begin{enumerate}
-    \item \textbf{Cấu trúc phụ thuộc mạng lưới phi tuyến và sự lan truyền rủi ro:} Các bài toán quản lý dự án truyền thống thường tiếp cận theo dạng dữ liệu bảng phẳng hai chiều. Cách tiếp cận này bỏ qua bản chất phụ thuộc đồ thị định hướng không chu trình (AON DAG) và quan hệ phụ thuộc tiến trình (PDM), dẫn đến việc không dự báo được rủi ro lan truyền trễ tiến độ từ thượng nguồn xuống hạ nguồn.
-    \item \textbf{Bài toán Lập lịch Ràng buộc Tài nguyên và Cấu trúc Chi phí Đa tầng:} Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP) là bài toán thuộc lớp NP-hard \cite{kolisch1997psplib}. Khi xảy ra xung đột nhân lực và thiết bị, việc điều chỉnh tiến độ hoặc ép tiến độ thi công làm phát sinh sự đánh đổi phức tạp giữa thời gian hoàn thành, chi phí làm thêm giờ, chi phí nhà thầu phụ và rủi ro trễ hạn.
-    \item \textbf{Bẫy hiệu năng phần mềm và tính đóng của mô hình tất định:} Các phần mềm thương mại hiện nay phụ thuộc vào thuật toán CPM tất định và mô hình ORM tiêu chuẩn. Điều này gây ra bẫy hiệu năng $N+1$ khi truy vấn cấu trúc đồ thị quy mô lớn trong CSDL, đồng thời thiếu khả năng tự động học tập quy luật bất định từ dữ liệu thi công lịch sử.
+    \item \textbf{Thiếu mô hình chi phí đặc thù theo loại hình dự án:} Các phần mềm quản lý dự án thương mại hiện tại không phân biệt cấu trúc chi phí giữa các loại dự án logistics khác nhau (thi công, vận tải quốc tế, sản xuất công nghiệp, v.v.), dẫn đến sai lệch trong dự toán khi áp dụng một công thức chung cho tất cả loại hình \cite{christopher2016}.
+
+    \item \textbf{Định lượng rủi ro trễ tiến độ thiếu cơ sở thống kê:} Phương pháp CPM (Critical Path Method) tất định không phản ánh tính bất định trong thời gian thi công thực tế, do đó không cung cấp được xác suất trễ hạn ($P[\text{delay}]$) làm cơ sở cho quyết định về hợp đồng phạt/thưởng.
+
+    \item \textbf{Không gian nghiệm RCPSP quá lớn cho các bộ giải chính xác:} Với dự án có hàng chục công việc và tài nguyên chia sẻ, không gian tìm kiếm của bộ giải chính xác tăng theo cấp số nhân. Cần có cơ chế thu hẹp không gian tìm kiếm trước khi đưa vào bộ giải để hội tụ trong thời gian chấp nhận được \cite{kolisch1997psplib}.
 \end{enumerate}
 
-Sự bùng nổ của mạng nơ-ron học sâu đồ thị dị thể (Heterogeneous Graph Neural Networks), đặc biệt là kiến trúc Heterogeneous Graph Transformer (HGT) \cite{hu2020hgt} tích hợp cơ chế Học tự giám sát Masked Autoencoder \cite{he2022mae}, mở ra phương pháp luận mới giúp biểu diễn tự nhiên mối tương tác đa chiều giữa công việc, tài nguyên và ca làm việc. Đồng thời, việc kết hợp Graph AI với bộ giải quy hoạch ràng buộc CP-SAT \cite{ortools2019} tạo tiền đề phát triển động cơ tối ưu hóa lai đa mục tiêu đáp ứng thời gian thực.
+Những tiến bộ gần đây trong học sâu trên đồ thị (Graph Neural Networks) cung cấp phương tiện để biểu diễn tự nhiên cấu trúc mạng lưới công việc dưới dạng đồ thị dị thể (heterogeneous graph) với nhiều loại nút và cạnh \cite{hu2020hgt}. Khi kết hợp với bộ giải tối ưu tổ hợp (CP-SAT), GNN có thể đóng vai trò heuristic học được nhằm định hướng tìm kiếm nghiệm trên không gian RCPSP.
 
-Vì những lý do cấp thiết về cả mặt khoa học lẫn thực tiễn công nghiệp, đồ án lựa chọn thực hiện đề tài: \textbf{"Hệ thống Quản trị Tiến độ và Chi phí Dự án Logistics dựa trên AI Đồ thị Dị thể và Tối ưu hóa Lai đa mục tiêu (GLPO)"}.
+Do đó, đồ án thực hiện đề tài: \textbf{``Xây dựng ứng dụng hỗ trợ quản lý tiến độ và chi phí dự án logistics''}.
 
 \section*{2. Mục tiêu nghiên cứu}
 
-Mục tiêu tổng quát của đồ án là nghiên cứu phương pháp luận, thiết kế kiến trúc và phát triển hoàn chỉnh hệ thống phần mềm GLPO nhằm tự động hóa quá trình lập lịch, dự báo rủi ro lan truyền trễ và tối ưu hóa đa mục tiêu Thời gian -- Chi phí -- Tài nguyên cho các dự án logistics.
+Mục tiêu tổng quát là thiết kế và phát triển hệ thống phần mềm \textbf{GLPO (Graph-Based Logistics Project Optimizer)} tích hợp mô hình AI đồ thị và thuật toán tối ưu hóa tổ hợp để hỗ trợ lập lịch và phân tích chi phí dự án logistics.
 
-Để đạt được mục tiêu tổng quát, đồ án triển khai 5 mục tiêu kỹ thuật cụ thể:
+Đồ án xác định 4 mục tiêu kỹ thuật cụ thể:
 
 \begin{enumerate}
-    \item \textbf{Tối ưu hóa Động cơ Truy vấn Đồ thị trong CSDL:} Thiết kế thuật toán duyệt sơ đồ mạng PDM đệ quy trực tiếp trong nhân CSDL PostgreSQL thông qua biểu thức Recursive CTE, triệt tiêu bẫy hiệu năng $N+1$ và đạt độ trễ truy vấn dưới $20$ ms.
-    \item \textbf{Phát triển Phân hệ AI Đồ thị Dị thể với Cơ chế Học tự giám sát:} Biểu diễn dự án dưới dạng Đồ thị Dị thể $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$, huấn luyện mô hình HGT kết hợp cơ chế Masked Autoencoder để dự báo thời gian thi công thực tế và trích xuất Trọng số Attention nhằm giải thích minh bạch các nút thắt cổ chai găng.
-    \item \textbf{Xây dựng Bộ Tối ưu hóa Lai Đa mục tiêu:} Ứng dụng engine quy hoạch ràng buộc Google OR-Tools CP-SAT kết hợp thuật toán làm mịn tài nguyên để giải bài toán RCPSP, dựng đường cong Pareto Frontier đánh đổi giữa thời gian thi công, tổng chi phí và rủi ro trễ hạn.
-    \item \textbf{Hiện thực hóa Mô hình Tài chính Phân ly 38 loại Chi phí:} Xây dựng công cụ phân rã ngân sách thành 38 hạng mục thuộc 7 nhóm chỉ số tài chính $G_1$ đến $G_7$, kết hợp phương pháp Quản lý Giá trị Thu được (EVM) để hỗ trợ chiến lược ép tiến độ thi công.
-    \item \textbf{Đóng gói và Triển khai Hệ thống theo Kiến trúc Vi dịch vụ:} Đóng gói hoàn chỉnh phông nền Web UI (React-Flow), Backend API (FastAPI) và Phân hệ AI (PyTorch Geometric) bằng Docker Compose, tiến hành kiểm thử và đo đạc định lượng trên dự án thực tế C2012-04.
+    \item \textbf{Xây dựng mô hình chi phí 7 nhóm đặc trưng (G1--G7) cho 5 loại dự án logistics:} Thiết kế công thức tính chi phí cơ sở (Base Cost) và tổng chi phí (Total Cost) riêng biệt cho 5 loại hình dự án (ITS, CON, IND, PRO, TRL), trong đó G5 là hệ số rủi ro nhân lên toàn bộ.
+
+    \item \textbf{Phát triển AI Pipeline 5 bước ứng dụng HGT và Monte Carlo CPM:} (i) Dựng đồ thị dị thể 3 loại nút (Task, Resource, Shift); (ii) Huấn luyện Heterogeneous Graph Transformer (HGT) kết hợp cơ chế Masked Autoencoder để dự báo Duration Factor, Expected Delay và độ không chắc chắn $\sigma$; (iii) Chạy mô phỏng Monte Carlo CPM ($N$ = 10.000 vòng lặp) để định lượng xác suất trễ hạn ($P[\text{delay}]$) theo phân phối thực nghiệm; (iv) Đưa kết quả vào bộ giải CP-SAT để tìm tập phương án Pareto tối ưu đa mục tiêu (Makespan, Total Cost, Risk).
+
+    \item \textbf{Thiết kế kiến trúc phần mềm 3 lớp và cơ sở dữ liệu quan hệ:} Xây dựng Backend RESTful API (FastAPI, Python~3.12) với ORM bất đồng bộ (SQLAlchemy~2.0), quản lý dữ liệu dự án trong PostgreSQL~15 bao gồm các bảng: \texttt{projects}, \texttt{tasks}, \texttt{task\_logic}, \texttt{resources}, \texttt{task\_resources}, \texttt{project\_calendars} và \texttt{pareto\_solutions}.
+
+    \item \textbf{Phát triển giao diện người dùng tương tác và đóng gói triển khai:} Xây dựng Frontend (React, TypeScript, Vite) cho phép người dùng nhập liệu dự án, kích hoạt AI Pipeline, và xem xét tập phương án Pareto; đóng gói toàn bộ hệ thống bằng Docker Compose (ba profile: \texttt{dev}, \texttt{prod}, \texttt{db}).
 \end{enumerate}
 
 \section*{3. Đối tượng và phạm vi nghiên cứu}
 
-\textbf{Đối tượng nghiên cứu:}
-\begin{itemize}
-    \item Cấu trúc mạng lưới công việc AON DAG, các loại quan hệ phụ thuộc tiến trình PDM và thuật toán tính toán mốc thời gian CPM.
-    \item Bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP), bài toán làm mịn biểu đồ nhân lực và bài toán ép tiến độ (Crashing Trade-off).
-    \item Mô hình tài chính đa tầng phân rã 38 loại chi phí logistics thuộc 7 nhóm chỉ số $G_1$ đến $G_7$ và chỉ tiêu kỹ thuật EVM.
-    \item Kiến trúc mạng nơ-ron đồ thị dị thể HGT, cơ chế học tự giám sát Masked Autoencoder và bộ giải quy hoạch ràng buộc CP-SAT.
-\end{itemize}
+\paragraph{Đối tượng nghiên cứu:}
+Đồ án tập trung nghiên cứu mạng lưới công việc dạng đồ thị định hướng không chu trình (AON-DAG) với quan hệ phụ thuộc tiến độ PDM (Finish-to-Start kèm lag\_hours). Nghiên cứu giải quyết bài toán lập lịch dự án giới hạn tài nguyên (RCPSP) đa mục tiêu nhằm tối ưu hóa đồng thời thời lượng Makespan (giờ), Tổng chi phí dự án và Xác suất trễ hạn của các hạng mục. Mô hình tài chính sử dụng hệ thống phân rã chi tiết gồm 38 hạng mục chi phí thuộc 7 nhóm đặc trưng từ G1 đến G7 áp dụng cho 5 loại hình dự án logistics khác nhau. Về mặt công nghệ AI và tối ưu hóa, đối tượng nghiên cứu cốt lõi bao gồm kiến trúc mạng nơ-ron đồ thị dị thể HGT (Heterogeneous Graph Transformer), cơ chế tự học tự giám sát Masked Autoencoder (MAE) trên đồ thị và bộ giải quy hoạch ràng buộc CP-SAT.
 
-\textbf{Phạm vi dữ liệu thực nghiệm:} Nghiên cứu tiến hành đánh giá thực nghiệm định lượng trên tập dữ liệu dự án thực tế \textbf{C2012-04} bao gồm $67$ công việc cốt lõi, $119$ cạnh phụ thuộc PDM và $5$ loại tài nguyên chuyên môn hạn chế.
+\paragraph{Phạm vi dữ liệu thực nghiệm:} Đồ án sử dụng tập dữ liệu từ 5 dự án lịch sử để huấn luyện mô hình (pre-training) và tiến hành đánh giá định lượng chuyên sâu trên tập dữ liệu dự án thực tế \textbf{C2012-04} (``Asti-Cuneo Highway'', loại hình CON) bao gồm $67$ công việc, $84$ cạnh phụ thuộc PDM và $16$ loại tài nguyên.
 
-\textbf{Phạm vi ứng dụng kỹ thuật:} Hệ thống phần mềm Web hoàn chỉnh được đóng gói dưới dạng vi dịch vụ containerizado vận hành trên Docker Desktop.
+\paragraph{Phạm vi triển khai:} Hệ thống phần mềm được container hóa bằng Docker Compose, vận hành trên môi trường Docker Desktop.
 
 \section*{4. Phương pháp nghiên cứu}
 
-Đồ án áp dụng kết hợp ba nhóm phương pháp nghiên cứu chuẩn mực:
+Đồ án kết hợp ba nhóm phương pháp nghiên cứu chính:
 
-\begin{enumerate}
-    \item \textbf{Phương pháp Mô hình hóa Toán học và Tối ưu hóa Tổ hợp:} Biểu diễn mạng lưới công việc bằng Lý thuyết Đồ thị DAG. Thiết lập mô hình quy hoạch toán học cho bài toán RCPSP và bài toán ép tiến độ. Khai thác thuật toán sinh mệnh đề lười của bộ giải CP-SAT để tìm tập nghiệm Pareto toàn cục.
-    \item \textbf{Phương pháp Học máy Đồ thị (Graph Machine Learning):} Xây dựng kiến trúc Heterogeneous Graph Transformer trên thư viện PyTorch Geometric. Áp dụng kỹ thuật Masked Autoencoder để học đại diện đồ thị không giám sát và trích xuất bản đồ nhiệt Attention Heatmap định vị nút găng.
-    \item \textbf{Phương pháp Thực nghiệm Kỹ thuật Phần mềm:} Áp dụng kiến trúc Vi dịch vụ (Microservices), xây dựng RESTful API bằng FastAPI, tối ưu nhân CSDL với PostgreSQL Recursive CTE, thiết kế giao diện React-Flow và đo đạc hiệu năng với kiểm định giả thuyết thống kê Wilcoxon.
-\end{enumerate}
+\paragraph{Mô hình hóa toán học và tối ưu hóa tổ hợp:} Biểu diễn mạng lưới công việc bằng đồ thị định hướng DAG với quan hệ Finish-to-Start và lag ràng buộc. Xây dựng mô hình RCPSP đa mục tiêu (tối ưu đồng thời Makespan, Total Cost, $P[\text{delay}]$). Khai thác cơ chế sinh mệnh đề trễ (lazy clause generation) của bộ giải CP-SAT để tìm tập nghiệm Pareto trong thời gian giới hạn có tính đến mức phạt trễ hạn và thưởng hoàn thành sớm.
+
+\paragraph{Học máy trên đồ thị (Graph Machine Learning):} Xây dựng HeteroGraph 4 loại nút bằng thư viện PyTorch Geometric. Huấn luyện HGT kết hợp Masked Autoencoder để trích xuất embedding cấu trúc và cung cấp heuristic định hướng cho CP-SAT. Sử dụng attention weights của HGT để xác định nút công việc có nguy cơ tạo nút thắt cổ chai (bottleneck).
+
+\paragraph{Thực nghiệm kỹ thuật phần mềm:} Thiết kế và kiểm thử RESTful API theo chuẩn mực kiến trúc 3 lớp (Endpoint -- Service -- Repository). Đo đạc thời gian phản hồi API và thời gian hội tụ của CP-SAT Pareto Solver trên tập dữ liệu thực nghiệm.
 
 \section*{5. Cấu trúc của đồ án}
 
-Đồ án được bố cục logic thành 4 chương chính:
+Đồ án được bố cục thành 4 chương:
 
-\textbf{Chương 1: Tổng quan lý thuyết và Cơ sở nghiên cứu} --- Trình bày đặc thù quản lý dự án logistics, lý thuyết sơ đồ mạng AON/CPM, bài toán RCPSP, mô hình tài chính EVM, cơ sở lý thuyết về Mạng nơ-ron Đồ thị Dị thể HGT và Học tự giám sát.
+\textbf{Chương 1: Tổng quan lý thuyết và Cơ sở nghiên cứu} --- Trình bày lý thuyết đồ thị ứng dụng trong quản lý dự án (AON-DAG, CPM), bài toán RCPSP và phân lớp NP-hard, mô hình tài chính 7 nhóm chi phí, cơ sở lý thuyết HGT và Masked Autoencoder, phương pháp Monte Carlo CPM.
 
-\textbf{Chương 2: Kiến trúc Hệ thống và Phương pháp luận đề xuất} --- Trình bày thiết kế kiến trúc vi dịch vụ, lược đồ CSDL PostgreSQL, thuật toán truy vấn Recursive CTE, đường ống học máy PyTorch Geometric HGT, bộ giải CP-SAT và hạ tầng Docker.
+\textbf{Chương 2: Kiến trúc Hệ thống và Phương pháp luận đề xuất} --- Trình bày thiết kế kiến trúc vi dịch vụ, lược đồ cơ sở dữ liệu PostgreSQL, luồng AI Pipeline 5 bước (HeteroGraph -- HGT -- Monte Carlo -- CP-SAT -- Pareto), giao diện người dùng React/Vite và hạ tầng Docker.
 
-\textbf{Chương 3: Kết quả Thực nghiệm và Thảo luận} --- Phân tích toàn bộ dữ liệu thực nghiệm định lượng trên dự án C2012-04 bao gồm độ trễ truy vấn CTE, bộ nhớ RAM/VRAM tiêu thụ, kết quả làm mịn tài nguyên, đường cong Pareto CP-SAT, độ chính xác mô hình AI ($R^2$, MAE, RMSE) và khả năng giải thích bằng Attention Heatmap.
+\textbf{Chương 3: Kết quả Thực nghiệm và Thảo luận} --- Trình bày kết quả đánh giá định lượng trên dự án C2012-04: độ chính xác dự báo của HGT (Duration Factor, Expected Delay), phân phối xác suất trễ từ Monte Carlo CPM, tập phương án Pareto (makespan\_hours, total\_cost, risk\_pct) và thời gian hội tụ của bộ giải.
 
-\textbf{Chương 4: Kết luận và Hướng phát triển} --- Tổng kết các đóng góp định lượng về mặt lý luận và thực tiễn kỹ thuật của đề tài, phân tích hạn chế nội tại và đề xuất 3 hướng nghiên cứu nâng cấp bao gồm LNS/CP-SAT, kiến trúc Graphormer và mở rộng dữ liệu thời gian thực.
+\textbf{Chương 4: Kết luận và Hướng phát triển} --- Tổng kết đóng góp kỹ thuật, phân tích hạn chế và đề xuất hướng mở rộng (tích hợp dữ liệu thời gian thực, hỗ trợ đa dự án song song, thay thế CP-SAT bằng LNS).
