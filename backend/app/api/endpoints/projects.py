@@ -170,7 +170,7 @@ async def run_simulation_api(
     
     # Ném tiến trình chạy Python script xuống Background
     # Chuyển project_type xuống cho AI
-    background_tasks.add_task(run_simulation_background, str(project_id), project.type or "Logistics")
+    background_tasks.add_task(run_simulation_background, str(project_id), project.project_type or "Logistics")
     
     return APIResponse(
         success=True, 

@@ -187,7 +187,9 @@ class HGTTaskPredictor(nn.Module):
         edge_types = [
             ('task', 'precedes', 'task'),
             ('task', 'uses', 'resource'),
-            ('task', 'constrained_by', 'shift')
+            ('resource', 'rev_uses', 'task'),
+            ('task', 'constrained_by', 'shift'),
+            ('shift', 'rev_constrained_by', 'task')
         ]
         self.metadata = (node_types, edge_types)
         

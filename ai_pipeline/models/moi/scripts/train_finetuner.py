@@ -1,5 +1,9 @@
 import os
 import sys
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 import shutil
 import json
 import numpy as np
@@ -338,6 +342,8 @@ def train_finetuner(
                 best_val_r2 = avg_val_r2
                 best_val_mse = avg_val_mse
                 patience_counter = 0
+                fold_model_path = os.path.join(moi_dir, checkpoint_dir, f"hgt_fold{fold+1}.pt")
+                torch.save(model.state_dict(), fold_model_path)
             else:
                 patience_counter += 1
                 if patience_counter >= patience:

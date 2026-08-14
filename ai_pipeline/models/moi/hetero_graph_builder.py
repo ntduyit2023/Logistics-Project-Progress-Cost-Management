@@ -104,7 +104,7 @@ class HeteroGraphBuilder:
         # --- NÚT 2: RESOURCE NODES (6 Features) ---
         res_features = []
         for idx, row in res_df.iterrows():
-            r_id = str(row['ID'])
+            r_id = str(row['name']) # SỬA LỖI: Dùng cột 'name' thay vì 'ID' vì task_resources.csv dùng tên tài nguyên
             self.resource_id_map[r_id] = idx
             
             unit_cost = float(row['unit_cost'])
@@ -219,6 +219,10 @@ class HeteroGraphBuilder:
         data['task', 'uses', 'resource'].edge_index = torch.tensor([t_src, r_dst], dtype=torch.long) if t_src else torch.zeros((2, 0), dtype=torch.long)
         data['task', 'uses', 'resource'].edge_attr = torch.tensor(req_qty, dtype=torch.float32) if req_qty else torch.zeros((0, 1), dtype=torch.float32)
 
+        # --- CẠNH TƯƠNG PHẢN: RESOURCE -> REV_USES -> TASK ---
+        data['resource', 'rev_uses', 'task'].edge_index = torch.tensor([r_dst, t_src], dtype=torch.long) if t_src else torch.zeros((2, 0), dtype=torch.long)
+        data['resource', 'rev_uses', 'task'].edge_attr = torch.tensor(req_qty, dtype=torch.float32) if req_qty else torch.zeros((0, 1), dtype=torch.float32)
+
         # --- CẠNH 3: TASK CONSTRAINED BY SHIFT ('task', 'constrained_by', 'shift') ---
         t_indices, shift_indices, shift_edge_attrs = [], [], []
         num_shifts = len(shift_features)
@@ -258,5 +262,9 @@ class HeteroGraphBuilder:
                 
         data['task', 'constrained_by', 'shift'].edge_index = torch.tensor([t_indices, shift_indices], dtype=torch.long) if t_indices else torch.zeros((2, 0), dtype=torch.long)
         data['task', 'constrained_by', 'shift'].edge_attr = torch.tensor(shift_edge_attrs, dtype=torch.float32) if shift_edge_attrs else torch.zeros((0, 3), dtype=torch.float32)
+        
+        # --- CẠNH TƯƠNG PHẢN: SHIFT -> REV_CONSTRAINED_BY -> TASK ---
+        data['shift', 'rev_constrained_by', 'task'].edge_index = torch.tensor([shift_indices, t_indices], dtype=torch.long) if t_indices else torch.zeros((2, 0), dtype=torch.long)
+        data['shift', 'rev_constrained_by', 'task'].edge_attr = torch.tensor(shift_edge_attrs, dtype=torch.float32) if shift_edge_attrs else torch.zeros((0, 3), dtype=torch.float32)
         
         return data

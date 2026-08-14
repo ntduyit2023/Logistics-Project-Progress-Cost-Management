@@ -44,34 +44,34 @@ class SimulationEventManager:
 simulation_event_manager = SimulationEventManager()
 
 async def _export_project_data(project_id: str, db_session: AsyncSession, base_dir: str):
-    processed_dir = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id))
+    processed_dir = os.path.join(base_dir, "ai_pipeline", "data", "production", str(project_id))
     # Safety: if a file (not directory) exists at this path, remove it to prevent FileExistsError
     if os.path.exists(processed_dir) and not os.path.isdir(processed_dir):
         os.remove(processed_dir)
     os.makedirs(processed_dir, exist_ok=True)
     
-    tasks_query = text(f"SELECT * FROM tasks WHERE project_id = {project_id}")
+    tasks_query = text(f"SELECT * FROM tasks WHERE project_id = '{project_id}'")
     tasks_res = await db_session.execute(tasks_query)
     df_tasks = pd.DataFrame(tasks_res.mappings().all())
     if df_tasks.empty:
         df_tasks = pd.DataFrame(columns=['id', 'task_name'])
     df_tasks.to_csv(os.path.join(processed_dir, 'tasks.csv'), index=False)
     
-    logic_query = text(f"SELECT predecessor_id as predecessor_task_id, successor_id as successor_task_id, dependency_type, lag_days FROM project_constraint_logic WHERE project_id = {project_id}")
+    logic_query = text(f"SELECT predecessor_id, successor_id, dependency_type, lag_hours FROM task_logic WHERE project_id = '{project_id}'")
     logic_res = await db_session.execute(logic_query)
     df_logic = pd.DataFrame(logic_res.mappings().all())
     if df_logic.empty:
-        df_logic = pd.DataFrame(columns=['predecessor_task_id', 'successor_task_id', 'dependency_type', 'lag_days'])
-    df_logic.to_csv(os.path.join(processed_dir, 'predecessors.csv'), index=False)
+        df_logic = pd.DataFrame(columns=['predecessor_id', 'successor_id', 'dependency_type', 'lag_hours'])
+    df_logic.to_csv(os.path.join(processed_dir, 'logic.csv'), index=False)
     
-    res_query = text(f"SELECT id as \"ID\", resource_name, resource_type, cost_per_unit as unit_cost, max_availability as capacity FROM project_constraint_resource WHERE project_id = {project_id}")
+    res_query = text(f"SELECT id as \"ID\", name, type, unit_cost, max_availability FROM resources WHERE project_id = '{project_id}'")
     res_res = await db_session.execute(res_query)
     df_res = pd.DataFrame(res_res.mappings().all())
     if df_res.empty:
-        df_res = pd.DataFrame(columns=['ID', 'resource_name', 'resource_type', 'unit_cost', 'capacity'])
+        df_res = pd.DataFrame(columns=['ID', 'name', 'type', 'unit_cost', 'max_availability'])
     df_res.to_csv(os.path.join(processed_dir, 'resources.csv'), index=False)
     
-    tr_query = text(f"SELECT tr.task_id, tr.resource_id, tr.request_quantity FROM task_resources tr JOIN tasks t ON tr.task_id = t.id WHERE t.project_id = {project_id}")
+    tr_query = text(f"SELECT tr.task_id, tr.resource_id, tr.request_quantity FROM task_resources tr JOIN tasks t ON tr.task_id = t.task_id WHERE t.project_id = '{project_id}'")
     tr_res = await db_session.execute(tr_query)
     df_tr = pd.DataFrame(tr_res.mappings().all())
     if df_tr.empty:
@@ -80,7 +80,7 @@ async def _export_project_data(project_id: str, db_session: AsyncSession, base_d
 
     # Export project_meta.json with DB type mapping (ITLG, CON, PRO)
     try:
-        proj_query = text(f"SELECT type FROM projects WHERE id = {project_id}")
+        proj_query = text(f"SELECT project_type FROM projects WHERE id = '{project_id}'")
         proj_res = await db_session.execute(proj_query)
         proj_row = proj_res.fetchone()
         db_type = (proj_row[0] if proj_row and proj_row[0] else 'ITLG').upper()
@@ -107,12 +107,12 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
     Hàm chạy ngầm quá trình giả lập AI (Optimal Simulation)
     Gọi script ai_pipeline/src/pipeline_runners/run_main.py
     """
-    p_id = int(project_id)
+    p_id = project_id
     simulation_event_manager.publish(p_id, {"status": "Simulating", "message": "Đang chuẩn bị dữ liệu giả lập AI..."})
     
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
-    ai_script_path = os.path.join(base_dir, "ai_pipeline", "src", "pipeline_runners", "run_main.py")
-    output_file = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id), f"output_{project_id}_main.json")
+    ai_script_path = os.path.join(base_dir, "ai_pipeline", "models", "moi", "pipeline_runner.py")
+    output_file = os.path.join(base_dir, "ai_pipeline", "data", "production", str(project_id), f"output_{project_id}_main.json")
     
     await _export_project_data(project_id, db_session, base_dir)
     simulation_event_manager.publish(p_id, {"status": "Simulating", "message": "Khởi tạo tiến trình Python AI..."})
@@ -182,18 +182,9 @@ async def _run_ai_pipeline(project_id: str, project_type: str, db_session: Async
             await _restore_project_status(project_id, db_session, "Error", error_msg=str(e))
         except Exception as e2:
             print(f"❌ Could not restore status: {e2}")
-    finally:
-        import shutil
-        temp_dir = os.path.join(base_dir, "ai_pipeline", "data", "processed", str(project_id))
-        if os.path.exists(temp_dir):
-            try:
-                shutil.rmtree(temp_dir)
-                print(f"🧹 Cleaned up temporary directory: {temp_dir}")
-            except Exception as cleanup_error:
-                print(f"⚠️ Error cleaning up temporary directory {temp_dir}: {cleanup_error}")
 
 async def _restore_project_status(project_id: str, db_session: AsyncSession, status: str, error_msg: str = None):
-    p_id = int(project_id)
+    p_id = project_id
     project = await db_session.get(AppProject, p_id)
     if project:
         project.status = status

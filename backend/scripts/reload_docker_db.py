@@ -189,7 +189,7 @@ async def reload_docker_database_rigorous():
                     r_cap = float(r_row.get(r_cap_col, 10.0) or 10.0)
                     
                     res_r = await conn.execute(
-                        text("INSERT INTO resources (project_id, resource_id, name, type, unit_cost, max_availability, energy, overtime_multi, max_overtime_per_day, created_at, updated_at) VALUES (:p_id, :r_id, :r_name, :r_type, :r_cost, :r_cap, 0.0, 1.5, 4.0, NOW(), NOW()) RETURNING id"),
+                        text("INSERT INTO resources (project_id, resource_id, name, type, unit_cost, max_availability, energy, overtime_multi, max_overtime_per_day, addres_efficiency, created_at, updated_at) VALUES (:p_id, :r_id, :r_name, :r_type, :r_cost, :r_cap, 0.0, 1.5, 4.0, 1.0, NOW(), NOW()) RETURNING id"),
                         {"p_id": p_id, "r_id": orig_r_id, "r_name": r_name, "r_type": r_type, "r_cost": r_cost, "r_cap": r_cap}
                     )
                     db_r_id = res_r.fetchone()[0]
