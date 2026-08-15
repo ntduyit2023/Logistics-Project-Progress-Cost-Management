@@ -254,7 +254,7 @@ Kết quả hội tụ của 10.000 kịch bản ngẫu nhiên cho dự án C201
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\linewidth]{image/hinh3_9_monte_carlo_cdf.png}
+\includegraphics[width=0.85\linewidth]{image/cdf_risk.png}
 \caption{Đường cong phân phối tích lũy CDF mô phỏng Monte Carlo CPM (10.000 vòng lặp, Dự án C2012-04)}
 \label{fig:hinh3_9_monte_carlo_cdf}
 \end{figure}
@@ -343,20 +343,148 @@ Phân tích định lượng sự dịch chuyển từ tiến độ nền sang t
 Hệ thống AI không thay thế con người ra quyết định, mà nó cung cấp một bản đồ không gian nghiệm định lượng tuyệt đối, giúp Ban Giám đốc nhìn thấu mọi ngóc ngách của sự đánh đổi để chọn ra chiến lược tối ưu nhất.
 
 % ==========================================
-% 3.5. BÀN LUẬN VÀ HẠN CHẾ
+% 3.5. HIỆN THỰC HỆ THỐNG VÀ GIAO DIỆN ỨNG DỤNG THỰC TẾ
+% ==========================================
+\section{Hiện thực Hệ thống và Giao diện Ứng dụng Thực tế}
+\label{sec:3.5_he_thong_giao_dien}
+
+Để chuyển giao các mô hình toán học và thuật toán AI thành công cụ thực tiễn có khả năng tương tác trực quan, nhóm nghiên cứu đã xây dựng nền tảng phần mềm GLPO (Graph-Based Logistics Project Optimizer). Hệ thống được đóng gói hoàn chỉnh theo kiến trúc vi dịch vụ với giao diện web hiện đại (React/Vite kết hợp TailwindCSS, React Flow và Chart.js) và tầng xử lý nghiệp vụ Backend (FastAPI, PostgreSQL, PyTorch Geometric, OR-Tools CP-SAT). 
+
+Quy trình trải nghiệm và điều hành của người dùng trên nền tảng được thiết kế xuyên suốt qua 4 phân hệ chức năng chính:
+
+\subsection{Quản trị Danh mục và Khởi tạo Dự án}
+\label{sec:3.5.1_portfolio_overview}
+
+Hệ thống hỗ trợ quản trị đa dự án ở cấp độ danh mục (Portfolio Management), cung cấp cái nhìn toàn diện về phân bổ nguồn vốn và tiến độ tổng thể của toàn bộ doanh nghiệp (Hình \ref{fig:ui_portfolio_group}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/2.jpg}
+        \caption{Dashboard phân tích danh mục (Analytics)}
+        \label{fig:ui_portfolio_analytics}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/3.jpg}
+        \caption{Quản lý danh sách dự án (Workspace)}
+        \label{fig:ui_projects_workspace}
+    \end{subfigure}
+    \vspace{0.2cm}
+    \begin{subfigure}[b]{0.99\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/1.jpg}
+        \caption{Màn hình tổng quan và Biểu đồ Gantt cơ sở dự án C2012-04 trước tối ưu}
+        \label{fig:ui_project_baseline}
+    \end{subfigure}
+    \caption{Giao diện quản trị danh mục và tổng quan dự án cơ sở ban đầu}
+    \label{fig:ui_portfolio_group}
+\end{figure}
+
+Giao diện Dashboard (Hình \ref{fig:ui_portfolio_analytics}) tổng hợp toàn bộ 5 dự án hoạt động trong hệ thống với 622 công việc, mật độ kết nối trung bình 0,0251 và tổng giá trị danh mục đạt \$226,8M. Biểu đồ cột phân tích so sánh chi phí cơ sở (Base Cost) và chi phí thực tế theo thang đo logarit giúp phát hiện nhanh các dự án có quy mô đột biến. Không gian làm việc tại Hình \ref{fig:ui_projects_workspace} hiển thị trực quan các thẻ dự án kèm trạng thái lập lịch (Planning). Khi truy cập vào dự án C2012-04 Asti-Cuneo Highway (Hình \ref{fig:ui_project_baseline}), hệ thống hiển thị 4 chỉ số cốt lõi (67 công việc, 84 liên kết, thời gian ước tính 2.486h, chi phí cơ sở \$9.947,5k) cùng biểu đồ Gantt cơ sở ban đầu.
+
+\subsection{Phân tích Rủi ro và Bản sao Số Đồ thị Mạng lưới}
+\label{sec:3.5.2_risk_dag}
+
+Nhằm hỗ trợ nhà quản trị nhận diện sớm các nguy cơ trễ hạn và thắt cổ chai dòng chảy công việc, phân hệ Phân tích và Bản sao số tích hợp các công cụ trực quan hóa thời gian thực (Hình \ref{fig:ui_risk_and_dag}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/11.jpg}
+        \caption{Đường cong S-Curve và Phân phối Monte Carlo}
+        \label{fig:ui_analysis_interactive}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/6.jpg}
+        \caption{Mạng lưới đồ thị kỹ thuật số (DAG React Flow)}
+        \label{fig:ui_digital_twin_dag}
+    \end{subfigure}
+    \caption{Giao diện phân tích rủi ro tài chính - tiến độ và bản sao số đồ thị mạng lưới}
+    \label{fig:ui_risk_and_dag}
+\end{figure}
+
+Tại Hình \ref{fig:ui_analysis_interactive}, đồ thị Financial S-Curve biểu diễn tiến trình giải ngân tích lũy song song với phân phối xác suất Monte Carlo, cho phép tra cứu tương tác xác suất hoàn thành tại từng mốc thời gian (đạt 60,3\% tại mốc 1.783 giờ). Song song đó, Hình \ref{fig:ui_digital_twin_dag} mô phỏng cấu trúc phụ thuộc của dự án dưới dạng đồ thị có hướng không chu trình (DAG) tương tác, cho phép người dùng kéo thả và quan sát 4 chế độ can thiệp (Mode 0: Normal, Mode 1: Overtime, Mode 2: Add Resources, Mode 3: Hybrid) được gắn mã màu trực quan trên từng nút tác vụ.
+
+\subsection{Cấu hình Tham số và Trực quan hóa Đường biên Pareto}
+\label{sec:3.5.3_ai_execution_pareto}
+
+Người quản trị dự án có thể thiết lập các điều kiện biên và mục tiêu tối ưu, sau đó kích hoạt thuật toán và đối chiếu các phương án trên đường biên Pareto (Hình \ref{fig:ui_ai_and_pareto}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/7.jpg}
+        \caption{Cấu hình ràng buộc và tham số thuật toán}
+        \label{fig:ui_ai_config}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/8.jpg}
+        \caption{Đồ thị đường biên Pareto tương tác}
+        \label{fig:ui_pareto_chart}
+    \end{subfigure}
+    \vspace{0.2cm}
+    \begin{subfigure}[b]{0.99\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/9.jpg}
+        \caption{Bảng so sánh định lượng chi tiết 7 phương án đánh đổi Pareto}
+        \label{fig:ui_pareto_table}
+    \end{subfigure}
+    \caption{Giao diện cấu hình tham số AI Pipeline và kết quả tối ưu hóa đa mục tiêu Pareto}
+    \label{fig:ui_ai_and_pareto}
+\end{figure}
+
+Form cấu hình (Hình \ref{fig:ui_ai_config}) cho phép thiết lập Target Deadline (20/04/2013), tiền phạt trễ hạn (\$500/ngày), tiền thưởng hoàn thành sớm (\$100/ngày) và số vòng Monte Carlo (1.000 vòng). Sau khi kích hoạt nút \textbf{RUN AI PIPELINE}, hệ thống tự động suy luận và xuất ra đồ thị đường biên Pareto (Hình \ref{fig:ui_pareto_chart}) cùng bảng chi tiết 7 phương án (Hình \ref{fig:ui_pareto_table}): từ Phương án 1 (Makespan 2.021h, rủi ro trễ hạn 12,0\%, nhận thưởng \$1.912,5) đến Phương án 7 (Makespan 2.556h, rủi ro 48,5\%, chịu phạt \$36.895,8).
+
+\subsection{Phân rã Can thiệp Tác vụ và Biểu đồ Tiến độ Sau Tối ưu}
+\label{sec:3.5.4_task_crashing_gantt}
+
+Sau khi lựa chọn phương án tối ưu, hệ thống cho phép bóc tách chi tiết chiến lược can thiệp trên từng nút tác vụ găng và trực quan hóa tiến độ tổng thể mới (Hình \ref{fig:ui_solution_details}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/10.jpg}
+        \caption{Can thiệp CP-SAT trên nút WBS 66 (Retaining walls)}
+        \label{fig:ui_task_crashing}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{image/12.jpg}
+        \caption{Biểu đồ Gantt tổng thể sau khi tối ưu (Phương án 1)}
+        \label{fig:ui_post_gantt}
+    \end{subfigure}
+    \caption{Chi tiết quyết định can thiệp cục bộ và biểu đồ Gantt tiến độ sau khi tối ưu hóa}
+    \label{fig:ui_solution_details}
+\end{figure}
+
+Tại Hình \ref{fig:ui_task_crashing}, khi nhấp chọn công việc găng WBS 66 (Retaining walls), hệ thống hiển thị chi tiết chiến lược can thiệp Hybrid: thời lượng giảm từ 9h xuống 4,5h nhờ bổ sung +5 nhân công (+\$1.500) và tăng ca +4h OT/ngày (+\$150), tổng chi phí can thiệp là \$1.650. Hình \ref{fig:ui_post_gantt} minh chứng kết quả toàn diện của dự án sau khi áp dụng phương án 1: Makespan rút ngắn từ 2.486h xuống còn 2.021h (giảm 21,1\%), các công việc được tăng tốc hiển thị biểu tượng tia sét vàng trực quan trên biểu đồ Gantt.
+
+% ==========================================
+% 3.6. BÀN LUẬN VÀ HẠN CHẾ
 % ==========================================
 \section{Bàn luận và Hạn chế}
-\label{sec:3.5_ban_luan}
+\label{sec:3.6_ban_luan}
 
 \subsection{Tính hiệu quả của phân ly 38 loại chi phí vi mô trong Logistics}
-\label{sec:3.5.1_chi_phi_logistics}
+\label{sec:3.6.1_chi_phi_logistics}
 
 Hầu hết các nghiên cứu trước đây về bài toán Đánh đổi Thời gian - Chi phí (TCTP) thường sử dụng phương pháp gộp, định nghĩa một biến "Chi phí chung" (Overhead Cost) tuyến tính đơn giản. Ngược lại, hệ thống GLPO đã đột phá bằng cách phân ly cấu trúc tài chính thành 38 đặc trưng chi phí vi mô – từ Chi phí Cơ hội, Lưu kho đến Phạt chậm doanh thu và Chi phí Nhàn rỗi.
 
 Dưới góc độ học máy, sự phân rã này cung cấp một không gian đặc trưng có độ phân giải cực cao. Nó cho phép mạng nơ-ron đồ thị HGT không chỉ học được mức độ khẩn cấp về mặt thời gian, mà còn nhúng được mức độ nhạy cảm kinh tế của từng công việc vào trong các vector biểu diễn. Nhờ tín hiệu định hướng đa chiều này, bộ giải CP-SAT đã thoát khỏi việc ép tiến độ mù quáng. Thay vào đó, hệ thống có khả năng thực hiện các quyết định đánh đổi tinh vi, ví dụ: chủ động chấp nhận rủi ro kéo dài thời gian lưu bãi một vài ngày để né tránh hoàn toàn khoản phạt đứt gãy chuỗi cung ứng khổng lồ. Điều này tạo ra một lợi thế kinh tế vượt trội so với các mô hình kinh điển.
 
 \subsection{Hạn chế: Điểm nghẽn Toán học khi Bùng nổ Tổ hợp (Combinatorial Explosion)}
-\label{sec:3.5.2_han_che_cpsat}
+\label{sec:3.6.2_han_che_cpsat}
 
 Dù đạt được những thành tựu định lượng ấn tượng, hệ thống vẫn phải đối mặt với điểm yếu chí tử mang tính nền tảng của Vận trù học. Bài toán lập lịch dự án có ràng buộc tài nguyên (RCPSP) đã được khoa học chứng minh là thuộc lớp NP-Hard. Kích thước không gian trạng thái tìm kiếm của bài toán gia tăng theo hàm mũ $O(c^{|V|})$ tương ứng với số đỉnh $|V|$ (tổng số công việc).
 

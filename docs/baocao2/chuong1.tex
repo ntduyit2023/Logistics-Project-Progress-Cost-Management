@@ -229,12 +229,12 @@ Phương pháp Đường găng (CPM) \cite{trietsch1993pert} là xương sống 
     \end{equation}
 \end{enumerate}
 
-Thời gian dự trữ của công việc được xác định bởi:
+Dự trữ thời gian tổng (Total Float) của công việc, hay còn gọi là thời gian nới lỏng ($\mathrm{TF}$), được xác định bởi:
 \begin{equation}
-    \mathrm{Slack}_i = \mathrm{LS}_i - \mathrm{ES}_i = \mathrm{LF}_i - \mathrm{EF}_i
+    \mathrm{TF}_i = \mathrm{LS}_i - \mathrm{ES}_i = \mathrm{LF}_i - \mathrm{EF}_i
 \end{equation}
 
-Đường găng là chuỗi các công việc liên tục từ khi bắt đầu đến khi kết thúc dự án có độ dự trữ bằng 0 ($\mathrm{Slack} = 0$). Bất kỳ sự chậm trễ nào trên đường găng đều trực tiếp làm chậm toàn bộ dự án.
+Đường găng là chuỗi các công việc liên tục từ khi bắt đầu đến khi kết thúc dự án có độ dự trữ bằng 0 ($\mathrm{TF} = 0$). Bất kỳ sự chậm trễ nào trên đường găng đều trực tiếp làm chậm toàn bộ dự án.
 
 \begin{figure}[H]
     \centering
@@ -304,10 +304,10 @@ Bài toán Lập lịch Dự án có Ràng buộc Tài nguyên (RCPSP) \cite{kol
 \end{itemize}
 Mục tiêu của RCPSP là tìm ra một lịch trình khả thi giảm thiểu thời gian hoàn thành sao cho tại bất kỳ thời điểm $t$ nào, tổng lượng tài nguyên $k$ được tiêu thụ không vượt quá năng lực tối đa $R_k$.
 
-\subsection{Tối ưu Ép tiến độ (Crashing) bằng Bộ giải Constraint Programming (CP-SAT)}
+\subsection{Tối ưu hóa Ép tiến độ bằng Bộ giải Quy hoạch Ràng buộc (CP-SAT)}
 Ép tiến độ là kỹ thuật nén thời gian thực thi của dự án bằng cách bơm thêm tài nguyên (làm thêm giờ, thuê thêm nhân công, sử dụng thiết bị năng suất cao) vào các công việc nằm trên Đường găng. Việc nén thời gian đồng nghĩa với sự gia tăng chi phí trực tiếp. Mối quan hệ đánh đổi Thời gian - Chi phí mang tính lồi, nghĩa là chi phí biên để giảm thêm một đơn vị thời gian sẽ ngày càng đắt đỏ.
 
-Thay vì sử dụng các thuật toán Crashing thủ công tĩnh, hệ thống xây dựng mô hình quy hoạch toán học tối ưu hóa tổ hợp và giải quyết bằng bộ giải CP-SAT (Constraint Programming) thuộc bộ công cụ Google OR-Tools \cite{ortools2019}.
+Thay vì sử dụng các thuật toán ép tiến độ thủ công tĩnh, hệ thống xây dựng mô hình quy hoạch toán học tối ưu hóa tổ hợp và giải quyết bằng bộ giải Quy hoạch Ràng buộc (CP-SAT) thuộc bộ công cụ Google OR-Tools \cite{ortools2019}.
 
 Các biến quyết định chính bao gồm:
 \begin{itemize}
@@ -340,10 +340,10 @@ Hệ thống ràng buộc toán học được thiết lập chặt chẽ bao g�
 
 Bốn chế độ thi công thực tế được xây dựng linh hoạt bao gồm:
 \begin{itemize}
-    \item \textbf{Chế độ Tiêu chuẩn (Normal - Mode 0):} Không ép tiến độ, giữ nguyên cấu hình và chi phí ban đầu. Hệ số điều chỉnh rủi ro $\gamma_0 = 1.0$.
-    \item \textbf{Chế độ Tăng ca (Overtime - Mode 1):} Tăng giờ làm việc trong ngày (giới hạn bởi $max\_overtime\_per\_day$). Thời lượng giảm, chi phí tăng do tiền lương tăng ca ($ot\_premium$). Hệ số rủi ro $\gamma_1 = 0.75$ (việc giảm thời lượng thực thi làm giảm khả năng trễ hạn chung, tuy nhiên áp lực làm thêm giờ có thể tạo ra rủi ro sai sót nhỏ).
-    \item \textbf{Chế độ Thêm tài nguyên (AddRes - Mode 2):} Tăng cường nhân sự hoặc thiết bị từ bể tài nguyên khả dụng (được ưu tiên điều phối dựa trên điểm chú ý AI Attention chập không gian của HGT). Thời lượng giảm dựa trên hiệu năng đóng góp $\eta_{\text{addres}} = 0.7$ (do hao hụt hiệu suất khi phối hợp mới), chi phí tăng do thuê ngoài. Hệ số rủi ro $\gamma_2 = 0.85$ do xuất hiện rủi ro quản trị khi ghép nhóm nhân sự mới.
-    \item \textbf{Chế độ Lai (Hybrid - Mode 3):} Kết hợp cả tăng ca và bổ sung tài nguyên để nén thời gian tối đa. Chi phí tăng cao nhất. Hệ số rủi ro $\gamma_3 = 0.90$ do tích tụ cả sự mệt mỏi nhân sự và áp lực điều phối lớn.
+    \item \textbf{Chế độ Tiêu chuẩn ($m=0$):} Không ép tiến độ, giữ nguyên cấu hình và chi phí ban đầu. Hệ số điều chỉnh rủi ro $\gamma_0 = 1.0$.
+    \item \textbf{Chế độ Tăng ca ($m=1$):} Tăng giờ làm việc trong ngày (giới hạn bởi \texttt{max\_overtime\_per\_day}). Thời lượng giảm, chi phí tăng do tiền lương tăng ca. Hệ số rủi ro $\gamma_1 = 0.75$ (việc giảm thời lượng thực thi làm giảm khả năng trễ hạn chung, tuy nhiên áp lực làm thêm giờ có thể tạo ra rủi ro sai sót nhỏ).
+    \item \textbf{Chế độ Bổ sung Nguồn lực ($m=2$):} Tăng cường nhân sự hoặc thiết bị từ bể tài nguyên khả dụng (được ưu tiên điều phối dựa trên điểm chú ý chập không gian của HGT). Thời lượng giảm dựa trên hiệu năng đóng góp $\eta_{\text{addres}} = 0.7$ (do hao hụt hiệu suất khi phối hợp mới), chi phí tăng do thuê ngoài. Hệ số rủi ro $\gamma_2 = 0.85$ do xuất hiện rủi ro quản trị khi ghép nhóm nhân sự mới.
+    \item \textbf{Chế độ Kết hợp ($m=3$):} Kết hợp cả tăng ca và bổ sung tài nguyên để nén thời gian tối đa. Chi phí tăng cao nhất. Hệ số rủi ro $\gamma_3 = 0.90$ do tích tụ cả sự mệt mỏi nhân sự và áp lực điều phối lớn.
 \end{itemize}
 
 Hàm mục tiêu đa mục tiêu cần tối thiểu hóa được định nghĩa như sau:
@@ -408,8 +408,43 @@ Khi đồng thời tối ưu hóa nhiều mục tiêu xung đột lẫn nhau (nh
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{../image/pareto_frontier.png}
-    \caption{Biểu đồ mô tả Đường biên Pareto trong không gian Đa mục tiêu.}
+    \begin{tikzpicture}[>=latex]
+        \begin{axis}[
+            width=10cm,
+            height=7cm,
+            axis lines=left,
+            xlabel={Thời gian},
+            ylabel={Chi phí},
+            xmin=0, xmax=10,
+            ymin=0, ymax=10,
+            xtick=\empty,
+            ytick=\empty,
+            clip=false,
+            label style={font=\sffamily\bfseries}
+        ]
+            
+            % The Pareto Frontier Curve
+            \addplot[domain=2:8, samples=50, ultra thick, teal!80!black] {16/x};
+            
+            % Optimal Pareto Points
+            \node[circle, fill=teal!80!black, inner sep=2pt] (P1) at (2, 8) {};
+            \node[circle, fill=teal!80!black, inner sep=2pt] (P2) at (4, 4) {};
+            \node[circle, fill=teal!80!black, inner sep=2pt] (P3) at (8, 2) {};
+            
+            % Sub-optimal (Dominated) Points
+            \node[circle, fill=red!80!black, inner sep=2pt] (D1) at (5, 6) {};
+            \node[circle, fill=red!80!black, inner sep=2pt] (D2) at (7, 4) {};
+            \node[circle, fill=red!80!black, inner sep=2pt] (D3) at (4, 8) {};
+            
+            % Labels
+            \node[above right=1mm of P2, font=\sffamily\small, text=teal!80!black] {Tập nghiệm Không bị chi phối};
+            \node[above right=1mm of D1, font=\sffamily\small, text=red!80!black] {Tập nghiệm Bị chi phối};
+            
+            \draw[->, thick, gray, dashed] (D1) -- (P2) node[midway, below left, font=\sffamily\scriptsize, text=gray] {Cải thiện};
+
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Biểu đồ minh họa khái niệm Đường biên Pareto trong không gian đa mục tiêu.}
     \label{fig:1.6}
 \end{figure}
 Tập hợp tất cả các nghiệm tối ưu này tạo thành Đường biên Pareto, cho phép nhà quản trị dự án quan sát được các phương án đánh đổi để ra quyết định dựa trên mức độ chấp nhận rủi ro và ngân sách khả dụng.
@@ -487,15 +522,15 @@ Dựa trên tốc độ tiêu hao hiện tại, EVM cung cấp công thức ngo�
 \end{equation}
 Trong đó, $\mathrm{BAC}$ là tổng ngân sách ban đầu, và $\mathrm{EAC}$ là tổng chi phí dự kiến mới. Khoản tiền cần bơm thêm để hoàn thành dự án là $\mathrm{ETC} = \mathrm{EAC} - \mathrm{AC}$.
 
-\subsection{Mô hình 6 Nhóm Chi phí Đặc trưng (Group 1 - Group 6)}
+\subsection{Mô hình 6 Nhóm Chi phí Đặc trưng}
 Khác với EVM truyền thống thường quy đổi giản lược, hệ thống GLPO áp dụng mô hình phân tách cấu trúc 38 cột chi phí thành 6 nhóm đặc trưng để phản ánh đầy đủ dòng tiền thực tế của dự án logistics:
 \begin{itemize}
-    \item \textbf{Group 1 - Chi phí Nguồn lực (Resource Costs):} Nhân công (\texttt{labor}), nguyên vật liệu (\texttt{material}), thiết bị (\texttt{equipment}), năng lượng (\texttt{energy}), kiểm định (\texttt{testing\_inspection}), và quản trị dự án (\texttt{project\_management}).
-    \item \textbf{Group 2 - Chi phí Quản lý chung (Overhead Costs):} Cơ sở vật chất (\texttt{facility}), tiện ích (\texttt{utilities}), truyền thông (\texttt{communication}), đào tạo (\texttt{training}), và quản lý chất lượng (\texttt{quality\_management}).
-    \item \textbf{Group 3 - Chi phí Phụ thuộc Thời gian (Time-dependent Costs):} Tăng ca (\texttt{overtime}), phạt trễ hạn (\texttt{delay\_penalty}), lưu kho (\texttt{inventory\_holding}), chờ đợi (\texttt{waiting\_cost}), tài nguyên nhàn rỗi (\texttt{idle\_resource}), tổn thất doanh thu do trễ (\texttt{revenue\_delay}), và đẩy nhanh tiến độ (\texttt{expediting}).
-    \item \textbf{Group 4 - Chi phí Rủi ro \& Tuân thủ (Risk \& Compliance Costs):} Bảo hiểm (\texttt{insurance}), làm lại (\texttt{rework}), bảo hành (\texttt{warranty}), tranh chấp (\texttt{litigation}), tuân thủ pháp lý (\texttt{regulatory\_compliance}), dự phòng phí (\texttt{contingency\_reserve}), và dự phòng quản lý (\texttt{management\_reserve}).
-    \item \textbf{Group 5 - Chi phí Hậu cần \& Bên ngoài (Supply Chain \& External Costs):} Vận chuyển (\texttt{transportation}), đặt hàng (\texttt{ordering}), đóng gói (\texttt{packaging}), hậu cần ngược (\texttt{reverse\_logistics}), hải quan (\texttt{customs}), và phối hợp nhà cung cấp (\texttt{supplier\_coordination}).
-    \item \textbf{Group 6 - Chi phí Chiến lược \& Tài chính (Strategic \& Financial Costs):} Chi phí cơ hội (\texttt{opportunity\_cost}), chi phí vốn (\texttt{capital\_cost}), chi phí tài chính (\texttt{financing\_cost}), tổn thất NPV (\texttt{npv\_loss}), chi phí ESG (\texttt{esg\_cost}), thuế carbon (\texttt{carbon\_tax}), và chi phí uy tín (\texttt{reputation\_cost}).
+    \item \textbf{Nhóm 1 - Chi phí Nguồn lực:} Nhân công (\texttt{labor}), nguyên vật liệu (\texttt{material}), thiết bị (\texttt{equipment}), năng lượng (\texttt{energy}), kiểm định (\texttt{testing\_inspection}), và quản trị dự án (\texttt{project\_management}).
+    \item \textbf{Nhóm 2 - Chi phí Quản lý chung:} Cơ sở vật chất (\texttt{facility}), tiện ích (\texttt{utilities}), truyền thông (\texttt{communication}), đào tạo (\texttt{training}), và quản lý chất lượng (\texttt{quality\_management}).
+    \item \textbf{Nhóm 3 - Chi phí Phụ thuộc Thời gian:} Tăng ca (\texttt{overtime}), phạt trễ hạn (\texttt{delay\_penalty}), lưu kho (\texttt{inventory\_holding}), chờ đợi (\texttt{waiting\_cost}), tài nguyên nhàn rỗi (\texttt{idle\_resource}), tổn thất doanh thu do trễ (\texttt{revenue\_delay}), và đẩy nhanh tiến độ (\texttt{expediting}).
+    \item \textbf{Nhóm 4 - Chi phí Rủi ro và Tuân thủ:} Bảo hiểm (\texttt{insurance}), làm lại (\texttt{rework}), bảo hành (\texttt{warranty}), tranh chấp (\texttt{litigation}), tuân thủ pháp lý (\texttt{regulatory\_compliance}), dự phòng phí (\texttt{contingency\_reserve}), và dự phòng quản lý (\texttt{management\_reserve}).
+    \item \textbf{Nhóm 5 - Chi phí Hậu cần và Bên ngoài:} Vận chuyển (\texttt{transportation}), đặt hàng (\texttt{ordering}), đóng gói (\texttt{packaging}), hậu cần ngược (\texttt{reverse\_logistics}), hải quan (\texttt{customs}), và phối hợp nhà cung cấp (\texttt{supplier\_coordination}).
+    \item \textbf{Nhóm 6 - Chi phí Chiến lược và Tài chính:} Chi phí cơ hội (\texttt{opportunity\_cost}), chi phí vốn (\texttt{capital\_cost}), chi phí tài chính (\texttt{financing\_cost}), tổn thất NPV (\texttt{npv\_loss}), chi phí ESG (\texttt{esg\_cost}), thuế carbon (\texttt{carbon\_tax}), và chi phí uy tín (\texttt{reputation\_cost}).
 \end{itemize}
 Cấu trúc này cho phép bộ giải CP-SAT tính toán chi phí tổng thể (\texttt{total\_cost}) cực kỳ chi tiết và sát với thực tế giải ngân tài chính của từng công việc.
 
@@ -636,13 +671,13 @@ Mô hình chi phí động thực hiện phân tách chi phí định mức thô
 \subsubsection{2. Công thức tính thời lượng và chi phí công việc theo các chế độ (Modes)}
 Các thông số thời lượng và chi phí của công việc được xác định động qua 4 chế độ thi công:
 
-\paragraph{Chế độ 0 (Tiêu chuẩn):}
+\paragraph{Chế độ Tiêu chuẩn ($m=0$):}
 Không ép tiến độ, giữ nguyên thời lượng và chi phí gốc của công việc:
 \begin{equation}
     d_{i, 0} = D_{i, \text{base}} \quad ; \quad C_{i, 0} = \text{base\_cost}_i
 \end{equation}
 
-\paragraph{Chế độ 1 (Tăng ca - Overtime):}
+\paragraph{Chế độ Tăng ca ($m=1$):}
 Thời lượng thi công $d_{i, 1}$ được rút ngắn bằng cách tăng thời gian làm việc hàng ngày thêm $\Delta_{\text{OT}}$ giờ:
 \begin{equation}
     d_{i, 1} = \max\left(1, \, \text{round}\left( \frac{D_{i, \text{base}} \cdot h_{\text{day}}}{h_{\text{day}} + \Delta_{\text{OT}}} \right)\right)
@@ -653,7 +688,7 @@ Trong đó $h_{\text{day}}$ là số giờ làm việc tiêu chuẩn một ngày
 \end{equation}
 Với $\lambda_{\text{ot}}$ là hệ số nhân lương làm thêm giờ (\texttt{overtime\_multiplier}).
 
-\paragraph{Chế độ 2 (Thêm tài nguyên - AddRes):}
+\paragraph{Chế độ Bổ sung Nguồn lực ($m=2$):}
 Bổ sung thêm một lượng tài nguyên $W_{\text{extra}, j}$ loại $j$ vào công việc. Năng lực thi công hiệu dụng mới của công việc là:
 \begin{equation}
     W_{\text{eff}, i} = W_{\text{base}, i} + \sum_{j} W_{\text{extra}, j} \cdot \eta_{\text{addres}, j}
@@ -668,7 +703,7 @@ Chi phí cho chế độ 2 bao gồm chi phí thuê tài nguyên bổ sung và c
 \end{equation}
 Trong đó $\text{fixed\_costs}_i = \text{base\_cost}_i - (\text{labor}_i + \text{equipment}_i + \text{energy}_i)$ là phần chi phí cố định không đổi, và hệ số $1.1$ đặc trưng cho phụ phí quản lý khi huy động tài nguyên thuê ngoài.
 
-\paragraph{Chế độ 3 (Lai - Hybrid):}
+\paragraph{Chế độ Kết hợp ($m=3$):}
 Kết hợp đồng thời cả tăng ca và bổ sung tài nguyên để nén tiến độ đến mức tối đa:
 \begin{equation}
     d_{i, 3} = \max\left(1, \, \text{round}\left( d_{i, 2} \cdot \frac{h_{\text{day}}}{h_{\text{day}} + \Delta_{\text{OT}}} \right)\right)
@@ -767,21 +802,21 @@ Mạng nơ-ron đồ thị (GNN) \cite{kipf_2017_gcn} hoạt động dựa trên
 \end{figure}
 
 \subsection{Mạng nơ-ron đồ thị dị thể (HGT)}
-Khác với đồ thị đồng thể chỉ có một loại nút, dự án logistics được biểu diễn thành đồ thị dị thể $G = (\mathcal{V}, \mathcal{E})$ với 3 loại nút $\mathcal{V} = \{\text{Task}, \text{Resource}, \text{Shift}\}$ và 3 loại cạnh quan hệ $\mathcal{E} = \{\text{precedes}, \text{uses}, \text{constrained\_by}\}$. 
+Khác với đồ thị đồng thể chỉ có một loại nút, dự án logistics được biểu diễn thành đồ thị dị thể $G = (\mathcal{V}, \mathcal{E})$ với 3 loại nút $\mathcal{V} = \{\text{Task}, \text{Resource}, \text{Shift}\}$ và 5 loại cạnh quan hệ $\mathcal{E} = \{\text{precedes}, \text{uses}, \text{constrained\_by}, \text{rev\_uses}, \text{rev\_constrained\_by}\}$. 
 
-Mạng nơ-ron đồ thị dị thể (HGT) \cite{hu2020hgt} giải quyết sự đa dạng này bằng cách chiếu các đặc trưng đầu vào có số chiều khác nhau về cùng một không gian ẩn ẩn số $d_{\text{model}} = 128$:
+Mạng nơ-ron đồ thị dị thể (HGT) \cite{hu2020hgt} giải quyết sự đa dạng này bằng cách chiếu các đặc trưng đầu vào có số chiều khác nhau về cùng một không gian ẩn số $d_{\text{model}} = 128$:
 \begin{equation}
     H_v^{(0)} = W_{\tau(v)} X_v + b_{\tau(v)}
 \end{equation}
 Trong đó $\tau(v)$ đại diện cho loại nút của đỉnh $v$, $W_{\tau(v)}$ và $b_{\tau(v)}$ là các tham số chiếu tuyến tính tương ứng.
 
-Mỗi tầng HGTConv áp dụng cơ chế tự chú ý dị thể Heterogeneous Mutual Attention để truyền thông tin qua các cạnh có quan hệ khác nhau:
+Mỗi tầng HGTConv áp dụng cơ chế tự chú ý dị thể tương hỗ (Heterogeneous Mutual Attention) để truyền thông tin qua các cạnh có quan hệ khác nhau:
 \begin{equation}
-    \text{Attention}(s, e, t) = \text{Softmax}\left(\bigoplus_{h=1}^{\text{heads}} \frac{Q_s^{(h)} \cdot R_{\psi(e)}^{(h)} \cdot (K_t^{(h)})^T}{\sqrt{d_{\text{head}}}}\right)
+    \text{Attention}(s, e, t) = \mathrm{Softmax}_{s \in \mathcal{N}(t)} \left( \bigoplus_{h=1}^{\text{heads}} \frac{{\mathbf{Q}_t^{(h)}}^\top \mathbf{K}_s^{(h)}}{\sqrt{d_{\text{head}}}} \cdot \mu_{\tau(s), \psi(e), \tau(t)} \right)
 \end{equation}
-Trong đó $Q_s^{(h)}$ là vector truy vấn (Query) của nút nguồn, $K_t^{(h)}$ là vector khóa (Key) của nút đích, và $R_{\psi(e)}^{(h)}$ là ma trận chú ý biểu diễn loại quan hệ cạnh $\psi(e)$.
+Trong đó $\mathbf{Q}_t^{(h)}$ là vector truy vấn (Query) của nút đích, $\mathbf{K}_s^{(h)}$ là vector khóa (Key) của nút nguồn, và $\mu_{\tau(s), \psi(e), \tau(t)}$ là trọng số học được biểu diễn loại quan hệ cạnh $\psi(e)$ giữa hai loại thực thể $\tau(s)$ và $\tau(t)$.
 
-Sau khi đi qua $2$ lớp HGTConv để luân chuyển thông điệp qua toàn bộ sơ đồ AON, hệ thống tổng hợp thông tin toàn dự án bằng cơ chế \textbf{Hybrid Readout Pooling (Mean + Max)} để thu thập ngữ cảnh toàn cục (Global Context):
+Sau khi đi qua $2$ lớp HGTConv để luân chuyển thông điệp qua toàn bộ sơ đồ AON, hệ thống tổng hợp thông tin toàn dự án bằng cơ chế gộp đọc lai (kết hợp trung bình và cực đại) để thu thập ngữ cảnh toàn cục (Global Context):
 \begin{equation}
     Z_{\text{global}} = \left[ \frac{1}{|V_{\text{task}}|} \sum_{v \in V_{\text{task}}} H_v^{(2)} \mathbin{\Vert} \max_{v \in V_{\text{task}}} H_v^{(2)} \right] \in \mathbb{R}^{2 \cdot d_{\text{model}}}
 \end{equation}
@@ -806,7 +841,7 @@ Ngữ cảnh toàn cục $Z_{\text{global}}$ sau đó được chập (concatena
     Độ lệch chuẩn $\widehat{\text{uncertainty\_sigma}}_v$ đặc trưng cho độ biến thiên của thời gian thi công thực tế do ảnh hưởng của môi trường.
 \end{enumerate}
 
-Bảng 1.1 và Bảng 1.2 dưới đây đặc tả chi tiết không gian siêu tham số cấu trúc mô hình và huấn luyện của mạng HGT.
+Bảng~\ref{tab:1.1} và Bảng~\ref{tab:1.2} dưới đây đặc tả chi tiết không gian siêu tham số cấu trúc mô hình và huấn luyện của mạng HGT.
 
 \begin{table}[H]
 \centering
@@ -833,7 +868,7 @@ Bảng 1.1 và Bảng 1.2 dưới đây đặc tả chi tiết không gian siêu
 \textbf{Siêu tham số} & \textbf{Ý nghĩa} & \textbf{Hàm số / Giá trị} & \textbf{Chi tiết cấu hình} \\ \hline
 \texttt{learning\_rate} & Tốc độ học khởi tạo & $0.001$ & Adam Optimizer \\
 \texttt{weight\_decay} & Hệ số chính quy hóa L2 & $10^{-4}$ & Tránh bùng nổ trọng số \\
-\texttt{patience} & Số vòng dừng sớm (Early Stopping) & $30$ epoch & Theo dõi \texttt{val\_loss} \\
+\texttt{patience} & Số vòng dừng sớm & $30$ epoch & Theo dõi \texttt{val\_loss} \\
 \texttt{loss\_fn} & Hàm mất mát tổng hợp Fine-tuning & $\mathcal{L}_{\text{MSE}} + 0.01 \mathcal{L}_{\text{GaussianNLL}}$ & Trọng số cân bằng $0.01$ \\
 \hline
 \end{tabular}
@@ -841,13 +876,13 @@ Bảng 1.1 và Bảng 1.2 dưới đây đặc tả chi tiết không gian siêu
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{../image/fig2_hgt_architecture.drawio.png}
+    \includegraphics[width=0.9\textwidth]{image/fig2_hgt_architecture.drawio.png}
     \caption{Kiến trúc cốt lõi của Heterogeneous Graph Transformer (HGT) và cơ chế Attention.}
     \label{fig:1.9}
 \end{figure}
 
 \subsection{Học biểu diễn Tự giám sát bằng Bộ mã hóa tự động ẩn (MAE)}
-Để giải quyết bài toán thiếu hụt dữ liệu dự án gán nhãn rủi ro trong thực tế chuỗi cung ứng logistics, hệ thống triển khai cơ chế Học tự giám sát (Self-Supervised Learning) thông qua mô hình Masked Autoencoder (MAE) đồ thị \cite{he2022mae}.
+Để giải quyết bài toán thiếu hụt dữ liệu dự án gán nhãn rủi ro trong thực tế chuỗi cung ứng logistics, hệ thống triển khai cơ chế học tự giám sát thông qua mô hình Masked Autoencoder (MAE) đồ thị \cite{he2022mae}.
 
 Tại mỗi epoch của Phase 0 (Pretraining), hệ thống chủ động che giấu (set về 0) các đặc trưng của một tập hợp các nút công việc ngẫu nhiên với tỷ lệ che phủ $\text{mask\_rate} = 25\%$. Mô hình HGT được huấn luyện để tái tạo lại toàn bộ các đặc trưng bị mất của các nút bị che dựa trên thông tin ngữ cảnh từ các nút lân cận không bị che:
 \begin{equation}
@@ -946,20 +981,25 @@ Trong đó:
 
 Sau 10,000 lần tính toán đường găng ngẫu nhiên, hệ thống trích xuất:
 \begin{enumerate}
-    \item \textbf{Chỉ số Găng (Criticality Index - CI\%):} Tỷ lệ phần trăm số lần công việc $i$ nằm trên đường găng (có thời gian dự trữ $Slack_i = 0$):
+    \item \textbf{Chỉ số Tới hạn (CI):} Tỷ lệ phần trăm số lần công việc $i$ nằm trên đường găng (có thời gian dự trữ $\mathrm{TF}_i = 0$):
     \begin{equation}
-        \text{CI\%}_i = \frac{1}{10000} \sum_{k=1}^{10000} \mathbb{I}\left(Slack_i^{(k)} = 0\right) \times 100\%
+        \text{CI}_i = \frac{1}{10000} \sum_{k=1}^{10000} \mathbb{I}\left(\mathrm{TF}_i^{(k)} = 0\right) \times 100\%
     \end{equation}
-    Chỉ số này dùng làm chỉ số găng rủi ro đầu vào cho biến $\text{ci\_score}_i$ trong CP-SAT.
+    Chỉ số này dùng làm biến phân loại rủi ro đầu vào $\text{ci\_score}_i$ trong CP-SAT.
     \item \textbf{Các ngưỡng rủi ro tiến độ dự án:} P50 (Makespan kỳ vọng), P80 (Kế hoạch an toàn), P95 (Ngưỡng phòng vệ rủi ro cao).
 \end{enumerate}
 
 \section{Tổng quan các công trình nghiên cứu và Khoảng trống}
-\subsection{Các nghiên cứu trong nước về tối ưu tiến độ}
-Tại Việt Nam, phần lớn các nghiên cứu về quản trị dự án tập trung vào các phương pháp heuristic truyền thống. Lê và cộng sự \cite{le_2020_cpm} đã áp dụng thuật toán Di truyền kết hợp CPM để cân bằng tài nguyên trong các dự án xây dựng hạ tầng. Tuy nhiên, mô hình này vẫn gặp khó khăn trong việc xử lý các ràng buộc phức tạp của dự án logistics quy mô lớn.
+\subsection{Các phương pháp Tối ưu hóa Tiến độ Dự án Truyền thống}
+Bài toán Lập lịch Dự án có Ràng buộc Tài nguyên (RCPSP) từ lâu đã là một trong những bài toán tối ưu hóa tổ hợp kinh điển và khó giải quyết (NP-hard). Các nghiên cứu nền tảng của Kolisch và Hartmann \cite{kolisch1997psplib}, cũng như Vanhoucke \cite{vanhoucke2016integrated}, chủ yếu tập trung vào các thuật toán chính xác như Nhánh và Cận (Branch-and-Bound) hoặc các siêu tự nghiệm (Metaheuristics) như thuật toán Di truyền (GA) và Tối ưu hóa bầy đàn (PSO). Tại Việt Nam, Lê và cộng sự \cite{le_2020_cpm} đã áp dụng hiệu quả thuật toán GA kết hợp CPM để cân bằng tài nguyên trong các dự án hạ tầng. Mặc dù các phương pháp này có khả năng hội tụ đến nghiệm tối ưu, nhưng chúng thường vấp phải giới hạn về khả năng mở rộng (scalability) khi số lượng công việc vượt quá 100, đồng thời giả định rằng môi trường thi công là hoàn toàn tĩnh, bỏ qua tính bất định vốn có của thực địa.
 
-\subsection{Các nghiên cứu ngoài nước về ứng dụng Graph AI trong Logistics}
-Trên thế giới, Graph Neural Networks (GNN) đang tạo ra một cuộc cách mạng trong chuỗi cung ứng. Kipf và Welling \cite{kipf_2017_gcn} đặt nền móng cho Mạng chập đồ thị. Mới đây, Zhang và cộng sự \cite{zhang_2022_supply_chain} đã sử dụng Heterogeneous Graph Neural Networks để dự báo gián đoạn nguồn cung cấp trong chuỗi cung ứng linh kiện điện tử, đạt độ chính xác F1 vượt trội lên tới 92\% so với các mô hình Random Forest tĩnh.
+\subsection{Ứng dụng Trí tuệ Nhân tạo và Graph Neural Networks trong Chuỗi cung ứng}
+Để khắc phục tính tĩnh của mô hình truyền thống, xu hướng nghiên cứu toàn cầu hiện nay đang dịch chuyển mạnh mẽ sang việc ứng dụng Trí tuệ Nhân tạo, đặc biệt là Mạng nơ-ron Đồ thị (GNN). Từ những nền tảng ban đầu của Kipf và Welling \cite{kipf_2017_gcn}, GNN đã chứng minh năng lực vượt trội trong việc trích xuất đặc trưng tô-pô. Gần đây, Zhang và cộng sự \cite{zhang_2022_supply_chain} đã ứng dụng Mạng đồ thị dị thể (Heterogeneous GNN) để dự báo gián đoạn nguồn cung linh kiện điện tử, đạt độ chính xác F1 92\%. Tuy nhiên, phần lớn các công trình Graph AI hiện tại mới chỉ dừng ở mức độ "dự báo cảnh báo" mà chưa liên kết trực tiếp với các bộ giải tối ưu hóa (solvers) để đưa ra hành động khắc phục tự động.
 
-\subsection{Khoảng trống nghiên cứu}
-Dù đã có nhiều bước tiến, vẫn tồn tại một khoảng trống lớn giữa Mô hình Tối ưu Toán học và Trí tuệ Nhân tạo. Các hệ thống quản lý hiện tại thường sử dụng thuật toán CP-SAT \cite{google_ortools} hoặc MILP \cite{gurobi} để tìm nghiệm tối ưu, nhưng chúng chạy rất chậm trên tập dữ liệu đồ thị hàng nghìn công việc do hiện tượng bùng nổ tổ hợp. Sự vắng bóng của một quy trình lai - nơi AI định hướng rủi ro bằng cơ chế sự chú ý để thu hẹp không gian tìm kiếm cho bộ giải CP-SAT - chính là cơ hội nghiên cứu đột phá mà Đồ án này tập trung giải quyết.
+\subsection{Khoảng trống nghiên cứu của Đồ án}
+Từ sự đối chiếu giữa hiện trạng ngành và khả năng của công nghệ học sâu, đồ án này xác định và tập trung giải quyết 3 khoảng trống nghiên cứu cốt lõi:
+\begin{enumerate}
+    \item \textbf{Khoảng trống về Cấu trúc Đồ thị:} Các mô hình GNN hiện hữu khi áp dụng cho bài toán lập lịch đa phần vẫn biểu diễn dự án dưới dạng đồ thị đồng nhất (chỉ có nút Task) hoặc thiếu cơ chế truyền tin phản hồi. Đồ án giải quyết vấn đề này bằng cách hình thức hóa mạng lưới thành đồ thị dị thể đa loại cạnh, cho phép luồng thông tin 2 chiều giữa Công việc, Tài nguyên và Ca kíp.
+    \item \textbf{Khoảng trống về Dữ liệu Huấn luyện:} Khác với thị giác máy tính hay xử lý ngôn ngữ tự nhiên, dữ liệu đồ thị dự án có nhãn rủi ro chất lượng cao vô cùng khan hiếm. Các mô hình học có giám sát truyền thống dễ rơi vào tình trạng quá khớp. Đồ án đề xuất giải pháp học tự giám sát thông qua mô hình Masked Autoencoder (MAE) đặc thù cho đồ thị dị thể để học biểu diễn không gian trước khi tinh chỉnh.
+    \item \textbf{Khoảng trống về Sự phân mảnh Giữa Dự báo và Tối ưu:} Sự vắng bóng của một quy trình lai xuyên suốt từ khâu dự báo đến khâu hành động là rào cản lớn nhất hiện nay. Đồ án đóng góp một kiến trúc hệ thống khép kín: nơi AI (HGT) dự báo phân phối rủi ro, Mô phỏng Monte Carlo CPM định lượng bất định thành Chỉ số Tới hạn (CI), và từ đó định hướng sự chú ý giúp thu hẹp không gian tìm kiếm cho bộ giải Quy hoạch Ràng buộc (CP-SAT), tạo ra tập nghiệm Pareto tối ưu thời gian thực.
+\end{enumerate}

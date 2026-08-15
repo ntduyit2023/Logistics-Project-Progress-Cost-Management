@@ -1,64 +1,122 @@
 \chapter{KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}
+\label{ch:chuong4_ket_luan}
 
+% ==========================================
+% 4.1. KẾT LUẬN CHUNG VỀ ĐỀ TÀI
+% ==========================================
 \section{Kết luận chung về đề tài}
 \label{sec:4.1_ket_luan_chung}
-
-Đề tài đã hoàn thành xuất sắc việc nghiên cứu lý thuyết, thiết kế kiến trúc và thực nghiệm đánh giá hệ thống Quản trị Tiến độ và Chi phí Dự án Logistics (GLPO). Thông qua việc kết hợp giữa mô hình Học máy Đồ thị Dị thể (Heterogeneous Graph Learning) và giải thuật Tối ưu hóa Quy hoạch Ràng buộc (Constraint Programming), nghiên cứu đã giải quyết trọn vẹn bài toán Lập lịch Dự án Hạn chế Tài nguyên (RCPSP) dưới tác động của rủi ro biến động ngẫu nhiên và cấu trúc chi phí tài chính đa tầng.
 
 \subsection{Đóng góp về mặt lý luận khoa học}
 \label{sec:4.1.1_dong_gop_ly_luan}
 
-\begin{enumerate}
-    \item \textbf{Mô hình hóa Đồ thị Dị thể:} Chuyển đổi bài toán RCPSP từ biểu diễn phẳng truyền thống sang cấu trúc Đồ thị Dị thể $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$. Mạng nơ-ron HGT (Heterogeneous Graph Transformer) đã học thành công "nhận thức cấu trúc" (Structural Awareness), đạt $R^2$ trung bình 5-Fold là $\mathbf{0,3734 \pm 0,3744}$, cho phép nhúng trọn vẹn 38 loại chi phí vi mô vào vector biểu diễn của từng công việc.
-    \item \textbf{Cơ chế Học tự giám sát (Self-Supervised Learning):} Khắc phục rào cản khan hiếm nhãn dữ liệu thông qua phương pháp Masked Autoencoder. Mô hình tự động trích xuất đặc trưng lan truyền trễ tiến độ mà không phụ thuộc vào nhãn thủ công (Val MAE đạt $0,2343$).
-    \item \textbf{Explainable AI (XAI) qua Trọng số Attention:} Trọng số chú ý $\alpha_{ij}^{(h)}$ định vị chính xác $100\%$ các Nút thắt cổ chai găng (Bottlenecks) trên dự án C2012-04. Từ đó, AI dẫn đường cho bộ giải CP-SAT cắt tỉa không gian tìm kiếm, rút ngắn thời gian hội tụ xuống mức mili-giây.
-\end{enumerate}
+Về mặt lý luận, đồ án đề xuất và hiện thực hóa một số đóng góp khoa học mang tính mới so với tổng quan tài liệu hiện có trong lĩnh vực học sâu đồ thị ứng dụng vào quản lý dự án.
+
+\textbf{Thứ nhất}, đồ án mở rộng lý thuyết đồ thị dị thể sang bài toán Lập lịch Dự án Hạn chế Tài nguyên ngẫu nhiên (Stochastic RCPSP). Thay vì biểu diễn bài toán trên đồ thị đồng nhất (homogeneous graph) hoặc đồ thị dị thể với 2 loại thực thể như phần lớn tài liệu trước đây, nghiên cứu hình thức hóa RCPSP thành đồ thị $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$ với $|\mathcal{T}_v| = 3$ loại nút và $|\mathcal{T}_e| = 5$ loại cạnh. Đặc biệt, việc bổ sung 2 cạnh nghịch đảo $\text{rev\_uses}$ và $\text{rev\_constrained\_by}$ giải quyết bài toán nút ngõ cụt thông tin (sink node bottleneck) — hiện tượng mà trong đồ thị có hướng thuần nhất, các nút công việc không thể tiếp nhận thông tin phản hồi trạng thái giới hạn từ tài nguyên và ca kíp.
+
+\textbf{Thứ hai}, đồ án đề xuất cơ chế học tự giám sát Masked Autoencoder trên đồ thị dị thể đa loại cạnh trong bối cảnh khan hiếm nhãn đặc thù của quản trị dự án logistics. Cụ thể, nghiên cứu áp dụng chiến lược che đặc trưng có chọn lọc theo loại nút: chỉ che nút \textit{Task} và giữ nguyên nút \textit{Resource} cùng \textit{Shift} làm ngữ cảnh dẫn truyền. Thiết kế này khai thác triệt để cấu trúc thông tin không đối xứng vốn có của đồ thị dự án, cho phép mô hình học được đặc trưng topo chuỗi cung ứng ngay cả khi không có nhãn giám sát. Mô hình đạt mức hội tụ tiền kỳ với Validation Loss tối thiểu $\mathbf{0{,}0437}$ sau chỉ 29 chu kỳ học, minh chứng cho tính hiệu quả của phương án học biểu diễn hai giai đoạn này.
+
+\textbf{Thứ ba}, nghiên cứu tích hợp ước lượng bất định xác suất (probabilistic uncertainty estimation) trực tiếp vào đầu dự báo của mô hình thông qua hàm mất mát Gaussian Negative Log-Likelihood. Thay vì chỉ xuất ra một điểm dự báo trung bình $\hat{y}_i$, mô hình đồng thời phát ra phân phối xác suất $(\hat{y}_i, \hat{\sigma}_i^2)$, trong đó $\hat{\sigma}_i^2$ biểu diễn độ bất định nội tại của từng công việc. Tham số bất định này không chỉ đóng vai trò tín hiệu cảnh báo rủi ro mà còn được sử dụng trực tiếp để hiệu chuẩn bộ tham số $\{O_i, M_i, P_i\}$ của phân phối Beta-PERT trong pha mô phỏng Monte Carlo CPM, tạo ra một luồng thông tin nhân quả liên tục từ học sâu sang đường găng ngẫu nhiên.
+
+\textbf{Thứ tư}, đồ án đề xuất và xác thực một khung tích hợp lai ba thành phần (HGT -- Monte Carlo CPM -- CP-SAT) thành một luồng suy luận khép kín, giải quyết đồng thời ba lớp bài toán thường được nghiên cứu tách rời trong tài liệu: dự báo rủi ro, định lượng xác suất trễ hạn, và tối ưu hóa lập lịch đa mục tiêu. Sự liên kết nhân quả giữa ba thành phần — trong đó đầu ra của mô hình HGT trực tiếp định hình phân phối xác suất của Monte Carlo CPM, và chỉ số CI từ CPM định hướng chiến lược tăng tốc của CP-SAT — tạo ra một kiến trúc hệ thống có tính nhất quán toán học cao hơn so với các tiếp cận đường ống rời rạc.
 
 \subsection{Đóng góp về mặt thực tiễn kỹ thuật}
 \label{sec:4.1.2_dong_gop_thuc_tien}
 
-\begin{enumerate}
-    \item \textbf{Tối ưu Đa mục tiêu (Pareto Frontier):} Dựng thành công đường biên đánh đổi Thời gian - Chi phí. Chiến lược ép tiến độ giúp dự án C2012-04 giảm $21,1\%$ thời gian thi công, hạ rủi ro từ $48,5\%$ xuống $12,0\%$, đồng thời san bằng biểu đồ nhân lực (Giảm hệ số Gini từ $0,316$ xuống $0,100$).
-    \item \textbf{Triển khai Vi dịch vụ (Microservices):} Toàn bộ pipeline được đóng gói Docker, tối ưu hóa RAM (chỉ chiếm 3,31 GB cho dự án $10.000$ nút), sẵn sàng triển khai thực tế trên môi trường công nghiệp.
-\end{enumerate}
+Về mặt thực tiễn kỹ thuật, hệ thống GLPO chứng minh khả năng vận hành trên dữ liệu thực địa và cung cấp các công cụ hỗ trợ ra quyết định có giá trị đo lường được cho nhà quản trị dự án logistics.
 
-\section{Hạn chế của nghiên cứu}
-\label{sec:4.2_han_che_nghien_cuu}
+\textbf{Thứ nhất}, nghiên cứu đóng góp bộ dữ liệu thực địa DSLIB gồm 5 dự án xây dựng và logistics (C2011-07 đến C2019-16), trải dài từ quy mô nhỏ 32 công việc đến quy mô lớn 437 công việc, tổng giá trị danh mục đạt 226,8 triệu USD. Kèm theo là quy trình ETL chuẩn hóa đầy đủ — bao gồm lọc nút lá, phát hiện chu trình DFS, xử lý nút cô lập và đồng bộ giờ tích lũy — có khả năng tái sử dụng cho các nghiên cứu RCPSP thực địa trong tương lai mà không cần phụ thuộc vào các tập giả lập như PSPLIB.
 
-Bên cạnh các thành tựu đạt được, hệ thống GLPO vẫn tồn tại một số hạn chế khách quan cần được phân tích thẳng thắn:
-\begin{enumerate}
-    \item \textbf{Quy mô và Tính đa dạng của Tập dữ liệu:} Mô hình hiện tại được huấn luyện dựa trên cấu trúc đồ thị của 23 dự án nội bộ. Dù đã sử dụng các kỹ thuật augmentation, tập dữ liệu này vẫn mang tính đặc thù ngành cao. Để chống hiện tượng quá khớp (Overfitting) và áp dụng cho các ngành khác (như IT, Y tế), hệ thống cần một lượng dữ liệu đa dạng hơn rất nhiều.
-    \item \textbf{Điểm nghẽn NP-Hard của Bộ giải Tập trung:} Như đã biện luận tại Chương 3, khi số lượng nút công việc $|V| > 10.000$, bộ giải CP-SAT tập trung (Centralized Solver) chắc chắn sẽ vấp phải hiện tượng Bùng nổ tổ hợp (Combinatorial Explosion). AI có thể hướng dẫn thu hẹp không gian, nhưng không thể thay đổi bản chất hàm mũ $O(c^{|V|})$ của bài toán Vận trù học cốt lõi.
-    \item \textbf{Thiếu thực nghiệm Phân lập đặc trưng (Ablation Study) tầng sâu:} Đề tài tập trung nhiều vào tính tích hợp toàn hệ thống (End-to-End Pipeline). Tuy nhiên, nghiên cứu chưa có điều kiện thực hiện các thử nghiệm vô hiệu hóa (masking) từng đầu chú ý (Attention Heads) hoặc từng lớp mạng nơ-ron để đo lường định lượng tỷ trọng đóng góp của riêng từng thành phần mạng HGT.
-\end{enumerate}
+\textbf{Thứ hai}, chiến lược kiểm thử chéo loại bỏ một dự án (LOPO CV) được hiện thực hóa và xác thực trên 5 dự án thực tế, mang lại kết quả đánh giá phản ánh trung thực năng lực tổng quát hóa của mô hình AI trên dự án chưa từng xuất hiện trong quá trình huấn luyện. Kết quả ghi nhận hệ số xác định trung bình $\bar{R}^2 = 0{,}3734 \pm 0{,}3744$ qua 5 folds, với đỉnh hiệu suất tại Fold 3 đạt $R^2 = 0{,}8023$. Sự phân tán cao giữa các folds ($\sigma_{R^2} = 0{,}3744$) phản ánh thực trạng khan hiếm dữ liệu và khoảng cách phân phối topo lớn giữa các dự án trong tập DSLIB, đồng thời chỉ ra hướng cải tiến cụ thể cho các nghiên cứu kế tiếp về học chuyển giao xuyên dự án.
 
-\section{Đề xuất Hướng phát triển}
+\textbf{Thứ ba}, phân hệ tối ưu hóa CP-SAT kết hợp mô phỏng Monte Carlo CPM với 10.000 vòng lặp tạo ra bộ 7 phương án Pareto có độ tin cậy thống kê cao cho dự án C2012-04. Kết quả nổi bật: phương án tối ưu nhất rút ngắn thời gian thi công từ 2.556 giờ (không can thiệp) xuống còn 2.016 giờ, tương đương mức ép tiến độ $\mathbf{21{,}1\%}$, đồng thời giảm xác suất trễ hạn từ $48{,}5\%$ xuống $12{,}0\%$ ($\mathbf{-36{,}5}$ điểm phần trăm). Trong trường hợp phương án này được chọn, dự án hoàn thành trước hạn 15 ngày và nhận khoản thưởng tiến độ \$15.041, bù đắp toàn bộ chi phí tăng ca và tạo ra lợi nhuận biên ròng dương so với phương án không can thiệp.
+
+\textbf{Thứ tư}, toàn bộ hệ thống được triển khai thành công dưới dạng ứng dụng Web đa lớp container hóa (Docker Compose), vận hành ổn định trên phần cứng thương mại phổ thông (Intel Core i5-13420H, NVIDIA RTX 2050 4 GB VRAM). Kiến trúc ba dịch vụ độc lập (Frontend React/Nginx, Backend FastAPI/Uvicorn, PostgreSQL) đảm bảo khả năng mở rộng và di chuyển môi trường, cho phép tái triển khai hệ thống trên máy chủ đám mây hoặc môi trường doanh nghiệp mà không cần thay đổi mã nguồn. Giao diện trực quan hóa tương tác bao gồm biểu đồ Gantt động, biểu đồ tán xạ Pareto Frontier và bản đồ nhiệt Attention, cung cấp cho nhà quản lý một bộ công cụ hỗ trợ ra quyết định đầy đủ, thay thế hiệu quả các phần mềm quản lý dự án thương mại đắt tiền trong các tình huống cần tối ưu hóa đa mục tiêu.
+
+
+% ==========================================
+% 4.2. ĐÁNH GIÁ ƯU ĐIỂM VÀ HẠN CHẾ CỦA HỆ THỐNG
+% ==========================================
+\section{Đánh giá Ưu điểm và Hạn chế của Hệ thống}
+\label{sec:4.2_uu_nhuoc_diem}
+
+\subsection{Ưu điểm nổi bật của giải pháp}
+\label{sec:4.2.1_uu_diem}
+
+\textbf{Thứ nhất -- Kiến trúc tích hợp khép kín, nhất quán về mặt nhân quả.}
+Điểm khác biệt cốt lõi so với các hệ thống quản lý dự án thông thường nằm ở sự liên kết nhân quả liên tục giữa ba phân hệ: mô hình HGT xuất ra phân phối bất định $(\hat{y}_i, \hat{\sigma}_i^2)$, các tham số này trực tiếp hiệu chuẩn bộ ba $(O_i, M_i, P_i)$ của phân phối Beta-PERT cho Monte Carlo CPM, và Chỉ số Tới hạn CI từ CPM trực tiếp xác định ưu tiên mở khóa chế độ tăng tốc trong bộ giải CP-SAT. Toàn bộ luồng từ dữ liệu thô đến phương án lập lịch Pareto diễn ra trong một đường ống duy nhất, không yêu cầu chuyên gia điều chỉnh tham số thủ công ở các bước trung gian.
+
+\textbf{Thứ hai -- Khả năng giải thích thông qua bản đồ nhiệt Attention.}
+Kiến trúc HGT cho phép truy xuất ma trận trọng số $\alpha_{s,t}^{(r)}$ tại lớp Attention cuối, từ đó tổng hợp thành bản đồ tương đồng Cosine kích thước $67 \times 16$ cho dự án C2012-04. Kết quả cho thấy mô hình tự động định vị Res 12 (Cold Milling Machine, chi phí 230 đơn vị/giờ, công suất tối đa duy nhất 1 đơn vị) là nút thắt cổ chai nghiêm trọng nhất với mức Attention cao vượt trội, trong khi Res 1 (lực lượng lao động phổ thông, công suất 10 người) được gán mức Attention thấp tương xứng với rủi ro khan hiếm thấp. Năng lực giải thích này chuyển hóa dự báo thành lập luận kỹ thuật có thể kiểm chứng, hỗ trợ trực tiếp cho giai đoạn đấu thầu và lập kế hoạch dự phòng.
+
+\textbf{Thứ ba -- Định lượng rủi ro xác suất có cơ sở thống kê.}
+Thay vì chỉ cung cấp một hạn chót tĩnh, hệ thống xuất ra đường cong phân phối tích lũy từ 10.000 kịch bản Monte Carlo, từ đó cụ thể hóa thành ba mốc kiểm soát chiến lược có căn cứ: P50 (384,7 ngày), P80 (422,2 ngày) và P95 (460,9 ngày). Khoảng dự phòng $\Delta T = P_{80} - P_{50} \approx 37{,}5$ ngày là thông tin định lượng trực tiếp phục vụ đàm phán hợp đồng và thiết lập quỹ thời gian dự phòng trong kế hoạch tổng thể.
+
+\textbf{Thứ tư -- Hỗ trợ ra quyết định đa mục tiêu qua Pareto Frontier.}
+Bộ giải CP-SAT tạo ra 7 phương án lập lịch nằm trên đường biên Pareto trong không gian 3 chiều (Makespan, tổng chi phí, xác suất trễ hạn). Nhà quản trị có toàn quyền lựa chọn phương án phù hợp với ưu tiên chiến lược hiện tại: từ Option 1 (ép tiến độ tối đa, hoàn thành sớm 15 ngày, nhận thưởng \$15.041, rủi ro 12,0\%) đến Option 7 (giữ nguyên tiến độ, chi phí thấp nhất nhưng rủi ro 48,5\%). Điểm uốn tối ưu Option 3 (tổng chi phí ròng \$10.013.348, rủi ro 20,2\%) được hệ thống xác định tự động làm điểm tham chiếu cho quyết định mặc định.
+
+\textbf{Thứ năm -- Triển khai thực chiến trên nền tảng phổ thông.}
+Hệ thống vận hành ổn định trong môi trường container hóa Docker Compose trên phần cứng thương mại (Intel Core i5-13420H, NVIDIA RTX 2050 4 GB VRAM), chứng tỏ đây không chỉ là bằng chứng khái niệm học thuật. Kiến trúc ba dịch vụ độc lập đảm bảo khả năng mở rộng theo chiều ngang khi triển khai lên môi trường đám mây, đồng thời giao diện Web tương tác (biểu đồ Gantt động, bản đồ nhiệt Attention, biểu đồ tán xạ Pareto) hạ ngưỡng chuyên môn vận hành xuống mức người dùng quản lý dự án không có nền tảng kỹ thuật sâu.
+
+\subsection{Các hạn chế khách quan}
+\label{sec:4.2.2_han_che}
+
+Bên cạnh các đóng góp trên, nghiên cứu thừa nhận một số hạn chế mang tính hệ thống cần được giải quyết trong các giai đoạn phát triển tiếp theo.
+
+\textbf{Thứ nhất -- Quy mô tập dữ liệu còn hạn chế, ảnh hưởng đến độ ổn định mô hình.}
+Với chỉ 5 đồ thị dự án trong tập DSLIB, chiến lược LOPO CV chỉ có thể tạo ra tối đa 5 folds. Phương sai $R^2$ lớn ($\sigma_{R^2} = 0{,}3744$) không phản ánh sai sót thiết kế kiến trúc HGT, mà phản ánh sự không đồng nhất về phân phối topo giữa các dự án: khoảng cách giữa dự án nhỏ nhất (32 nút) và lớn nhất (437 nút) dẫn đến sự dịch chuyển phân phối (distribution shift) đáng kể. Theo ước tính thực nghiệm, cần ít nhất 20--50 dự án có phân phối quy mô đồng đều để mô hình HGT đạt độ ổn định xuyên miền.
+
+\textbf{Thứ hai -- Giới hạn tổng quát hóa trên đồ thị quy mô cực lớn.}
+Dự án C2012-08 (437 nút, 673 cạnh) khi là tập kiểm định dẫn đến $R^2 = -0{,}1537$, chứng tỏ mô hình HGT với 2 lớp tích chập và bán kính lân cận $k$-hop cố định không đủ năng lực ngoại suy sang cấu trúc topo cực lớn khi toàn bộ tập huấn luyện gồm các dự án nhỏ và trung bình. Hạn chế này mang tính hệ thống trong kiến trúc học sâu đồ thị cố định chiều sâu và đòi hỏi giải pháp học chuyển giao xuyên quy mô (cross-scale transfer learning) trong nghiên cứu tương lai.
+
+\textbf{Thứ ba -- Bộ giải CP-SAT mô hình hóa không gian quyết định tĩnh.}
+Hệ thống GLPO hiện tại thực hiện tối ưu hóa theo kịch bản một lần (offline optimization): các tham số đầu vào (chi phí gián tiếp, mức phạt trễ hạn, thưởng hoàn thành sớm) cố định trong suốt quá trình giải. Các yếu tố bất định ngoại sinh như gián đoạn chuỗi cung ứng, biến động giá vật liệu theo thời điểm, hay sự cố thiết bị không có trong mô hình ràng buộc. CP-SAT hiện chỉ tối ưu hóa trong không gian quyết định xác định, chưa phải tối ưu hóa kháng nhiễu theo kịch bản.
+
+\textbf{Thứ tư -- Chưa có cơ chế học tăng dần khi nhận dữ liệu thực địa mới.}
+Mô hình HGT được huấn luyện hoàn toàn offline và trọng số cố định sau khi triển khai. Trong vận hành thực tế, khi dự án phát sinh sai lệch tiến độ (thực tế vs kế hoạch), hệ thống không tự động cập nhật lại trọng số để thích nghi với tín hiệu phản hồi từ thực địa. Đây là rào cản quan trọng để hệ thống trở thành công cụ quản lý dự án thời gian thực thực sự, và đòi hỏi nghiên cứu về học tăng dần trên đồ thị động (dynamic graph incremental learning).
+
+% ==========================================
+% 4.3. ĐỀ XUẤT HƯỚNG PHÁT TRIỂN TRONG TƯƠNG LAI
+% ==========================================
+\section{Đề xuất Hướng phát triển trong Tương lai}
 \label{sec:4.3_huong_phat_trien}
 
-Nhằm khắc phục các hạn chế kỹ thuật và mở rộng quy mô, ba hướng nghiên cứu công nghệ lõi được đề xuất triển khai:
+\subsection{Ứng dụng Cơ chế Chú ý Sai phân cho Lập lịch Động Thời gian thực}
+\label{sec:4.3.1_delta_attention}
 
-\subsection{Tích hợp Tìm kiếm Lân cận Lớn (LNS) phối hợp CP-SAT}
-\label{sec:4.3.1_lns_cpsat}
+Một trong những hạn chế kiến trúc của hệ thống GLPO hiện tại là mô hình HGT phải tái tính toán toàn bộ đồ thị dự án mỗi khi có một công việc cập nhật trạng thái, dẫn đến độ trễ tính toán không tương thích với yêu cầu lập lịch động thời gian thực. Để giải quyết rào cản này, hướng phát triển đề xuất ứng dụng Cơ chế Chú ý Sai phân (Kimi Delta Attention -- KDA), một kiến trúc Attention tuyến tính tiên tiến được Moonshot AI công bố tháng 10/2025 \cite{moonshot2025kimilinear}.
 
-Để vượt qua rào cản NP-Hard ở siêu dự án ($|V| > 1.000$), nghiên cứu đề xuất sử dụng Tìm kiếm Lân cận Lớn (Large Neighborhood Search - LNS) làm khung điều khiển cho CP-SAT.
-Cơ chế lặp sẽ liên tục "Phá hủy" (Destroy) một cụm nhỏ dự án (VD: 15-30\%) và dùng CP-SAT "Tái thiết lập" (Solve) lại cụm đó trong một giới hạn thời gian cực ngắn (100-500ms):
+KDA là phiên bản mở rộng của kiến trúc GatedDeltaNet \cite{yang2024gated}, trong đó cơ chế bộ nhớ tuần tự (recurrent state $\mathbf{S}_t \in \mathbb{R}^{d_k \times d_v}$) được cập nhật theo quy tắc sai phân (delta rule):
 \begin{equation}
-S^{(t+1)} = \text{Solve}_{\text{CP-SAT}} \left( \text{Destroy}_{\gamma} \left( S^{(t)} \right) \right)
+    \mathbf{S}_t = \mathbf{S}_{t-1} + \mathbf{k}_t^\top \left(\mathbf{v}_t - \mathbf{S}_{t-1}\mathbf{k}_t\right)
 \end{equation}
-Cách tiếp cận này giữ cho không gian tìm kiếm luôn nhỏ gọn, duy trì khả năng tối ưu thời gian thực cho các dự án quy mô siêu lớn.
+Thay vì tính toán lại toàn bộ ma trận Attention $O(N^2)$ khi chuỗi kéo dài, KDA chỉ cập nhật vi phân trạng thái $\Delta\mathbf{S}_t = \mathbf{k}_t^\top(\mathbf{v}_t - \mathbf{S}_{t-1}\mathbf{k}_t)$ với độ phức tạp $O(d_k \cdot d_v)$ không đổi theo chiều dài chuỗi. Đặc biệt, KDA-2 giới thiệu cổng theo kênh phân biệt (channel-wise erase gate $b_t$ và write gate $w_t$), giúp mô hình kiểm soát chính xác từng chiều của bộ nhớ ẩn -- điều mà các kiến trúc Attention toàn cục như Transformer tiêu chuẩn không thể thực hiện với chi phí hằng số.
 
-\subsection{Nâng cấp lên Kiến trúc Graphormer / MARL}
-\label{sec:4.3.2_graphormer}
+Ứng dụng vào bối cảnh lập lịch dự án động, mỗi sự kiện cập nhật trạng thái công việc (bắt đầu sớm hơn, trễ do sự cố tài nguyên, thay đổi ca kíp) có thể được mã hóa thành một token cập nhật và đẩy qua lớp KDA theo thời gian thực, thay vì phải chạy lại toàn bộ pha forward pass của HGT. Với tỷ lệ sử dụng bộ nhớ đệm KV cache giảm tới 75\% và thông lượng giải mã tăng 6 lần so với Attention đầy đủ tại cửa sổ ngữ cảnh 1 triệu token \cite{moonshot2025kimilinear}, kiến trúc lai HGT--KDA mở ra khả năng cập nhật dự báo rủi ro cho các dự án có vài trăm công việc trong vòng dưới một giây -- đủ nhanh để phục vụ giám sát thi công thời gian thực.
 
-Mô hình HGT hiện tại xử lý thông tin bằng cơ chế truyền tin cục bộ (Local Message Passing). Trên các đường găng kéo dài, tín hiệu có thể bị suy hao (Over-smoothing). Hướng đi tiếp theo là áp dụng \textbf{Graph Transformer (Graphormer)} để tích hợp trực tiếp khoảng cách ngắn nhất $\phi(v_i, v_j)$ vào ma trận Self-Attention, giúp các nút đầu dự án "giao tiếp" ngay lập tức với nút cuối dự án với độ trễ $O(1)$.
-Đồng thời, nghiên cứu khả năng dùng Học tăng cường Đa tác tử (MARL), trong đó mỗi thiết bị/nhân sự là một Agent tự đàm phán lịch làm việc, thay vì dùng một bộ giải tập trung.
+\subsection{Khung Tối ưu hóa Lai Quy mô Siêu lớn}
+\label{sec:4.3.2_hybrid_lns}
 
-\subsection{Tích hợp Bản sao số (Digital Twin) và Dữ liệu Thời gian thực}
-\label{sec:4.3.3_data_scaling}
+Bộ giải CP-SAT trong hệ thống GLPO hiện tại đạt hiệu quả cao trên các dự án quy mô trung bình (dưới 100 công việc), nhưng thời gian tìm nghiệm tăng phi tuyến khi kích thước bài toán vượt quá 500 công việc do không gian tìm kiếm tổ hợp bùng nổ theo hàm mũ. Để vượt qua giới hạn này mà không đánh đổi chất lượng nghiệm, hướng phát triển đề xuất khung tích hợp Tìm kiếm Lân cận Rộng (Large Neighborhood Search -- LNS) vào bên trong vòng lặp giải của CP-SAT.
 
-Đưa hệ thống GLPO từ một công cụ "Lập lịch tĩnh" trở thành một \textbf{Bản sao số (Digital Twin)} sống động:
-\begin{itemize}
-    \item \textbf{Luồng dữ liệu IoT \& Telematics:} Kết nối trực tiếp tín hiệu GPS của hạm đội xe, tiến độ từ cảm biến máy xúc và kho bãi WMS.
-    \item \textbf{Tái lập lịch động (Dynamic Rescheduling):} Bất cứ khi nào có rủi ro phát sinh (máy hỏng, thời tiết xấu), AI sẽ nhận diện tín hiệu ngay lập tức, tính toán lại độ trễ và kích hoạt CP-SAT tái lập lịch trong vài giây để tự động khắc phục sự cố.
-    \item \textbf{Đóng gói SaaS:} Chuẩn hóa API RESTful/gRPC để cắm trực tiếp module AI này vào các hệ thống ERP Enterprise (như SAP, Oracle) hoặc Microsoft Project.
-\end{itemize}
+Nguyên lý hoạt động của khung lai LNS + CP-SAT theo cơ chế ``phá hủy và sửa chữa'' (destroy-and-repair) \cite{pisinger2019lns}: tại mỗi vòng lặp, một tập con $\mathcal{S} \subset V_{\text{Task}}$ gồm $|\mathcal{S}|$ công việc (thường $|\mathcal{S}| \approx 10\text{--}30\%|V|$) được chọn hủy bỏ phân công theo một tiêu chí nhất định (ngẫu nhiên, theo CI cao nhất, hoặc theo vùng clique tài nguyên), và toàn bộ biến $\{s_v\}_{v \in \mathcal{S}}$ được thả tự do. CP-SAT sau đó giải bài toán con chỉ trên $\mathcal{S}$, trong khi phần lời giải còn lại cố định làm ràng buộc ngữ cảnh:
+\begin{equation}
+    \min \; \omega_1 \cdot Makespan_\mathcal{S} + \omega_2 \cdot Cost_\mathcal{S} \quad \text{s.t. } s_v = s_v^* \; \forall v \notin \mathcal{S}
+\end{equation}
+Bài toán con có quy mô thu nhỏ đáng kể, cho phép CP-SAT giải chính xác trong thời gian giới hạn (time budget mỗi vòng lặp). Nghiên cứu gần đây chứng minh rằng chiến lược LNS tích hợp CP-SAT đạt được kết quả cạnh tranh với các bộ giải thương mại chuyên dụng (Hexaly) trên tập chuẩn RG300 của RCPSP với khoảng cách tối ưu dưới 2\% trong vòng 60 giây \cite{laborie2018schedulingseminar}.
+
+Cụ thể cho GLPO, tiêu chí phá hủy thông minh đề xuất sử dụng Chỉ số Tới hạn CI từ Monte Carlo CPM để ưu tiên phá hủy cụm công việc có $CI > 0{,}6$ -- chính xác là nhóm công việc nằm trên đường găng và có rủi ro lan truyền trễ hạn dây chuyền cao nhất. Điều này đảm bảo mỗi vòng LNS tập trung cải thiện đúng vùng quyết định có tác động lớn nhất lên Makespan tổng thể.
+
+\subsection{Điều phối Tự chủ qua Học Tăng cường Đa Tác tử}
+\label{sec:4.3.3_marl_scheduling}
+
+Hệ thống GLPO hiện tại giải quyết bài toán lập lịch ở góc độ tập trung (centralized optimization): một bộ giải CP-SAT duy nhất xử lý toàn bộ danh mục dự án và tài nguyên. Khi doanh nghiệp vận hành đồng thời nhiều dự án chia sẻ cùng nhóm tài nguyên (đa dự án, đa công trường), tiếp cận tập trung gặp phải hai rào cản cốt lõi: thứ nhất, không gian quyết định tăng lên gấp bội theo số dự án; thứ hai, mô hình tập trung không phản ánh được thực tế phân tán của các đội thi công có tự chủ nhất định. Hướng phát triển đề xuất ứng dụng Học Tăng cường Đa Tác tử (MARL) để giải quyết bài toán này theo cơ chế phân tán.
+
+Trong khung MARL cho RCPSP đa dự án, mỗi công việc $v \in V_{\text{Task}}$ hoặc mỗi nhóm tài nguyên $r \in V_{\text{Resource}}$ đóng vai trò một tác tử (agent) độc lập với không gian trạng thái $\mathbf{s}_v^t$ (bao gồm đặc trưng nhúng HGT của nút, CI, trạng thái khả dụng tài nguyên) và không gian hành động $\mathbf{a}_v^t$ (chế độ thi công, giờ bắt đầu). Thuật toán tối ưu hóa chính sách đa tác tử MAPPO (Multi-Agent Proximal Policy Optimization) \cite{yu2022surprising} huấn luyện các tác tử tối ưu hóa phần thưởng toàn cục:
+\begin{equation}
+    R_{global} = -\omega_1 \cdot Makespan - \omega_2 \cdot TotalCost - \omega_3 \cdot \sum_{r} \sigma^2_{r,\text{usage}}
+\end{equation}
+trong khi vẫn tôn trọng các ràng buộc địa phương của từng agent thông qua cơ chế học hợp tác có phê bình tập trung, thực thi phân tán (Centralized Training, Decentralized Execution -- CTDE).
+
+Lợi thế cốt lõi của khung MARL so với CP-SAT tập trung nằm ở khả năng phản ứng thích nghi thời gian thực: thay vì tối ưu hóa một lần rồi cố định, mỗi tác tử liên tục quan sát môi trường và điều chỉnh quyết định ngay khi nhận được tín hiệu phản hồi thực địa (sự cố tài nguyên, thay đổi độ ưu tiên công việc). Tích hợp với kiến trúc đồ thị dị thể HGT để mã hóa trạng thái đầu vào cho mỗi agent, hướng phát triển này kế thừa trực tiếp bộ biểu diễn đặc trưng đã được huấn luyện trong GLPO, rút ngắn đáng kể thời gian học hội tụ so với khởi tạo ngẫu nhiên trong các mô hình MARL thuần túy \cite{lin2024multiagentrl}.
+

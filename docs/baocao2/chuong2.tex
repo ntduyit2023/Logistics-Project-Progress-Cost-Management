@@ -2,7 +2,7 @@
 \chapter{PHƯƠNG TIỆN VÀ PHƯƠNG PHÁP NGHIÊN CỨU}
 \label{ch:chuong2_phuong_phap}
 
-Chương này trình bày chi tiết về phương pháp luận, các công cụ công nghệ và cơ sở toán học của hệ thống Tối ưu hóa Tiến độ và Chi phí Dự án Logistics (GLPO). Nội dung được cấu trúc hóa bám sát theo luồng dữ liệu (Data Pipeline) từ khâu thu thập, tiền xử lý, huấn luyện cho đến triển khai.
+Chương này trình bày chi tiết về phương pháp luận, các công cụ công nghệ và cơ sở toán học của hệ thống Tối ưu hóa Tiến độ và Chi phí Dự án Logistics (GLPO). Nội dung được cấu trúc hóa bám sát theo luồng dữ liệu từ khâu thu thập, tiền xử lý, huấn luyện cho đến triển khai.
 
 % ==========================================
 % 2.1. SƠ ĐỒ TỔNG QUAN GIẢI PHÁP
@@ -10,9 +10,9 @@ Chương này trình bày chi tiết về phương pháp luận, các công cụ
 \section{Sơ đồ tổng quan giải pháp}
 \label{sec:2.1_overall_solution}
 
-Hệ thống tối ưu hóa tiến độ và chi phí dự án logistics (GLPO - Graph-Based Logistics Project Optimizer) được đề xuất dựa trên kiến trúc tích hợp lai (Hybrid Architecture) kết hợp giữa Trí tuệ nhân tạo đồ thị (Graph AI), Mô phỏng ngẫu nhiên (Stochastic Simulation) và Lập trình ràng buộc (Constraint Programming). Mục tiêu chính của giải pháp là giải quyết bài toán Lập lịch Dự án Hạn chế Tài nguyên dưới tác động của các nhân tố rủi ro ngẫu nhiên (Stochastic RCPSP) và cấu trúc tài chính đa tầng.
+Hệ thống tối ưu hóa tiến độ và chi phí dự án logistics (GLPO - Graph-Based Logistics Project Optimizer) được đề xuất dựa trên kiến trúc tích hợp lai kết hợp giữa trí tuệ nhân tạo đồ thị, mô phỏng ngẫu nhiên và lập trình ràng buộc. Mục tiêu chính của giải pháp là giải quyết bài toán Lập lịch Dự án Hạn chế Tài nguyên dưới tác động của các nhân tố rủi ro ngẫu nhiên (RCPSP) và cấu trúc tài chính đa tầng.
 
-Kiến trúc hệ thống được phân rã thành một quy trình xử lý dữ liệu xuyên suốt (Data Pipeline) gồm 5 khối chức năng chính liên kết chặt chẽ với nhau. Sơ đồ luồng xử lý và trao đổi thông tin tổng thể của hệ thống GLPO được thể hiện chi tiết tại Hình \ref{fig:overall_solution_flowchart}.
+Kiến trúc hệ thống được phân rã thành một quy trình xử lý dữ liệu xuyên suốt gồm 5 khối chức năng chính liên kết chặt chẽ với nhau. Sơ đồ luồng xử lý và trao đổi thông tin tổng thể của hệ thống GLPO được thể hiện chi tiết tại Hình \ref{fig:overall_solution_flowchart}.
 
 \begin{figure}[H]
     \centering
@@ -64,20 +64,79 @@ Kiến trúc hệ thống được phân rã thành một quy trình xử lý d�
 
 Dưới đây là mô tả chi tiết nguyên lý hoạt động và vai trò kỹ thuật của từng khối chức năng trong hệ thống:
 
-\subsection{Khối 1 -- Trích xuất và Tiền xử lý dữ liệu (ETL Pipeline)}
+\subsection{Khối 1 -- Trích xuất và Tiền xử lý dữ liệu}
 Khối ETL đóng vai trò là cửa ngõ tiếp nhận các tệp dự án thô định dạng DSLIB. Nhiệm vụ chính của khối này là giải mã và cấu trúc hóa dữ liệu phi cấu trúc từ các trang tính Excel thành các thực thể dữ liệu sạch. Quá trình này bao gồm việc phân tích lịch làm việc tuần để xác định thời lượng hữu dụng của một ca kíp, phân tách 38 loại mục chi phí của công việc thành các nhóm chi phí cơ bản (chi phí nhân công, vật tư, thiết bị), và tính toán các mốc thời gian cơ sở của dự án. Kết quả đầu ra của khối 1 là tập hợp các tệp CSV và JSON chuẩn hóa, sẵn sàng cho việc biểu diễn đồ thị.
 
-\subsection{Khối 2 -- Xây dựng Đồ thị Dị thể (Heterogeneous Graph Builder)}
-Khối 2 chuyển đổi các bảng thuộc tính phẳng thu được từ Khối 1 thành một cấu trúc đồ thị dị thể sinh động $G = (V, E)$. Đồ thị này biểu diễn 3 lớp thực thể độc lập bao gồm đỉnh Công việc ($V_{\text{Task}}$), đỉnh Tài nguyên ($V_{\text{Resource}}$) và đỉnh Ca làm việc ($V_{\text{Shift}}$). Khối 2 thực hiện các phép kiểm tra logic nghiêm ngặt như lọc bỏ các nút cha WBS để tránh hiện tượng trùng lặp đặc trưng, phát hiện chu trình bằng thuật toán duyệt DFS để loại bỏ các vòng lặp vô hạn, xử lý các công việc cô lập (orphan nodes) và quy đổi mốc thời gian chuỗi thành số giờ tích lũy (Epoch Base = 0). Các quan hệ phụ thuộc PDM và sử dụng tài nguyên được ánh xạ thành các cạnh có hướng mang trọng số đặc trưng (lags, resource demands).
+\subsection{Khối 2 -- Xây dựng Đồ thị Dị thể}
+Khối 2 chuyển đổi các bảng thuộc tính phẳng thu được từ Khối 1 thành một cấu trúc đồ thị dị thể đa hướng $G = (V, E, \mathcal{T}_v, \mathcal{T}_e)$. Đồ thị này biểu diễn 3 lớp thực thể độc lập ($|\mathcal{T}_v| = 3$) bao gồm đỉnh Công việc ($V_{\text{Task}}$), đỉnh Tài nguyên ($V_{\text{Resource}}$) và đỉnh Ca làm việc ($V_{\text{Shift}}$). Khối 2 thực hiện các phép kiểm tra logic nghiêm ngặt như lọc bỏ các nút cha WBS để tránh hiện tượng trùng lặp đặc trưng, phát hiện chu trình bằng thuật toán duyệt DFS để loại bỏ các vòng lặp vô hạn, xử lý các công việc cô lập (orphan nodes) và quy đổi mốc thời gian chuỗi thành số giờ tích lũy (Epoch Base = 0). Các quan hệ phụ thuộc được ánh xạ thành 5 loại cạnh liên kết ($|\mathcal{T}_e| = 5$), bao gồm 3 cạnh thuận cơ bản (phân bổ tài nguyên, ràng buộc ca kíp, logic PDM) và 2 cạnh nghịch đảo cho phép lan truyền thông điệp hai chiều từ tài nguyên và ca kíp ngược trở lại công việc.
 
-\subsection{Khối 3 -- Dự báo AI dựa trên mạng HGT (AI Predictive Engine)}
-Khối 3 chịu trách nhiệm dự báo các tham số rủi ro trễ tiến độ cho từng công việc thông qua mô hình học sâu đồ thị Heterogeneous Graph Transformer (HGT). Do tính chất khan hiếm dữ liệu nhãn trong quản lý dự án logistics, khối này sử dụng cơ chế học tự giám sát Masked Autoencoder (MAE) để che khuất ngẫu nhiên 20\% đặc trưng công việc và huấn luyện khôi phục nhằm giúp mô hình thấu hiểu sâu sắc cấu trúc topo mạng. Sau đó, mô hình được tinh chỉnh đa nhiệm (Multi-task Fine-tuning) để dự báo đồng thời ba chỉ số: hệ số rút ngắn thời lượng tối đa ($duration\_factor$), độ trễ kỳ vọng ($expected\_delay$), và độ bất định của tiến độ ($\sigma$). Các hàm kích hoạt ReLU và Softplus được áp dụng ở đầu ra để đảm bảo tính hợp lệ toán học (độ lệch chuẩn và độ trễ không âm).
+\subsection{Khối 3 -- Dự báo AI dựa trên mạng HGT}
+Khối 3 chịu trách nhiệm dự báo các tham số rủi ro trễ tiến độ cho từng công việc thông qua mô hình học sâu đồ thị Heterogeneous Graph Transformer (HGT). Do tính chất khan hiếm dữ liệu nhãn trong quản lý dự án logistics, khối này sử dụng cơ chế học tự giám sát Masked Autoencoder (MAE) để che khuất ngẫu nhiên 25\% đặc trưng công việc và huấn luyện khôi phục nhằm giúp mô hình thấu hiểu sâu sắc cấu trúc topo mạng. Sau đó, mô hình được tinh chỉnh đa nhiệm để dự báo đồng thời ba chỉ số: hệ số rút ngắn thời lượng tối đa ($duration\_factor$), độ trễ kỳ vọng ($expected\_delay$), và độ bất định của tiến độ ($\sigma$). Các hàm kích hoạt ReLU và Softplus được áp dụng ở đầu ra để đảm bảo tính hợp lệ toán học (độ lệch chuẩn và độ trễ không âm).
 
-\subsection{Khối 4 -- Mô phỏng Đường găng Ngẫu nhiên (Stochastic CPM)}
-Nhận kết quả dự báo từ Khối 3, Khối 4 tiến hành mô phỏng ngẫu nhiên để đánh giá rủi ro toàn cục của dự án. Thay vì coi thời gian thực hiện công việc là một hằng số tĩnh, hệ thống thiết lập thời lượng thực tế của mỗi công việc tuân theo phân phối xác suất Beta-PERT. Các cực trị của phân phối ($a$: lạc quan, $m$: khả dĩ nhất, $b$: bi quan) được hiệu chuẩn động dựa trên các tham số dự báo từ mô hình AI. Thuật toán Monte Carlo chạy 10.000 vòng lặp ngẫu nhiên, thực hiện duyệt thuật toán CPM (Forward-Backward Pass) trên đồ thị DAG để tính toán lượng dự trữ thời gian (slack time). Cuối cùng, khối 4 tổng hợp ra Chỉ số Tới hạn (Criticality Index - CI), phản ánh xác suất một công việc rơi vào đường găng và trực tiếp gây trễ hạn dự án.
+\subsubsection{Kiến trúc mô hình HGT}
+Mô hình HGT xây dựng cơ chế Attention nhận biết kiểu thực thể và kiểu quan hệ cho từng cạnh trong đồ thị dị thể. Với một cạnh $e = (s, r, t)$ nối nút nguồn $s$ kiểu $\tau(s)$ tới nút đích $t$ kiểu $\tau(t)$ qua quan hệ $\phi(r)$, quá trình lan truyền thông điệp gồm bốn bước:
 
-\subsection{Khối 5 -- Tối ưu hóa Lập lịch đa mục tiêu (CP-SAT Solver)}
-Khối 5 là phân hệ ra quyết định cuối cùng, kết hợp dữ liệu topo từ Khối 2, dự báo chi phí từ Khối 3 và chỉ số rủi ro CI từ Khối 4. Lõi tối ưu hóa sử dụng bộ giải Google OR-Tools CP-SAT để lập lịch công việc dưới ràng buộc hạn chế tài nguyên (RCPSP) tích hợp 4 chế độ thi công (Tiêu chuẩn, Tăng ca, Bổ sung nguồn lực, và Thuê ngoài). Các công việc có chỉ số CI cao (nút cổ chai) được ưu tiên mở khóa các chế độ đẩy nhanh tiến độ, khi các công việc ít quan trọng được giữ ở chế độ tiêu chuẩn để tiết kiệm ngân sách. Thông qua cơ chế grid sweep trượt trọng số hàm mục tiêu đa chiều (Makespan vs Cost vs Risk), bộ giải tìm kiếm tập nghiệm Pareto đại diện tối ưu, ghi nhận kết quả vào cơ sở dữ liệu để hiển thị Gantt chart và Pareto Frontier tương tác cho nhà quản lý.
+\textbf{Bước 1 -- Chiếu tuyến tính:} Toàn bộ đặc trưng nút được chiếu thống nhất lên không gian nhúng $d = 128$ chiều theo kiểu thực thể:
+$$\mathbf{h}_v^{(0)} = \text{Gelu}\!\left(\text{LayerNorm}\!\left(\mathbf{W}^{(\tau(v))} \mathbf{x}_v\right)\right), \quad \forall v \in V$$
+
+\textbf{Bước 2 -- Tính trọng số Attention dị thể:} Tại lớp $l$, trọng số Attention giữa nút nguồn $s$ và nút đích $t$ qua quan hệ $r$ được tính theo cơ chế scaled dot-product với các ma trận riêng theo kiểu quan hệ:
+$$\mathbf{Q}_t^{(r)} = \mathbf{W}_Q^{(\tau(t), \phi(r))} \mathbf{h}_t^{(l)}, \quad \mathbf{K}_s^{(r)} = \mathbf{W}_K^{(\tau(s), \phi(r))} \mathbf{h}_s^{(l)}$$
+$$\alpha_{s,t}^{(r)} = \mathrm{softmax}_{s \in \mathcal{N}(t)} \!\left( \frac{{\mathbf{Q}_t^{(r)}}^\top \mathbf{K}_s^{(r)}}{\sqrt{d/H}} \cdot \mu_{\tau(s), \phi(r), \tau(t)} \right)$$
+Trong đó $H = 4$ là số đầu Attention và $\mu_{\tau(s), \phi(r), \tau(t)}$ là hệ số hiệu chỉnh học được riêng cho từng bộ ba kiểu $(\text{kiểu nút nguồn}, \text{quan hệ}, \text{kiểu nút đích})$.
+
+\textbf{Bước 3 -- Tổng hợp và kết nối thặng dư:} Đặc trưng của nút đích được cập nhật bằng tổng hợp trọng số các vector giá trị từ nút nguồn kết hợp kết nối thặng dư:
+$$\mathbf{h}_t^{(l+1)} = \text{Gelu}\!\left( \sum_{s \in \mathcal{N}(t)} \alpha_{s,t}^{(r)} \cdot \mathbf{W}_V^{(\tau(s))} \mathbf{h}_s^{(l)} \right) + \mathbf{h}_t^{(l)}$$
+Kết nối thặng dư $+ \mathbf{h}_t^{(l)}$ giúp ổn định gradient khi xếp chồng nhiều lớp và bảo toàn thông tin cục bộ của nút.
+
+\textbf{Bước 4 -- Hybrid Readout Pooling:} Sau 2 lớp HGTConv, đặc trưng các nút Task được kết hợp với ngữ cảnh toàn cục dự án:
+$$\mathbf{g} = \mathrm{Concat}\!\left(\mathrm{MeanPool}_{t \in V_{\text{Task}}}(\mathbf{h}_t),\; \mathrm{MaxPool}_{t \in V_{\text{Task}}}(\mathbf{h}_t)\right) \in \mathbb{R}^{256}$$
+$$\mathbf{z}_t = \text{Gelu}\!\left(\text{LayerNorm}\!\left(\mathbf{W}_{\text{fusion}} \cdot \mathrm{Concat}(\mathbf{h}_t, \mathbf{g})\right)\right) \in \mathbb{R}^{128}$$
+Vector $\mathbf{z}_t$ mang đồng thời thông tin cục bộ lân cận công việc và thông tin toàn cục toàn dự án, trước khi được đưa vào đầu giải mã 4 lớp tuyến tính để xuất ra các tham số dự báo.
+
+\subsection{Khối 4 -- Mô phỏng Đường găng Ngẫu nhiên}
+Nhận kết quả dự báo từ Khối 3, Khối 4 tiến hành mô phỏng ngẫu nhiên để đánh giá rủi ro toàn cục của dự án. Thay vì coi thời gian thực hiện công việc là một hằng số tĩnh, hệ thống thiết lập thời lượng thực tế của mỗi công việc tuân theo phân phối xác suất Beta-PERT. Các cực trị của phân phối ($a$: lạc quan, $m$: khả dĩ nhất, $b$: bi quan) được hiệu chuẩn động dựa trên các tham số dự báo từ mô hình AI. Thuật toán Monte Carlo chạy 10.000 vòng lặp ngẫu nhiên, thực hiện hai lượt duyệt CPM trên đồ thị DAG để tính toán dự trữ thời gian và xác định đường găng. Cuối cùng, khối 4 tổng hợp ra Chỉ số Tới hạn (CI), phản ánh xác suất một công việc rơi vào đường găng và trực tiếp gây trễ hạn dự án.
+
+\subsubsection{Công thức CPM -- Lượt tiến và lượt lùi}
+Thuật toán CPM phân tích thời gian dự án qua hai lượt duyệt đồ thị DAG. Tại mỗi vòng lặp Monte Carlo, thời lượng $d(v)$ của công việc $v$ được lấy mẫu từ phân phối Beta-PERT trước khi thực hiện:
+
+\textbf{Lượt tiến (Forward Pass)} -- tính các mốc thời gian sớm nhất:
+$$ES(v) = \max_{u \in \mathrm{pred}(v)} \bigl( EF(u) + Lag(u, v) \bigr), \quad ES(S_{\mathrm{start}}) = 0$$
+$$EF(v) = ES(v) + d(v)$$
+
+\textbf{Lượt lùi (Backward Pass)} -- tính các mốc thời gian muộn nhất:
+$$LF(v) = \min_{w \in \mathrm{succ}(v)} \bigl( LS(w) - Lag(v, w) \bigr), \quad LF(S_{\mathrm{end}}) = EF(S_{\mathrm{end}})$$
+$$LS(v) = LF(v) - d(v)$$
+
+\textbf{Dự trữ thời gian tổng:}
+$$TF(v) = LS(v) - ES(v) = LF(v) - EF(v)$$
+Trong các công thức trên, $ES(v)$, $EF(v)$ lần lượt là mốc bắt đầu sớm nhất và mốc kết thúc sớm nhất của công việc $v$; $LS(v)$, $LF(v)$ là mốc bắt đầu muộn nhất và mốc kết thúc muộn nhất. Đường găng là tập hợp các công việc có $TF(v) = 0$.
+
+Sau $M = 10.000$ vòng lặp, Chỉ số Tới hạn CI của công việc $v$ được ước lượng thống kê:
+$$CI(v) = \frac{1}{M} \sum_{m=1}^{M} \mathbb{I}\!\left( TF^{(m)}(v) = 0 \right)$$
+
+\subsection{Khối 5 -- Tối ưu hóa Lập lịch đa mục tiêu}
+Khối 5 là phân hệ ra quyết định cuối cùng, kết hợp dữ liệu topo từ Khối 2, dự báo chi phí từ Khối 3 và chỉ số rủi ro CI từ Khối 4. Lõi tối ưu hóa sử dụng bộ giải Google OR-Tools CP-SAT để lập lịch công việc dưới ràng buộc hạn chế tài nguyên tích hợp 4 chế độ thi công (Tiêu chuẩn, Tăng ca, Bổ sung nguồn lực, và Thuê ngoài). Các công việc có chỉ số CI cao được ưu tiên mở khóa các chế độ đẩy nhanh tiến độ, trong khi các công việc ít quan trọng được giữ ở chế độ tiêu chuẩn để tiết kiệm ngân sách. Thông qua cơ chế grid sweep trượt trọng số hàm mục tiêu đa chiều, bộ giải tìm kiếm tập nghiệm Pareto đại diện tối ưu, ghi nhận kết quả vào cơ sở dữ liệu để hiển thị sơ đồ Gantt và Pareto Frontier tương tác cho nhà quản lý.
+
+\subsubsection{Mô hình toán học bộ giải CP-SAT}
+Bài toán lập lịch trong Khối 5 được hình thức hóa thành bài toán quy hoạch ràng buộc số nguyên hỗn hợp với cấu trúc:
+
+\textbf{Biến quyết định:}
+\begin{itemize}
+    \item $s_v \in \mathbb{Z}_{\geq 0}$: Thời điểm bắt đầu của công việc $v$ (tính bằng giờ nguyên).
+    \item $m_v \in \{0, 1, 2, 3\}$: Chế độ thi công của công việc $v$ (0 = Tiêu chuẩn, 1 = Tăng ca, 2 = Bổ sung nguồn lực, 3 = Thuê ngoài).
+    \item $d_v(m_v)$: Thời lượng thực tế của $v$ phụ thuộc vào chế độ $m_v$.
+\end{itemize}
+
+\textbf{Ràng buộc thứ tự thi công:}
+$$s_t \geq s_u + d_u(m_u) + Lag(u, t), \quad \forall (u, t) \in \mathcal{E}_{\text{precedes}}$$
+
+\textbf{Ràng buộc hạn chế tài nguyên (Cumulative):}
+$$\sum_{\substack{v \in V_{\text{Task}}:\\ s_v \leq t < s_v + d_v(m_v)}} req(v, r, m_v) \leq cap(r), \quad \forall r \in V_{\text{Resource}}, \; \forall t \in [0, T_{\max}]$$
+Ràng buộc Cumulative đảm bảo tổng nhu cầu tài nguyên $r$ tại bất kỳ thời điểm nào cũng không vượt quá năng lực khả dụng $cap(r)$.
+
+\textbf{Hàm mục tiêu đa chiều (Pareto Sweep):}
+$$\min \; \omega_1 \cdot Makespan + \omega_2 \cdot TotalCost + \omega_3 \cdot P_{\text{delay}}$$
+Trong đó $\omega_1, \omega_2, \omega_3 \in [0, 1]$ với $\omega_1 + \omega_2 + \omega_3 = 1$ được thay đổi đều đặn qua lưới grid sweep. Mỗi bộ trọng số sinh ra một phương án tối ưu cục bộ, tổng hợp lại thành tập nghiệm xấp xỉ Pareto Frontier.
 
 % ==========================================
 % 2.2. PHƯƠNG TIỆN NGHIÊN CỨU
@@ -88,10 +147,10 @@ Khối 5 là phân hệ ra quyết định cuối cùng, kết hợp dữ liệu
 \subsection{Ngôn ngữ lập trình và các thư viện hỗ trợ}
 Để thực thi hệ thống lai GLPO, nghiên cứu sử dụng ngôn ngữ lập trình \textbf{Python 3.10} làm nền tảng phát triển cốt lõi cho lõi AI và Backend API, kết hợp với hệ sinh thái thư viện chuyên dụng:
 \begin{itemize}
-    \item \textbf{PyTorch (v2.0.1)}: Cung cấp khung lập trình học sâu (Deep Learning) tối ưu hóa tính toán tensor trên phần cứng tăng tốc GPU thông qua CUDA 11.8.
-    \item \textbf{PyTorch Geometric (PyG v2.3.1)}: Thư viện chuyên biệt dành cho Học máy đồ thị (Graph Machine Learning), cung cấp các lớp cấu trúc dữ liệu đồ thị thưa (\texttt{HeteroData}) và các lớp tích chập đồ thị dị thể tối ưu như \texttt{HGTConv}.
+    \item \textbf{PyTorch (v2.0.1)}: Cung cấp khung lập trình học sâu tối ưu hóa tính toán tensor trên phần cứng tăng tốc GPU thông qua CUDA 11.8.
+    \item \textbf{PyTorch Geometric (PyG v2.3.1)}: Thư viện chuyên biệt dành cho học máy đồ thị, cung cấp các lớp cấu trúc dữ liệu đồ thị thưa (\texttt{HeteroData}) và các lớp tích chập đồ thị dị thể tối ưu như \texttt{HGTConv}.
     \item \textbf{Google OR-Tools (v9.6)}: Thư viện tối ưu hóa toán học mã nguồn mở. Lõi \textbf{CP-SAT Engine} được sử dụng để giải bài toán quy hoạch ràng buộc phi tuyến dưới dạng số nguyên, vượt trội về tốc độ tìm nghiệm tối ưu nhờ tích hợp thuật toán SAT (Satisfiability).
-    \item \textbf{FastAPI (v0.95)}: Khung phát triển ứng dụng Web API tốc độ cao, hỗ trợ lập trình bất đồng bộ (Asynchronous Programming) giúp tối ưu hóa băng thông truyền dữ liệu giữa lõi AI và Frontend.
+    \item \textbf{FastAPI (v0.95)}: Khung phát triển ứng dụng Web API tốc độ cao, hỗ trợ lập trình bất đồng bộ giúp tối ưu hóa băng thông truyền dữ liệu giữa lõi AI và Frontend.
     \item \textbf{React.js (v18.2)}: Sử dụng thư viện React Flow và Cytoscape.js để trực quan hóa sơ đồ mạng công việc AON và giao diện Gantt Chart động.
     \item \textbf{PostgreSQL (v15.3)}: Hệ quản trị cơ sở dữ liệu quan hệ mã nguồn mở mạnh mẽ, đóng vai trò lưu trữ topo dự án và kết quả tối ưu hóa đa mục tiêu.
 \end{itemize}
@@ -129,11 +188,11 @@ Môi trường CSDL & PostgreSQL 15.3 kết hợp PgBouncer Connection Pooler \\
 Quá trình thu thập dữ liệu trong đồ án được thiết kế đồng bộ để tích lũy đầy đủ thông tin về mặt kỹ thuật lập lịch, ràng buộc tài nguyên thực tế và rủi ro thời gian trong logistics. Dữ liệu thu thập được chia làm ba nhóm thành phần:
 
 \subsection{Dữ liệu tiến độ và chi phí cơ sở}
-Dữ liệu tiến độ cơ sở (Baseline Schedule) cung cấp danh sách công việc lá ($Task_i$). Mỗi công việc đi kèm các thuộc tính: mã định danh WBS ($wbs$), thời lượng kế hoạch tĩnh ($duration$), và quan hệ phụ thuộc tiền nhiệm (Predecessors) xác định trình tự thi công. Quan hệ phụ thuộc bao gồm 4 loại liên kết PDM: Finish-to-Start (FS), Start-to-Start (SS), Finish-to-Finish (FF), và Start-to-Finish (SF) đi kèm thời gian trễ ($Lag\_hours$). 
+Dữ liệu tiến độ cơ sở cung cấp danh sách công việc lá ($Task_i$). Mỗi công việc đi kèm các thuộc tính: mã định danh WBS ($wbs$), thời lượng kế hoạch tĩnh ($duration$), và quan hệ phụ thuộc tiền nhiệm xác định trình tự thi công. Quan hệ phụ thuộc bao gồm 4 loại liên kết PDM: Finish-to-Start (FS), Start-to-Start (SS), Finish-to-Finish (FF), và Start-to-Finish (SF) đi kèm thời gian trễ ($Lag\_hours$). 
 Về mặt tài chính, thu thập cơ cấu chi phí dự toán gồm chi phí nhân công trực tiếp ($Labor$) và chi phí nguyên vật liệu, thiết bị ($Material$, $Equipment$) nhằm khởi tạo các thuộc tính ngân sách cho các nút công việc.
 
 \subsection{Dữ liệu tài nguyên và ca kíp}
-Dữ liệu tài nguyên (Resources) bao gồm danh sách các nguồn lực hạn chế được phân loại thành nhân sự chuyên môn (Human) và thiết bị/phương tiện (Machine). Mỗi tài nguyên thu thập các thông số định ngạch: công suất khả dụng tối đa trong ngày ($Availability$), đơn giá giờ làm việc tiêu chuẩn ($Cost/Unit$), và hệ số lương ngoài giờ ($Overtime\_multiplier$).
+Dữ liệu tài nguyên bao gồm danh sách các nguồn lực hạn chế được phân loại thành nhân sự chuyên môn và thiết bị và phương tiện. Mỗi tài nguyên thu thập các thông số định ngạch: công suất khả dụng tối đa trong ngày ($Availability$), đơn giá giờ làm việc tiêu chuẩn ($Cost/Unit$), và hệ số lương ngoài giờ ($Overtime\_multiplier$).
 Dữ liệu ca kíp làm việc được bóc tách từ lịch làm việc dự án (`agenda.json`), quy định rõ số ngày làm việc trong tuần ($D_{week}$), số giờ làm việc tối đa trong một ca kíp tiêu chuẩn ($H_{day}$), và danh sách các ngày nghỉ lễ đặc lệ nhằm xác định quỹ thời gian khả dụng thực tế của dự án.
 
 \subsection{Dữ liệu rủi ro và nhãn đánh giá}
@@ -147,12 +206,12 @@ Dữ liệu rủi ro được thu thập dưới dạng ước lượng 3 điể
 \label{sec:2.4_dslib_dataset}
 
 \subsection{Nguồn gốc và quy mô tập dữ liệu}
-Nghiên cứu sử dụng tập dữ liệu đối chuẩn học thuật \textbf{DSLIB} (Project Scheduling Dataset with Cost and Risk Extensions). DSLIB được phát triển trực tiếp dựa trên các bài toán chuẩn mực thuộc thư viện \textbf{PSPLIB} (Project Scheduling Problem Library) -- thư viện uy tín nhất thế giới dành cho các thuật toán lập lịch dự án hạn chế tài nguyên RCPSP. 
+Nghiên cứu sử dụng tập dữ liệu \textbf{DSLIB} (Dynamic Scheduling Library). Khác với các thư viện giả lập như PSPLIB (với các tập J30, J60, J120 mang tính lý thuyết), DSLIB bao gồm các hồ sơ dự án thực tế trong lĩnh vực xây dựng và logistics, phản ánh chân thực các rào cản về không gian, thời gian và sự phụ thuộc logic phức tạp.
 
-Tập dữ liệu bao gồm các dự án giả lập với quy mô tăng dần: $30$ công việc (J30), $60$ công việc (J60), $90$ công việc (J90) và $120$ công việc (J120) phục vụ việc đánh giá khả năng mở rộng của thuật toán. DSLIB đã tích hợp bổ sung cơ cấu chi phí ngẫu nhiên phân phối lệch phải (log-normal) và các biến động rủi ro ngẫu nhiên để mô phỏng chân thực các dự án logistics thực địa.
+Tập dữ liệu bao gồm 5 dự án thực địa với quy mô và độ phức tạp khác nhau (C2011-07, C2012-04, C2012-08, C2013-09, C2014-11) nhằm đánh giá toàn diện khả năng mở rộng của mô hình AI. DSLIB tích hợp cơ cấu chi phí thực tế đa dạng cùng các rủi ro biến động năng suất, cho phép mô phỏng chính xác những gián đoạn và điểm nghẽn thường gặp trong vận hành dự án thực địa.
 
 \subsection{Cấu trúc tệp dữ liệu mẫu C2012-04}
-Để minh chứng và đánh giá hiệu năng thực tế của giải pháp, dự án \textbf{C2012-04} thuộc tập dữ liệu DSLIB được lựa chọn làm trường hợp nghiên cứu điển hình (Case Study). Dự án đại diện cho một kịch bản quản lý chuỗi cung ứng logistics quy mô trung bình phức tạp với cấu trúc chi tiết được tổng hợp tại Bảng \ref{tab:case_study_c2012_04}.
+Để minh chứng và đánh giá hiệu năng thực tế của giải pháp, dự án \textbf{C2012-04} thuộc tập dữ liệu DSLIB được lựa chọn làm trường hợp nghiên cứu điển hình. Dự án đại diện cho một kịch bản quản lý chuỗi cung ứng logistics quy mô trung bình phức tạp với cấu trúc chi tiết được tổng hợp tại Bảng \ref{tab:case_study_c2012_04}.
 
 \begin{table}[H]
 \centering
@@ -166,7 +225,7 @@ Tập dữ liệu bao gồm các dự án giả lập với quy mô tăng dần:
 Mã định danh dự án & C2012-04 \\
 Tổng số lượng công việc lá ($|V_{\text{Task}}|$) & 67 công việc từ $Task_1$ đến $Task_{67}$ \\
 Số lượng cạnh liên kết phụ thuộc PDM ($|E_{\text{precedes}}|$) & 94 liên kết thứ tự thi công định hướng \\
-Mật độ liên kết đồ thị (Network Density) & 2,12 cạnh/nút \\
+Mật độ liên kết đồ thị & 2,12 cạnh/nút \\
 Số loại tài nguyên tái tạo ($|V_{\text{Resource}}|$) & 5 nhóm tài nguyên chuyên dụng hạn chế \\
 Số lượng ca làm việc định nghĩa ($|V_{\text{Shift}}|$) & 3 loại ca (Ca hành chính, Ca kíp 1, Ca kíp 2) \\
 Tổng ngân sách kế hoạch cơ sở & \$9.980.668,83 USD \\
@@ -174,7 +233,7 @@ Tổng ngân sách kế hoạch cơ sở & \$9.980.668,83 USD \\
 \end{tabular}
 \end{table}
 
-Cấu trúc topo mạng công việc AON và sự phân bổ tài nguyên, ca kíp của dự án C2012-04 được biểu diễn dưới dạng Đồ thị dị thể (Heterogeneous Graph). Cấu trúc biểu diễn đồ thị dị thể trực quan của dự án được minh họa tại Hình \ref{fig:heterograph_structure}.
+Cấu trúc topo mạng công việc AON và sự phân bổ tài nguyên, ca kíp của dự án C2012-04 được biểu diễn dưới dạng Đồ thị dị thể đa hướng. Nhằm giải quyết điểm nghẽn thông tin một chiều, cấu trúc đồ thị này không chỉ chứa các cạnh thuận phân bổ tài nguyên mà còn được nhúng thêm các cạnh nghịch đảo để tài nguyên và ca kíp có thể truyền thông điệp trạng thái giới hạn ngược trở lại công việc. Cấu trúc biểu diễn đồ thị dị thể trực quan của dự án được minh họa tại Hình \ref{fig:heterograph_structure}.
 
 \begin{figure}[H]
     \centering
@@ -233,28 +292,28 @@ Trước khi cấu trúc dữ liệu dự án phẳng được đưa vào mô h�
         \draw[arrow] (step3) -- (step4);
         \draw[arrow] (step4) -- (output);
     \end{tikzpicture}
-    \caption{Sơ đồ quy trình tiền xử lý dữ liệu và làm sạch đồ thị (Graph Preprocessing Pipeline).}
+    \caption{Sơ đồ quy trình tiền xử lý dữ liệu và làm sạch đồ thị.}
     \label{fig:data_cleaning_flowchart}
 \end{figure}
 
-\subsection{Bước 1 -- Lọc hạng mục lá (Leaf Node Filtering)}
-Trong quản lý dự án theo cấu trúc WBS (Work Breakdown Structure), các công việc được tổ chức phân cấp dưới dạng cây mục lục. Các công việc cha (Summary Tasks) thực chất là sự tổng hợp đại diện (aggregation) cho các công việc con về mặt tiến độ và chi phí, không đại diện cho thực thể thi công trực tiếp. Để ngăn chặn việc tính lặp lại (double-counting) đặc trưng tài chính và các liên kết topo thừa trong mạng nơ-ron đồ thị, hệ thống sử dụng thư viện \texttt{openpyxl} để lọc bỏ tất cả các Summary Tasks dựa trên cấu trúc WBS và kiểu định dạng màu ô. Chỉ các công việc lá (Leaf Tasks) mới được giữ lại làm các nút đỉnh thực tế $v \in V_{\text{Task}}$.
+\subsection{Bước 1 -- Lọc hạng mục lá}
+Trong quản lý dự án theo cấu trúc WBS (Work Breakdown Structure), các công việc được tổ chức phân cấp dưới dạng cây mục lục. Các công việc cha thực chất là sự tổng hợp đại diện cho các công việc con về mặt tiến độ và chi phí, không đại diện cho thực thể thi công trực tiếp. Để ngăn chặn việc tính lặp lại đặc trưng tài chính và các liên kết topo thừa trong mạng nơ-ron đồ thị, hệ thống sử dụng thư viện \texttt{openpyxl} để lọc bỏ tất cả các Summary Tasks dựa trên cấu trúc WBS và kiểu định dạng màu ô. Chỉ các công việc lá mới được giữ lại làm các nút đỉnh thực tế $v \in V_{\text{Task}}$.
 
-\subsection{Bước 2 -- Phát hiện chu trình (Cycle Detection DFS)}
+\subsection{Bước 2 -- Phát hiện chu trình}
 Đồ thị mạng công việc AON (Activity-on-Node) bắt buộc phải tuân thủ cấu trúc của một đồ thị có hướng không chu trình (DAG - Directed Acyclic Graph). Để đảm bảo các thuật toán CPM và CP-SAT có thể giải được, hệ thống áp dụng thuật toán duyệt đồ thị theo chiều sâu (DFS) tích hợp cơ chế gán nhãn 3 trạng thái màu để phát hiện vòng lặp vô hạn giữa các ràng buộc tiền nhiệm:
 \begin{itemize}
     \item \textbf{Màu Trắng (Trạng thái 0):} Nút chưa được duyệt qua.
-    \item \textbf{Màu Xám (Trạng thái 1):} Nút đang nằm trong ngăn xếp đệ quy (recursion stack) của nhánh duyệt hiện tại.
+    \item \textbf{Màu Xám (Trạng thái 1):} Nút đang nằm trong ngăn xếp đệ quy của nhánh duyệt hiện tại.
     \item \textbf{Màu Đen (Trạng thái 2):} Nút và tất cả các nút hạ nguồn đã được duyệt hoàn toàn.
 \end{itemize}
-Nếu trong quá trình duyệt DFS từ một nút Màu Trắng, hệ thống phát hiện có một cạnh đi hướng tới một nút Màu Xám, điều này khẳng định sự tồn tại của chu trình ngược chiều (back-edge) trong đồ thị. Khi đó, hệ thống sẽ chặn luồng dữ liệu và đưa ra thông báo cảnh báo mã lỗi để người dùng điều chỉnh lại logic dự án.
+Nếu trong quá trình duyệt DFS từ một nút Màu Trắng, hệ thống phát hiện có một cạnh đi hướng tới một nút Màu Xám, điều này khẳng định sự tồn tại của chu trình ngược chiều trong đồ thị. Khi đó, hệ thống sẽ chặn luồng dữ liệu và đưa ra thông báo cảnh báo mã lỗi để người dùng điều chỉnh lại logic dự án.
 
-\subsection{Bước 3 -- Xử lý công việc cô lập (Orphan Node Resolution)}
-Các công việc không có bất kỳ công việc tiền nhiệm nào hoặc không có công việc kế nhiệm nào được gọi là các nút cô lập (Orphan Nodes). Sự xuất hiện của các nút này làm ngắt quãng dòng chảy topo và gây sai lệch cho việc tính toán đường găng toàn cục. Hệ thống giải quyết bằng cách tự động tạo ra hai nút ranh giới ảo: Nút bắt đầu ảo ($S_{\text{start}}$) và Nút kết thúc ảo ($S_{\text{end}}$).
+\subsection{Bước 3 -- Xử lý công việc cô lập}
+Các công việc không có bất kỳ công việc tiền nhiệm nào hoặc không có công việc kế nhiệm nào được gọi là các nút cô lập. Sự xuất hiện của các nút này làm ngắt quãng dòng chảy topo và gây sai lệch cho việc tính toán đường găng toàn cục. Hệ thống giải quyết bằng cách tự động tạo ra hai nút ranh giới ảo: Nút bắt đầu ảo ($S_{\text{start}}$) và Nút kết thúc ảo ($S_{\text{end}}$).
 * Tập nút cô lập đầu vào: $V_{\text{orphan\_in}} = \{v \in V_{\text{Task}} \mid \text{in-degree}(v) = 0 \text{ và } v \neq S_{\text{start}}\}$. Hệ thống tự động tạo các cạnh định hướng ảo trỏ từ $S_{\text{start}} \rightarrow v \quad \forall v \in V_{\text{orphan\_in}}$.
 * Tập nút cô lập đầu ra: $V_{\text{orphan\_out}} = \{v \in V_{\text{Task}} \mid \text{out-degree}(v) = 0 \text{ và } v \neq S_{\text{end}}\}$. Hệ thống tự động tạo các cạnh định hướng ảo trỏ từ $v \rightarrow S_{\text{end}} \quad \forall v \in V_{\text{orphan\_out}}$.
 
-\subsection{Bước 4 -- Đồng bộ hóa giờ thi công (Timeline Alignment)}
+\subsection{Bước 4 -- Đồng bộ hóa giờ thi công}
 Dữ liệu thời gian kế hoạch ban đầu thường được lưu dưới dạng chuỗi ngày tháng tiêu chuẩn (ví dụ: `2026-08-13 08:00:00`). Để loại bỏ sự phụ thuộc vào định dạng múi giờ quốc gia và giảm độ phức tạp tính toán cho bộ giải số nguyên CP-SAT, hệ thống quy ước ngày khởi công sớm nhất của dự án làm tọa độ gốc (Epoch Base = 0). Mọi mốc thời gian bắt đầu và kết thúc của các công việc khác được quy đổi thành giá trị số nguyên biểu diễn số giờ tích lũy (offset hours) so với mốc gốc:
 $$T_{\text{offset}}(v) = T_{\text{date}}(v) - T_{\text{base}}$$
 
@@ -264,7 +323,7 @@ $$T_{\text{offset}}(v) = T_{\text{date}}(v) - T_{\text{base}}$$
 \section{Kỹ nghệ đặc trưng}
 \label{sec:2.6_feature_engineering}
 
-Kỹ nghệ đặc trưng (Feature Engineering) tập trung vào việc làm nổi bật các mối tương quan phi tuyến giữa đặc trưng không gian (vị trí công việc trong mạng lưới) và đặc trưng thời gian (ca kíp tuần hoàn).
+Kỹ nghệ đặc trưng tập trung vào việc làm nổi bật các mối tương quan phi tuyến giữa đặc trưng không gian (vị trí công việc trong mạng lưới) và đặc trưng thời gian (ca kíp tuần hoàn).
 
 \subsection{Trích xuất các tỷ lệ chi phí thành phần}
 Thay vì chỉ cung cấp các giá trị chi phí thô dễ gây nhiễu, hệ thống trích xuất hai đặc trưng tỷ lệ tài chính đại diện cho cơ cấu đầu tư của từng công việc:
@@ -299,7 +358,7 @@ Trong đó, nhãn mục tiêu dự báo độ trễ thực tế ($expected\_dela
 \subsection{Chuẩn hóa Z-Score và kẹp giá trị}
 Sau khi đưa về dạng log-scale, toàn bộ tensor đặc trưng được chuẩn hóa Z-Score toàn cục để đưa giá trị trung bình về 0 và độ lệch chuẩn về 1:
 $$x'_{std} = \frac{x_{raw} - \mu}{\sigma + \epsilon}$$
-Trong đó, $\mu$ và $\sigma$ được tính toán nghiêm ngặt chỉ trên tập huấn luyện (training set) để chống rò rỉ dữ liệu (data leakage), và $\epsilon = 10^{-6}$ là hệ số ổn định số học tránh lỗi chia cho không. Cuối cùng, hệ thống thực hiện hàm kẹp `clamp` giới hạn biên đặc trưng trong khoảng an toàn $[-5.0, 5.0]$ để triệt tiêu ảnh hưởng của các giá trị ngoại lai cực đoan.
+Trong đó, $\mu$ và $\sigma$ được tính toán nghiêm ngặt chỉ trên tập huấn luyện để chống rò rỉ dữ liệu, và $\epsilon = 10^{-6}$ là hệ số ổn định số học tránh lỗi chia cho không. Cuối cùng, hệ thống thực hiện hàm kẹp `clamp` giới hạn biên đặc trưng trong khoảng an toàn $[-5.0, 5.0]$ để triệt tiêu ảnh hưởng của các giá trị ngoại lai cực đoan.
 
 \subsection{Cơ cấu Normalizer Registry thích ứng}
 Hệ số quy mô $s_{\text{domain}}$ trong công thức log-scale được thay đổi động thông qua bộ đăng ký Normalizer Registry thích ứng theo từng loại hình dự án:
@@ -312,26 +371,26 @@ Cơ cấu này đảm bảo GNN có thể tự thích ứng tối ưu với các
 \section{Chia tập dữ liệu}
 \label{sec:2.8_dataset_splitting}
 
-Đối với các mô hình học máy truyền thống, tập dữ liệu thường được phân tách ngẫu nhiên theo tỷ lệ (ví dụ: 80\% huấn luyện và 20\% kiểm thử) ở mức độ bản ghi độc lập. Tuy nhiên, đối với dữ liệu đồ thị dự án logistics, việc phân tách ngẫu nhiên ở mức công việc (Task-level split) sẽ dẫn đến các lỗi logic nghiêm trọng và rò rỉ dữ liệu (data leakage). Phần này phân tích các đặc trưng cấu trúc topo của dự án và đề xuất chiến lược chia tập dữ liệu phù hợp.
+Đối với các mô hình học máy truyền thống, tập dữ liệu thường được phân tách ngẫu nhiên theo tỷ lệ (ví dụ: 80\% huấn luyện và 20\% kiểm thử) ở mức độ bản ghi độc lập. Tuy nhiên, đối với dữ liệu đồ thị dự án logistics, việc phân tách ngẫu nhiên ở mức công việc sẽ dẫn đến các lỗi logic nghiêm trọng và rò rỉ dữ liệu. Phần này phân tích các đặc trưng cấu trúc topo của dự án và đề xuất chiến lược chia tập dữ liệu phù hợp.
 
 \subsection{Đặc trưng cấu trúc topo rời rạc và rò rỉ dữ liệu}
 Trong đồ thị dự án $G = (V, E)$, các công việc $v \in V_{\text{Task}}$ không thỏa mãn giả định phân phối độc lập và đồng nhất (i.i.d. -- independent and identically distributed). Trái lại, chúng liên kết chặt chẽ với nhau thông qua mạng lưới quan hệ phụ thuộc tiền nhiệm $E_{\text{precedes}}$. Năng suất và độ trễ của một công việc hạ nguồn phụ thuộc trực tiếp vào trạng thái hoàn thành của các công việc thượng nguồn. 
 
 Nếu áp dụng phương pháp phân tách ngẫu nhiên các công việc trong cùng một đồ thị dự án vào tập huấn luyện và kiểm thử:
 \begin{itemize}
-    \item \textbf{Hiện tượng rò rỉ dữ liệu qua lan truyền thông điệp (Message Passing Leakage):} Khi mạng GNN thực hiện các lớp tích chập đồ thị, thông tin đặc trưng của các công việc thuộc tập kiểm thử sẽ được lan truyền và nhúng vào đặc trưng của các công việc thuộc tập huấn luyện lân cận. Điều này khiến mô hình có thể "nhìn thấy trước" thông tin của tập kiểm thử trong quá trình huấn luyện, dẫn đến kết quả đánh giá bị lạc quan giả tạo.
-    \item \textbf{Vi phạm tính thực tiễn triển khai:} Trong thực tế, khi áp dụng hệ thống GLPO tại doanh nghiệp, mô hình AI cần phải dự báo độ trễ cho một dự án hoàn toàn mới chưa từng xuất hiện trong quá trình huấn luyện. Do đó, mô hình cần được đánh giá khả năng tổng quát hóa ở mức độ dự án (Project-level generalization) chứ không phải mức độ công việc đơn lẻ.
+    \item \textbf{Hiện tượng rò rỉ dữ liệu qua lan truyền thông điệp:} Khi mạng GNN thực hiện các lớp tích chập đồ thị, thông tin đặc trưng của các công việc thuộc tập kiểm thử sẽ được lan truyền và nhúng vào đặc trưng của các công việc thuộc tập huấn luyện lân cận. Điều này khiến mô hình có thể "nhìn thấy trước" thông tin của tập kiểm thử trong quá trình huấn luyện, dẫn đến kết quả đánh giá bị lạc quan giả tạo.
+    \item \textbf{Vi phạm tính thực tiễn triển khai:} Trong thực tế, khi áp dụng hệ thống GLPO tại doanh nghiệp, mô hình AI cần phải dự báo độ trễ cho một dự án hoàn toàn mới chưa từng xuất hiện trong quá trình huấn luyện. Do đó, mô hình cần được đánh giá khả năng tổng quát hóa ở mức độ dự án chứ không phải mức độ công việc đơn lẻ.
 \end{itemize}
 
-\subsection{Chiến lược Kiểm thử chéo Loại bỏ một Dự án (Leave-One-Project-Out CV)}
-Để giải quyết triệt để các hạn chế trên, nghiên cứu đề xuất áp dụng chiến lược kiểm thử chéo \textbf{Leave-One-Project-Out Cross-Validation (LOPO CV)} (Kiểm thử chéo loại bỏ một dự án). Quy trình này phân tách dữ liệu ở mức độ đồ thị dự án rời rạc thay vì mức công việc nội bộ.
+\subsection{Chiến lược Kiểm thử chéo Loại bỏ một Dự án}
+Để giải quyết triệt để các hạn chế trên, nghiên cứu đề xuất áp dụng chiến lược kiểm thử chéo kiểm thử chéo loại bỏ một dự án (Leave-One-Project-Out Cross-Validation - LOPO CV). Quy trình này phân tách dữ liệu ở mức độ đồ thị dự án rời rạc thay vì mức công việc nội bộ.
 
 Giả sử tập dữ liệu nghiên cứu gồm $K$ đồ thị dự án độc lập trích xuất từ DSLIB:
 $$\mathcal{D} = \{G_1, G_2, \dots, G_K\}$$
 Với mỗi lượt kiểm thử chéo $k \in \{1, 2, \dots, K\}$, tập dữ liệu được phân chia động thành:
 \begin{itemize}
-    \item \textbf{Tập Kiểm thử (Validation Set):} $\mathcal{D}_{\text{val}}^{(k)} = \{G_k\}$
-    \item \textbf{Tập Huấn luyện (Training Set):} $\mathcal{D}_{\text{train}}^{(k)} = \mathcal{D} \setminus \{G_k\}$
+    \item \textbf{Tập kiểm thử:} $\mathcal{D}_{\text{val}}^{(k)} = \{G_k\}$
+    \item \textbf{Tập huấn luyện:} $\mathcal{D}_{\text{train}}^{(k)} = \mathcal{D} \setminus \{G_k\}$
 \end{itemize}
 
 Quy trình huấn luyện và đánh giá được lặp lại $K$ lần (gọi là $K$ folds). Tại fold thứ $k$, mô hình được huấn luyện hoàn chỉnh trên $K-1$ đồ thị dự án thuộc $\mathcal{D}_{\text{train}}^{(k)}$, sau đó thực hiện suy luận dự báo độ trễ và độ bất định trên đồ thị dự án duy nhất $G_k$ thuộc tập kiểm thử $\mathcal{D}_{\text{val}}^{(k)}$. Sơ đồ phân tách dữ liệu kiểm thử chéo LOPO CV được minh họa tại Hình \ref{fig:lopo_cv_splitting}.
@@ -356,9 +415,9 @@ Chiến lược LOPO CV mang lại các ưu điểm vượt trội:
 \section{Huấn luyện mô hình}
 \label{sec:2.9_model_training}
 
-Quá trình huấn luyện mô hình học sâu đồ thị trong hệ thống GLPO được chia làm hai giai đoạn độc lập nhằm giải quyết rào cản khan hiếm dữ liệu nhãn và cải thiện độ ổn định dự báo: Giai đoạn 0: Huấn luyện tiền kỳ tự giám sát (Pre-training SSL) và Giai đoạn 1: Huấn luyện tinh chỉnh đa nhiệm có giám sát (Supervised Fine-tuning).
+Quá trình huấn luyện mô hình học sâu đồ thị trong hệ thống GLPO được chia làm hai giai đoạn độc lập nhằm giải quyết rào cản khan hiếm dữ liệu nhãn và cải thiện độ ổn định dự báo: Giai đoạn 0: Huấn luyện tiền kỳ tự giám sát và Giai đoạn 1: Huấn luyện tinh chỉnh đa nhiệm có giám sát.
 
-\subsection{Huấn luyện tiền kỳ tự giám sát (Pre-training SSL HGT MAE)}
+\subsection{Huấn luyện tiền kỳ tự giám sát}
 Để mô hình HGT tự hấp thụ được các quy luật phân phối topo mạng lưới AON (như đường găng, mức độ phức tạp của nhánh song song) mà không cần dữ liệu nhãn, hệ thống đóng gói HGT thành một cấu trúc Masked Autoencoder (MAE) đồ thị. Kiến trúc của pha huấn luyện tiền kỳ này được minh họa tại Hình \ref{fig:pretraining_flow}.
 
 \begin{figure}[H]
@@ -368,18 +427,20 @@ Quá trình huấn luyện mô hình học sâu đồ thị trong hệ thống G
     \label{fig:pretraining_flow}
 \end{figure}
 
-Quá trình huấn luyện tự giám sát áp dụng giải thuật che đặc trưng (Node Feature Masking):
+Quá trình huấn luyện tự giám sát áp dụng giải thuật che đặc trưng:
 \begin{enumerate}
-    \item \textbf{Khởi tạo mặt nạ (Mask Generator):} Với mỗi epoch huấn luyện, hệ thống sinh ngẫu nhiên một mặt nạ nhị phân $\mathbf{M} \in \{0, 1\}^{|V_{\text{Task}}| \times d}$ với tỷ lệ che giấu $mask\_rate = 25\%$.
+    \item \textbf{Khởi tạo mặt nạ:} Với mỗi epoch huấn luyện, hệ thống sinh ngẫu nhiên một mặt nạ nhị phân $\mathbf{M} \in \{0, 1\}^{|V_{\text{Task}}| \times d}$ với tỷ lệ che giấu $mask\_rate = 25\%$.
     \item \textbf{Che giấu đặc trưng:} Các vector đặc trưng của các nút công việc được che giấu bằng cách gán về 0:
     $$\mathbf{\tilde{X}}_{task} = \mathbf{X}_{task} \odot (1 - \mathbf{M})$$
     Các nút tài nguyên $V_{\text{Resource}}$ và ca làm việc $V_{\text{Shift}}$ được giữ nguyên đặc trưng ban đầu để làm ngữ cảnh dẫn truyền.
-    \item \textbf{Lan truyền thông tin đồ thị:} Đồ thị bị che $\mathbf{\tilde{X}}$ được đưa qua 2 lớp tích chập HGTConv. Nhờ cơ chế Attention dị thể, thông tin từ các nút lân cận (không bị che) và nút tài nguyên liên quan sẽ lan truyền qua các cạnh để khôi phục lại đặc trưng bị thiếu của nút Task tại lớp đầu ra $\mathbf{\hat{X}}_{task}$.
+    \item \textbf{Lan truyền thông tin đồ thị:} Đồ thị bị che $\mathbf{\tilde{X}}$ được đưa qua các lớp tích chập HGTConv. Tại lớp thứ $l+1$, đặc trưng của công việc mục tiêu $t$ được tổng hợp thông qua phép tính toán Attention dị thể:
+    $$\mathbf{h}_{t}^{(l+1)} = \sum_{s \in \mathcal{N}(t)} \sum_{e = (s, r, t)} \alpha_{s, t}^{(r)} \cdot \mathbf{W}_{\text{Value}}^{(\tau(s))} \mathbf{h}_{s}^{(l)}$$
+    Trong đó, $\mathcal{N}(t)$ là tập hợp các nút lân cận và $e \in \{\text{precedes}, \text{uses}, \text{rev\_uses}, \text{constrained\_by}, \text{rev\_constrained\_by}\}$. Đặc biệt, nhờ có các cạnh tương phản $\text{rev\_uses}$ và $\text{rev\_constrained\_by}$, nút Task bị che giấu đặc trưng mới có thể khôi phục lại thuộc tính chi phí và thời gian dựa trên các thông điệp dẫn truyền ngược từ các nút Resource và Shift lân cận. Đầu ra của mạng HGT là vector $\mathbf{\hat{X}}_{task}$.
     \item \textbf{Tối ưu hóa hàm khôi phục (Smooth L1 Loss):} Sử dụng hàm lỗi Smooth L1 Loss để so sánh sự khác biệt giữa đặc trưng khôi phục và đặc trưng gốc, giúp giảm tính nhạy cảm với các trị ngoại lai:
     $$\mathcal{L}_{recon} = \frac{1}{|V_{\text{Task}}|} \sum_{i \in V_{\text{Task}}} \text{SmoothL1}\left(\mathbf{\hat{X}}_{task, i} \odot \mathbf{M}_i, \mathbf{X}_{task, i} \odot \mathbf{M}_i\right)$$
 \end{enumerate}
 
-\subsection{Huấn luyện tinh chỉnh đa nhiệm và Ước lượng Bất định (Supervised Fine-tuning)}
+\subsection{Huấn luyện tinh chỉnh đa nhiệm và ước lượng bất định}
 Sau khi hoàn thành huấn luyện tiền kỳ, mô hình HGT đã sở hữu khả năng nhúng topo vượt trội. Trọng số của bộ mã hóa HGT được tải lại để bước vào giai đoạn tinh chỉnh có giám sát. Ở giai đoạn này, hệ thống áp dụng một quy trình huấn luyện phức hợp nhằm nâng cao khả năng tổng quát hóa và cho phép mô hình tự đánh giá độ bất định của dự báo. Sơ đồ kiến trúc HGT Task Predictor hoàn chỉnh được minh họa tại Hình \ref{fig:hgt_predictor_architecture}.
 
 \begin{figure}[H]
@@ -389,17 +450,17 @@ Sau khi hoàn thành huấn luyện tiền kỳ, mô hình HGT đã sở hữu k
     \label{fig:hgt_predictor_architecture}
 \end{figure}
 
-\subsubsection{Kỹ thuật Tăng cường dữ liệu Đồ thị (Graph Data Augmentation)}
+\subsubsection{Kỹ thuật tăng cường dữ liệu đồ thị}
 Để tránh hiện tượng quá khớp (overfitting) do số lượng đồ thị dự án hạn chế, hệ thống áp dụng hai phương pháp tăng cường dữ liệu động trong mỗi lượt huấn luyện:
 \begin{itemize}
-    \item \textbf{Cộng nhiễu Gaussian (Feature Noise Injection):} Cộng nhiễu trắng vào đặc trưng nút Task: $\mathbf{x}_i \leftarrow \mathbf{x}_i + \mathbf{e}_i$ với $\mathbf{e}_i \sim \mathcal{N}(0, 0.02^2 \cdot \mathbf{I})$ để chống overfitting đặc trưng tĩnh.
+    \item \textbf{Cộng nhiễu Gaussian:} Cộng nhiễu trắng vào đặc trưng nút Task: $\mathbf{x}_i \leftarrow \mathbf{x}_i + \mathbf{e}_i$ với $\mathbf{e}_i \sim \mathcal{N}(0, 0.02^2 \cdot \mathbf{I})$ để chống overfitting đặc trưng tĩnh.
     \item \textbf{Bỏ rơi cạnh (DropEdge):} Loại bỏ ngẫu nhiên 20\% các liên kết thứ tự thi công hoặc liên kết phân bổ tài nguyên ($\mathcal{E}_{\text{precedes}}, \mathcal{E}_{\text{uses}}$) trong mỗi epoch:
     $$\mathcal{E}' = \text{DropEdge}(\mathcal{E}, p = 0.20)$$
     Buộc GNN phải tìm kiếm các đường dẫn truyền thông tin thay thế, tăng cường tính bền vững của Embedding không gian.
 \end{itemize}
 
 \subsubsection{Trộn mẫu biểu diễn (Manifold Mixup)}
-Hệ thống triển khai thuật toán Manifold Mixup trực tiếp trên không gian nhúng (Embedding Space) của nút công việc trước khi đưa vào các đầu giải mã. Phép trộn mẫu tuyến tính giữa nút công việc $i$ và nút công việc $j$ (chọn ngẫu nhiên) tuân theo:
+Hệ thống triển khai thuật toán Manifold Mixup trực tiếp trên không gian nhúng của nút công việc trước khi đưa vào các đầu giải mã. Phép trộn mẫu tuyến tính giữa nút công việc $i$ và nút công việc $j$ (chọn ngẫu nhiên) tuân theo:
 $$\mathbf{h}' = \lambda \mathbf{h}_i + (1 - \lambda) \mathbf{h}_j$$
 $$y'_{dfac} = \lambda y_{i, dfac} + (1 - \lambda) y_{j, dfac}$$
 $$y'_{delay} = \lambda y_{i, delay} + (1 - \lambda) y_{j, delay}$$
@@ -420,18 +481,18 @@ Trong đó, $\epsilon = 10^{-6}$ để đảm bảo độ ổn định số họ
 Để đo lường hiệu năng của giải pháp lai GLPO một cách định lượng và khách quan, hệ thống thiết lập bộ chỉ số đánh giá chia làm hai nhóm chính: Nhóm chỉ số đánh giá độ chính xác dự báo của mô hình Deep Learning (HGT Task Predictor) và Nhóm chỉ số đánh giá hiệu quả tối ưu hóa lập lịch dưới ràng buộc (CP-SAT Solver).
 
 \subsection{Các chỉ số đánh giá độ chính xác dự báo rủi ro tiến độ}
-Nhánh dự báo đặc trưng của GNN thực hiện bài toán hồi quy (Regression) trên các nhãn độ co giãn thời lượng ($duration\_factor$) và độ trễ kỳ vọng ($expected\_delay$). Ba chỉ số đo lường sai số học máy chuẩn học thuật được áp dụng:
+Nhánh dự báo đặc trưng của GNN thực hiện bài toán hồi quy trên các nhãn độ co giãn thời lượng ($duration\_factor$) và độ trễ kỳ vọng ($expected\_delay$). Ba chỉ số đo lường sai số học máy chuẩn học thuật được áp dụng:
 
 \begin{enumerate}
-    \item \textbf{Sai số Tuyệt đối Trung bình (MAE - Mean Absolute Error):} 
+    \item \textbf{Sai số tuyệt đối trung bình (MAE):} 
     Đo lường độ lệch trung bình giữa giá trị thực tế và giá trị dự báo, có tính chất trực quan dễ hiểu:
     $$\text{MAE} = \frac{1}{|V_{\text{Task}}|} \sum_{i \in V_{\text{Task}}} \left| y_i - \hat{y}_i \right|$$
     
-    \item \textbf{Sai số Bình phương Trung bình trục căn (RMSE - Root Mean Square Error):}
+    \item \textbf{Sai số bình phương trung bình trục căn (RMSE):}
     Đo lường sai số trung bình có trọng số phạt nặng cho các lỗi dự báo lớn nhờ phép bình phương trước khi lấy căn:
     $$\text{RMSE} = \sqrt{\frac{1}{|V_{\text{Task}}|} \sum_{i \in V_{\text{Task}}} \left( y_i - \hat{y}_i \right)^2}$$
     
-    \item \textbf{Hệ số Xác định ($R^2$ Score - Coefficient of Determination):}
+    \item \textbf{Hệ số xác định ($R^2$):}
     Đo lường tỷ lệ biến thiên của nhãn mục tiêu thực tế được giải thích bởi các đặc trưng dự báo của mô hình. Giá trị $R^2 \rightarrow 1.0$ thể hiện mô hình dự báo gần như hoàn hảo, trong khi $R^2 \le 0$ thể hiện mô hình kém hiệu quả hơn một bộ dự báo hằng số trung bình:
     $$R^2 = 1 - \frac{\sum_{i \in V_{\text{Task}}} \left( y_i - \hat{y}_i \right)^2}{\sum_{i \in V_{\text{Task}}} \left( y_i - \bar{y} \right)^2}$$
     Trong đó, $\bar{y} = \frac{1}{|V_{\text{Task}}|} \sum_{i} y_i$ đại diện cho giá trị trung bình thực tế của nhãn trên toàn bộ tập công việc.
@@ -455,7 +516,7 @@ Nhóm chỉ số này đánh giá chất lượng của tập phương án lập
     Trong đó, $\mathbb{I}(\cdot)$ là hàm chỉ thị, nhận giá trị bằng 1 nếu biểu thức trong ngoặc đúng và bằng 0 nếu ngược lại.
     
     \item \textbf{Độ lệch tài nguyên sử dụng (Resource Leveling Variance - $\sigma^2_{\text{resource}}$):}
-    Đo lường độ thăng trầm (sự không ổn định) của hồ sơ sử dụng tài nguyên theo thời gian. Mục tiêu là san phẳng tài nguyên (resource leveling), tránh các đỉnh nhọn nhu cầu vượt quá giới hạn khả dụng:
+    Đo lường độ thăng trầm (sự không ổn định) của hồ sơ sử dụng tài nguyên theo thời gian. Mục tiêu là san phẳng tài nguyên, tránh các đỉnh nhọn nhu cầu vượt quá giới hạn khả dụng:
     $$\sigma^2_{\text{resource}} = \frac{1}{T_{max}} \sum_{t=1}^{T_{max}} \left( R_t - \bar{R} \right)^2$$
     Trong đó, $R_t$ là tổng lượng tài nguyên tích lũy được sử dụng tại giờ $t$, và $\bar{R}$ là lượng tài nguyên sử dụng trung bình trong suốt vòng đời dự án. Chỉ số $\sigma^2_{\text{resource}}$ càng nhỏ thể hiện biểu đồ phụ tải tài nguyên càng phẳng và tối ưu.
 \end{enumerate}
@@ -463,22 +524,22 @@ Nhóm chỉ số này đánh giá chất lượng của tập phương án lập
 % ==========================================
 % 11. TRIỂN KHAI ỨNG DỤNG (DEPLOYMENT)
 % ==========================================
-\section{Triển khai ứng dụng (Deployment)}
+\section{Triển khai ứng dụng}
 \label{sec:2.11_deployment}
 
-Để chuyển giao kết quả nghiên cứu thành một sản phẩm phần mềm thực tế hỗ trợ các nhà quản trị dự án, hệ thống GLPO được triển khai dưới dạng ứng dụng Web đa lớp (Multi-tier Web Application) container hóa. Phần này trình bày kiến trúc triển khai hệ thống và luồng xử lý giao diện người dùng.
+Để chuyển giao kết quả nghiên cứu thành một sản phẩm phần mềm thực tế hỗ trợ các nhà quản trị dự án, hệ thống GLPO được triển khai dưới dạng ứng dụng Web đa lớp container hóa. Phần này trình bày kiến trúc triển khai hệ thống và luồng xử lý giao diện người dùng.
 
-\subsection{Kiến trúc hệ thống và Container hóa (Docker \& Docker Compose)}
+\subsection{Kiến trúc hệ thống và Container hóa}
 Hệ thống sử dụng giải pháp container hóa toàn bộ các dịch vụ thông qua Docker và điều phối bằng Docker Compose, giúp cô lập môi trường thực thi, đảm bảo khả năng di trú và mở rộng động. Kiến trúc triển khai tổng thể bao gồm ba dịch vụ (services) chính được thiết lập trong mạng nội bộ ảo:
 
 \begin{enumerate}
-    \item \textbf{Dịch vụ Giao diện Người dùng (Frontend Service Container):}
+    \item \textbf{Dịch vụ giao diện người dùng (Frontend):}
     Được xây dựng trên thư viện React.js, đóng gói bằng quy trình biên dịch tối ưu hóa Webpack, và được phục vụ bởi máy chủ HTTP Nginx gọn nhẹ. Container này chịu trách nhiệm hiển thị giao diện dashboard, tương tác biểu đồ mạng công việc AON và vẽ bảng Pareto.
     
-    \item \textbf{Dịch vụ Cổng thông tin \& Lõi tính toán (Backend API Container):}
+    \item \textbf{Dịch vụ cổng thông tin và lõi tính toán (Backend API):}
     Được xây dựng bằng khung FastAPI, vận hành thông qua máy chủ ASGI Uvicorn hỗ trợ lập trình bất đồng bộ. Dịch vụ này nhúng sẵn mô hình PyTorch HGT Task Predictor (đã được huấn luyện) cùng bộ thư viện OR-Tools CP-SAT để trực tiếp thực hiện các luồng tính toán nặng.
     
-    \item \textbf{Dịch vụ Lưu trữ dữ liệu (Database Container):}
+    \item \textbf{Dịch vụ lưu trữ dữ liệu (Database):}
     Khởi tạo hệ quản trị cơ sở dữ liệu PostgreSQL. Cơ sở dữ liệu này được cấu hình tối ưu hóa bộ nhớ đệm (shared buffers) để xử lý nhanh các tác vụ ghi/đọc dữ liệu topo mạng lưới lớn và lưu trữ lịch sử kịch bản tối ưu hóa.
 \end{enumerate}
 
@@ -488,7 +549,7 @@ Mối tương tác giữa người dùng và các dịch vụ trong hệ thống
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\linewidth]{fig10_frontend_rendering.drawio.png}
-    \caption{Sơ đồ luồng dữ liệu (Data Flow) và tương tác kết xuất giữa Frontend React, Backend FastAPI, và PostgreSQL.}
+    \caption{Sơ đồ luồng dữ liệu và tương tác kết xuất giữa Frontend React, Backend FastAPI, và PostgreSQL.}
     \label{fig:frontend_rendering_flow}
 \end{figure}
 
@@ -500,6 +561,6 @@ Quy trình vận hành và kết xuất đồ họa diễn ra theo các bước 
     \item \textbf{Kết xuất kịch bản Pareto:} Kết quả CP-SAT trả về tập phương án Pareto Frontier dưới dạng JSON. Giao diện Frontend nhận dữ liệu và kết xuất hai biểu đồ động:
     \begin{itemize}
         \item \textbf{Biểu đồ Pareto Frontier:} Bản đồ phân tán (Scatter Plot) biểu diễn mối tương quan đánh đổi giữa Makespan -- Chi phí -- Rủi ro, cho phép nhà quản lý rê chuột chọn cấu hình mong muốn.
-        \item \textbf{Biểu đồ Gantt Chart động:} Sử dụng React Flow và Cytoscape.js để kết xuất sơ đồ Gantt trực quan hóa tiến độ bắt đầu/kết thúc các công việc. Các công việc nằm trên Đường Găng (Critical Path) hoặc có rủi ro trễ hạn cao được nhuộm đỏ nổi bật để cảnh báo sớm cho nhà quản lý.
+        \item \textbf{Biểu đồ Gantt Chart động:} Sử dụng React Flow và Cytoscape.js để kết xuất sơ đồ Gantt trực quan hóa tiến độ bắt đầu/kết thúc các công việc. Các công việc nằm trên đường găng hoặc có rủi ro trễ hạn cao được nhuộm đỏ nổi bật để cảnh báo sớm cho nhà quản lý.
     \end{itemize}
 \end{enumerate}

@@ -10,7 +10,7 @@ Thực tiễn quản lý dự án logistics hiện nay đối mặt với ba v�
 \begin{enumerate}
     \item \textbf{Thiếu mô hình chi phí đặc thù theo loại hình dự án:} Các phần mềm quản lý dự án thương mại hiện tại không phân biệt cấu trúc chi phí giữa các loại dự án logistics khác nhau (thi công, vận tải quốc tế, sản xuất công nghiệp, v.v.), dẫn đến sai lệch trong dự toán khi áp dụng một công thức chung cho tất cả loại hình \cite{christopher2016}.
 
-    \item \textbf{Định lượng rủi ro trễ tiến độ thiếu cơ sở thống kê:} Phương pháp CPM (Critical Path Method) tất định không phản ánh tính bất định trong thời gian thi công thực tế, do đó không cung cấp được xác suất trễ hạn ($P[\text{delay}]$) làm cơ sở cho quyết định về hợp đồng phạt/thưởng.
+    \item \textbf{Định lượng rủi ro trễ tiến độ thiếu cơ sở thống kê:} Phương pháp Đường găng (CPM) tất định không phản ánh tính bất định trong thời gian thi công thực tế, do đó không cung cấp được xác suất trễ hạn ($P[\text{delay}]$) làm cơ sở cho quyết định về hợp đồng phạt/thưởng.
 
     \item \textbf{Không gian nghiệm RCPSP quá lớn cho các bộ giải chính xác:} Với dự án có hàng chục công việc và tài nguyên chia sẻ, không gian tìm kiếm của bộ giải chính xác tăng theo cấp số nhân. Cần có cơ chế thu hẹp không gian tìm kiếm trước khi đưa vào bộ giải để hội tụ trong thời gian chấp nhận được \cite{kolisch1997psplib}.
 \end{enumerate}
@@ -26,9 +26,9 @@ Mục tiêu tổng quát là thiết kế và phát triển hệ thống phần 
 Đồ án xác định 4 mục tiêu kỹ thuật cụ thể:
 
 \begin{enumerate}
-    \item \textbf{Xây dựng mô hình chi phí 7 nhóm đặc trưng (G1--G7) cho 5 loại dự án logistics:} Thiết kế công thức tính chi phí cơ sở (Base Cost) và tổng chi phí (Total Cost) riêng biệt cho 5 loại hình dự án (ITS, CON, IND, PRO, TRL), trong đó G5 là hệ số rủi ro nhân lên toàn bộ.
+    \item \textbf{Xây dựng mô hình chi phí 6 nhóm đặc trưng (Nhóm 1 -- Nhóm 6) cho dự án logistics:} Thiết kế công thức tính chi phí cơ sở (Base Cost) và tổng chi phí (Total Cost) bao quát 38 hạng mục chi phí, phản ánh đầy đủ dòng tiền thực tế của dự án.
 
-    \item \textbf{Phát triển AI Pipeline 5 bước ứng dụng HGT và Monte Carlo CPM:} (i) Dựng đồ thị dị thể 3 loại nút (Task, Resource, Shift); (ii) Huấn luyện Heterogeneous Graph Transformer (HGT) kết hợp cơ chế Masked Autoencoder để dự báo Duration Factor, Expected Delay và độ không chắc chắn $\sigma$; (iii) Chạy mô phỏng Monte Carlo CPM ($N$ = 10.000 vòng lặp) để định lượng xác suất trễ hạn ($P[\text{delay}]$) theo phân phối thực nghiệm; (iv) Đưa kết quả vào bộ giải CP-SAT để tìm tập phương án Pareto tối ưu đa mục tiêu (Makespan, Total Cost, Risk).
+    \item \textbf{Phát triển AI Pipeline 5 bước ứng dụng HGT và Monte Carlo CPM:} (i) Dựng đồ thị dị thể 3 loại nút (Task, Resource, Shift) và 5 loại cạnh; (ii) Huấn luyện Heterogeneous Graph Transformer (HGT) kết hợp cơ chế Masked Autoencoder để dự báo Duration Factor, Expected Delay và độ không chắc chắn $\sigma$; (iii) Chạy mô phỏng Monte Carlo CPM ($N$ = 10.000 vòng lặp) để định lượng xác suất trễ hạn ($P[\text{delay}]$) theo phân phối thực nghiệm; (iv) Đưa kết quả vào bộ giải CP-SAT để tìm tập phương án Pareto tối ưu đa mục tiêu (Makespan, Total Cost, Risk).
 
     \item \textbf{Thiết kế kiến trúc phần mềm 3 lớp và cơ sở dữ liệu quan hệ:} Xây dựng Backend RESTful API (FastAPI, Python~3.12) với ORM bất đồng bộ (SQLAlchemy~2.0), quản lý dữ liệu dự án trong PostgreSQL~15 bao gồm các bảng: \texttt{projects}, \texttt{tasks}, \texttt{task\_logic}, \texttt{resources}, \texttt{task\_resources}, \texttt{project\_calendars} và \texttt{pareto\_solutions}.
 
@@ -38,7 +38,7 @@ Mục tiêu tổng quát là thiết kế và phát triển hệ thống phần 
 \section*{3. Đối tượng và phạm vi nghiên cứu}
 
 \paragraph{Đối tượng nghiên cứu:}
-Đồ án tập trung nghiên cứu mạng lưới công việc dạng đồ thị định hướng không chu trình (AON-DAG) với quan hệ phụ thuộc tiến độ PDM (Finish-to-Start kèm lag\_hours). Nghiên cứu giải quyết bài toán lập lịch dự án giới hạn tài nguyên (RCPSP) đa mục tiêu nhằm tối ưu hóa đồng thời thời lượng Makespan (giờ), Tổng chi phí dự án và Xác suất trễ hạn của các hạng mục. Mô hình tài chính sử dụng hệ thống phân rã chi tiết gồm 38 hạng mục chi phí thuộc 7 nhóm đặc trưng từ G1 đến G7 áp dụng cho 5 loại hình dự án logistics khác nhau. Về mặt công nghệ AI và tối ưu hóa, đối tượng nghiên cứu cốt lõi bao gồm kiến trúc mạng nơ-ron đồ thị dị thể HGT (Heterogeneous Graph Transformer), cơ chế tự học tự giám sát Masked Autoencoder (MAE) trên đồ thị và bộ giải quy hoạch ràng buộc CP-SAT.
+Đồ án tập trung nghiên cứu mạng lưới công việc dạng đồ thị định hướng không chu trình (AON-DAG) với quan hệ phụ thuộc tiến độ PDM (Hoàn thành-Bắt đầu kèm độ trễ). Nghiên cứu giải quyết bài toán lập lịch dự án giới hạn tài nguyên (RCPSP) đa mục tiêu nhằm tối ưu hóa đồng thời thời lượng Makespan (giờ), Tổng chi phí dự án và Xác suất trễ hạn của các hạng mục. Mô hình tài chính sử dụng hệ thống phân rã chi tiết gồm 38 hạng mục chi phí thuộc 6 nhóm đặc trưng (Từ Nhóm 1 đến Nhóm 6) bao quát toàn diện các khía cạnh của dự án. Về mặt công nghệ AI và tối ưu hóa, đối tượng nghiên cứu cốt lõi bao gồm kiến trúc mạng nơ-ron đồ thị dị thể HGT (Heterogeneous Graph Transformer), cơ chế học tự giám sát Masked Autoencoder (MAE) trên đồ thị và bộ giải quy hoạch ràng buộc CP-SAT.
 
 \paragraph{Phạm vi dữ liệu thực nghiệm:} Đồ án sử dụng tập dữ liệu từ 5 dự án lịch sử để huấn luyện mô hình (pre-training) và tiến hành đánh giá định lượng chuyên sâu trên tập dữ liệu dự án thực tế \textbf{C2012-04} (``Asti-Cuneo Highway'', loại hình CON) bao gồm $67$ công việc, $84$ cạnh phụ thuộc PDM và $16$ loại tài nguyên.
 
@@ -48,9 +48,9 @@ Mục tiêu tổng quát là thiết kế và phát triển hệ thống phần 
 
 Đồ án kết hợp ba nhóm phương pháp nghiên cứu chính:
 
-\paragraph{Mô hình hóa toán học và tối ưu hóa tổ hợp:} Biểu diễn mạng lưới công việc bằng đồ thị định hướng DAG với quan hệ Finish-to-Start và lag ràng buộc. Xây dựng mô hình RCPSP đa mục tiêu (tối ưu đồng thời Makespan, Total Cost, $P[\text{delay}]$). Khai thác cơ chế sinh mệnh đề trễ (lazy clause generation) của bộ giải CP-SAT để tìm tập nghiệm Pareto trong thời gian giới hạn có tính đến mức phạt trễ hạn và thưởng hoàn thành sớm.
+\paragraph{Mô hình hóa toán học và tối ưu hóa tổ hợp:} Biểu diễn mạng lưới công việc bằng đồ thị định hướng DAG với quan hệ Hoàn thành-Bắt đầu kèm độ trễ (lag). Xây dựng mô hình RCPSP đa mục tiêu (tối ưu đồng thời Makespan, Total Cost, $P[\text{delay}]$). Khai thác cơ chế sinh mệnh đề trễ (lazy clause generation) của bộ giải CP-SAT để tìm tập nghiệm Pareto trong thời gian giới hạn có tính đến mức phạt trễ hạn và thưởng hoàn thành sớm.
 
-\paragraph{Học máy trên đồ thị (Graph Machine Learning):} Xây dựng HeteroGraph 4 loại nút bằng thư viện PyTorch Geometric. Huấn luyện HGT kết hợp Masked Autoencoder để trích xuất embedding cấu trúc và cung cấp heuristic định hướng cho CP-SAT. Sử dụng attention weights của HGT để xác định nút công việc có nguy cơ tạo nút thắt cổ chai (bottleneck).
+\paragraph{Học máy trên đồ thị (Graph Machine Learning):} Xây dựng đồ thị dị thể 3 loại nút bằng thư viện PyTorch Geometric. Huấn luyện HGT kết hợp Masked Autoencoder để trích xuất embedding cấu trúc và cung cấp heuristic định hướng cho CP-SAT. Sử dụng attention weights của HGT để xác định nút công việc có nguy cơ tạo nút thắt cổ chai (bottleneck).
 
 \paragraph{Thực nghiệm kỹ thuật phần mềm:} Thiết kế và kiểm thử RESTful API theo chuẩn mực kiến trúc 3 lớp (Endpoint -- Service -- Repository). Đo đạc thời gian phản hồi API và thời gian hội tụ của CP-SAT Pareto Solver trên tập dữ liệu thực nghiệm.
 
@@ -58,10 +58,10 @@ Mục tiêu tổng quát là thiết kế và phát triển hệ thống phần 
 
 Đồ án được bố cục thành 4 chương:
 
-\textbf{Chương 1: Tổng quan lý thuyết và Cơ sở nghiên cứu} --- Trình bày lý thuyết đồ thị ứng dụng trong quản lý dự án (AON-DAG, CPM), bài toán RCPSP và phân lớp NP-hard, mô hình tài chính 7 nhóm chi phí, cơ sở lý thuyết HGT và Masked Autoencoder, phương pháp Monte Carlo CPM.
+\textbf{Chương 1: Tổng quan lý thuyết và Cơ sở nghiên cứu} --- Trình bày lý thuyết đồ thị ứng dụng trong quản lý dự án (AON-DAG, CPM), bài toán RCPSP và phân lớp NP-hard, mô hình tài chính 6 nhóm chi phí, cơ sở lý thuyết HGT và Masked Autoencoder, phương pháp Monte Carlo CPM.
 
-\textbf{Chương 2: Kiến trúc Hệ thống và Phương pháp luận đề xuất} --- Trình bày thiết kế kiến trúc vi dịch vụ, lược đồ cơ sở dữ liệu PostgreSQL, luồng AI Pipeline 5 bước (HeteroGraph -- HGT -- Monte Carlo -- CP-SAT -- Pareto), giao diện người dùng React/Vite và hạ tầng Docker.
+\textbf{Chương 2: Kiến trúc Hệ thống và Phương pháp luận đề xuất} --- Trình bày thiết kế kiến trúc vi dịch vụ, lược đồ cơ sở dữ liệu PostgreSQL, kiến trúc HGT với 5 loại cạnh, luồng AI Pipeline khép kín (HeteroGraph -- HGT -- Monte Carlo -- CP-SAT -- Pareto), giao diện người dùng React/Vite và hạ tầng Docker.
 
 \textbf{Chương 3: Kết quả Thực nghiệm và Thảo luận} --- Trình bày kết quả đánh giá định lượng trên dự án C2012-04: độ chính xác dự báo của HGT (Duration Factor, Expected Delay), phân phối xác suất trễ từ Monte Carlo CPM, tập phương án Pareto (makespan\_hours, total\_cost, risk\_pct) và thời gian hội tụ của bộ giải.
 
-\textbf{Chương 4: Kết luận và Hướng phát triển} --- Tổng kết đóng góp kỹ thuật, phân tích hạn chế và đề xuất hướng mở rộng (tích hợp dữ liệu thời gian thực, hỗ trợ đa dự án song song, thay thế CP-SAT bằng LNS).
+\textbf{Chương 4: Kết luận và Hướng phát triển} --- Tổng kết đóng góp kỹ thuật, phân tích hạn chế và đề xuất hướng mở rộng (cơ chế chú ý sai phân KDA cho suy luận thời gian thực, tối ưu lai LNS kết hợp CP-SAT cho đồ thị cực lớn, và Học tăng cường đa tác tử MAPPO cho quản trị đa dự án).

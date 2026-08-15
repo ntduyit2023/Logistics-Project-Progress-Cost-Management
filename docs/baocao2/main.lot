@@ -9,13 +9,13 @@
 \contentsline {table}{\numberline {1.7}{\ignorespaces Siêu tham số cấu trúc mạng nội tại của HGTTaskPredictor}}{14}{table.caption.41}%
 \contentsline {table}{\numberline {1.8}{\ignorespaces Siêu tham số huấn luyện và hàm mất mát của mô hình HGT}}{15}{table.caption.42}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Cấu hình chi tiết hạ tầng phần cứng và phần mềm thực nghiệm}}{21}{table.caption.45}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces Thông số cấu trúc đặc trưng của Dự án mẫu C2012-04}}{23}{table.caption.46}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Cấu hình chi tiết hạ tầng phần cứng và phần mềm thực nghiệm}}{24}{table.caption.45}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Thông số cấu trúc đặc trưng của Dự án mẫu C2012-04}}{26}{table.caption.46}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị của 5 dự án trong tập dữ liệu DSLIB}}{35}{table.caption.53}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces Bảng tổng hợp chỉ số hiệu năng đại diện của toàn hệ thống GLPO}}{35}{table.caption.54}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces Đối chuẩn cơ chế đánh giá giữa Random Split và Leave-One-Project-Out (LOPO CV)}}{36}{table.caption.55}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation (LOPO CV)}}{37}{table.caption.57}%
-\contentsline {table}{\numberline {3.5}{\ignorespaces Ảnh hưởng của quy mô đồ thị dự án đến hiệu năng học sâu}}{38}{table.caption.60}%
-\contentsline {table}{\numberline {3.6}{\ignorespaces Tập phương án tối ưu Pareto (Ép tiến độ) cho dự án C2012-04}}{42}{table.caption.63}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Thống kê đặc trưng cấu trúc đồ thị của 5 dự án trong tập dữ liệu DSLIB}}{38}{table.caption.53}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Bảng tổng hợp chỉ số hiệu năng đại diện của toàn hệ thống GLPO}}{38}{table.caption.54}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Đối chuẩn cơ chế đánh giá giữa Random Split và Leave-One-Project-Out (LOPO CV)}}{39}{table.caption.55}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Đánh giá hiệu năng huấn luyện AI trên 5-Fold Cross Validation (LOPO CV)}}{40}{table.caption.57}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Ảnh hưởng của quy mô đồ thị dự án đến hiệu năng học sâu}}{41}{table.caption.60}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Tập phương án tối ưu Pareto (Ép tiến độ) cho dự án C2012-04}}{46}{table.caption.63}%
 \addvspace {10\p@ }

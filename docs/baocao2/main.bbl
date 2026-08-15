@@ -119,16 +119,38 @@ Y.~Zhang {\em et~al.}, ``Predicting supply chain disruptions using
 {Gurobi Optimization, LLC}, ``Gurobi optimizer reference manual.''
   \url{https://www.gurobi.com}, 2023.
 
-\bibitem{pisinger2010large}
-D.~Pisinger and S.~Ropke, ``Large neighborhood search,'' {\em Handbook of
-  Metaheuristics}, pp.~399--419, 2010.
-\newblock \url{https://doi.org/10.1007/978-1-4419-1375-3_13}.
+\bibitem{moonshot2025kimilinear}
+{Moonshot AI}, ``Kimi linear: An expressive, efficient attention
+  architecture,'' tech. rep., Moonshot AI, October 2025.
+\newblock \url{https://arxiv.org/abs/2506.04062}.
 
-\bibitem{ying2021graphormer}
-C.~Ying, T.~He, D.~Chen, T.~Zheng, G.~Lu, R.~Zheng, and T.~Liu, ``Do
-  transformers really perform bad for graph representation?,'' in {\em Advances
-  in Neural Information Processing Systems (NeurIPS)}, vol.~34,
-  pp.~28877--28888, 2021.
-\newblock \url{https://arxiv.org/abs/2106.07471}.
+\bibitem{yang2024gated}
+S.~Yang, B.~Wang, Y.~Zhang, Y.~Shen, and Y.~Kim, ``Gated delta networks:
+  Improving mamba2 with delta rule,'' in {\em The Thirteenth International
+  Conference on Learning Representations (ICLR)}, 2025.
+\newblock \url{https://arxiv.org/abs/2412.06464}.
+
+\bibitem{pisinger2019lns}
+D.~Pisinger and S.~Ropke, ``Large neighborhood search,'' {\em Handbook of
+  Metaheuristics}, pp.~99--127, 2019.
+\newblock \url{https://doi.org/10.1007/978-3-319-91086-4_4}.
+
+\bibitem{laborie2018schedulingseminar}
+P.~Laborie, J.~Rogerie, P.~Shaw, and P.~Vilím, ``{IBM ILOG CP Optimizer} for
+  scheduling,'' in {\em Constraints}, vol.~23, pp.~210--250, 2018.
+\newblock \url{https://doi.org/10.1007/s10601-018-9281-x}.
+
+\bibitem{yu2022surprising}
+C.~Yu, A.~Velu, E.~Vinitsky, J.~Gao, Y.~Wang, A.~Bayen, and Y.~Wu, ``The
+  surprising effectiveness of {MAPPO} in cooperative multi-agent games,'' in
+  {\em Advances in Neural Information Processing Systems (NeurIPS)}, vol.~35,
+  pp.~9068--9081, 2022.
+\newblock \url{https://arxiv.org/abs/2103.01955}.
+
+\bibitem{lin2024multiagentrl}
+Z.~Lin {\em et~al.}, ``Multi-agent reinforcement learning for dynamic resource
+  allocation in complex project networks,'' {\em IEEE Transactions on
+  Engineering Management}, 2024.
+\newblock \url{https://doi.org/10.1109/TEM.2024.3351042}.
 
 \end{thebibliography}
